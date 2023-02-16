@@ -5,6 +5,13 @@
 if (!class_exists('Magick_Mixtrue_Tool')) {
     class Magick_Mixtrue_Tool
     {
+        private static $time;
+        public function __construct()
+        {
+
+            $time = self::get_time();
+
+        }
 
         /**
          * 判断指定主题是否启用，若使用了该主题则返回true
@@ -88,13 +95,14 @@ if (!class_exists('Magick_Mixtrue_Tool')) {
 
             return array(
                 'a' => array(
-                    date("Y-m-d H:i:s", $todaytime),
-                    date("Y-m-d H:i:s", $todaytime - 24 * 60 * 60 * 1),
-                    date("Y-m-d H:i:s", $todaytime - 24 * 60 * 60 * 2),
-                    date("Y-m-d H:i:s", $todaytime - 24 * 60 * 60 * 3),
-                    date("Y-m-d H:i:s", $todaytime - 24 * 60 * 60 * 4),
-                    date("Y-m-d H:i:s", $todaytime - 24 * 60 * 60 * 5),
-                    date("Y-m-d H:i:s", $todaytime - 24 * 60 * 60 * 6),
+                    date("Y-m-d", $todaytime),
+                    // date("Y-m-d H:i:s", $todaytime),
+                    date("Y-m-d", $todaytime - 24 * 60 * 60 * 1),
+                    date("Y-m-d", $todaytime - 24 * 60 * 60 * 2),
+                    date("Y-m-d", $todaytime - 24 * 60 * 60 * 3),
+                    date("Y-m-d", $todaytime - 24 * 60 * 60 * 4),
+                    date("Y-m-d", $todaytime - 24 * 60 * 60 * 5),
+                    date("Y-m-d", $todaytime - 24 * 60 * 60 * 6),
                 ),
                 'b' => array(
                     date("Y-m-d H:i:s", $todaytime - 8 * 60 * 60),
@@ -183,7 +191,7 @@ if (!class_exists('Magick_Mixtrue_Tool')) {
 
         /**
          * 用途：获取本年发文数量
-         * 描述：仅统计本月已发布文章数量
+         * 描述：仅统计本年已发布文章数量
          */
         public static function get_publish_count_year()
         {
@@ -204,7 +212,7 @@ if (!class_exists('Magick_Mixtrue_Tool')) {
         /**
          * 用途：获取所有已发布文章数量
          * 来源：https://developer.wordpress.org/reference/functions/wp_count_posts/
-         * 返回：数字
+         * 返回：数组
          */
         public static function get_publish_count()
         {
@@ -217,8 +225,77 @@ if (!class_exists('Magick_Mixtrue_Tool')) {
         }
 
         /**
-         * 输入人员ID，返回最近7天发文数量
+         * 输入人员ID和时间，输出发文数量
+         * 时间：2022-12-09
          */
+        public static function get_count_user($id = '1', $time = '2023-02-16', $type = 'publish')
+        {
+            /**
+             * $id:待查询人员的ID
+             * $time:时间：2022-12-09
+             * $type:文章状态类型，默认publish(已发布)
+             */
+            $arr = array();
+            $args = array(
+                'date_query' => array(
+                    array(
+                        'after' => $time,
+                        'before' => $time,
+                        //'after'     => '2022-12-09',
+                        //'before'    => '2022-12-09',
+                        'inclusive' => true,
+                    ),
+                ),
+                'posts_per_page' => -1, //全显示
+                'post_status' => $type, //已发布的文章 - 非待审、草稿、私密
+                'author' => $id, //指定用户的ID
+            );
+            $query = new WP_Query($args);
+            $arr['user_id'] = $id;
+            $arr['time'] = $time;
+            $arr['post_status'] = $type;
+            $arr['total'] = $query->post_count;
+            return $arr;
+
+        }
+        /**
+         * 输入人员ID，返回最近7天发文数量
+         * 输出：数组(array)
+         */
+        public static function get_count_user_week($id = '1')
+        {
+            //拿到时间数组
+            $t = self::get_time()['a'];
+            //存储数据
+            $arr = array();
+
+            for ($i = 0; $i < 7; $i++) {
+                //拿到日期
+                $time = $t[$i];
+                $arr[$i] = self::get_count_user($id, $time, 'publish');
+
+            }
+            return $arr;
+        }
+
+        /**
+         * 根据给出的ID返回对应属性值
+         * [ID] => 1
+         *[user_login] => test
+         *[user_pass] => $P$Bm9497CNcPxNS8DJMMCMqgXR.jKTeQ.
+         *[user_nicename] => test
+         *[user_email] => test@test.cc
+         *[user_url] => http://magick.plugin
+         *[user_registered] => 2023-02-01 08:40:27
+         *[user_activation_key] =>
+         *[user_status] => 0
+         *[display_name] => test  推荐用这个获取名字
+         */
+        public static function get_user_data($id = '1', $type = 'ID')
+        {
+            $user = new WP_User($id);
+            return $user->data->$type;
+        }
 
     } //end
 }

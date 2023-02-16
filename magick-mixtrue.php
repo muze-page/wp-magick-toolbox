@@ -79,11 +79,4 @@ function kbs_get_users_by_role()
 
 $magick_tool = new Magick_Mixtrue_Tool;
 
-//$magick_tool->p($blogusers);
-//$magick_tool->p(hindle_user($blogusers));
-
-$magick_tool->p($magick_tool::get_publish_count());
-
-//WordPress获取本周发布的文章数量
-
-//echo get_week_post_count();
+$magick_tool->p($magick_tool::get_user_data('1','display_name'));

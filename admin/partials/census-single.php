@@ -9,12 +9,12 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
         public function __construct()
         {
             self::init_actions();
+
         }
 
         public static function init_actions()
         {
 
-            //add_action('admin_enqueue_scripts', array(__CLASS__, 'load_block_js'));
             add_action('admin_init', array(__CLASS__, 'magick_plugin_options'));
 
         }
@@ -39,12 +39,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
 	             </div><!-- /.wrap -->
             <?php
 }
-        //加载echarts 用于图标绘制
-        public static function load_block_js()
-        {
-            wp_enqueue_style('插件名', plugin_dir_url(dirname(__FILE__)) . 'js/echarts_v5.4.0.js', array(), '版本号', 'all');
 
-        }
         //开始判断，在文章统计页则加载
         //public static function current_page_hook($hook)
         //{
@@ -163,18 +158,73 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             }
             return $arr;
         }
+        /**
+         * 获取一批人的近7天发文数量
+         */
+        public static function get_user_release_arr()
+        {
+            $tool = new Magick_Mixtrue_Tool;
+            //存储数组
+            $arr = array();
+            //拿到ID数组
+            $options = get_option('magick_plugin_config');
+            $a = $options['option_id'];
+
+            foreach ($a as $key => $value) {
+                $arr[$key] = $tool->get_count_user_week($value);
+            }
+
+            return $arr;
+
+        }
 
         //统计页面基本框架
         public static function render_page()
         {
+            $tool = new Magick_Mixtrue_Tool;
+            //拿到表格用数据
+            $chart = self::get_user_release_arr();
+
             /**
              * 表格数据准备
              */
-            
+            //拿到作者名
+            $chart_user = array();
+            foreach ($chart as $key => $value) {
+                $id = $value['0']['user_id'];
+                $chart_user[$key] = $tool->get_user_data($id, 'display_name'); //拿到名字
+            }
+
+            //拿到时间
+            $chart_time = array();
+            foreach ($chart['0'] as $key => $value) {
+                $time = $value['time'];
+                $chart_time[$key] = date("d", strtotime($time));
+            }
+
+            $chart_content = array();
+            foreach ($chart as $a => $b) {
+
+                foreach ($b as $key => $value) {
+
+                    $c[$key] = $value['total'];
+                }
+                $id = $b['0']['user_id'];
+                $chart_content[$a]['name'] = $tool->get_user_data($id, 'display_name'); //拿到名字
+                $chart_content[$a]['type'] = "bar";
+                $chart_content[$a]['data'] = $c;
+            }
+
+            //看看里面有啥
+            //$tool->p($chart);
+            //$tool->p($chart_user);
+            //$tool->p($chart_time);
+            //$tool->p($chart_content);
+
             /**
              * 基础数据准备
              */
-            $tool = new Magick_Mixtrue_Tool;
+
             //今天发文
             $count_today = $tool->get_publish_count_today();
             //本周发文
@@ -187,6 +237,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             $count_total = $tool->get_publish_count();
 
             ?>
+
             <div class="magick-single-census">
         <!--放统计图-->
         <div id="magick-seven-census" style="width:700px;height:400px;"></div>
@@ -232,10 +283,6 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
                     </div>
                 </div>
             </div>
-
-
-
-
         </div>
     </div>
     <script type="text/javascript">
@@ -245,35 +292,38 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
         // 指定图表的配置项和数据
         var option = {
             title: {
-                text: "ECharts 入门示例",
+                text: "一周发文统计",
             },
             tooltip: {},
             legend: {
-                data: ["作者一", "作者二", "作者三"],
+                //data: ["作者一", "作者二", "作者三"],
+                data: <?php echo json_encode($chart_user) ?>,
             },
             xAxis: {
-                data: ["周一", "周二", "周三", "周四", "周五", "周六", "周七"],
+                //data: ["周一", "周二", "周三", "周四", "周五", "周六", "周七"],
+                data: <?php echo json_encode($chart_time) ?>,
             },
             yAxis: {},
-            series: [
-                {
-                    name: "作者一",
-                    type: "bar",
-                    data: [5, 20, 36, 10, 10, 20, 22],
-                },
-
-                {
-                    name: "作者二",
-                    type: "bar",
-                    data: [55, 22, 16, 18, 30, 22, 26],
-                },
-
-                {
-                    name: "作者三",
-                    type: "bar",
-                    data: [26, 10, 16, 20, 30, 10, 28],
-                },
-            ],
+            series:  <?php echo json_encode($chart_content) ?>,
+            //series: [
+            //    {
+            //        name: "作者一",
+            //        type: "bar",
+            //        data: [5, 20, 36, 10, 10, 20, 22],
+            //    },
+//
+            //    {
+            //        name: "作者二",
+            //        type: "bar",
+            //        data: [55, 22, 16, 18, 30, 22, 26],
+            //    },
+//
+            //    {
+            //        name: "作者三",
+            //        type: "bar",
+            //        data: [26, 10, 16, 20, 30, 10, 28],
+            //    },
+            //],
         };
 
         // 使用刚指定的配置项和数据显示图表。
@@ -286,6 +336,12 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
     } //end class
 }
 
+//加载echarts 用于图标绘制
+// public static function load_block_js()
+// {
+//     wp_enqueue_style('插件名', plugin_dir_url(dirname(__FILE__)) . 'js/echarts_v5.4.0.js', array(), '版本号', 'all');
+
+// }
 //激活插件时运行
 //add_action('plugins_loaded', array('Magick_Mixtrue_Census_Single', 'init_actions'));
 //add_action('admin_enqueue_scripts', array('Magick_Mixtrue_Census_Single', 'load_block_js'));
