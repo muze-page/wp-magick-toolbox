@@ -45,4 +45,8 @@ run_magick_mixture();
 
 $magick_tool = new Magick_Mixtrue_Tool;
 
-$magick_tool->p($magick_tool->get_time_long('last_monthsdfasdf'));
+//$magick_tool->p($magick_tool->get_time_long('last_monthsdfasdf'));
+
+
+
+//$magick_tool->p($mytime);

@@ -149,7 +149,6 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
                     //符合其中之一要求的人
                     'role__in' => $role = array('administrator', 'author', 'editor', 'contributor'),
                 ));
-
             //存储数据
             $arr = array();
             foreach ($user as $key => $value) {

@@ -393,7 +393,7 @@ if (!class_exists('Magick_Mixtrue_Tool')) {
             //存储数据
             $arr = array();
 
-            for ($i = 0; $i < 7; $i++) {
+            for ($i = 0; $i < count((array) $t); $i++) {
                 //拿到日期
                 $time = $t[$i];
                 $arr[$i] = self::get_count_user($id, $time, 'publish');
