@@ -1,4 +1,8 @@
 /*圆角弧度*/
+/*大体框架*/
+.magick-content {
+  max-width: 1200px;
+}
 .magick-single-census {
   display: flex;
   justify-content: space-between;

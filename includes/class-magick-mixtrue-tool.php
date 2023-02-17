@@ -188,168 +188,121 @@ if (!class_exists('Magick_Mixtrue_Tool')) {
         }
 
         /**
-         *输出上周数组
+         * 输出今天、本周、本月、本年和累计发文数量
+         * 可选获取时间、类型（page.post）、状态
+         * 描述：考虑到性能问题，这里写成if判断，
+         * 注意：全部统计有问题，有时间再解决
          */
-        public function last_week()
+        public static function get_total_release_amount($time = 'today', $type = 'post', $status = 'publish')
         {
-            //本周开始时间戳
-            $startTime = date("Y-m-d H:i:s", mktime(0, 0, 0, date('m'), date('d') - date('w') + 1 - 7, date('Y')));
-            //本周结束时间戳
-            $overTime = date("Y-m-d H:i:s", mktime(23, 59, 59, date('m'), date('d') - date('w') + 7 - 7, date('Y')));
-            $date = self::getDateFromRange($startTime, $overTime);
-            return $date;
-        }
-        /**
-         *输出本周数组
-         */
 
-        public function this_week()
-        {
-            //本周开始时间戳
-            $startTime = date("Y-m-d H:i:s", mktime(0, 0, 0, date('m'), date('d') - date('w') + 1, date('y')));
-            //本周结束时间戳
-            $overTime = date("Y-m-d H:i:s", mktime(23, 59, 59, date('m'), date('d') - date('w') + 7, date('y')));
-            $date = self::getDateFromRange($startTime, $overTime);
-            return $date;
-        }
+            /**
+             * 作用本日发文数量
+             * 查询：https://developer.wordpress.org/reference/classes/wp_query/#date-parameters
+             * 描述：仅统计已发布的公开内容和密码保护内容
+             */
+            if ($time == 'today') {
 
-        /**
-         *输出本月数组
-         */
-        public function this_month()
-        {
-            //本月起始时间日期格式
-            $startTime = date("Y-m-d ", mktime(0, 0, 0, date('m'), 1, date('Y')));
-            //本月结束时间日期格式
-            $overTime = date("Y-m-d", mktime(23, 59, 59, date('m'), date('t'), date('Y')));
-            $date = self::getDateFromRange($startTime, $overTime);
-            return $date;
-        }
-
-        /**
-         * 输出上一个月的数组
-         */
-        public function last_month()
-        {
-            $month = 1;
-            // 1代表上个月，可以增加数字追溯前几个月的时间
-            $startTime = date("Y-m-d", mktime(0, 0, 0, date("m") - 1 * $month, 1, date("Y")));
-            $overTime = date("Y-m-d", mktime(23, 59, 59, date("m") - ($month - 1), 0, date("Y")));
-            $date = self::getDateFromRange($startTime, $overTime);
-            return $date;
-        }
-
-        /**
-         * 本日发文数量
-         * 查询：https://developer.wordpress.org/reference/classes/wp_query/#date-parameters
-         * 描述：仅统计已发布的公开内容和密码保护内容
-         * 类型：默认为post,可为page
-         */
-        public static function get_publish_count_today()
-        {
-            $today = getdate();
-            $args = array(
-                'post_type' => 'post', //类型
-                'post_status' => 'publish', //状态
-                'post__not_in' => get_option('sticky_posts'), //排除置顶文章
-                'date_query' => array( //时间
-                    array(
-                        'year' => $today['year'],
-                        'month' => $today['mon'],
-                        'day' => $today['mday'],
+                $today = getdate();
+                $today_args = array(
+                    'post_type' => $type, //类型
+                    'post_status' => $status, //状态
+                    'post__not_in' => get_option('sticky_posts'), //排除置顶文章
+                    'date_query' => array( //时间
+                        array(
+                            'year' => $today['year'],
+                            'month' => $today['mon'],
+                            'day' => $today['mday'],
+                        ),
                     ),
-                ),
-            );
-            $query = new WP_Query($args);
-            return $query->post_count;
-
-        }
-
-        /**
-         * 用途：获取本周发文数量
-         * 来源：https://www.166yc.cn/195.html
-         * 参考：https://developer.wordpress.org/reference/classes/wp_query/#date-parameters
-         * 描述：仅统计当前周的已发布数量
-         */
-        public static function get_publish_count_week()
-        {
-            $date_query = array(
-
-                'year' => date('Y'),
-                'week' => date('W'),
-
-            );
-            $args = array(
-                'post_type' => 'post',
-                'post_status' => 'publish',
-                'date_query' => $date_query,
-                'no_found_rows' => true, //跳过计算找到的总行数
-                'suppress_filters' => true,
-                'fields' => 'ids',
-                'posts_per_page' => -1,
-            );
-            $query = new WP_Query($args);
-            return $query->post_count;
-        }
-
-        /**
-         * 用途：获取本月发文数量
-         * 描述：仅统计本月已发布文章数量
-         */
-        public static function get_publish_count_month()
-        {
-            $args = array(
-                'post_type' => 'post',
-                'post_status' => 'publish',
-                'post__not_in' => get_option('sticky_posts'), //排除置顶文章
-                'date_query' => array(
-                    array(
-                        'after' => '1 month ago',
-                    ),
-                ),
-                'posts_per_page' => -1,
-            );
-            $query = new WP_Query($args);
-            return $query->post_count;
-        }
-
-        /**
-         * 用途：获取本年发文数量
-         * 描述：仅统计本年已发布文章数量
-         */
-        public static function get_publish_count_year()
-        {
-            $args = array(
-                'post_type' => 'post',
-                'post_status' => 'publish',
-                'post__not_in' => get_option('sticky_posts'), //排除置顶文章
-                'date_query' => array(
-                    array(
-                        'after' => '1 year ago',
-                    ),
-                ),
-                'posts_per_page' => -1,
-            );
-            $query = new WP_Query($args);
-            return $query->post_count;
-        }
-        /**
-         * 用途：获取所有已发布文章数量
-         * 来源：https://developer.wordpress.org/reference/functions/wp_count_posts/
-         * 返回：数组
-         */
-        public static function get_publish_count()
-        {
-            $count_posts = wp_count_posts();
-
-            if ($count_posts) {
-                $published_posts = $count_posts->publish;
+                );
+                $today_query = new WP_Query($today_args);
+                return $today_query->post_count;
             }
-            return $published_posts;
+
+            /**
+             *功能：本周发文数量
+             *来源：https://www.166yc.cn/195.html
+             *参考：https://developer.wordpress.org/reference/classes/wp_query/#date-parameters
+             */
+            if ($time == 'week') {
+                $time_week = array(
+                    'year' => date('Y'),
+                    'week' => date('W'),
+                );
+                $args_week = array(
+                    'post_type' => $type,
+                    'post_status' => $status,
+                    'date_query' => $time_week,
+                    'no_found_rows' => true, //跳过计算找到的总行数
+                    'suppress_filters' => true,
+                    'fields' => 'ids',
+                    'posts_per_page' => -1,
+                );
+                $query_week = new WP_Query($args_week);
+                return $query_week->post_count;
+            }
+
+            /**
+             * 用途：获取本月发文数量
+             * 描述：仅统计本月已发布文章数量
+             */
+            if ($time == 'month') {
+                $args = array(
+                    'post_type' => $type,
+                    'post_status' => $status,
+                    'post__not_in' => get_option('sticky_posts'), //排除置顶文章
+                    'date_query' => array(
+                        array(
+                            'after' => '1 month ago',
+                        ),
+                    ),
+                    'posts_per_page' => -1,
+                );
+                $query = new WP_Query($args);
+                return $query->post_count;
+            }
+
+            /**
+             * 用途：获取本年发文数量
+             */
+
+            if ($time == 'year') {
+                $args = array(
+                    'post_type' => $type,
+                    'post_status' => $status,
+                    'post__not_in' => get_option('sticky_posts'), //排除置顶文章
+                    'date_query' => array(
+                        array(
+                            'after' => '1 year ago',
+                        ),
+                    ),
+                    'posts_per_page' => -1,
+                );
+                $query = new WP_Query($args);
+                return $query->post_count;
+            }
+
+            /**
+             * 用途：获取所有已发布文章数量
+             * 来源：https://developer.wordpress.org/reference/functions/wp_count_posts/
+             */
+            if ($time == 'total') {
+                $count_posts = wp_count_posts();
+
+                if ($count_posts) {
+                    $published_posts = $count_posts->publish;
+                }
+                return $published_posts;
+            }
+
+            $msg = "参数错误！";
+            return $msg;
+
         }
 
         /**
-         * 输入人员ID和时间，输出发文数量
+         * 输入人员ID和时间，输出发文数量，可选文章状态
          * 时间：2022-12-09
          */
         public static function get_count_user($id = '1', $time = '2023-02-16', $type = 'publish')
@@ -381,25 +334,6 @@ if (!class_exists('Magick_Mixtrue_Tool')) {
             $arr['total'] = $query->post_count;
             return $arr;
 
-        }
-        /**
-         * 输入人员ID，返回最近7天发文数量
-         * 输出：数组(array)
-         */
-        public static function get_count_user_week($id = '1')
-        {
-            //拿到时间数组
-            $t = self::get_time()['a'];
-            //存储数据
-            $arr = array();
-
-            for ($i = 0; $i < count((array) $t); $i++) {
-                //拿到日期
-                $time = $t[$i];
-                $arr[$i] = self::get_count_user($id, $time, 'publish');
-
-            }
-            return $arr;
         }
 
         /**

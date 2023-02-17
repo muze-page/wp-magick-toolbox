@@ -25,8 +25,11 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             ?>
             <!-- 在默认WordPress“包装”容器中创建标题 -->
 	        <div class="wrap">
+                <div class="magick-content">
             <!--标题-->
 		     <h2><?php echo esc_html(get_admin_page_title()); ?></h2>
+             <!--展示图表内容-->
+             <?php self::render_page()?>
 		     <!--在保存设置时调用WordPress函数以呈现错误。 -->
 		     <?php settings_errors();?>
 		     <!-- 创建用于呈现选项的表单 -->
@@ -35,7 +38,8 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
 		     	<?php do_settings_sections('sandbox_theme_display_options');?>
 		     	<?php submit_button();?>
 		     </form>
-             <?php self::render_page()?>
+
+        </div><!-- /.magick-content -->
 	             </div><!-- /.wrap -->
             <?php
 }
@@ -86,6 +90,10 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             );
 
         } //结束magick_plugin_options
+
+        /**
+         * 选择结果
+         */
         public function magick_plugin_options_callback()
         {
             //拿到选项的值
@@ -99,120 +107,59 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             }
         } //结束magick_plugin_options_callback
 
-        //选中框设置的回调
+        /**
+         * 选中框设置的回调
+         */
         public function magick_show_select_callback($args)
         {
             // 首先，我们拿到选项
             $options = get_option('magick_plugin_config');
-
             $uwcc_checkbox_field_1 = isset($options['option_id']) ? (array) $options['option_id'] : [];
             //name值很关键
-            //开始循环
-            $user = self::get_user();
-            foreach ($user as $value) {
-                $id = $value['id'];
-                $name = $value['name'];
-                //echo $id, $name;
-                //Magick_Mixtrue_Tool::p($user);
-                //注意，元素的ID和name属性应与add_settings_field调用中的ID属性相匹配
-                ?>
 
-                     <input type='checkbox' name='magick_plugin_config[option_id][]' <?php checked(in_array($id, $uwcc_checkbox_field_1), 1);?> value=<?php echo $id; ?>>
-        <label><?php echo $name; ?></label>
-                <?php
-} //end foreach
-            ?>
-
-    <label for="option_id"> <?php echo $args[0]; ?></label>
-
-    <?php
-
-        } // end magick_show_select_callback
-
-        /**
-         * 产出管理员、编辑、作者和贡献用户的ID
-         *
-         * Array
-         * (
-         *     [0] => Array
-         *         (
-         *             [id] => 5
-         *             [name] => FOUR
-         *         )
-         * )
-         * */
-        public static function get_user()
-        {
-            //获取基础数组
-            $user = get_users(
+            //拿到用户数据
+            $user_data = get_users(
                 array(
                     //符合其中之一要求的人
                     'role__in' => $role = array('administrator', 'author', 'editor', 'contributor'),
                 ));
-            //存储数据
-            $arr = array();
-            foreach ($user as $key => $value) {
-                $arr[$key]['id'] .= $value->id;
-                $arr[$key]['name'] .= $value->display_name;
-            }
-            return $arr;
-        }
+
+            //将选项循环出来
+            foreach ($user_data as $key => $value) {
+                $id = $value->id;
+                $name = $value->display_name;
+                ?>
+
+            <input type='checkbox' name='magick_plugin_config[option_id][]' <?php checked(in_array($id, $uwcc_checkbox_field_1), 1);?> value=<?php echo $id; ?>>
+            <label><?php echo $name; ?></label>
+
+
+               <?php
+} //end foreach
+            ?>
+            <!--描述-->
+            <hr /><label for="option_id"> <?php echo $args[0]; ?></label>
+
+            <?php
+
+        } // end magick_show_select_callback
+
         /**
-         * 获取一批人的近7天发文数量
+         * 统计页面基本框架
          */
-        public static function get_user_release_arr()
-        {
-            $tool = new Magick_Mixtrue_Tool;
-            //存储数组
-            $arr = array();
-            //拿到ID数组
-            $options = get_option('magick_plugin_config');
-            $a = $options['option_id'];
-
-            foreach ($a as $key => $value) {
-                $arr[$key] = $tool->get_count_user_week($value);
-            }
-
-            return $arr;
-
-        }
-
-        //统计页面基本框架
         public static function render_page()
         {
             $tool = new Magick_Mixtrue_Tool;
-            //拿到表格用数据
-            $chart = self::get_user_release_arr();
 
             /**
-             * 表格数据准备
+             * 表格数据准备 - 周
              */
-            //拿到作者名
-            $chart_user = array();
-            foreach ($chart as $key => $value) {
-                $id = $value['0']['user_id'];
-                $chart_user[$key] = $tool->get_user_data($id, 'display_name'); //拿到名字
-            }
+            $chart_data_week = self::get_user_release_arr()['week'];
 
-            //拿到时间
-            $chart_time = array();
-            foreach ($chart['0'] as $key => $value) {
-                $time = $value['time'];
-                $chart_time[$key] = date("d", strtotime($time));
-            }
-
-            $chart_content = array();
-            foreach ($chart as $a => $b) {
-
-                foreach ($b as $key => $value) {
-
-                    $c[$key] = $value['total'];
-                }
-                $id = $b['0']['user_id'];
-                $chart_content[$a]['name'] = $tool->get_user_data($id, 'display_name'); //拿到名字
-                $chart_content[$a]['type'] = "bar";
-                $chart_content[$a]['data'] = $c;
-            }
+            /**
+             * 表格数据准备 - 月
+             */
+            $chart_data_month = self::get_user_release_arr()['month'];
 
             //看看里面有啥
             //$tool->p($chart);
@@ -225,19 +172,19 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
              */
 
             //今天发文
-            $count_today = $tool->get_publish_count_today();
+            //$count_today = $tool->get_publish_count_today();
+            $count_today = $tool->get_total_release_amount('today');
             //本周发文
-            $count_week = $tool->get_publish_count_week();
+            $count_week = $tool->get_total_release_amount('week');
             //本月发文
-            $count_month = $tool->get_publish_count_month();
+            $count_month = $tool->get_total_release_amount('month');
             //本年发文
-            $count_year = $tool->get_publish_count_year();
+            $count_year = $tool->get_total_release_amount('year');
             //累计发文
-            $count_total = $tool->get_publish_count();
-
+            $count_total = $tool->get_total_release_amount('total');
             ?>
 
-            <div class="magick-single-census">
+            <section class="magick-single-census">
         <!--放统计图-->
         <div id="magick-seven-census" style="width:700px;height:400px;"></div>
         <!--放方框-->
@@ -283,54 +230,171 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
                 </div>
             </div>
         </div>
-    </div>
+
+    </section>
+    <!--月度统计-->
+    <section class="magick-census-single-month">
+        <div id="magick-month-census" style="width:1200px;height:400px;"></div>
+    </section>
+
     <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById("magick-seven-census"));
+        let myChart_week = echarts.init(document.getElementById("magick-seven-census"));
+        let myChart_month = echarts.init(document.getElementById("magick-month-census"));
 
         // 指定图表的配置项和数据
-        var option = {
+        let option_week = {
             title: {
                 text: "一周发文统计",
             },
             tooltip: {},
             legend: {
-                //data: ["作者一", "作者二", "作者三"],
-                data: <?php echo json_encode($chart_user) ?>,
+                data: <?php echo $chart_data_week['user'] ?>,
             },
             xAxis: {
-                //data: ["周一", "周二", "周三", "周四", "周五", "周六", "周七"],
-                data: <?php echo json_encode($chart_time) ?>,
+                data: <?php echo $chart_data_week['time'] ?>,
             },
             yAxis: {},
-            series:  <?php echo json_encode($chart_content) ?>,
-            //series: [
-            //    {
-            //        name: "作者一",
-            //        type: "bar",
-            //        data: [5, 20, 36, 10, 10, 20, 22],
-            //    },
-//
-            //    {
-            //        name: "作者二",
-            //        type: "bar",
-            //        data: [55, 22, 16, 18, 30, 22, 26],
-            //    },
-//
-            //    {
-            //        name: "作者三",
-            //        type: "bar",
-            //        data: [26, 10, 16, 20, 30, 10, 28],
-            //    },
-            //],
+            series:  <?php echo $chart_data_week['content'] ?>,
+        };
+                // 指定图表的配置项和数据
+                let option_month = {
+            title: {
+                text: "月度发文统计",
+            },
+            tooltip: {},
+            legend: {
+                data: <?php echo $chart_data_month['user'] ?>,
+            },
+            xAxis: {
+                data: <?php echo $chart_data_month['time'] ?>,
+            },
+            yAxis: {},
+            series:  <?php echo $chart_data_month['content'] ?>,
         };
 
         // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
+        myChart_week.setOption(option_week);
+        myChart_month.setOption(option_month);
     </script>
 
             <?php
 }
+
+        /**
+         * 获取一批人的发文数量,一周，一个月
+         */
+        public static function get_user_release_arr()
+        {
+            $tool = new Magick_Mixtrue_Tool;
+            //存储数组
+            $arr = array();
+            //拿到ID数组
+            $options = get_option('magick_plugin_config');
+            $id = $options['option_id'];
+
+            //获取周发文数量
+            $week = array();
+            foreach ($id as $key => $value) {
+                //$week[$key] = $tool->get_count_user_week($value);
+                $week[$key] = self::get_count_release($value)['week'];
+            }
+
+            //获取月发文数量
+            $month = array();
+            foreach ($id as $key => $value) {
+                //$month[$key] = $tool->get_count_user_month($value);
+                $month[$key] = self::get_count_release($value)['month'];
+            }
+
+            //将数据处理后存入数组
+            $arr['week'] = self::optimize_chart_data($week);
+            $arr['month'] = self::optimize_chart_data($month);
+
+            return $arr;
+
+        }
+
+        /**
+         * 输入人员ID，返回最近7天，本月发文数量
+         * 输出：数组(array)
+         */
+        public function get_count_release($id = '1')
+        {
+            $tool = new Magick_Mixtrue_Tool;
+            //存储数据
+            $arr = array();
+            /**
+             * 最近一周发文
+             */
+            //拿到时间数组
+            $t_week = $tool->get_time()['a'];
+            //表格需要，反转下时间
+            $t_week = array_reverse($t_week);
+            //开始循环
+            for ($i = 0; $i < count((array) $t_week); $i++) {
+                //拿到日期
+                $time = $t_week[$i];
+                $arr['week'][$i] = $tool->get_count_user($id, $time, 'publish');
+            }
+            /**
+             * 本月发文数量
+             */
+            //拿到时间数组
+            $t_month = $tool->get_time_long("this_month");
+            //循环
+            for ($i = 0; $i < count((array) $t_month); $i++) {
+                //拿到日期
+                $time = $t_month[$i];
+                $arr['month'][$i] = $tool->get_count_user($id, $time, 'publish');
+            }
+            return $arr;
+
+        }
+
+        /**
+         * 对拿到的列表数组进行优化，产出数组
+         */
+        public static function optimize_chart_data($chart)
+        {
+            //实例化工具
+            $tool = new Magick_Mixtrue_Tool;
+            //拿到作者名
+            $chart_user = array();
+            foreach ($chart as $key => $value) {
+                $id = $value['0']['user_id'];
+                $chart_user[$key] = $tool->get_user_data($id, 'display_name'); //拿到名字
+            }
+
+            //拿到时间
+            $chart_time = array();
+            foreach ($chart['0'] as $key => $value) {
+                $time = $value['time'];
+                $chart_time[$key] = date("d", strtotime($time));
+            }
+
+            //拿到数据
+            $chart_content = array();
+            foreach ($chart as $a => $b) {
+
+                foreach ($b as $key => $value) {
+
+                    $c[$key] = $value['total'];
+                }
+                $id = $b['0']['user_id'];
+                $chart_content[$a]['name'] = $tool->get_user_data($id, 'display_name'); //拿到名字
+                $chart_content[$a]['type'] = "bar";
+                $chart_content[$a]['data'] = $c;
+            }
+            //存储数组
+            //调整为表格用格式
+            $arr = array();
+            $arr['user'] = json_encode($chart_user);
+            $arr['time'] = json_encode($chart_time);
+            $arr['content'] = json_encode($chart_content);
+            return $arr;
+
+        } //end 数据优化
 
     } //end class
 }

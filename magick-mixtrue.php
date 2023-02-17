@@ -19,7 +19,7 @@ if (!defined('WPINC')) {
  *从1.0.0版本开始，使用SemVer-https://semver.org
  *重命名此插件，并在发布新版本时进行更新。
  */
-define('MAGICK_MIXTURE_VERSION', '1.1.2');
+define('MAGICK_MIXTURE_VERSION', '1.1.3');
 
 /**
  * 用于定义国际化的核心插件类，
@@ -45,8 +45,4 @@ run_magick_mixture();
 
 $magick_tool = new Magick_Mixtrue_Tool;
 
-//$magick_tool->p($magick_tool->get_time_long('last_monthsdfasdf'));
-
-
-
-//$magick_tool->p($mytime);
+//$magick_tool->p($magick_tool->get_count_user_month());
