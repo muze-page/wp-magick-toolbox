@@ -119,7 +119,7 @@ if (!class_exists('Magick_Mixtrue_Tool')) {
         /**
          * 处理时间用
          */
-        public function getDateFromRange($startdate, $enddate)
+        public static function getDateFromRange($startdate, $enddate)
         {
             $stimestamp = strtotime($startdate);
             $etimestamp = strtotime($enddate);

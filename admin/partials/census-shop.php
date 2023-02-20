@@ -481,9 +481,9 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
 
     </script>
             
-            <? 
+            <?php
 
-        }
+        } //end load_echarts_js()
 
     } //end class
 }

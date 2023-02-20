@@ -179,9 +179,9 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             //本月发文
             $count_month = $tool->get_total_release_amount('month');
             //本年发文
-            $count_year = $tool->get_total_release_amount('year');
+            //$count_year = $tool->get_total_release_amount('year');
             //累计发文
-            $count_total = $tool->get_total_release_amount('total');
+            //$count_total = $tool->get_total_release_amount('total');
             ?>
 
             <section class="magick-single-census">
@@ -197,6 +197,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
                         <span class="dashicons dashicons-analytics"></span>
                     </div>
                 </div>
+                <!--
                 <div class="census-total">
                     <span>累计发文</span>
                     <div class="census-child">
@@ -204,6 +205,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
                         <span class="dashicons dashicons-analytics"></span>
                     </div>
                 </div>
+                -->
             </div>
 
             <div class="bisection">
@@ -221,6 +223,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
                         <span class="dashicons dashicons-analytics"></span>
                     </div>
                 </div>
+                <!--
                 <div class="census-month">
                     <span>本年发文</span>
                     <div class="census-child">
@@ -228,6 +231,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
                         <span class="dashicons dashicons-analytics"></span>
                     </div>
                 </div>
+                -->
             </div>
         </div>
 
@@ -319,7 +323,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
          * 输入人员ID，返回最近7天，本月发文数量
          * 输出：数组(array)
          */
-        public function get_count_release($id = '1')
+        public static function get_count_release($id = '1')
         {
             $tool = new Magick_Mixtrue_Tool;
             //存储数据

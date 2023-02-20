@@ -72,7 +72,7 @@ if (!class_exists('Magick_Mixtrue_Admin_Census')) {
         /**
          * 发文统计内容
          */
-        public function census_single_content()
+        public static function census_single_content()
         {
             Magick_Mixtrue_Census_Single::load_content();
         }
