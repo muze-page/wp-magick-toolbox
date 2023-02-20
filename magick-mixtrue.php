@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: 魔法合剂插件
-Plugin URI: https://dongbd.com/
-Description: 添加一些有趣的功能
-Version: 1.1.5
+Plugin URI: https://www.npc.ink/
+Description: 目前主要是统计功能
+Version: 0.0.1
 Author: Muze
-Author URI: https://www.npc.ink/276641.html
+Author URI: https://www.npc.ink/
  */
 //调试内容，在后台顶部显示一个通知
 
@@ -19,7 +19,7 @@ if (!defined('WPINC')) {
  *从1.0.0版本开始，使用SemVer-https://semver.org
  *重命名此插件，并在发布新版本时进行更新。
  */
-define('MAGICK_MIXTURE_VERSION', '1.1.5');
+define('MAGICK_MIXTURE_VERSION', '0.0.1');
 
 /**
  * 用于定义国际化的核心插件类，
