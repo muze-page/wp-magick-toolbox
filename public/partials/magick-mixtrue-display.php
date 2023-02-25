@@ -23,7 +23,12 @@ if (!class_exists('Magick_Mixtrue_Display')) {
             self::$plugin_data['version'] = $version;
 
             //加载表情包
-            self::load_owo();
+
+            //判断，是否加载表情
+            if (get_option('slider_ons') === 'yes') {
+                self::load_owo();
+
+            }
 
         }
 

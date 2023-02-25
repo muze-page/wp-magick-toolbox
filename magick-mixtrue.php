@@ -50,29 +50,29 @@ $magick_tool = new Magick_Mixtrue_Tool;
 //echo '<h1>当前文章评论已打开</h1>';
 //$magick_tool->p($id);
 
-add_action( 'restrict_manage_posts', 'rudr_filter_by_the_author' );
+add_action('restrict_manage_posts', 'rudr_filter_by_the_author');
 
-function rudr_filter_by_the_author( $post_type ) {
-	
-	// you can add a condition for a specific post type
-	// if( 'my_type' !== $post_type ) {
-	// 	return;
-	// }
+function rudr_filter_by_the_author($post_type)
+{
 
-	$selected = isset( $_GET[ 'user' ] ) && $_GET[ 'user' ] ? $_GET[ 'user' ] : '';
- 
-	wp_dropdown_users(
-		array(
-			'role__in' => array( 
-				'administrator', 
-				'editor', 
-				'author',
-				'contributor'
-			),
-			'name' => 'author',
-			'show_option_all' => 'All authors',
-			'selected' => $selected
-		)
-	); 
+    // you can add a condition for a specific post type
+    // if( 'my_type' !== $post_type ) {
+    //     return;
+    // }
+
+    $selected = isset($_GET['user']) && $_GET['user'] ? $_GET['user'] : '';
+
+    wp_dropdown_users(
+        array(
+            'role__in' => array(
+                'administrator',
+                'editor',
+                'author',
+                'contributor',
+            ),
+            'name' => 'author',
+            'show_option_all' => 'All authors',
+            'selected' => $selected,
+        )
+    );
 }
-

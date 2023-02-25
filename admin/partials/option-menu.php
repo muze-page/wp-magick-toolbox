@@ -44,17 +44,14 @@ if (!class_exists('Magick_Mixtrue_Option')) {
         {
 
             ?>
-            <!-- 在默认WordPress“wrap”容器中创建标题 -->
             <div class="wrap">
-                <!--标题-->
                 <h1><?php echo get_admin_page_title() ?></h1>
-                 <!-- 在保存设置时调用WordPress函数以呈现错误. -->
-                <?php settings_errors('rudr_slider_settings_errors');?>
 
-                <?php
-/**
-             * 初次访问，给个默认值
-             */
+                     <!-- 在保存设置时调用WordPress函数以呈现错误. -->
+            <?php settings_errors('rudr_slider_settings_errors');?>
+
+            <?php
+
             if (isset($_GET['tab'])) {
                 $active_tab = $_GET['tab'];
             } // end if
@@ -62,29 +59,30 @@ if (!class_exists('Magick_Mixtrue_Option')) {
             //设置默认值
             $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'display_options';
             ?>
-<!--选项卡-->
-<h2 class="nav-tab-wrapper">
-			<a href="?page=magick_mixtrue_id&tab=display_options" class="nav-tab <?php echo $active_tab == 'display_options' ? 'nav-tab-active' : ''; ?>">安全选项</a>
-			<a href="?page=magick_mixtrue_id&tab=social_options" class="nav-tab <?php echo $active_tab == 'social_options' ? 'nav-tab-active' : ''; ?>">附加选项</a>
+
+		<h2 class="nav-tab-wrapper">
+			<a href="?page=magick_mixtrue_id&tab=display_options" class="nav-tab <?php echo $active_tab == 'display_options' ? 'nav-tab-active' : ''; ?>">显示选项</a>
+			<a href="?page=magick_mixtrue_id&tab=social_options" class="nav-tab <?php echo $active_tab == 'social_options' ? 'nav-tab-active' : ''; ?>">效果展示</a>
 		</h2>
 
-
-                <form method="post" action="options.php">
-                    <?php
-
-            //根据tab显示对应的内容
+        <form method="post" action="options.php">
+        <?php
+//根据tab显示对应的内容
             if ($active_tab == 'display_options') {
-                settings_fields('add_id'); // 设置组名称
-                do_settings_sections('add_id'); // just a page slug，只是一个页面段
+                settings_fields('rudr_slider_settings'); // 设置组名称
+                do_settings_sections('rudr_slider'); // just a page slug，只是一个页面 slug
             } else {
-                settings_fields('safe_id');
-                do_settings_sections('safe_id');
+                settings_fields('rudr_slider_settings');
+                do_settings_sections('ruders');
             } // end if/else
 
-            submit_button(); // 保存按钮
+            submit_button();
+
             ?>
+
+
                 </form>
-            </div><!-- /.wrap -->
+            </div>
         <?php
 
         } // end sandbox_menu_page_display
@@ -94,23 +92,14 @@ if (!class_exists('Magick_Mixtrue_Option')) {
          */
         public static function rudr_settings_fields()
         {
-            /**
-             * 安全选项组
-             */
-            $page_safe = "safe_id";
-            $option_safe = "safe_option";
-            /**
-             * 附加功能选项组
-             */
-
             // 我创建了变量以使事情更清楚
-            $page_slug = 'add_id'; //显示的位置
-            $option_group = 'add_option'; //选项组
+            $page_slug = 'rudr_slider'; //页面段
+            $option_group = 'rudr_slider_settings'; //选项组
 
             // 1. 创建节
             add_settings_section(
                 'rudr_section_id', // section ID
-                '简单选项', // title (optional)
+                '', // title (optional)
                 '', // 显示节的回调函数（可选）
                 $page_slug //显示的位置
             );
@@ -157,14 +146,13 @@ if (!class_exists('Magick_Mixtrue_Option')) {
                 'rudr_section_display', // section ID
                 '展示效果', // title (optional)
                 array(__CLASS__, 'rudr_section_callback'),
-                $page_safe
+                'ruders'
             );
 
             /**
-             * 附加选项
+             * 表情包
              */
-            //评论框添加表情
-            // 2. 保存选项用字段
+            //是否显示表情包
             register_setting(
                 $option_group, //选项组
                 'slider_ons', //选项名称
@@ -173,7 +161,7 @@ if (!class_exists('Magick_Mixtrue_Option')) {
 
             add_settings_field(
                 'slider_ons',
-                '评论框添加表情',
+                '显示表情包',
                 array(__CLASS__, 'rudr_checkboxs'), // 函数打印字段
                 $page_slug,
                 'rudr_section_id' // 节的 ID
@@ -200,17 +188,6 @@ if (!class_exists('Magick_Mixtrue_Option')) {
 			<input type="checkbox" name="slider_on" <?php checked($value, 'yes')?> /> Yes
 		</label>
 	<?php
-}
-
-// 评论框是否添加表情包
-public static function rudr_checkboxs($args)
-{
-    $value = get_option('slider_ons');
-    ?>
-<label>
-    <input type="checkbox" name="slider_on" <?php checked($value, 'yes')?> /> 评论框下添加OWO表情按钮
-</label>
-<?php
 }
 
 /**
@@ -255,7 +232,7 @@ public static function rudr_checkboxs($args)
 
             if (
                 isset($_GET['page'])
-                && 'rudr_slider' == $_GET['page']
+                && 'magick_mixtrue_id' == $_GET['page']
                 && isset($_GET['settings-updated'])
                 && true == $_GET['settings-updated']
             ) {
@@ -278,11 +255,25 @@ public static function rudr_checkboxs($args)
 //获取选项值
             $switch = get_option('slider_on');
             $num = get_option('num_of_slides');
+            $switchs = get_option('slider_ons');
             ?>
 您的开关状态：<?php echo $switch; ?>
 <br />
 您填写的数字是：<?php echo $num; ?>
+<br />
+您的开关状态：<?php echo $switchs; ?>
     <?php
+}
+
+// 用于打印复选框字段HTML的自定义回调函数
+        public static function rudr_checkboxs($args)
+        {
+            $value = get_option('slider_ons');
+            ?>
+<label>
+    <input type="checkbox" name="slider_ons" <?php checked($value, 'yes')?> /> 给评论框添加表情包功能
+</label>
+<?php
 }
 
     } //end Magick_Mixtrue_Option
