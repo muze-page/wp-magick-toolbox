@@ -55,9 +55,7 @@ class Magick_Mixtrue_Public
         $this->version = $version;
 
         require_once plugin_dir_path(__FILE__) . 'partials/magick-mixtrue-display.php';
-        $a = new Magick_Mixtrue_Display;
-
-        
+        $magick_mixtrue_display = new Magick_Mixtrue_Display($this->magick_mixtrue, $this->version = $version);
 
     }
 
@@ -108,7 +106,5 @@ class Magick_Mixtrue_Public
         //wp_enqueue_script($this->magick_mixtrue, plugin_dir_url(__FILE__) . 'js/OwO.min.js', array('jquery'), $this->version, false);
 
     }
-
-    
 
 }

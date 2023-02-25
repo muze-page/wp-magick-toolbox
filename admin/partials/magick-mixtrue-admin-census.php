@@ -4,6 +4,8 @@ if (!class_exists('Magick_Mixtrue_Admin_Census')) {
     class Magick_Mixtrue_Admin_Census
     {
 
+        protected $loader_option;
+
         public function __construct()
         {
 
@@ -21,21 +23,31 @@ if (!class_exists('Magick_Mixtrue_Admin_Census')) {
         }
 
         /**
-         * 添加钩子
-         */
-        public static function run()
-        {
-            //实例化一下，跑起来
-            $Census_Single = new Magick_Mixtrue_Census_Single;
-        }
-
-        /**
          * 导入资源
          */
         public function load()
         {
+            //文章统计
             require_once plugin_dir_path(__FILE__) . 'census-single.php';
+            //商城统计
             require_once plugin_dir_path(__FILE__) . 'census-shop.php';
+            //菜单统计
+            require_once plugin_dir_path(__FILE__) . 'option-menu.php';
+
+        }
+
+        /**
+         * 添加钩子
+         */
+        public static function run()
+        {
+
+            //实例化一下，跑起来
+            $Census_Single = new Magick_Mixtrue_Census_Single;
+
+            //添加选项
+            $option = new Magick_Mixtrue_Option();
+
         }
 
         /**

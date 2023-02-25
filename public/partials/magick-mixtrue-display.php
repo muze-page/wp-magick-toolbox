@@ -15,8 +15,12 @@
 if (!class_exists('Magick_Mixtrue_Display')) {
     class Magick_Mixtrue_Display
     {
-        public function __construct()
+        private static $plugin_data = array();
+
+        public function __construct($name, $version)
         {
+            self::$plugin_data['name'] = $name;
+            self::$plugin_data['version'] = $version;
 
             //加载表情包
             self::load_owo();
@@ -46,18 +50,18 @@ if (!class_exists('Magick_Mixtrue_Display')) {
         public static function load_owo_resouce()
         {
             wp_enqueue_script(
-                "插件名",
+                self::$plugin_data['name'],
                 plugin_dir_url(\dirname(__FILE__)) . 'js/OwO.min.js',
                 array(),
-                "1.0.0",
+                self::$plugin_data['version'],
                 false
             );
 
             wp_enqueue_style(
-                '插件名',
+                self::$plugin_data['name'],
                 plugin_dir_url(\dirname(__FILE__)) . 'css/OwO.min.css',
                 array(),
-                '1.0.0',
+                self::$plugin_data['version'],
                 'all'
             );
         }
