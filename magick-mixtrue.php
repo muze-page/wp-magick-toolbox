@@ -52,3 +52,19 @@ $magick_tool = new Magick_Mixtrue_Tool;
 
 //echo '<h1>当前文章评论已打开</h1>';
 //$magick_tool->run_page_hook();
+
+function add_column($columns)
+{
+    $columns['post_id_clmn'] = 'ID'; // $columns['Column ID'] = 'Column Title';
+    return $columns;
+}
+add_filter('manage_posts_columns', 'add_column', 5);
+
+function column_content($column, $id)
+{
+    if ($column === 'post_id_clmn') {
+        echo $id;
+    }
+
+}
+add_action('manage_posts_custom_column', 'column_content', 5, 2);
