@@ -60,8 +60,13 @@ if (!class_exists('Magick_Mixtrue_Tool')) {
         /**
          * 调试用，打印当前页面的$hook参数
          */
+        public static function run_page_hook()
+        {
+            add_action('admin_enqueue_scripts', array(__CLASS__, 'display_page_hook'));
+        }
         public static function display_page_hook($hook)
         {
+
             echo '<h1 style="color: crimson;text-align: center;">' . esc_html($hook) . '</h1>';
         }
         /**

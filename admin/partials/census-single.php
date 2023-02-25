@@ -16,6 +16,24 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
         {
 
             add_action('admin_init', array(__CLASS__, 'magick_plugin_options'));
+            //加载图标js
+            add_action('admin_enqueue_scripts', array(__CLASS__, 'load_enqueue_admin_script'));
+
+        }
+
+        //加载图标用js
+        public static function load_enqueue_admin_script($hook)
+        {
+            if ('dashboard_page_magick-census-single' != $hook) {
+                return;
+            }
+            wp_enqueue_script(
+                MAGICK_MIXTURE_NAME,
+                plugin_dir_url(\dirname(__FILE__)) . 'js/echarts_v5.4.0.js',
+                array(),
+                MAGICK_MIXTURE_VERSION,
+                false
+            );
 
         }
 

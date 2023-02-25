@@ -113,9 +113,23 @@ class Magick_Mixtrue_Admin
          *类。
          */
 //加载echarts 用于图标绘制
-        wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/echarts_v5.4.0.js', array(), $this->version, false);
+       // wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/echarts_v5.4.0.js', array(), $this->version, false);
         //wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/magick-mixtrue-admin.js', array('jquery'), $this->version, false);
 
+    }
+
+    /**
+     * 加载图标用的JS
+     */
+    public function load_echarts_js()
+    {
+        wp_enqueue_script(
+            $this->plugin_name,
+            plugin_dir_url(__FILE__) . 'js/echarts_v5.4.0.js',
+            array(),
+            $this->version,
+            false
+        );
     }
 
 }

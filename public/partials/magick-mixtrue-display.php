@@ -15,20 +15,14 @@
 if (!class_exists('Magick_Mixtrue_Display')) {
     class Magick_Mixtrue_Display
     {
-        private static $plugin_data = array();
+       
 
-        public function __construct($name, $version)
+        public function __construct()
         {
-            self::$plugin_data['name'] = $name;
-            self::$plugin_data['version'] = $version;
+            
 
             //加载表情包
-
-            //判断，是否加载表情
-            if (get_option('slider_ons') === 'yes') {
-                self::load_owo();
-
-            }
+            add_action('wp', array(__CLASS__, 'load_owo'));
 
         }
 
@@ -37,15 +31,18 @@ if (!class_exists('Magick_Mixtrue_Display')) {
          */
         public static function load_owo()
         {
-
-            //判断，当前文章或页面是否开启评论
-
-            //加载js和css资源
-            add_action('wp_enqueue_scripts', array(__CLASS__, 'load_owo_resouce'));
-            //加载配置js
-            add_action('wp_footer', array(__CLASS__, 'load_owo_comment_js'));
-            //加载表情包位置
-            add_filter('comment_form_defaults', array(__CLASS__, 'load_owo_content'));
+            //判断当前页面是否加载评论区
+            if (comments_open()) {
+                //判断开关
+                if (get_option('slider_ons') === 'yes') {
+                    //加载js和css资源
+                    add_action('wp_enqueue_scripts', array(__CLASS__, 'load_owo_resouce'));
+                    //加载配置js
+                    add_action('wp_footer', array(__CLASS__, 'load_owo_comment_js'));
+                    //加载表情包位置
+                    add_filter('comment_form_defaults', array(__CLASS__, 'load_owo_content'));
+                }
+            }
 
         }
 
@@ -55,18 +52,18 @@ if (!class_exists('Magick_Mixtrue_Display')) {
         public static function load_owo_resouce()
         {
             wp_enqueue_script(
-                self::$plugin_data['name'],
+                MAGICK_MIXTURE_NAME,
                 plugin_dir_url(\dirname(__FILE__)) . 'js/OwO.min.js',
                 array(),
-                self::$plugin_data['version'],
+                MAGICK_MIXTURE_VERSION,
                 false
             );
 
             wp_enqueue_style(
-                self::$plugin_data['name'],
+                MAGICK_MIXTURE_NAME,
                 plugin_dir_url(\dirname(__FILE__)) . 'css/OwO.min.css',
                 array(),
-                self::$plugin_data['version'],
+                MAGICK_MIXTURE_VERSION,
                 'all'
             );
         }
@@ -122,6 +119,29 @@ if (!class_exists('Magick_Mixtrue_Display')) {
 
     }
 }
+
+class My_Plugin
+{
+    public function __construct()
+    {
+        // Add a hook to execute our function on page load
+        add_action('wp', array($this, 'my_function'));
+    }
+
+    public function my_function()
+    {
+        // Get the current page ID
+        $page_id = get_the_ID();
+
+        // Do something with the page ID
+        echo 'The current page ID is: ' . $page_id;
+        return $page_id;
+    }
+}
+
+// Instantiate the plugin class
+//$my_plugin = new My_Plugin();
+
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->

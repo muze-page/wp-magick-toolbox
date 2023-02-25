@@ -10,16 +10,26 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
         public function __construct()
         {
 
-            self::init_actions();
+            add_action('admin_enqueue_scripts', array(__CLASS__, 'load_enqueue_admin_script'));
 
         }
 
-        public static function init_actions()
+        //加载图标用js
+        public static function load_enqueue_admin_script($hook)
         {
-
-            //add_action('admin_init', array(__CLASS__, 'magick_plugin_options'));
+            if ('dashboard_page_magick-census-shop' != $hook) {
+                return;
+            }
+            wp_enqueue_script(
+                MAGICK_MIXTURE_NAME,
+                plugin_dir_url(\dirname(__FILE__)) . 'js/echarts_v5.4.0.js',
+                array(),
+                MAGICK_MIXTURE_VERSION,
+                false
+            );
 
         }
+
         public static function load_content()
         {
             /**

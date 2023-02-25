@@ -61,8 +61,8 @@ if (!class_exists('Magick_Mixtrue_Option')) {
             ?>
 
 		<h2 class="nav-tab-wrapper">
-			<a href="?page=magick_mixtrue_id&tab=display_options" class="nav-tab <?php echo $active_tab == 'display_options' ? 'nav-tab-active' : ''; ?>">显示选项</a>
-			<a href="?page=magick_mixtrue_id&tab=social_options" class="nav-tab <?php echo $active_tab == 'social_options' ? 'nav-tab-active' : ''; ?>">效果展示</a>
+			<a href="?page=magick_mixtrue_id&tab=display_options" class="nav-tab <?php echo $active_tab == 'display_options' ? 'nav-tab-active' : ''; ?>">安全</a>
+			<a href="?page=magick_mixtrue_id&tab=social_options" class="nav-tab <?php echo $active_tab == 'social_options' ? 'nav-tab-active' : ''; ?>">优化</a>
 		</h2>
 
         <form method="post" action="options.php">
@@ -92,6 +92,23 @@ if (!class_exists('Magick_Mixtrue_Option')) {
          */
         public static function rudr_settings_fields()
         {
+            /**
+             * 安全
+             * -- 账户安全
+             */
+            /**
+             * 优化
+             * -- 评论优化
+             * -- 后台增强
+             */
+
+            /**
+             * 其他
+             * -- 评论添加表情
+             */
+            $about_slug = 'about';
+            $about_group = 'about_settings';
+
             // 我创建了变量以使事情更清楚
             $page_slug = 'rudr_slider'; //页面段
             $option_group = 'rudr_slider_settings'; //选项组

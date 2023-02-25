@@ -55,7 +55,7 @@ class Magick_Mixtrue_Public
         $this->version = $version;
 
         require_once plugin_dir_path(__FILE__) . 'partials/magick-mixtrue-display.php';
-        $magick_mixtrue_display = new Magick_Mixtrue_Display($this->magick_mixtrue, $this->version = $version);
+        $magick_mixtrue_display = new Magick_Mixtrue_Display();
 
     }
 

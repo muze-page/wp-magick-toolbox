@@ -60,8 +60,10 @@ if (!class_exists('Magick_Mixtrue_Admin_Census')) {
             $theme = 'B2 PRO';
 
             if ($tool->theme_active($theme)) {
-                //安装了2020主题
+                //安装了B2 PRO主题
                 add_action('admin_menu', array(__CLASS__, 'add_menu_shop'));
+                //实例化一下
+                $a = new Magick_Mixtrue_Census_Shop();
             } else {
                 //啥也不做
             }

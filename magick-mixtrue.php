@@ -19,10 +19,13 @@ if (!defined('WPINC')) {
  *从1.0.0版本开始，使用SemVer-https://semver.org
  *重命名此插件，并在发布新版本时进行更新。
  */
+//定义插件名
+define('MAGICK_MIXTURE_NAME', 'magick-mixtrue');
+//定义插件版本
 define('MAGICK_MIXTURE_VERSION', '0.0.3');
 
 /**
- * 用于定义国际化的核心插件类，
+ * 用于定义需要用到的插件类，
  */
 require plugin_dir_path(__FILE__) . 'includes/class-magick-mixtrue.php';
 
@@ -48,31 +51,4 @@ run_magick_mixture();
 $magick_tool = new Magick_Mixtrue_Tool;
 
 //echo '<h1>当前文章评论已打开</h1>';
-//$magick_tool->p($id);
-
-add_action('restrict_manage_posts', 'rudr_filter_by_the_author');
-
-function rudr_filter_by_the_author($post_type)
-{
-
-    // you can add a condition for a specific post type
-    // if( 'my_type' !== $post_type ) {
-    //     return;
-    // }
-
-    $selected = isset($_GET['user']) && $_GET['user'] ? $_GET['user'] : '';
-
-    wp_dropdown_users(
-        array(
-            'role__in' => array(
-                'administrator',
-                'editor',
-                'author',
-                'contributor',
-            ),
-            'name' => 'author',
-            'show_option_all' => 'All authors',
-            'selected' => $selected,
-        )
-    );
-}
+//$magick_tool->run_page_hook();
