@@ -16,7 +16,7 @@ if (!class_exists('Magick_Mixtrue_Optimize')) {
         public static function run()
         {
             add_action('wp', array(__CLASS__, 'load_run'));
-
+            //add_action('admin_init', array(__CLASS__, 'add_list_id_run'));
         }
         //准备
         public static function load_run()
@@ -26,9 +26,11 @@ if (!class_exists('Magick_Mixtrue_Optimize')) {
                 add_action('restrict_manage_posts', array(__CLASS__, 'rudr_filter_by_the_author'));
             };
 
-            //文章管理显示ID
+            //各个列表显示ID
             if (carbon_get_theme_option('cmma_single_show_id')) {
-                self::add_single_id_run();
+                self::add_list_id_run();
+                //add_action('admin_init', array(__CLASS__, 'add_list_id_run'));
+
             };
 
             //文章和媒体添加日期筛选
@@ -181,28 +183,76 @@ if (!class_exists('Magick_Mixtrue_Optimize')) {
          * 优化-显示
          */
         /**
-         * 效果：显示文章ID
-         * 来源：https://kinsta.com/blog/wordpress-get-post-id/#2-use-custom-code-to-display-post-ids-in-the-posts-tab
+         * 效果：各个列表显示ID
+         * 来源：https://blog.csdn.net/qq_39339179/article/details/119135050
          */
-        public static function add_single_id_run()
+        public static function add_list_id_run()
         {
-            //ID 显示在第五行
-            add_filter('manage_posts_columns', array(__CLASS__, 'add_column'), 5);
-            add_action('manage_posts_custom_column', array(__CLASS__, 'column_content'), 5, 2);
-        }
-        public static function add_column($columns)
-        {
-            $columns['post_id_clmn'] = 'ID'; // $columns['Column ID'] = 'Column Title';
-            return $columns;
+            //ID 显示在第10行
+
+            //添加样式
+            add_action('admin_head', array(__CLASS__, 'ssid_css'));
+
+            add_filter('manage_posts_columns', array(__CLASS__, 'ssid_column'));
+            add_action('manage_posts_custom_column', array(__CLASS__, 'ssid_value'), 10, 2);
+
+            add_filter('manage_pages_columns', array(__CLASS__, 'ssid_column'));
+            add_action('manage_pages_custom_column', array(__CLASS__, 'ssid_value'), 10, 2);
+
+            add_filter('manage_media_columns', array(__CLASS__, 'ssid_column'));
+            add_action('manage_media_custom_column', array(__CLASS__, 'ssid_value'), 10, 2);
+
+            add_filter('manage_link-manager_columns', array(__CLASS__, 'ssid_column'));
+            add_action('manage_link_custom_column', array(__CLASS__, 'ssid_value'), 10, 2);
+
+            add_action('manage_edit-link-categories_columns', array(__CLASS__, 'ssid_column'));
+            add_filter('manage_link_categories_custom_column', array(__CLASS__, 'ssid_return_value'), 10, 3);
+
+            foreach (get_taxonomies() as $taxonomy) {
+                add_action("manage_edit-${taxonomy}_columns", array(__CLASS__, 'ssid_column'));
+                add_filter("manage_${taxonomy}_custom_column", array(__CLASS__, 'ssid_return_value'), 10, 3);
+            }
+
+            add_action('manage_users_columns', array(__CLASS__, 'ssid_column'));
+            add_filter('manage_users_custom_column', array(__CLASS__, 'ssid_return_value'), 10, 3);
+
+            add_action('manage_edit-comments_columns', array(__CLASS__, 'ssid_column'));
+            add_action('manage_comments_custom_column', array(__CLASS__, 'ssid_value'), 10, 2);
         }
 
-        public static function column_content($column, $id)
+        public static function ssid_column($cols)
         {
-            if ($column === 'post_id_clmn') {
+            $cols['ssid'] = 'ID';
+            return $cols;
+        }
+
+// 显示 ID
+        public static function ssid_value($column_name, $id)
+        {
+            if ($column_name == 'ssid') {
                 echo $id;
             }
 
         }
+
+        public static function ssid_return_value($value, $column_name, $id)
+        {
+            if ($column_name == 'ssid') {
+                $value = $id;
+            }
+
+            return $value;
+        }
+
+// 为 ID 这列添加css
+        public static function ssid_css()
+        {
+            ?>
+<style type="text/css">
+	#ssid { width: 50px; } /* Simply Show IDs */
+</style>
+<?php
+}
 
     }
 }

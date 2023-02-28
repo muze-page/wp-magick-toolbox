@@ -20,7 +20,7 @@ if (!class_exists('Magick_Mixtrue_Display')) {
         {
 
             //加载表情包
-            add_action('wp', array(__CLASS__, 'load_owo'));
+            //add_action('wp', array(__CLASS__, 'load_owo'));
 
         }
 
@@ -94,9 +94,9 @@ if (!class_exists('Magick_Mixtrue_Display')) {
         <?php
 }
 
-/**
- * 加载表情用文件内容
- */
+        /**
+         * 加载表情用文件内容
+         */
         public static function load_owo_content($default)
         {
             $commenter = wp_get_current_commenter();
@@ -118,28 +118,4 @@ if (!class_exists('Magick_Mixtrue_Display')) {
     }
 }
 
-class My_Plugin
-{
-    public function __construct()
-    {
-        // Add a hook to execute our function on page load
-        add_action('wp', array($this, 'my_function'));
-    }
-
-    public function my_function()
-    {
-        // Get the current page ID
-        $page_id = get_the_ID();
-
-        // Do something with the page ID
-        echo 'The current page ID is: ' . $page_id;
-        return $page_id;
-    }
-}
-
-// Instantiate the plugin class
-//$my_plugin = new My_Plugin();
-
-?>
-
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
+//这个文件应该主要由HTML和一点点PHP组成

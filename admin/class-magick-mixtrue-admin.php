@@ -63,6 +63,8 @@ class Magick_Mixtrue_Admin
         require_once plugin_dir_path(__FILE__) . 'partials/magick-mixtrue-admin-census.php';
         //优化设置
         require_once plugin_dir_path(__FILE__) . 'partials/option-optimize.php';
+        //安全设置
+        require_once plugin_dir_path(__FILE__) . 'partials/option-safe.php';
     }
 
     /**
@@ -75,6 +77,8 @@ class Magick_Mixtrue_Admin
         $census = new Magick_Mixtrue_Admin_Census();
         //优化
         Magick_Mixtrue_Optimize::run();
+        //安全
+        Magick_Mixtrue_Safe::run();
 
     }
 
@@ -143,17 +147,26 @@ class Magick_Mixtrue_Admin
                     ->set_option_value('yes')
                     ->set_help_text("媒体菜单需为列表布局"),
                 Field::make('separator', 'cmma_optimize_show_id', __('显示ID')),
-                Field::make('checkbox', 'cmma_single_show_id', __('文章菜单显示文章ID'))
-                    ->set_option_value('yes'),
-                Field::make('text', 'crb_first_name', __('First Name')),
-                Field::make('text', 'crb_last_name', __('Last Name')),
-                Field::make('text', 'crb_position', __('Position')),
+                Field::make('checkbox', 'cmma_single_show_id', __('各个列表显示链接ID'))
+                    ->set_option_value('yes')
+                    ->set_help_text("支持 文章、页面、链接、多媒体、评论、分类、标签、用户 等"),
                 Field::make('html', 'crb_information_text')
                     ->set_html('<h2>Lorem ipsum</h2><p>Quisque mattis ligula.</p>'),
             ))
             ->add_tab(__('安全'), array(
-                Field::make('text', 'crb_email', __('Notification Email')),
-                Field::make('text', 'crb_phone', __('Phone Number')),
+                Field::make('separator', 'cmma_safe_login', __('登录')),
+                Field::make('checkbox', 'cmma_safe_login_errors', __('替换默认账号密码报错信息-待完善'))
+                    ->set_option_value('yes')
+                    ->set_help_text("默认报错信息会透露用户名错误还是密码错误，统一信息后，可改善此情况"),
+
+                Field::make('checkbox', 'cmma_safe_comment_style_name', __('修改评论中的用户名'))
+                    ->set_option_value('yes')
+                    ->set_help_text("默认的评论样式中，会包含管理员登录ID，修改后，可改善此情况"),
+
+                Field::make('checkbox', 'cmma_safe_head_version', __('从RSS源和网站中删除WordPress版本-待完善'))
+                    ->set_option_value('yes')
+                    ->set_help_text("如果您无法保持您的WordPres版本为最新，推荐开启"),
+
             ))
             ->add_tab(__('其他'), array(
                 Field::make('separator', 'crb_separator', __('评论区')),
