@@ -155,25 +155,32 @@ class Magick_Mixtrue_Admin
 
                 //优化 - 评论
                 Field::make('separator', 'cmma_optimize_commont', __('评论')),
-                Field::make('checkbox', 'cmma_opt_com_time', __('两次评论间需指定间隔'))
-                    ->set_option_value('yes')
-                    ->set_help_text("避免短时间内重复灌水评论，对管理员无效")
-                    ->set_width(50),
+                Field::make('select', 'cmma_opt_com_time', __('两次评论间需指定间隔'))
+                    ->set_options(array(
+                        'yes' => '开启',
+                        'no' => '关闭',
+                    ))
+                    ->set_help_text("避免短时间内重复灌水评论，对管理员无效"),
+                   
 
                 Field::make('text', 'cmma_opt_com_times', '时间间隔（秒）')
                     ->set_attribute('type', 'number')
                     ->set_attribute('placeholder', '指定时间后才能再次评论')
-                    ->set_width(50)
+                    ->set_width(40)
                     ->set_conditional_logic(array(
                         array(
                             'field' => 'cmma_opt_com_time',
-                            'value' => true,
+                            'value' => 'yes',
+                            'compare' => '=',
                         ),
                     )),
 
-                Field::make('checkbox', 'cmma_opt_com_number', __('指定最小和最大评论字数'))
-                    ->set_option_value('yes')
-                    ->set_width(33),
+                Field::make('select', 'cmma_opt_com_number', __('指定最小和最大评论字数'))
+                    ->set_options(array(
+                        'yes' => '开启',
+                        'no' => '关闭',
+                    )),
+                    
 
                 Field::make('text', 'cmma_opt_com_num_min', '最少字数（个）')
                     ->set_required(true)
@@ -183,7 +190,8 @@ class Magick_Mixtrue_Admin
                     ->set_conditional_logic(array(
                         array(
                             'field' => 'cmma_opt_com_number',
-                            'value' => true,
+                            'value' => 'yes',
+                            'compare' => '=',
                         ),
                     )),
                 Field::make('text', 'cmma_opt_com_num_max', '最多字数（个）')
@@ -194,7 +202,8 @@ class Magick_Mixtrue_Admin
                     ->set_conditional_logic(array(
                         array(
                             'field' => 'cmma_opt_com_number',
-                            'value' => true,
+                            'value' => 'yes',
+                            'compare' => '=',
                         ),
                     )),
 
@@ -237,16 +246,20 @@ class Magick_Mixtrue_Admin
                 Field::make('checkbox', 'cmma_show_owo', __('评论区添加OWO表情包'))
                     ->set_option_value('yes'),
                 Field::make('separator', 'crb_separator_login', __('登录页')),
-                Field::make('checkbox', 'cmma_abt_style_login', __('更改为自定义登录页'))
-                    ->set_option_value('yes')
-                    ->set_width(20),
+                Field::make('select', 'cmma_abt_style_login', __('更改为自定义登录页'))
+                    ->set_options(array(
+                        'yes' => '开启',
+                        'no' => '关闭',
+                    ))
+                    ->set_width(40),
                 Field::make('color', 'cmma_opt_login_bgcolor_left', '背景色（左下角）')
                     ->set_palette(array('#181d23', '#960a9b', '#0000FF'))
                     ->set_width(20)
                     ->set_conditional_logic(array(
                         array(
                             'field' => 'cmma_abt_style_login',
-                            'value' => true,
+                            'value' => 'yes',
+                            'compare' => '=',
                         ),
                     )),
                 Field::make('color', 'cmma_opt_login_bgcolor_right', '背景色（右上角）')
@@ -255,30 +268,35 @@ class Magick_Mixtrue_Admin
                     ->set_conditional_logic(array(
                         array(
                             'field' => 'cmma_abt_style_login',
-                            'value' => true,
-                        ),
-                    )),
-                Field::make('image', 'cmma_opt_login_logo', '顶部标志')
-                    ->set_type(array('image'))
-                    ->set_value_type('url')
-                    ->set_help_text("推荐是圆形")
-                    ->set_width(20)
-                    ->set_conditional_logic(array(
-                        array(
-                            'field' => 'cmma_abt_style_login',
-                            'value' => true,
+                            'value' => 'yes',
+                            'compare' => '=',
                         ),
                     )),
 
                 Field::make('text', 'cmma_opt_login_logo_size', '标志尺寸（像素px）')
-                    ->set_help_text("默认尺寸是84px")
+                    ->set_default_value('84')
                     ->set_attribute('type', 'number')
                     ->set_attribute('placeholder', 'LOGO的尺寸')
+                    ->set_help_text("默认尺寸是84px")
                     ->set_width(20)
                     ->set_conditional_logic(array(
                         array(
                             'field' => 'cmma_abt_style_login',
-                            'value' => true,
+                            'value' => 'yes',
+                            'compare' => '=',
+                        ),
+                    )),
+
+                Field::make('image', 'cmma_opt_login_logo', '顶部标志')
+                    ->set_type(array('image'))
+                    ->set_value_type('url')
+                    ->set_help_text("推荐是圆形")
+                    ->set_width(50)
+                    ->set_conditional_logic(array(
+                        array(
+                            'field' => 'cmma_abt_style_login',
+                            'value' => 'yes',
+                            'compare' => '=',
                         ),
                     )),
 
@@ -286,11 +304,12 @@ class Magick_Mixtrue_Admin
                     ->set_type(array('image'))
                     ->set_value_type('url')
                     ->set_help_text("推荐尺寸是900X600，安全边距100像素")
-                    ->set_width(20)
+                    ->set_width(50)
                     ->set_conditional_logic(array(
                         array(
                             'field' => 'cmma_abt_style_login',
-                            'value' => true,
+                            'value' => 'yes',
+                            'compare' => '=',
                         ),
                     )),
 

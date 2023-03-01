@@ -17,9 +17,13 @@ if (!class_exists('Magick_Mixtrue_Login')) {
 
         public static function run_iowen()
         {
-            add_action('login_header', array(__CLASS__, 'io_login_header'));
-            add_action('login_footer', array(__CLASS__, 'io_login_footer'));
-            add_action('login_head', array(__CLASS__, 'custom_login_style'));
+            if (carbon_get_theme_option('cmma_abt_style_login')) {
+
+                add_action('login_header', array(__CLASS__, 'io_login_header'));
+                add_action('login_footer', array(__CLASS__, 'io_login_footer'));
+                add_action('login_head', array(__CLASS__, 'custom_login_style'));
+            }
+
         }
         public static function io_login_header()
         {
