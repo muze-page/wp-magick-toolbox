@@ -12,13 +12,49 @@ if (!class_exists('Magick_Mixtrue_Display')) {
         public static function run()
         {
 //加载表情包
-            add_action('wp', array(__CLASS__, 'load_owo'));
+            add_action('wp', array(__CLASS__, 'load'));
+        }
+
+        public static function load()
+        {
+            self::run_owo();
+            self::run_particle();
+        }
+
+        /**
+         * 效果：页面添加烟花粒子
+         * 来源：https://www.iowen.cn/canvas-click-effect-second-edition/
+         */
+        public static function run_particle()
+        {
+
+            add_action('wp_body_open', array(__CLASS__, 'add_page_particle'));
+            //add_action('wp_enqueue_scripts', array(__CLASS__, 'add_page_particle_js'));
+        }
+        //添加文件
+        public static function add_page_particle()
+        {
+
+            echo '<div id="clickCanvas" style=" position:fixed;left:0;top:0;z-index:999999999;pointer-events:none;"></div>';
+
+        }
+        //加载js
+        public static function add_page_particle_js()
+        {
+            wp_register_script(
+                MAGICK_MIXTURE_NAME,
+                plugin_dir_url(\dirname(__FILE__)) . 'js/style-click-particle.js',
+                array(),
+                MAGICK_MIXTURE_VERSION,
+                true
+            );
+
         }
 
         /**
          * 加载表情包
          */
-        public static function load_owo()
+        public static function run_owo()
         {
             //判断当前页面是否加载评论区
             if (comments_open()) {
@@ -55,6 +91,7 @@ if (!class_exists('Magick_Mixtrue_Display')) {
                 MAGICK_MIXTURE_VERSION,
                 'all'
             );
+
         }
 
         /**

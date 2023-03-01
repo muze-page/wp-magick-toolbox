@@ -117,7 +117,7 @@ class Magick_Mixtrue_Public
          * class.
          */
 
-        //wp_enqueue_script($this->magick_mixtrue, plugin_dir_url(__FILE__) . 'js/OwO.min.js', array('jquery'), $this->version, false);
+        //wp_enqueue_script($this->magick_mixtrue, plugin_dir_url(__FILE__) . 'js/magick-mixtrue.js', array('jquery'), $this->version, true);
 
     }
 
