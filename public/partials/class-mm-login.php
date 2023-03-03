@@ -245,7 +245,7 @@ if (!class_exists('Magick_Mixtrue_Login')) {
                   }
               </script>
             <?php
-        }
+}
 
         /**
          * 处理登录二次验证
@@ -256,7 +256,7 @@ if (!class_exists('Magick_Mixtrue_Login')) {
             if ($slide == '') {
                 return new WP_Error('broke', __("请先进行真人验证！！！"));
             } else {
-                $result = validate_login($_POST['syz_ticket'], $_POST['syz_randstr']);
+                $result = self::validate_login($_POST['syz_ticket'], $_POST['syz_randstr']);
                 if ($result['result']) {
                     return $user;
                 } else {
@@ -284,7 +284,7 @@ if (!class_exists('Magick_Mixtrue_Login')) {
                 "UserIP" => $UserIP,
             );
             $paramstring = http_build_query($params);
-            $content = txcurl($url, $paramstring);
+            $content = self::txcurl($url, $paramstring);
             $result = json_decode($content, true);
             if ($result) {
                 if ($result['response'] == 1) {
