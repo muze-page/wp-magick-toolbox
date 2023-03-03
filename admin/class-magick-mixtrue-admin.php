@@ -306,7 +306,7 @@ class Magick_Mixtrue_Admin
                 /**
              * 登录验证码
              */
-                Field::make('select', 'cmma_login_verify_tx', __('登录验证码'))
+                Field::make('select', 'cmma_login_verify', __('登录验证码'))
                     ->set_options(array(
                         'math_results' => '数学验证码',
                         'random_mixing' => '随机混合验证码',
@@ -325,7 +325,7 @@ class Magick_Mixtrue_Admin
                 </p>')
                     ->set_conditional_logic(array(
                         array(
-                            'field' => 'cmma_login_verify_tx',
+                            'field' => 'cmma_login_verify',
                             'value' => 'math_results',
                             'compare' => '=',
                         ),
@@ -337,7 +337,7 @@ class Magick_Mixtrue_Admin
                 </p>')
                     ->set_conditional_logic(array(
                         array(
-                            'field' => 'cmma_login_verify_tx',
+                            'field' => 'cmma_login_verify',
                             'value' => 'random_mixing',
                             'compare' => '=',
                         ),
@@ -356,7 +356,7 @@ class Magick_Mixtrue_Admin
                     </p>')
                     ->set_conditional_logic(array(
                         array(
-                            'field' => 'cmma_login_verify_tx',
+                            'field' => 'cmma_login_verify',
                             'value' => 'tx_vcode',
                             'compare' => '=',
                         ),
@@ -368,7 +368,7 @@ class Magick_Mixtrue_Admin
                     ->set_help_text('貌似随便填也能用')
                     ->set_conditional_logic(array(
                         array(
-                            'field' => 'cmma_login_verify_tx',
+                            'field' => 'cmma_login_verify',
                             'value' => 'tx_vcode',
                             'compare' => '=',
                         ),
@@ -380,7 +380,7 @@ class Magick_Mixtrue_Admin
                     ->set_width(50)
                     ->set_conditional_logic(array(
                         array(
-                            'field' => 'cmma_login_verify_tx',
+                            'field' => 'cmma_login_verify',
                             'value' => 'tx_vcode',
                             'compare' => '=',
                         ),

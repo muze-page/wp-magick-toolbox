@@ -21,13 +21,18 @@ if (!class_exists('Magick_Mixtrue_Login')) {
                 self::run_iowen();
             }
             //添加腾讯验证码
-            if (carbon_get_theme_option('cmma_login_verify_tx') === "tx_vcode") {
+            if (carbon_get_theme_option('cmma_login_verify') === "tx_vcode") {
                 self::login_verify_tx_run();
             }
 
             //添加数字运算验证码
-            if (carbon_get_theme_option('cmma_login_verify_tx') === "math_results") {
+            if (carbon_get_theme_option('cmma_login_verify') === "math_results") {
                 self::run_math();
+            }
+
+            //WordPress登陆后台随机混合数验证码
+            if (carbon_get_theme_option('cmma_login_verify') === "random_mixing") {
+                self::run_random();
             }
         }
 
@@ -136,8 +141,8 @@ if (!class_exists('Magick_Mixtrue_Login')) {
         public static function myplugin_add_login_fields()
         {
             //获取两个随机数, 范围0~100
-            $num1 = rand(0, 20);
-            $num2 = rand(0, 20);
+            $num1 = rand(5, 50);
+            $num2 = rand(5, 50);
             //最终网页中的具体内容
             echo "<p><label for='math' class='small'>验证码： $num1 + $num2 = ?<input type='text' name='sum' class='input' value='' size='20' tabindex='4'>"
                 . "<input type='hidden' name='num1' value='$num1'>"
@@ -155,20 +160,54 @@ if (!class_exists('Magick_Mixtrue_Login')) {
                 //得到正确的计算结果则直接跳出
                 case $_POST['num1'] + $_POST['num2']:break;
                 //未填写结果时的错误讯息
-                case null:wp_die('提示: 请输入验证码.');
+                case null:wp_die('提示: 请输入验证码.', '', array('back_link' => true));
                     break;
                 //计算错误时的错误讯息
-                default:wp_die('提示: 验证码错误,请重试.');
+                default:wp_die('提示: 验证码错误,请重试.', '', array('back_link' => true));
 
             }
         }
 
-/**
- * WordPress 接入腾讯防水墙，给网站登录加上验证功能
- * 原文地址：https://www.iowen.cn/wordpress-tencent-waterproof-wall/
- * 一为忆
- * swallow 主题
- */
+        /**
+         * 效果：WordPress登陆后台随机混合数验证码
+         * 来源：https://blog.csdn.net/qq_39339179/article/details/119183143
+         */
+        public static function run_random()
+        {
+            add_action('login_form', array(__CLASS__, 'loper_login_english_figures'));
+            add_action('login_form_login', array(__CLASS__, 'loper_login_calculation'));
+        }
+
+        public static function loper_login_english_figures()
+        {
+            # 获取英语和数字随机数, 范围0~99，目前是0~5，5位数
+            $num1 = substr(md5(mt_rand(0, 99)), 0, 5);
+            echo "<p>
+            <label for='math' class='small'>验证码：$num1 </label>
+            <input id='math' type='text' name='sum' class='input' value='' size='25'>
+            <input type='hidden' name='num1' value='$num1'></p>";
+        }
+
+        //判断验证码是否空白和错误
+        public static function loper_login_calculation()
+        {
+            $_POST['sum'] = isset($_POST['sum']) ? $_POST['sum'] : 0;
+            $_POST['num1'] = isset($_POST['num1']) ? $_POST['num1'] : 0;
+            $sum = $_POST['sum'];
+            switch ($sum) {
+                case $_POST['num1']:break;
+                case null:wp_die(__('错误：请填入验证码！'), '', array('back_link' => true));
+                    break;
+                default:wp_die(__('错误：验证码不正确！'), '', array('back_link' => true));
+            }
+        }
+
+        /**
+         * WordPress 接入腾讯防水墙，给网站登录加上验证功能
+         * 原文地址：https://www.iowen.cn/wordpress-tencent-waterproof-wall/
+         * 一为忆
+         * swallow 主题
+         */
         public static function login_verify_tx_run()
         {
 
@@ -206,11 +245,11 @@ if (!class_exists('Magick_Mixtrue_Login')) {
                   }
               </script>
             <?php
-         }
+}
 
-/**
- * 处理登录二次验证
- */
+        /**
+         * 处理登录二次验证
+         */
         public static function validate_tcaptcha_login($user)
         {
             $slide = $_POST['tcaptcha_007'];
