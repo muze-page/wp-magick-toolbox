@@ -310,7 +310,7 @@ class Magick_Mixtrue_Admin
                     ->set_options(array(
                         'math_results' => '数学验证码',
                         'random_mixing' => '随机混合验证码',
-                        'tx_vcode' => '腾讯验证码',
+                        'tx_vcode' => '腾讯验证码-功能未验证',
                         'no' => '关闭',
                     ))
                     ->set_default_value('no')
