@@ -303,24 +303,64 @@ class Magick_Mixtrue_Admin
                         ),
                     )),
 
-                //腾讯防水墙
-                Field::make('select', 'cmma_login_verify_tx', __('接入腾讯防水墙，给网站登录加上图形验证功能'))
+                /**
+             * 登录验证码
+             */
+                Field::make('select', 'cmma_login_verify_tx', __('登录验证码'))
                     ->set_options(array(
-                        'yes' => '开启',
+                        'math_results' => '数学验证码',
+                        'random_mixing' => '随机混合验证码',
+                        'tx_vcode' => '腾讯验证码',
                         'no' => '关闭',
                     ))
                     ->set_default_value('no')
                     ->set_help_text('
+
+                    ')
+                ,
+                //数学验证码
+                Field::make('html', 'cmma_login_verify_msg_math')
+                    ->set_html('<h2>需输入指定数学运算的结果才可登录</h2><p>
+
+                </p>')
+                    ->set_conditional_logic(array(
+                        array(
+                            'field' => 'cmma_login_verify_tx',
+                            'value' => 'math_results',
+                            'compare' => '=',
+                        ),
+                    )),
+                //随机混合验证码
+                Field::make('html', 'cmma_login_verify_msg_random')
+                    ->set_html('<h2>需输入指定的文本才可登录</h2><p>
+
+                </p>')
+                    ->set_conditional_logic(array(
+                        array(
+                            'field' => 'cmma_login_verify_tx',
+                            'value' => 'random_mixing',
+                            'compare' => '=',
+                        ),
+                    )),
+                //腾讯验证码
+
+                Field::make('html', 'cmma_login_verify_msg_tx')
+                    ->set_html('<h2>接入腾讯防水墙，给网站登录加上图形验证功能</h2><p>
                     点击这里注册
                     <a href="https://cloud.tencent.com/act/cps/redirect?redirect=10717&cps_key=c4baec70ed3f429838d86e2682a46f63" target="_blank">
                     <b">T-Sec 天御 验证码</b>
                     </a>
-                    使用方法可参考 <a href="https://www.iowen.cn/wordpress-access-to-tencent-captcha-service/" target="_blank">
+                    ，使用方法可参考 <a href="https://www.iowen.cn/wordpress-access-to-tencent-captcha-service/" target="_blank">
                     <b">使用教程</b>
                     </a>
-                    ')
-
-                ,
+                    </p>')
+                    ->set_conditional_logic(array(
+                        array(
+                            'field' => 'cmma_login_verify_tx',
+                            'value' => 'tx_vcode',
+                            'compare' => '=',
+                        ),
+                    )),
 
                 Field::make('text', 'cmma_login_verify_tx_id', 'App ID')
                     ->set_attribute('type', 'number')
@@ -329,7 +369,7 @@ class Magick_Mixtrue_Admin
                     ->set_conditional_logic(array(
                         array(
                             'field' => 'cmma_login_verify_tx',
-                            'value' => 'yes',
+                            'value' => 'tx_vcode',
                             'compare' => '=',
                         ),
                     )),
@@ -341,7 +381,7 @@ class Magick_Mixtrue_Admin
                     ->set_conditional_logic(array(
                         array(
                             'field' => 'cmma_login_verify_tx',
-                            'value' => 'yes',
+                            'value' => 'tx_vcode',
                             'compare' => '=',
                         ),
                     )),

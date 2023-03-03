@@ -21,7 +21,7 @@ if (!class_exists('Magick_Mixtrue_Login')) {
                 self::run_iowen();
             }
             //添加腾讯验证码
-            if (carbon_get_theme_option('cmma_login_verify_tx') === "yes") {
+            if (carbon_get_theme_option('cmma_login_verify_tx') === "tx_vcode") {
                 self::login_verify_tx_run();
             }
         }
