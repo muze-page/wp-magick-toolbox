@@ -57,10 +57,6 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
         //页面显示内容
         public static function load_content()
         {
-            /**
-             * 准备数据
-             */
-            $arr = self::handle_order_seven();
 
             ?>
              <!-- 在默认WordPress“包装”容器中创建标题 -->
@@ -70,58 +66,13 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
 		     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
              <hr />
 
-             <section class="magick_shop_box">
-        <div class="content">
-            <div class="child-box">
-                <span>待发货</span>
-                <div class="child">
-                    <p><span><?php echo $arr['shipped'] ?></span>个</p>
-                    <span class="dashicons dashicons-store"></span>
-                </div>
-            </div>
-        </div>
-        <div class="content">
-            <div class="child-box">
-                <span>今日总销售额（已减退款）</span>
-                <div class="child">
-                    <p><span><?php echo $arr['today']['sale'] ?></span>￥</p>
-                    <span class="dashicons dashicons-insert"></span>
-                </div>
-            </div>
-        </div>
-        <div class="content">
-            <div class="child-box">
-                <span>今日总订单（已减退款）</span>
-                <div class="child">
-                    <p><span><?php echo $arr['today']['sale_order'] ?></span>个</p>
-                    <span class="dashicons dashicons-database-add"></span>
-                </div>
-            </div>
-        </div>
-        <div class="content">
-            <div class="child-box">
-                <span>今日总退款</span>
-                <div class="child">
-                    <p><span><?php echo $arr['today']['refund'] ?></span>￥</p>
-                    <span class="dashicons dashicons-remove"></span>
-                </div>
-            </div>
-        </div>
-        <div class="content">
-            <div class="child-box">
-                <span>今日总退款订单</span>
-                <div class="child">
-                    <p><span><?php echo $arr['today']['refund_order'] ?></span>个</p>
-                    <span class="dashicons dashicons-database-remove"></span>
-                </div>
-            </div>
-        </div>
 
-    </section>
-
-
-    <!--四栏分隔-->
-    <?php echo self::load_echarts_js() ?>
+            <!--五栏数据-->
+            <?php echo self::week_data_show() ?>
+            <!--四栏分隔-->
+            <?php echo self::load_echarts_js() ?>
+            <!--月度统计-->
+            <?php echo self::month_content() ?>
 
             </div><!-- end wrap-->
             <?php
@@ -569,6 +520,175 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
             <?php
 
         } //end load_echarts_js()
+
+        /**
+         * 月数据
+         * 月总订单数（去退款）
+         * 月总销售额（去退款）
+         * 月总退款订单数
+         * 月总退款额
+         */
+        public static function get_month_order()
+        {
+            //用WordPress提供的全局变量
+            global $wpdb;
+            //拿到表
+            $table_name = $wpdb->prefix . 'zrz_order';
+            //实例化工具
+            $tool = new Magick_Mixtrue_Tool;
+            //拿到时间
+            $math = $tool->get_time_long('this_month');
+
+            $start = '';
+            $end = '';
+            $start = $tool->export_handle_time('start', reset($math));
+            $end = $tool->export_handle_time('end', end($math));
+            //存储数据
+            $arr = array();
+
+            //开始查询
+            //总销售额
+            $judge_later_a = "SELECT SUM(BINARY(order_total)) AS total FROM $table_name WHERE order_type = 'gx' and order_commodity = 1 and (order_state = 'c' or order_state = 'q') and order_date > '$start' and order_date < '$end'";
+            //总订单数
+            $judge_later_b = "SELECT COUNT(*) FROM $table_name WHERE order_type = 'gx' and order_commodity = 1 and (order_state = 'c' or order_state = 'q') and order_date > '$start' and order_date < '$end'";
+
+            //总退款
+            $judge_later_c = "SELECT SUM(BINARY(order_total)) AS refund FROM $table_name WHERE order_type = 'gx' and order_commodity = 1 and order_state = 't' and order_date > '$start' and order_date < '$end'";
+
+            //总退款订单数
+            $judge_later_d = "SELECT COUNT(*) FROM $table_name WHERE order_type = 'gx' and order_commodity = 1 and  order_state = 't' and order_date > '$start' and order_date < '$end'";
+            //第二天到第7天拿到的值
+            //总销售额
+            $arr['total_sales'] = isset(($wpdb->get_results($judge_later_a, ARRAY_A))['0']['total']) ? ($wpdb->get_results($judge_later_a, ARRAY_A))['0']['total'] : 0;
+
+            //总订单数
+            $arr['total_order'] = $wpdb->get_var($judge_later_b);
+
+            //总退款
+            $arr['total_refund_sales'] = isset(($wpdb->get_results($judge_later_c, ARRAY_A))['0']['refund']) ? ($wpdb->get_results($judge_later_c, ARRAY_A))['0']['refund'] : 0;
+
+            //总退款订单
+            $arr['total_refund_order'] = $wpdb->get_var($judge_later_d);
+
+            return $arr;
+
+        }
+
+        /**
+         * 月度数据展示
+         */
+        public static function month_content()
+        {
+            //本月数据
+            $month = self::get_month_order();
+            ?>
+                        <!--月度统计-->
+                <section class="magick_shop_box">
+
+            <div class="content">
+                <div class="child-box">
+                    <span>本月总销售额（已减退款）</span>
+                    <div class="child">
+                        <p><span><?php echo $month['total_sales'] ?></span>￥</p>
+                        <span class="dashicons dashicons-insert"></span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="content">
+                <div class="child-box">
+                    <span>本月总订单（已减退款）</span>
+                    <div class="child">
+                        <p><span><?php echo $month['total_order'] ? $month['total_order'] : 0 ?></span>个</p>
+                        <span class="dashicons dashicons-database-add"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="child-box">
+                    <span>本月总退款</span>
+                    <div class="child">
+                        <p><span><?php echo $month['total_refund_sales'] ?></span>￥</p>
+                        <span class="dashicons dashicons-remove"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="child-box">
+                    <span>本月总退款订单</span>
+                    <div class="child">
+                        <p><span><?php echo $month['total_refund_order'] ? $month['total_refund_order'] : 0 ?></span>个</p>
+                        <span class="dashicons dashicons-database-remove"></span>
+                    </div>
+                </div>
+            </div>
+
+            </section>
+            <?php
+}
+
+        /**
+         * 五栏数据展示
+         */
+        public static function week_data_show()
+        {
+            /**
+             * 准备数据
+             */
+            $arr = self::handle_order_seven();
+            ?>
+             <section class="magick_shop_box">
+        <div class="content">
+            <div class="child-box">
+                <span>待发货</span>
+                <div class="child">
+                    <p><span><?php echo $arr['shipped'] ? $arr['shipped'] : 0 ?></span>个</p>
+                    <span class="dashicons dashicons-store"></span>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="child-box">
+                <span>今日总销售额（已减退款）</span>
+                <div class="child">
+                    <p><span><?php echo $arr['today']['sale'] ?></span>￥</p>
+                    <span class="dashicons dashicons-insert"></span>
+                </div>
+
+            </div>
+        </div>
+        <div class="content">
+            <div class="child-box">
+                <span>今日总订单（已减退款）</span>
+                <div class="child">
+                    <p><span><?php echo $arr['today']['sale_order'] ?></span>个</p>
+                    <span class="dashicons dashicons-database-add"></span>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="child-box">
+                <span>今日总退款</span>
+                <div class="child">
+                    <p><span><?php echo $arr['today']['refund'] ?></span>￥</p>
+                    <span class="dashicons dashicons-remove"></span>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="child-box">
+                <span>今日总退款订单</span>
+                <div class="child">
+                    <p><span><?php echo $arr['today']['refund_order'] ?></span>个</p>
+                    <span class="dashicons dashicons-database-remove"></span>
+                </div>
+            </div>
+        </div>
+
+    </section>
+            <?php
+}
 
     } //end class
 }

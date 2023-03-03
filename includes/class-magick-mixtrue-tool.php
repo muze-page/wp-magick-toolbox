@@ -120,6 +120,20 @@ if (!class_exists('Magick_Mixtrue_Tool')) {
                 ),
             );
         }
+        /**
+         * 输入一个日期，输出第一秒时间和最后一秒
+         */
+        public static function export_handle_time($type = 'start', $time = '2023-03-31')
+        {
+            if ($type === 'start') {
+                $handle_time = date('Y-m-d H:i:s', strtotime($time . '00:00:00'));
+            }
+            if ($type === 'end') {
+                $handle_time = date('Y-m-d H:i:s', strtotime($time . '23:59:59'));
+            }
+            return $handle_time;
+
+        }
 
         /**
          * 处理时间用
@@ -148,9 +162,9 @@ if (!class_exists('Magick_Mixtrue_Tool')) {
              */
             if ($type == "this_week") {
                 //本周开始时间戳
-                $startTime = date("Y-m-d H:i:s", mktime(0, 0, 0, date('m'), date('d') - date('w') + 1, date('y')));
+                $startTime = date("Y-m-d ", mktime(0, 0, 0, date('m'), date('d') - date('w') + 1, date('y')));
                 //本周结束时间戳
-                $overTime = date("Y-m-d H:i:s", mktime(23, 59, 59, date('m'), date('d') - date('w') + 7, date('y')));
+                $overTime = date("Y-m-d ", mktime(23, 59, 59, date('m'), date('d') - date('w') + 7, date('y')));
                 $date = self::getDateFromRange($startTime, $overTime);
                 return $date;
             };
@@ -159,9 +173,9 @@ if (!class_exists('Magick_Mixtrue_Tool')) {
              */
             if ($type == "last_week") {
                 //本周开始时间戳
-                $startTime = date("Y-m-d H:i:s", mktime(0, 0, 0, date('m'), date('d') - date('w') + 1 - 7, date('Y')));
+                $startTime = date("Y-m-d ", mktime(0, 0, 0, date('m'), date('d') - date('w') + 1 - 7, date('Y')));
                 //本周结束时间戳
-                $overTime = date("Y-m-d H:i:s", mktime(23, 59, 59, date('m'), date('d') - date('w') + 7 - 7, date('Y')));
+                $overTime = date("Y-m-d ", mktime(23, 59, 59, date('m'), date('d') - date('w') + 7 - 7, date('Y')));
                 $date = self::getDateFromRange($startTime, $overTime);
                 return $date;
             }
