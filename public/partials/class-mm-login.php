@@ -20,20 +20,25 @@ if (!class_exists('Magick_Mixtrue_Login')) {
             if (carbon_get_theme_option('cmma_abt_style_login') === "yes") {
                 self::run_iowen();
             }
-            //添加腾讯验证码
-            if (carbon_get_theme_option('cmma_login_verify') === "tx_vcode") {
-                self::login_verify_tx_run();
+
+            //登录验证码判断
+            switch (carbon_get_theme_option('cmma_login_verify')) {
+                //添加数字运算验证码
+                case 'math_results':
+                    self::run_math();
+                    break;
+                //WordPress登陆后台随机混合数验证码
+                case 'random_mixing':
+                    self::run_random();
+                    break;
+
+                //添加腾讯验证码
+                case 'tx_vcode':
+                    self::login_verify_tx_run();
+                    break;
+                default:return;
             }
 
-            //添加数字运算验证码
-            if (carbon_get_theme_option('cmma_login_verify') === "math_results") {
-                self::run_math();
-            }
-
-            //WordPress登陆后台随机混合数验证码
-            if (carbon_get_theme_option('cmma_login_verify') === "random_mixing") {
-                self::run_random();
-            }
         }
 
         /**
