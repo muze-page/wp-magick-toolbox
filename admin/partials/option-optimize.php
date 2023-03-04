@@ -36,7 +36,6 @@ if (!class_exists('Magick_Mixtrue_Optimize')) {
 
             //各个列表显示ID
             if (carbon_get_theme_option('cmma_single_show_id')) {
-                //self::add_list_id_run();
                 add_action('admin_init', array(__CLASS__, 'add_list_id_run'));
 
             };
@@ -77,6 +76,23 @@ if (!class_exists('Magick_Mixtrue_Optimize')) {
                 add_filter('login_display_language_dropdown', '__return_false');
             }
 
+            /**
+             * 媒体
+             */
+            //自动给图片添加Alt标签
+            if (carbon_get_theme_option('cmma_medium_img_add_alt')) {
+                add_filter('the_content', array(__CLASS__, 'image_alt_tag'), 99999);
+            }
+            // 禁用自动生成的图片尺寸
+            if (carbon_get_theme_option('cmma_medium_ban_auto_size')) {
+                self::run_ban_auto_size();
+            }
+
+            //添加媒体库 SVG 图标支持
+            if (carbon_get_theme_option('cmma_medium_add_svg')) {
+                self::run_add_svg();
+            }
+
             //媒体文件重命名
             switch (carbon_get_theme_option('cmma_opt_medium_rename')) {
                 //时间
@@ -90,6 +106,20 @@ if (!class_exists('Magick_Mixtrue_Optimize')) {
                 //默认值
                 default:
                     return;
+            }
+
+            /**
+             * 禁用
+             */
+
+            //禁用更新
+            if (carbon_get_theme_option('cmma_opt_ban_update')) {
+                self::run_ban_update();
+            }
+
+            //文章关键词自动添加内链链接代码
+            if (carbon_get_theme_option('cmma_opt_site_content_add_tag')) {
+                add_filter('the_content', array(__CLASS__, 'tag_link'), 1);
             }
 
         }
@@ -413,6 +443,68 @@ if (!class_exists('Magick_Mixtrue_Optimize')) {
         /**
          * 优化 - 媒体
          */
+        //自动给图片添加Alt标签
+        public static function image_alt_tag($content)
+        {
+            global $post;
+            preg_match_all('/<img (.*?)\/>/', $content, $images);
+            if (!is_null($images)) {foreach ($images[1] as $index => $value) {
+                $new_img = str_replace('<img', '<img alt="' . get_the_title() . '-' . get_bloginfo('name') . '"', $images[0][$index]);
+                $content = str_replace($images[0][$index], $new_img, $content);}}
+            return $content;
+        }
+
+        // 禁用自动生成的图片尺寸
+        public static function run_ban_auto_size()
+        {
+
+            // 禁用自动生成的图片尺寸
+            add_action('intermediate_image_sizes_advanced', array(__CLASS__, 'shapeSpace_disable_image_sizes'));
+            // 禁用缩放尺寸
+            add_filter('big_image_size_threshold', '__return_false');
+            // 禁用其他图片尺寸
+            add_action('init', array(__CLASS__, 'shapeSpace_disable_other_image_sizes'));
+
+        }
+        public static function shapeSpace_disable_image_sizes($sizes)
+        {
+            unset($sizes['thumbnail']); // disable thumbnail size
+            unset($sizes['medium']); // disable medium size
+            unset($sizes['large']); // disable large size
+            unset($sizes['medium_large']); // disable medium-large size
+            unset($sizes['1536x1536']); // disable 2x medium-large size
+            unset($sizes['2048x2048']); // disable 2x large size return $sizes;
+        }
+
+        public static function shapeSpace_disable_other_image_sizes()
+        {
+            remove_image_size('post-thumbnail');
+            // 禁用通过 set_post_thumbnail_size()  添加的图像
+            remove_image_size('another-size');
+            // 禁用任何其他添加的图像大小
+        }
+
+        //添加媒体库 SVG 图标支持
+        public static function run_add_svg()
+        {
+            add_filter('upload_mimes', array(__CLASS__, 'salong_mime_types'));
+            add_action('admin_head', array(__CLASS__, 'salong_admin_svg_css'));
+        }
+
+        //添加媒体库 SVG 图标支持
+        public static function salong_mime_types($mimes)
+        {$mimes['svg'] = 'image/svg+xml';return $mimes;}
+
+        //在媒体库显示 SVG 图标
+        public static function salong_admin_svg_css()
+        {echo "
+            <style>
+            table.media .column-title .media-icon img[src*='.svg']{
+             width: 100%;
+             height: auto;
+                    }
+        </style>";}
+
         /**
          * 重命名
          */
@@ -435,6 +527,78 @@ if (!class_exists('Magick_Mixtrue_Optimize')) {
             $md5 = md5($file['name']);
             $file['name'] = $md5 . $ext;
             return $file;
+        }
+
+        /**
+         * 禁用
+         */
+
+        /**
+         * 效果：禁用更新
+         * 来源：https://www.npc.ink/15932.html
+         */
+        public static function run_ban_update()
+        {
+            remove_action('init', 'wp_schedule_update_checks'); // 关闭更新检查定时作业
+            wp_clear_scheduled_hook('wp_version_check'); // 移除已有的版本检查定时作业
+            wp_clear_scheduled_hook('wp_update_plugins'); // 移除已有的插件更新定时作业
+            wp_clear_scheduled_hook('wp_update_themes'); // 移除已有的主题更新定时作业
+            wp_clear_scheduled_hook('wp_maybe_auto_update'); // 移除已有的自动更新定时作业
+            add_filter('automatic_updater_disabled', '__return_true'); // 彻底关闭自动更新
+            remove_action('admin_init', '_maybe_update_core'); // 移除后台内核更新检查
+            remove_action('load-plugins.php', 'wp_update_plugins'); // 移除后台插件更新检查
+            remove_action('load-update.php', 'wp_update_plugins');
+            remove_action('load-update-core.php', 'wp_update_plugins');
+            remove_action('admin_init', '_maybe_update_plugins');
+            remove_action('load-themes.php', 'wp_update_themes'); // 移除后台主题更新检查
+            remove_action('load-update.php', 'wp_update_themes');
+            remove_action('load-update-core.php', 'wp_update_themes');
+            remove_action('admin_init', '_maybe_update_themes');
+        }
+
+        /*
+         *作用：Wordpress文章关键词自动添加内链链接代码
+         *效果：https://www.npc.ink/15286.html
+         */
+        //按长度排序
+        public static function tag_sort($a, $b)
+        {
+            if ($a->name == $b->name) {
+                return 0;
+            }
+
+            return (strlen($a->name) > strlen($b->name)) ? -1 : 1;
+        }
+        //改变标签关键字
+        public static function tag_link($content)
+        {
+            //连接数量
+            $match_num_from = 1; //一篇文章中同一个关键字少于多少不锚文本（这个直接填1就好了）
+            $match_num_to = 3; //一篇文章中同一个关键字最多出现多少次锚文本（建议不超过1次）
+            $posttags = get_the_tags();
+            if ($posttags) {
+                usort($posttags, array(__CLASS__, "tag_sort"));
+                foreach ($posttags as $tag) {
+                    $link = get_tag_link($tag->term_id);
+                    $keyword = $tag->name;
+                    //连接代码
+                    $cleankeyword = stripslashes($keyword);
+                    $url = "<strong><a href=\"$link\" title=\"" . str_replace('%s', addcslashes($cleankeyword, '$'), __('查看所有文章关于 %s')) . "\"";
+                    $url .= 'target="_blank"';
+                    $url .= ">" . addcslashes($cleankeyword, '$') . "</a></strong>";
+                    $limit = rand($match_num_from, $match_num_to);
+                    //不连接的代码
+                    $ex_word = '';
+                    $case = '';
+                    $content = preg_replace('|(<a[^>]+>)(.*)(' . $ex_word . ')(.*)(</a[^>]*>)|U' . $case, '$1$2%&&&&&%$4$5', $content);
+                    $content = preg_replace('|(<img)(.*?)(' . $ex_word . ')(.*?)(>)|U' . $case, '$1$2%&&&&&%$4$5', $content);
+                    $cleankeyword = preg_quote($cleankeyword, '\'');
+                    $regEx = '\'(?!((<.*?)|(<a.*?)))(' . $cleankeyword . ')(?!(([^<>]*?)>)|([^>]*?</a>))\'s' . $case;
+                    $content = preg_replace($regEx, $url, $content, $limit);
+                    $content = str_replace('%&&&&&%', stripslashes($ex_word), $content);
+                }
+            }
+            return $content;
         }
 
     }

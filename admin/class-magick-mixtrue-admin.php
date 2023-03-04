@@ -136,7 +136,18 @@ class Magick_Mixtrue_Admin
                 Field::make('checkbox', 'cmma_opt_site_transferred', __('禁止网站title中的 “-” 被转义'))
                     ->set_option_value('yes'),
 
+                Field::make('checkbox', 'cmma_opt_site_content_add_tag', __('文章关键词自动添加内链链接代码'))
+                    ->set_option_value('yes')
+                    ->set_help_text('
+                    撰写文章，内容中添加1个以上标签文本，发文章时添加标签，
+                    <a href="https://www.npc.ink/15286.html?=magick-plugin" target="_blank">详细介绍</a>
+                    '),
+
+                /**
+             * 筛选
+             */
                 Field::make('separator', 'cmma_optimize_filter', __('筛选')),
+
                 Field::make('checkbox', 'cmma_filter_single_user', __('文章菜单添加作者筛选项'))
                     ->set_option_value('yes'),
                 Field::make('checkbox', 'cmma_filter_single_time', __('文章和媒体菜单添加时间筛选项'))
@@ -151,6 +162,17 @@ class Magick_Mixtrue_Admin
              * 优化 - 媒体
              */
                 Field::make('separator', 'cmma_opt_medium_title', __('媒体')),
+                Field::make('checkbox', 'cmma_medium_img_add_alt', __('自动给图片添加Alt标签'))
+                    ->set_option_value('yes')
+                    ->set_help_text("标签值为当前文章名 - 网站名"),
+
+                Field::make('checkbox', 'cmma_medium_ban_auto_size', __('禁用自动生成的图片尺寸'))
+                    ->set_option_value('yes')
+                    ->set_help_text("禁用自动生成的图片尺寸、禁用缩放尺寸、禁用其他图片尺寸"),
+
+                Field::make('checkbox', 'cmma_medium_add_svg', __('添加媒体库 SVG 图标支持'))
+                    ->set_option_value('yes'),
+
                 Field::make('select', 'cmma_opt_medium_rename', __('媒体图片上传自动重命名'))
                     ->set_options(array(
                         'no' => '关闭',
@@ -223,8 +245,15 @@ class Magick_Mixtrue_Admin
 
                 Field::make('separator', 'cmma_opt_page', __('页面')),
 
-                Field::make('separator', 'cmma_opt_remove', __('移除'))
+                /**
+             * 禁用
+             */
+                Field::make('separator', 'cmma_opt_ban_svg', __('禁用'))
                     ->set_help_text("<b style='color:red;'>若您不知道会发生什么，还请慎重</b>"),
+
+                Field::make('checkbox', 'cmma_opt_ban_update', __('禁用更新'))
+                    ->set_option_value('yes')
+                    ->set_help_text("WordPress、主题和插件不再提示更新"),
 
             ))
 
@@ -250,7 +279,9 @@ class Magick_Mixtrue_Admin
          * 其他
          */
             ->add_tab(__('其他'), array(
+
                 Field::make('separator', 'comm_separator_fun_switch', __('功能开关')),
+
                 Field::make('checkbox', 'cmma_fun_census_single', __('文章统计'))
                     ->set_option_value('yes')
                     ->set_width(20)
@@ -260,6 +291,7 @@ class Magick_Mixtrue_Admin
                     ->set_width(20)
                     ->set_help_text('开启后显示在仪表盘下,<a href="https://7b2.com/shop/35736.html?=Npcink" target="_blank">了解B2主题</a>'),
 
+
                 /**
              * 页面特效
              */
@@ -268,13 +300,15 @@ class Magick_Mixtrue_Admin
                     ->set_option_value('yes')
                     ->set_help_text("考虑到性能以及操作问题，移动端不加载此特效"),
 
-                Field::make('checkbox', 'cmma_page_label_cloud', __('添加圆角彩色背景标签云'))  
+                Field::make('checkbox', 'cmma_page_label_cloud', __('添加圆角彩色背景标签云'))
                     ->set_option_value('yes')
                     ->set_help_text("可在小工具中添加标签云，前台即可看到效果"),
 
                 Field::make('separator', 'crb_separator', __('评论区')),
                 Field::make('checkbox', 'cmma_show_owo', __('评论区添加OWO表情包'))
                     ->set_option_value('yes'),
+
+                    
 
                 /**
              * 登录页
