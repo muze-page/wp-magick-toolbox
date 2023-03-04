@@ -21,6 +21,14 @@ if (!class_exists('Magick_Mixtrue_Optimize')) {
         //准备
         public static function load_run()
         {
+
+            /**
+             * 优化 - 站点
+             */
+            //禁止网站title中的 “-” 被转义
+            if (carbon_get_theme_option('cmma_opt_site_transferred')) {
+                add_filter('run_wptexturize', '__return_false');
+            };
             //文章管理添加作者筛选
             if (carbon_get_theme_option('cmma_filter_single_user')) {
                 add_action('restrict_manage_posts', array(__CLASS__, 'rudr_filter_by_the_author'));
@@ -85,6 +93,7 @@ if (!class_exists('Magick_Mixtrue_Optimize')) {
             }
 
         }
+
         /**
          * 优化 - 筛选
          */

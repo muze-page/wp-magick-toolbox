@@ -129,6 +129,13 @@ class Magick_Mixtrue_Admin
          * 优化
          */
             ->add_tab(__('优化'), array(
+                /**
+             * 站点
+             */
+                Field::make('separator', 'cmma_optimize_site_msg', __('站点')),
+                Field::make('checkbox', 'cmma_opt_site_transferred', __('禁止网站title中的 “-” 被转义'))
+                    ->set_option_value('yes'),
+
                 Field::make('separator', 'cmma_optimize_filter', __('筛选')),
                 Field::make('checkbox', 'cmma_filter_single_user', __('文章菜单添加作者筛选项'))
                     ->set_option_value('yes'),
@@ -257,9 +264,13 @@ class Magick_Mixtrue_Admin
              * 页面特效
              */
                 Field::make('separator', 'crb_separator_page', __('页面特效')),
-                Field::make('checkbox', 'cmma_page_show_particle', __('页面添加粒子特效'))
+                Field::make('checkbox', 'cmma_page_show_particle', __('添加粒子特效'))
                     ->set_option_value('yes')
                     ->set_help_text("考虑到性能以及操作问题，移动端不加载此特效"),
+
+                Field::make('checkbox', 'cmma_page_label_cloud', __('添加圆角彩色背景标签云'))  
+                    ->set_option_value('yes')
+                    ->set_help_text("可在小工具中添加标签云，前台即可看到效果"),
 
                 Field::make('separator', 'crb_separator', __('评论区')),
                 Field::make('checkbox', 'cmma_show_owo', __('评论区添加OWO表情包'))
