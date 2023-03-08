@@ -266,7 +266,7 @@ class Magick_Mixtrue_Admin
          */
             ->add_tab(__('安全'), array(
                 Field::make('separator', 'cmma_safe_login', __('登录')),
-                Field::make('checkbox', 'cmma_safe_login_errors', __('替换默认账号密码报错信息'))
+                Field::make('checkbox', 'cmma_safe_login_errors', __('替换默认账号密码报错信息，会影响验证码错误提示！'))
                     ->set_option_value('yes')
                     ->set_help_text("默认报错信息会透露用户名错误还是密码错误，统一信息后，可改善此情况"),
 
