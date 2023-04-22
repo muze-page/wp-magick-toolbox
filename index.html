@@ -2,39 +2,71 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3小时才能点击一次按钮</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>处理表格</title>
 </head>
 
 <body>
-    <button type="button" id="myButton">点击下试试</button>
+    <script src="https://unpkg.com/vue@next"></script>
+
+    <div id="Application">
+
+        <table class="widefat">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>图片名称</th>
+                    <th>展示日期</th>
+                    <th>展示次数</th>
+                </tr>
+            </thead>
+            <tbody v-for="item in newData">
+                <tr>
+                    <td>{{item.id}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.date}}</td>
+                    <td>{{item.count}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <script>
-        const myButton = document.getElementById('myButton');
-        myButton.addEventListener('click', () => {
-            //有时间则为存储时间，没有则为0
-            let lastClickTime = parseInt(localStorage.getItem('lastClickTime')) || '0';
-            //拿到当前时间
-            const now = Date.now();
-            if (now - lastClickTime < 3 * 60 * 60 * 1000) {
-                // 如果与上次点击时间相差不到3小时，则不算一次有效点击
-                console.log("等等吧")
-                return;
-            }
+        const App = Vue.createApp({
+            setup() {
+                //原始数据
+                const data = [
 
-            // 更新lastClickTime并写入localStorage
-            localStorage.setItem('lastClickTime', now)
+                    { id: '8', ad: '2', date: '2023-04-22 16:12:41' },
+                    { id: '7', ad: '2', date: '2023-04-22 16:12:40' },
+                    { id: '6', ad: '2', date: '2023-04-22 16:12:39' },
+                    { id: '4', ad: '2199', date: '2023-04-22 16:12:37' }
+                ];
+                //提取对象中ad相同的值，添加新建count
 
-            // 弹窗提示
-            alert('点击成功');
+                const newData = data.map(item => {
+                    if (item.ad === '2') {
+                        return { ...item, name: 'hh' };
+                    }
+
+                    if (item.ad === '2199') {
+                        return { ...item, name: '娜娜' };
+                    }
+
+                    return { ...item, name: '没有' };
+                });
+
+
+
+                return {
+
+                    newData,
+                };
+            },
         });
-
-
-
-
+        App.mount("#Application");
     </script>
-
 </body>
 
 </html>

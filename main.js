@@ -51,7 +51,7 @@ function record_image_views(image_id, name) {
 
             },
             success: function (response) {
-                alert(response)
+                //alert(response)
             }
         });
     }

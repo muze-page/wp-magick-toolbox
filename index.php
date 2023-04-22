@@ -44,7 +44,6 @@ function record_image_view()
 
     //获取图片ID
     $image_id = $_POST['image_id'];
-    
 
     echo "<script>console.log('我打印了')</script>" . $image_id . $time;
     // 插入记录到数据库中
@@ -52,7 +51,6 @@ function record_image_view()
         $table_name,
         array(
             'identify' => $image_id,
-            
 
         )
     );
@@ -140,14 +138,72 @@ function show_image_views()
     echo '<input type="submit" value="筛选">';
     echo '</form>';
 
-    echo '<table class="widefat">';
-    //echo '<thead><tr><th>ID</th><th>展示日期</th><th>展示次数</th></tr></thead>';
-    echo '<thead><tr><th>ID</th><th>图片名称</th><th>展示日期</th><th>展示次数</th></tr></thead>';
-    echo '<tbody>';
-    foreach ($rows as $row) {
-        echo sprintf('<tr><td>%d</td><td>%s</td><td>%d</td></tr>', $row->identify, $row->date, $row->count);
-
+    //---------------------------------获取数据
+    $arr = get_image_view_data();
+    //echo var_dump($arr);
+    $data = array();
+    foreach ($arr as $row) {
+        $data[] = array(
+            'id' => $row->id, //唯一ID
+            'ad' => $row->identify, //广告ID
+            'date' => $row->click_time,
+        );
     }
-    echo '</tbody>';
-    echo '</table>';
+
+    // Enqueue the script file
+    wp_enqueue_script('my-image-views-vue', plugin_dir_url(__FILE__) . 'js/vue.global.js', array(), '1.0', true);
+    wp_enqueue_script('my-image-views-script', plugin_dir_url(__FILE__) . 'js/my-image-views.js', array(), '1.0', true);
+
+    wp_add_inline_script('my-image-views-script', sprintf('const imageViewsData = %s;', json_encode($data)), 'before');
+
+    // Display the menu HTML
+
+    echo '
+    <br />
+    <div id="Application">
+
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>图片名称</th>
+                <th>展示日期</th>
+                <th>展示次数</th>
+            </tr>
+        </thead>
+        <tbody v-for="item in newData">
+            <tr>
+                <td>{{item.id}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.date}}</td>
+                <td>{{item.count}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>';
+
+}
+
+//获取最近3个月的数据
+function get_image_view_data()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'npc_ad_count';
+
+    // 计算三个月前的时间
+    $three_months_ago = strtotime('-3 months');
+
+    // 使用 WordPress 提供的 $wpdb 对象构造 SQL 查询语句
+    $sql = $wpdb->prepare("
+        SELECT *
+        FROM $table_name
+        WHERE click_time >= '%s'
+        ORDER BY click_time DESC
+    ", date('Y-m-d H:i:s', $three_months_ago));
+
+    // 执行 SQL 查询，获取结果
+    $result = $wpdb->get_results($sql);
+
+    // 返回结果
+    return $result;
 }
