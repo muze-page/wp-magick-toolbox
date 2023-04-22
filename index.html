@@ -12,25 +12,31 @@
     <script src="https://unpkg.com/vue@next"></script>
 
     <div id="Application">
+        <select>
+            <option value="volvo">Volvo</option>
+            <option value="saab">Saab</option>
+            <option value="vw">VW</option>
+            <option value="audi" selected>Audi</option>
+        </select>
+        <input type="time" />
 
         <table class="widefat">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>图片名称</th>
-                    <th>展示日期</th>
                     <th>展示次数</th>
                 </tr>
             </thead>
             <tbody v-for="item in newData">
                 <tr>
-                    <td>{{item.id}}</td>
+                    <td>{{item.ad}}</td>
                     <td>{{item.name}}</td>
-                    <td>{{item.date}}</td>
                     <td>{{item.count}}</td>
                 </tr>
             </tbody>
         </table>
+
     </div>
     <script>
         const App = Vue.createApp({
@@ -43,9 +49,20 @@
                     { id: '6', ad: '2', date: '2023-04-22 16:12:39' },
                     { id: '4', ad: '2199', date: '2023-04-22 16:12:37' }
                 ];
-                //提取对象中ad相同的值，添加新建count
+                //添加计算属性
 
-                const newData = data.map(item => {
+                //提取对象中ad相同的值，添加新建count
+                const result = Object.values(data.reduce((res, { id, ad }) => {
+                    if (ad in res) {
+                        res[ad].count++;
+                    } else {
+                        res[ad] = { ad, count: 1 };
+                    }
+                    return res;
+                }, {}));
+
+
+                const newData = result.map(item => {
                     if (item.ad === '2') {
                         return { ...item, name: 'hh' };
                     }
@@ -60,10 +77,12 @@
 
 
                 return {
-
                     newData,
+
                 };
+
             },
+            //template: ``
         });
         App.mount("#Application");
     </script>

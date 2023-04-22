@@ -11,7 +11,6 @@ function record_image_view(image_id) {
             data: {
                 action: "record_image_view",
                 image_id: image_id,
-
             },
             success: function (response) {
                 alert(response)
@@ -47,8 +46,6 @@ function record_image_views(image_id, name) {
             data: {
                 action: "record_image_view",
                 image_id: image_id,
-               
-
             },
             success: function (response) {
                 //alert(response)
