@@ -147,48 +147,48 @@ function show_image_views()
     echo '</table>';
 
     //---------------------------------获取数据
-//    $arr = get_image_view_data();
-//    //echo var_dump($arr);
-//    $data = array();
-//    foreach ($arr as $row) {
-//        $data[] = array(
-//            'id' => $row->id, //唯一ID
-//            'ad' => $row->identify, //广告ID
-//            'date' => $row->click_time,
-//        );
-//    }
-//
-//    // Enqueue the script file
-//    wp_enqueue_script('my-image-views-vue', plugin_dir_url(__FILE__) . 'js/vue.global.js', array(), '1.0', true);
-//    wp_enqueue_script('my-image-views-script', plugin_dir_url(__FILE__) . 'js/my-image-views.js', array(), '1.0', true);
-//
-//    wp_add_inline_script('my-image-views-script', sprintf('const imageViewsData = %s;', json_encode($data)), 'before');
-//
-//    // Display the menu HTML
-//
-//    echo '
-//    <br />
-//    <h2>统计</h2>
-//    <div id="Application">
-//        <table class="widefat">
-//            <thead>
-//                <tr>
-//                    <th>ID</th>
-//                    <th>图片名称</th>
-//                    <th>展示次数</th>
-//                </tr>
-//            </thead>
-//            <tbody v-for="item in newData">
-//                <tr>
-//                    <td>{{item.ad}}</td>
-//                    <td>{{item.name}}</td>
-//                    <td>{{item.count}}</td>
-//                </tr>
-//            </tbody>
-//        </table>
-//    </div>
-//
-//';
+    //    $arr = get_image_view_data();
+    //    //echo var_dump($arr);
+    //    $data = array();
+    //    foreach ($arr as $row) {
+    //        $data[] = array(
+    //            'id' => $row->id, //唯一ID
+    //            'ad' => $row->identify, //广告ID
+    //            'date' => $row->click_time,
+    //        );
+    //    }
+    //
+    //    // Enqueue the script file
+    //    wp_enqueue_script('my-image-views-vue', plugin_dir_url(__FILE__) . 'js/vue.global.js', array(), '1.0', true);
+    //    wp_enqueue_script('my-image-views-script', plugin_dir_url(__FILE__) . 'js/my-image-views.js', array(), '1.0', true);
+    //
+    //    wp_add_inline_script('my-image-views-script', sprintf('const imageViewsData = %s;', json_encode($data)), 'before');
+    //
+    //    // Display the menu HTML
+    //
+    //    echo '
+    //    <br />
+    //    <h2>统计</h2>
+    //    <div id="Application">
+    //        <table class="widefat">
+    //            <thead>
+    //                <tr>
+    //                    <th>ID</th>
+    //                    <th>图片名称</th>
+    //                    <th>展示次数</th>
+    //                </tr>
+    //            </thead>
+    //            <tbody v-for="item in newData">
+    //                <tr>
+    //                    <td>{{item.ad}}</td>
+    //                    <td>{{item.name}}</td>
+    //                    <td>{{item.count}}</td>
+    //                </tr>
+    //            </tbody>
+    //        </table>
+    //    </div>
+    //
+    //';
 
 }
 
@@ -215,3 +215,4 @@ function get_image_view_data()
     // 返回结果
     return $result;
 }
+
