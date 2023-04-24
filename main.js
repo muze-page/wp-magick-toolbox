@@ -37,7 +37,6 @@ function record_image_view(image_id) {
 function record_image_views(image_id, name) {
     console.log("我执行了");
     console.log(image_id);
-    console.log(name);
     //开始统计
     const tj = () => {
         jQuery.ajax({

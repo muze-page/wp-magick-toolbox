@@ -137,58 +137,44 @@ function show_image_views()
 
     echo '<input type="submit" value="筛选">';
     echo '</form>';
-    echo '<table class="widefat">';
-    echo '<thead><tr><th>ID</th><th>展示日期</th><th>展示次数</th></tr></thead>';
-    echo '<tbody>';
-    foreach ($rows as $row) {
-        echo sprintf('<tr><td>%d</td><td>%s</td><td>%d</td></tr>', $row->identify, $row->date, $row->count);
-    }
-    echo '</tbody>';
-    echo '</table>';
+
+    //echo '<table class="widefat">';
+    //echo '<thead><tr><th>ID</th><th>展示日期</th><th>展示次数</th></tr></thead>';
+    //echo '<tbody>';
+    //foreach ($rows as $row) {
+    //    echo sprintf('<tr><td>%d</td><td>%s</td><td>%d</td></tr>', $row->identify, $row->date, $row->count);
+    //}
+    //echo '</tbody>';
+    //echo '</table>';
 
     //---------------------------------获取数据
-    //    $arr = get_image_view_data();
-    //    //echo var_dump($arr);
-    //    $data = array();
-    //    foreach ($arr as $row) {
-    //        $data[] = array(
-    //            'id' => $row->id, //唯一ID
-    //            'ad' => $row->identify, //广告ID
-    //            'date' => $row->click_time,
-    //        );
-    //    }
-    //
-    //    // Enqueue the script file
-    //    wp_enqueue_script('my-image-views-vue', plugin_dir_url(__FILE__) . 'js/vue.global.js', array(), '1.0', true);
-    //    wp_enqueue_script('my-image-views-script', plugin_dir_url(__FILE__) . 'js/my-image-views.js', array(), '1.0', true);
-    //
-    //    wp_add_inline_script('my-image-views-script', sprintf('const imageViewsData = %s;', json_encode($data)), 'before');
-    //
-    //    // Display the menu HTML
-    //
-    //    echo '
-    //    <br />
-    //    <h2>统计</h2>
-    //    <div id="Application">
-    //        <table class="widefat">
-    //            <thead>
-    //                <tr>
-    //                    <th>ID</th>
-    //                    <th>图片名称</th>
-    //                    <th>展示次数</th>
-    //                </tr>
-    //            </thead>
-    //            <tbody v-for="item in newData">
-    //                <tr>
-    //                    <td>{{item.ad}}</td>
-    //                    <td>{{item.name}}</td>
-    //                    <td>{{item.count}}</td>
-    //                </tr>
-    //            </tbody>
-    //        </table>
-    //    </div>
-    //
-    //';
+
+    $data = array();
+    //echo var_dump($rows);
+    foreach ($rows as $row) {
+        $data[] = array(
+
+            'id' => $row->identify, //广告ID
+            'date' => $row->date, //时间
+            'count' => $row->count, //展现次数
+        );
+    }
+
+    // Enqueue the script file
+    wp_enqueue_script('my-image-views-vue', plugin_dir_url(__FILE__) . 'js/vue.global.js', array(), '1.0', true);
+    wp_enqueue_script('my-image-views-echarts', plugin_dir_url(__FILE__) . 'js/echarts.js', array(), '1.0', true);
+    wp_enqueue_script('my-image-views-script', plugin_dir_url(__FILE__) . 'js/my-image-views.js', array(), '1.2', true);
+
+    wp_add_inline_script('my-image-views-script', sprintf('const imageViewsData = %s;', json_encode($data)), 'before');
+
+    // Display the menu HTML
+
+    echo '
+        <br />
+
+        <div id="Application"></div>
+
+    ';
 
 }
 
@@ -215,4 +201,3 @@ function get_image_view_data()
     // 返回结果
     return $result;
 }
-

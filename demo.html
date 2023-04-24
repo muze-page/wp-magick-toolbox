@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>处理表格</title>
+</head>
+
+<body>
+    <script src="./js/vue.global.js"></script>
+
+
+    <div id="Application">
+
+        <select v-model="selectedId">
+            <option v-for="(item,index) in arrId" :key="index" :value="item">{{item}}</option>
+        </select>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>计划</th>
+                    <th>时间</th>
+                    <th>展现次数</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in filteredData" :key="item.id">
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.date }}</td>
+                    <td>{{ item.count }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <script src="demo.js"></script>
+
+</body>
+
+</html>
