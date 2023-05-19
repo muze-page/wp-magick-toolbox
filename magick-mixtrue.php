@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: 魔法合剂插件
+Plugin Name: 魔法合剂
 Plugin URI: https://www.npc.ink/
 Description: 文章统计+小功能
 Version: 0.1.1
@@ -29,7 +29,7 @@ define('MAGICK_MIXTURE_VERSION', '0.0.2');
 require plugin_dir_path(__FILE__) . 'includes/class-magick-mixtrue.php';
 
 //测试类
-require plugin_dir_path(__FILE__) . 'index.php';
+//require plugin_dir_path(__FILE__) . 'index.php';
 
 /**
  * 开始执行插件。
@@ -110,13 +110,13 @@ function mytheme_get_theme_options($request)
 
 //查询文章接口
 //http://magick.plugin/wp-json/carbon-fields/v1/posts/2278
-add_action('rest_api_init', function () {
-    register_rest_route('carbon-fields/v1', 'posts/(?P<id>\d+)', array(
-        'methods' => 'GET',
-        'callback' => 'mytheme_get_post_infos',
-        //'permission_callback' => '__return_true',
-    ));
-});
+//add_action('rest_api_init', function () {
+//    register_rest_route('carbon-fields/v1', 'posts/(?P<id>\d+)', array(
+//        'methods' => 'GET',
+//        'callback' => 'mytheme_get_post_infos',
+//        //'permission_callback' => '__return_true',
+//    ));
+//});
 
 //撰写查询用接口
 function mytheme_get_post_infos($request)
@@ -161,12 +161,12 @@ function mytheme_get_post_infos($request)
 
 //撰写首页用接口
 //根据设置，输出首页要展示用的数据
-add_action('rest_api_init', function () {
-    register_rest_route('carbon-fields/v1', 'posts', array(
-        'methods' => 'GET',
-        'callback' => 'mytheme_get_posts',
-    ));
-});
+//add_action('rest_api_init', function () {
+//    register_rest_route('carbon-fields/v1', 'posts', array(
+//        'methods' => 'GET',
+//        'callback' => 'mytheme_get_posts',
+//    ));
+//});
 
 function mytheme_get_posts($request)
 {
@@ -227,12 +227,12 @@ function mytheme_get_posts($request)
     return new WP_Error('no_posts', 'No posts found', array('status' => 404)); // 若无文章，返回404错误
 }
 
-add_action('rest_api_init', function () {
-    register_rest_route('mytheme/v1', 'postssli', array(
-        'methods' => 'GET',
-        'callback' => 'mytheme_get_posts_data',
-    ));
-});
+//add_action('rest_api_init', function () {
+//    register_rest_route('mytheme/v1', 'postssli', array(
+//        'methods' => 'GET',
+//        'callback' => 'mytheme_get_posts_data',
+//    ));
+//});
 
 function mytheme_get_posts_data()
 {
@@ -280,7 +280,7 @@ function mytheme_get_posts_data()
 }
 
 //加载js文件
-add_action('wp_enqueue_scripts', 'npcink_plugin_ad_scripts');
+//add_action('wp_enqueue_scripts', 'npcink_plugin_ad_scripts');
 function npcink_plugin_ad_scripts()
 {
     wp_enqueue_script('npcink-name', plugin_dir_url(__FILE__) . '/main.js', array('jquery'), '1.0.0', true);
