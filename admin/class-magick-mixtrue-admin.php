@@ -23,7 +23,7 @@ class Magick_Mixtrue_Admin
      * @access   private
      * @var      string    $plugin_name    此插件的ID。
      */
-    private $plugin_name;
+    private static $plugin_name;
 
     /**
      * 此插件的版本。
@@ -32,7 +32,7 @@ class Magick_Mixtrue_Admin
      * @access   private
      * @var      string    $version   此插件的当前版本。
      */
-    private $version;
+    private static $version;
 
     /**
      * 初始化类并设置其财产。
@@ -44,13 +44,14 @@ class Magick_Mixtrue_Admin
     public function __construct($plugin_name, $version)
     {
 
-        $this->plugin_name = $plugin_name;
-        $this->version = $version;
+        self::$plugin_name = $plugin_name;
+        self::$version = $version;
 
         $this->load(); //加载所需的依赖项
         $this->run(); //跑起来
 
     }
+
 
     /**
      *
@@ -75,6 +76,15 @@ class Magick_Mixtrue_Admin
      */
     public function run()
     {
+
+        //加载菜单
+        add_action('admin_menu',  array(__CLASS__, 'add_menu'));
+
+        //加载菜单用的 CSS 和 JS 资源
+        add_action('admin_enqueue_scripts', array(__CLASS__, 'load_admin_script'));
+
+        //对js文件进行module接入
+        add_filter('script_loader_tag', array(__CLASS__, 'refund_type_script'), 10, 2);
 
         //加载主题选项
         add_action('carbon_fields_register_fields', array(__CLASS__, 'load_admin_settings'));
@@ -119,6 +129,74 @@ class Magick_Mixtrue_Admin
         //wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/magick-mixtrue-admin.js', array('jquery'), $this->version, false);
 
     }
+    /**
+     * 添加菜单
+     */
+    public static function add_menu()
+    {
+        //添加插件菜单
+
+        add_plugins_page(
+            '魔法药剂',             // 要在此页面的浏览器窗口中显示的标题。
+            '魔法药剂ss',            // 要为此菜单项显示的文本
+            'administrator',            // 哪种类型的用户可以看到此菜单项
+            'mami_config',    // The unique ID - that is, the slug - for this menu item 
+            array(__CLASS__, 'mami_display')   // 呈现此菜单的页面时要调用的函数的名称
+        );
+    }
+
+    /**
+     * 菜单回调
+     */
+    public static function mami_display()
+    {
+        //准备节点
+        echo '<div id="root"></div>';
+    }
+
+    /**
+     * 加载JS和CSS资源
+     */
+    public static  function load_admin_script($hook)
+    {
+        $ver = self::$version;
+        $name = self::$plugin_name;
+       
+        //是否是指定页面
+       //if ('settings_page_mami_config' != $hook) {
+       //    return;
+       //}
+
+        //准备地址
+        $index_css = plugin_dir_url(__DIR__) . 'vite/admin/dist/index.css';
+        $index_js = plugin_dir_url(__DIR__) . 'vite/admin/dist/index.js';
+
+        wp_enqueue_style($name, $index_css, array(), $ver, false);
+        wp_enqueue_script($name, $index_js, array(), $ver, true);
+
+
+        $pf_api_translation_array = array(
+            'route' => esc_url_raw(rest_url()),
+            'nonce' => wp_create_nonce('wp_rest'),
+
+        );
+        wp_localize_script($name, 'dataLocal', $pf_api_translation_array); //传给vite项目
+
+
+    }
+    /**
+     * 对js文件进行module接入
+     */
+    public static function refund_type_script($tag, $handle)
+    {
+        // 在这里判断需要添加 type 属性的 JS 文件，比如文件名包含 xxx.js
+        if (strpos($tag, 'index.js') !== false) {
+            // 在 script 标签中添加 type 属性
+            $tag = str_replace('<script', '<script type="module"', $tag);
+        }
+        return $tag;
+    }
+
 
     /**
      * 设置选项组
