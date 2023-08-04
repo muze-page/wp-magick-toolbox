@@ -128,7 +128,7 @@ function add_hello_header()
     //获取选项
     $value = get_option("mami_object_option");
     print_r($value);
-    if ($value['handle'] === "true") {
+    if ($value->handle == 1) {
         echo '<div style="background-color: yellow; text-align: center;">你好</div>';
     }
 }
