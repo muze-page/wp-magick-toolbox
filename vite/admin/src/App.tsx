@@ -57,7 +57,7 @@ const getOption = dataLocal?.option;
 
 const App = () => {
   //创建变量并设默认值
-  const [formData, setFormData] = useState<FieldType>(getOption || {});
+  const [, setFormData] = useState<FieldType>(getOption || {});
 
   //changedValues表示发生变化的字段及其新值的对象，
   //allValues表示所有字段及其当前值的对象。
@@ -86,9 +86,7 @@ const App = () => {
 
   return (
     <>
-      <h1>{formData.name}</h1>
-      <p>Age: {formData.age}</p>
-      <p>状态: {String(formData.handle)}</p>
+      
 
       <Form
         name="basic"
