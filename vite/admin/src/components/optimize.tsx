@@ -1,67 +1,78 @@
 //优化菜单
 import React from "react";
-import { useContext } from "react";
-import { Switch, Form, Input } from "antd";
+import { useState, useContext } from "react";
+import { Button, Switch, Form, Input, InputNumber } from "antd";
 import DataContext from "../dataContext";
 //选项类型
 type FieldType = {
-  //站点
-  site: {
-    //禁止转义
-    no_escape: boolean;
-    //关键词自动添加链接
-    add_inks: boolean;
-  };
-  //筛选
-  screen: {
-    Article_Menu_Author: boolean;
-  };
-  //显示ID
-  show_id: {
-    all: boolean;
-  };
+  name: string;
+  age: number;
+  handle: boolean;
 };
+
 const App: React.FC = () => {
-  const obj = useContext(DataContext);
+  //拿到值
+  const optionObj = useContext(DataContext);
+  //创建变量并设默认值
+  const [, setFormData] = useState<FieldType>(optionObj.option || {});
+
+  //表单修改值
+  const onValuesChange = (allValues: FieldType) => {
+    setFormData(allValues);
+  };
+
+  //打印修改后的值
+  const printData = (value: FieldType) => {
+    console.log(value);
+  };
+
+  // 打印DataContext文件中的值
+  const printDataContextValue = () => {
+    console.log(DataContext?._currentValue.option);
+  };
+
   return (
     <>
-      优化
-      {obj.screen.Article_Menu_Author.toString()}
+     
       <Form
         name="opt"
-        labelCol={{ span: 16 }}
+        labelCol={{ span: 12 }}
         wrapperCol={{ span: 8 }}
         style={{ maxWidth: 600 }}
+        //表单默认值，只有初始化以及重置时生效
+        initialValues={optionObj.option}
         //自动填充功能禁用
         autoComplete="off"
         //指定当表单提交时要执行的回调函数
-
+        onFinish={printData}
         //指定当表单字段值发生变化时要执行的回调函数
+        onValuesChange={onValuesChange}
       >
+        <Form.Item>
+          <h2>验证</h2>
+        </Form.Item>
+
+        <Form.Item<FieldType> label="姓名" name="name">
+          <Input />
+        </Form.Item>
+        <Form.Item<FieldType> label="年龄" name="age">
+          <InputNumber min={1} max={100} />
+        </Form.Item>
         <Form.Item<FieldType>
-          label="禁止网站title中的 “-” 被转义"
-          name="site.no_escape"
+          label="是否开启顶部显示"
+          name="handle"
           valuePropName="checked"
         >
           <Switch />
         </Form.Item>
-        <Form.Item<FieldType>
-          label="文章关键词自动添加内链链接代码"
-          name="site.add_inks"
-          valuePropName="checked"
-          extra={
-            <a
-              href="https://www.npc.ink/15286.html?=magick-plugin"
-              target="_blank"
-            >
-              详细介绍
-            </a>
-          }
-        >
-          <Switch />
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button type="primary" htmlType="submit">
+            提交
+          </Button>
         </Form.Item>
-        
       </Form>
+      <Button onClick={printData}>打印</Button>
+      <Button onClick={printDataContextValue}>上下文</Button>
     </>
   );
 };

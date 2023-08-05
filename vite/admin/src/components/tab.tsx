@@ -16,12 +16,12 @@ const items: TabsProps["items"] = [
   {
     key: "1",
     label: `安全`,
-    children: <SwitchTest />,
+    children: <Optimize />,
   },
   {
     key: "2",
     label: `优化`,
-    children: <Optimize />,
+    children: <SwitchTest />,
   },
   {
     key: "3",
