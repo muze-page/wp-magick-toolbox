@@ -1,7 +1,7 @@
 //优化菜单
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Button, Switch, Form, Input, InputNumber } from "antd";
+import {  Switch, Form, Input, InputNumber } from "antd";
 import DataContext from "../dataContext";
 //选项类型
 type FieldType = {
@@ -37,10 +37,7 @@ const App: React.FC = () => {
     optionObj.option = FormData;
   }, [FormData]);
 
-  // 打印DataContext文件中的值
-  const printDataContextValue = () => {
-    console.log(optionObj.option);
-  };
+  
 
   return (
     <>
@@ -78,7 +75,7 @@ const App: React.FC = () => {
         
       </Form>
 
-      <Button onClick={printDataContextValue}>上下文</Button>
+     
     </>
   );
 };

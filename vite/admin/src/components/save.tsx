@@ -5,10 +5,23 @@ import axios from "axios";
 import { Button } from "antd";
 import DataContext from "../dataContext";
 
-interface AppProps {
-  site: string;
+//开发环境状态
+const state: boolean = import.meta.env.VITE_STATE;
+
+//输出ajaxurl
+function getAjaxurl(): string {
+  if (state) {
+    //开发
+    return import.meta.env.VITE_AJAXURL;
+  } else {
+    //打包
+    return (window as any).ajaxurl;
+  }
 }
-const App: React.FC<AppProps> = ({ site }) => {
+//传值
+const ajaxurl = getAjaxurl();
+
+const App: React.FC = () => {
   //拿到值
   const optionObj = useContext(DataContext);
 
@@ -18,7 +31,7 @@ const App: React.FC<AppProps> = ({ site }) => {
     params.append("action", "save_object_option");
     params.append("object_data", JSON.stringify(optionObj));
     try {
-      const response = await axios.post(site, params);
+      const response = await axios.post(ajaxurl, params);
 
       if (response.status === 200) {
         console.log("设置选项已保存！");
