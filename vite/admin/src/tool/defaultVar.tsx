@@ -30,7 +30,7 @@ const App = {
       upload_auto_name: fal,
     },
     comment: {
-      interval: true, //两次评论间隔
+      interval: boo, //两次评论间隔
       interval_time: num, //两次评论间隔
       words_number: boo, //是否开启字数控制
       words_number_min: num, //最少评论字数
@@ -38,6 +38,13 @@ const App = {
       english: boo, //禁止纯英文评论
       japanese: boo, //禁止纯日文评论
       only: boo, //单篇文章仅限评论一次
+    },
+    other: {
+      //筛选
+      add_user: boo, //作者筛选
+      add_time: boo, //时间筛选
+      //显示ID
+      show_id: boo, //列表显示ID
     },
   },
 };

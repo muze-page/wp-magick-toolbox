@@ -2,15 +2,14 @@
 import Site from "@/components/optimize/site";
 import Medium from "@/components/optimize/medium";
 import Comment from "@/components/optimize/comment";
-import About from "@/components/optimize/about";
+import Other from "@/components/optimize/other";
 const App: React.FC = () => {
   return (
     <>
-    你好，大家好
       <Site />
       <Medium />
       <Comment />
-      <About />
+      <Other />
      
     </>
   );

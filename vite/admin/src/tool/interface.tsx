@@ -7,6 +7,7 @@ export type DataLocal = {
     site: OptimizeSite;
     medium: OptimizeMedium;
     comment: OptimizeComment;
+    other: OptimizeOther;
   };
 };
 
@@ -42,4 +43,13 @@ export type OptimizeComment = {
   english: boolean; //禁止纯英文评论
   japanese: boolean; //禁止纯日文评论
   only: boolean; //单篇文章仅限评论一次
+};
+
+//优化 其他
+export type OptimizeOther = {
+  //筛选
+  add_user: boolean; //作者筛选
+  add_time: boolean; //时间筛选
+  //显示ID
+  show_id: boolean; //列表显示ID
 };

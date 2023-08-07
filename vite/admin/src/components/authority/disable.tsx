@@ -1,5 +1,6 @@
+//聚合
 const App: React.FC = () => {
-  return <>其他</>;
+  return <>权限</>;
 };
 
 export default App;
