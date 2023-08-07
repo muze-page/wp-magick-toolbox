@@ -19,23 +19,23 @@ const App: React.FC = () => {
     optionObj.authority?.disable || defaultVar.authority.disable;
 
   //创建变量并设默认值
-  const [FormData, setFormData] = useState(publicData || {});
+  const [formData, setFormData] = useState(publicData);
 
   //表单同步修改值
-  const onValuesChange = (
-    changedValues: Partial<FieldType>,
-    _allValues: FieldType
-  ) => {
-    setFormData((prevState) => ({
-      ...prevState,
+  const onValuesChange = (changedValues: Partial<FieldType>) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       ...changedValues,
     }));
   };
 
   // 表单值发生变化时更新dataContext的值
   useEffect(() => {
-    optionObj.authority.disable = FormData;
-  }, [FormData]);
+    optionObj.authority = {
+      ...optionObj.authority,
+      disable: formData,
+    };
+  }, [formData]);
 
   return (
     <>

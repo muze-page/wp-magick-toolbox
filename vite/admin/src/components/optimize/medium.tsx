@@ -8,32 +8,27 @@ import defaultVar from "@/tool/defaultVar";
 type FieldType = OptimizeMedium;
 
 const App: React.FC = () => {
-
   //拿到公共值
   const optionObj = useContext(DataContext) || { optimize: {} };
 
-  //简化
-  let publicData = optionObj.optimize.medium;
-
-  //提供默认值
-  if (!publicData) {
-    publicData = defaultVar.optimize.medium;
-  }
+  //简化并提供默认值
+  let publicData = optionObj.optimize?.medium || defaultVar.optimize.medium;
 
   //拿到需要的媒体值
-  const [FormData, setFormData] = useState(publicData);
+  const [formData, setFormData] = useState(publicData);
 
   //表单同步值
   const onValuesChange = (changedValues: Partial<FieldType>) => {
     setFormData((prevState) => ({ ...prevState, ...changedValues }));
   };
 
-
-
-  //修改公共值
+  // 表单值发生变化时更新dataContext的值
   useEffect(() => {
-    optionObj.optimize.medium = FormData;
-  }, [FormData]);
+    optionObj.optimize = {
+      ...optionObj.optimize,
+      medium: formData,
+    };
+  }, [formData]);
 
   return (
     <Form
