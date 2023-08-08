@@ -1,20 +1,21 @@
-//站点 - 模版
+//权限 - 辅助功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Switch, Form } from "antd";
+import { Switch, Form, Input } from "antd";
 import DataContext from "@/tool/dataContext";
-import { OptimizeSecure } from "@/tool/interface";
+import { AuthorityAuxiliary } from "@/tool/interface";
 import defaultVar from "@/tool/defaultVar";
 
 //选项类型
-type FieldType = OptimizeSecure;
+type FieldType = AuthorityAuxiliary;
 
 const App: React.FC = () => {
   //拿到值
-  const optionObj = useContext(DataContext) ?? { optimize: {} };
+  const optionObj = useContext(DataContext) ?? { authority: {} };
 
   //简化并提供默认值
-  let publicData = optionObj.optimize?.secure || defaultVar.optimize.secure;
+  let publicData =
+    optionObj.authority?.auxiliary || defaultVar.authority.auxiliary;
 
   //创建变量并设默认值
   const [formData, setFormData] = useState(publicData || {});
@@ -30,19 +31,19 @@ const App: React.FC = () => {
     }));
   };
 
-  // 表单值发生变化时更新dataContext的值
-
   useEffect(() => {
-    optionObj.optimize = {
-      ...optionObj.optimize,
-      secure: formData,
+    //由于选项site可能不存在，这里需要使用复制来新建
+    optionObj.authority = {
+      ...optionObj.authority,
+      auxiliary: formData,
     };
   }, [formData]);
 
+  const { TextArea } = Input;
   return (
     <>
       <Form
-        name="secure"
+        name="auxiliary"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         style={{ maxWidth: 800 }}
@@ -56,40 +57,50 @@ const App: React.FC = () => {
         onValuesChange={onValuesChange}
       >
         <Form.Item>
-          <h2>安全</h2>
+          <h2>辅助功能</h2>
         </Form.Item>
 
         <Form.Item<FieldType>
-          label="替换默认登录报错信息"
-          name="replace_login_error"
+          label="文章统计"
+          name="single_count"
+          valuePropName="checked"
+          extra={"开启后显示在仪表盘下"}
+        >
+          <Switch />
+        </Form.Item>
+
+        <Form.Item<FieldType>
+          label="B2商城统计"
+          name="b2_count"
           valuePropName="checked"
           extra={
-            <span>
-              默认登录报错信息会透露用户是用户名错误还是密码错误，统一信息后，可改善此情况，
-              <b style={{ color: "red" }}>会影响验证码错误提示！</b>
-            </span>
+            <p>
+              开启后显示在仪表盘下,
+              <a href="https://7b2.com/shop/35736.html?=mami" target="_blank">
+                详细介绍
+              </a>
+            </p>
           }
         >
           <Switch />
         </Form.Item>
+
         <Form.Item<FieldType>
-          label="修改评论样式中的管理员ID"
-          name="modify_comment_user"
+          label="屏蔽恶意关键词搜索"
+          name="no_malice_key"
           valuePropName="checked"
-          extra={"默认的评论样式中，会包含管理员登录ID，修改后，可改善此情况"}
         >
           <Switch />
         </Form.Item>
-        <Form.Item<FieldType>
-          label="删除WordPress版本信息"
-          name="remove_RSS_version"
-          valuePropName="checked"
-          extra={
-            "从RSS源和网站中删除，如果您无法保持您的WordPres版本为最新，推荐开启"
-          }
-        >
-          <Switch />
-        </Form.Item>
+        {formData.no_malice_key && (
+          <Form.Item<FieldType>
+            label="输入关键词"
+            name="malice_keu_content"
+            extra={"输入您的关键词，以“回车键”分隔，一行一个"}
+          >
+            <TextArea rows={4} placeholder="一行一个" />
+          </Form.Item>
+        )}
       </Form>
     </>
   );

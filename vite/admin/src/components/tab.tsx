@@ -24,7 +24,7 @@ const items: TabsProps["items"] = [
   },
   {
     key: "3",
-    label: `权限`,
+    label: `其他`,
     children: <Authority />,
   },
   {

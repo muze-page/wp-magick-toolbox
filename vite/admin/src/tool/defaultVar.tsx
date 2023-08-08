@@ -3,7 +3,7 @@
 const boo: boolean = import.meta.env.VITE_BOOLEAN === true;
 
 //准备字符串false
-const fal: string = import.meta.env.VITE_BOOLEAN;
+const str: string = import.meta.env.VITE_BOOLEAN;
 
 //准备数字
 const num: number = import.meta.env.VITE_BOOLEAN ? 1 : 0;
@@ -23,7 +23,7 @@ const optimize = {
     img_add_tag: boo,
     no_auto_size: boo,
     medium_add_svg: boo,
-    upload_auto_name: fal,
+    upload_auto_name: str,
   },
   comment: {
     interval: boo, //两次评论间隔
@@ -54,6 +54,12 @@ const style = {
     particle: boo, //粒子特效
     color_tag: boo, //彩色标签云特效
     comment_emote: boo, //评论区表情包特效
+    custom_login_page: boo, //自定义登录页
+    background_left: str, //左下角颜色
+    background_right: str, //右上角颜色
+    logo_size: num, //LOGO尺寸
+    top_logo: str, //顶部LOGO
+    background_img: str, //文字背景图
   },
 };
 //权限控制
@@ -62,6 +68,13 @@ const authority = {
   disable: {
     renew: boo, //自动更新
     no_login_img: boo, //未登录模糊图片
+  },
+  //辅助功能
+  auxiliary: {
+    single_count: boo, //文章统计
+    b2_count: boo, //B2商城统计
+    no_malice_key: boo, //拒绝恶意关键词
+    malice_keu_content: str, //恶意关键词内容
   },
 };
 

@@ -1,7 +1,8 @@
 //页面特效
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Switch, Form } from "antd";
+import { Switch, Form, ColorPicker, Input, InputNumber } from "antd";
+import { FileImageOutlined } from "@ant-design/icons";
 import DataContext from "@/tool/dataContext";
 import { StylePage } from "@/tool/interface";
 import defaultVar from "@/tool/defaultVar";
@@ -82,6 +83,69 @@ const App: React.FC = () => {
         >
           <Switch />
         </Form.Item>
+
+        <Form.Item<FieldType>
+          label="自定义登录页"
+          name="custom_login_page"
+          valuePropName="checked"
+          extra={""}
+        >
+          <Switch />
+        </Form.Item>
+
+        {formData.custom_login_page && (
+          <>
+            <Form.Item<FieldType>
+              label="左下角颜色"
+              name="background_left"
+              valuePropName="checked"
+              extra={""}
+            >
+              <ColorPicker />
+            </Form.Item>
+            <Form.Item<FieldType>
+              label="右上角颜色"
+              name="background_right"
+              valuePropName="checked"
+              extra={""}
+            >
+              <ColorPicker />
+            </Form.Item>
+
+            <Form.Item<FieldType>
+              label="LOGO尺寸(px)"
+              name="logo_size"
+              valuePropName="checked"
+              extra={""}
+            >
+              <InputNumber />
+            </Form.Item>
+
+            <Form.Item<FieldType>
+              label="顶部LOGO"
+              name="top_logo"
+              valuePropName="checked"
+              extra={""}
+            >
+              <Input
+                addonBefore={<FileImageOutlined />}
+                placeholder="图片网址"
+              />
+            </Form.Item>
+
+            <Form.Item<FieldType>
+              label="文字背景图"
+              name="background_img"
+              valuePropName="checked"
+              extra={""}
+            >
+              <Input
+                addonBefore={<FileImageOutlined />}
+                placeholder="图片网址"
+              />
+            </Form.Item>
+          </>
+        )}
       </Form>
     </>
   );

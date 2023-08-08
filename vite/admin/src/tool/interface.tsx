@@ -18,6 +18,7 @@ export type DataLocal = {
   authority: {
     //禁用
     disable: AuthorityDisable;
+    auxiliary: AuthorityAuxiliary;
   };
 };
 
@@ -76,10 +77,24 @@ export type StylePage = {
   particle: boolean; //粒子特效
   color_tag: boolean; //彩色标签云特效
   comment_emote: boolean; //评论区表情包特效
+  custom_login_page: boolean; //自定义登录页
+  background_left: string; //左下角颜色
+  background_right: string; //右上角颜色
+  logo_size: number; //LOGO尺寸
+  top_logo: string; //顶部LOGO
+  background_img: string; //文字背景图
 };
 
 //权限 禁用
 export type AuthorityDisable = {
   renew: boolean; //禁用自动更新
   no_login_img: boolean; //未登录模糊图片
+};
+
+//权限 辅助
+export type AuthorityAuxiliary = {
+  single_count: boolean; //文章统计
+  b2_count: boolean; //B2商城统计
+  no_malice_key: boolean; //拒绝恶意关键词
+  malice_keu_content: string; //恶意关键词内容
 };
