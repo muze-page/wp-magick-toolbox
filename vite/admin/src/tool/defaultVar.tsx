@@ -75,6 +75,9 @@ const authority = {
     b2_count: boo, //B2商城统计
     no_malice_key: boo, //拒绝恶意关键词
     malice_keu_content: str, //恶意关键词内容
+    login_code: str, //登录验证码
+    tecent_id: str, //腾讯ID
+    tecent_key: str, //腾讯秘钥
   },
 };
 

@@ -1,7 +1,7 @@
 //权限 - 辅助功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Switch, Form, Input } from "antd";
+import { Switch, Form, Input, Select } from "antd";
 import DataContext from "@/tool/dataContext";
 import { AuthorityAuxiliary } from "@/tool/interface";
 import defaultVar from "@/tool/defaultVar";
@@ -100,6 +100,37 @@ const App: React.FC = () => {
           >
             <TextArea rows={4} placeholder="一行一个" />
           </Form.Item>
+        )}
+
+        <Form.Item<FieldType> label="登录验证码" name="login_code">
+          <Select
+            style={{ width: 200 }}
+            options={[
+              { value: "false", label: "禁用" },
+              { value: "math", label: "数学验证码" },
+              { value: "random", label: "随机混合验证码" },
+              { value: "tecent", label: " 腾讯验证码-功能未验证" },
+            ]}
+          />
+        </Form.Item>
+
+        {formData.login_code === "tecent" && (
+          <>
+            <Form.Item<FieldType>
+              label="App ID"
+              name="no_malice_key"
+              extra={"貌似随便填也能用"}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item<FieldType>
+              label="App Secret Key"
+              name="no_malice_key"
+              extra={"貌似随便填也能用"}
+            >
+              <Input.Password />
+            </Form.Item>
+          </>
         )}
       </Form>
     </>

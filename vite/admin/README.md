@@ -1,3 +1,5 @@
+# 计划
+1. 准备一个从媒体库中选图的组件
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

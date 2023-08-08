@@ -97,4 +97,7 @@ export type AuthorityAuxiliary = {
   b2_count: boolean; //B2商城统计
   no_malice_key: boolean; //拒绝恶意关键词
   malice_keu_content: string; //恶意关键词内容
+  login_code: string; //登录验证码
+  tecent_id: string; //腾讯ID
+  tecent_key: string; //腾讯秘钥
 };
