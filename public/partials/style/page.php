@@ -33,6 +33,35 @@ if (!class_exists('MaMi_Style_Page')) {
                     add_action('wp_footer', array(__CLASS__, 'add_page_particle'));
                 }
             }
+
+
+            //自定义登录页外观
+            $custom_login_page = MaMi_Admin::get_config($option, 'custom_login_page');
+            //左下角颜色
+            //右上角颜色
+            //LOGO尺寸
+            //顶部LOGO
+            //文字背景图
+            $background_left = MaMi_Admin::get_config($option, 'background_left', '#0073aa');
+            $background_right = MaMi_Admin::get_config($option, 'background_right', '#0073aa');
+            $logo_size = MaMi_Admin::get_config($option, 'logo_size', '1');
+            $top_logo = MaMi_Admin::get_config($option, 'top_logo', '1');
+            $background_img = MaMi_Admin::get_config($option, 'background_img', '1');
+
+            if ($custom_login_page) {
+                add_action('login_header', array(__CLASS__, 'io_login_header'));
+                add_action('login_footer', array(__CLASS__, 'io_login_footer'));
+                //样式配置
+                //add_action('login_head', array(__CLASS__, 'custom_login_style'));
+                add_filter('login_head', function () use ($background_left, $background_right, $logo_size, $top_logo, $background_img) {
+                    return self::custom_login_style($background_left, $background_right, $logo_size, $top_logo, $background_img);
+                }, 10, 3);
+
+                //加载css
+                add_action('login_enqueue_scripts', array(__CLASS__, 'load_css'));
+            }
+            //self::custom_login_style($background_left, $background_right, $logo_size, $top_logo, $background_img);
+
         }
         /**
          * 添加彩色标签云
@@ -158,6 +187,89 @@ if (!class_exists('MaMi_Style_Page')) {
                 MAGICK_MIXTURE_VERSION,
                 true
             );
+        }
+
+
+        /**
+         * 效果：美化Wordpress登录页
+         * 原文地址：https://www.iowen.cn/chundaimameihuawordpressmorendengluye/
+         */
+
+
+        /**
+         * 加载css
+         */
+        public static function load_css()
+        {
+            wp_enqueue_style(
+                MAGICK_MIXTURE_NAME . '_style-login-css',
+                plugin_dir_url(\dirname(__FILE__)) . 'css/style-login.css',
+                array(),
+                MAGICK_MIXTURE_VERSION,
+                'all'
+            );
+        }
+        public static function io_login_header()
+        {
+            echo '<div class="login-container">
+                  <div class="login-body">
+                      <div class="login-img shadow-lg position-relative flex-fill">
+                          <div class="img-bg position-absolute">
+                              <div class="login-info">
+                                  <h2>' . get_bloginfo('name') . '</h2>
+                                  <p>' . get_bloginfo('description') . '</p>
+                              </div>
+                          </div>
+                      </div>';
+        }
+        public static function io_login_footer()
+        {
+            echo '</div><!--login-body END-->
+             </div><!--login-container END-->
+             <div class="footer-copyright position-absolute">
+                     <span>Copyright © <a href="' . esc_url(home_url()) . '" class="text-white-50" title="' . get_bloginfo('name') . '" rel="home">' . get_bloginfo('name') . '</a></span>
+             </div>';
+        }
+
+        public static function custom_login_style($background_left, $background_right, $logo_size, $top_logo, $background_img)
+        {
+            //左下背景色
+            $bg_left = $background_left;
+            //右上背景色
+            $bg_right = $background_right;
+            //LOGO
+            $logo_url = $top_logo;
+            //尺寸
+            $logo_size = $logo_size;
+            //左边文字背景图
+            $bg_img_left = $background_img;
+            echo '<style type="text/css">
+             body{
+                 background:-o-linear-gradient(45deg,' . $bg_left . ',' . $bg_right . ');
+                 background:linear-gradient(45deg,' . $bg_left . ',' . $bg_right . ');
+                 height:100vh;
+             }
+             .login h1 a{
+                 background-image:url(' . $logo_url . ' );
+                 width:180px;
+                 background-position:center center;
+                 background-size:' . $logo_size . 'px;
+             }
+             .img-bg{
+                 color: #fff;
+                 padding: 2rem;
+                 bottom: -2rem;
+                 left: 0;
+                 top: -2rem;
+                 right: 0;
+                 border-radius: 10px;
+                 background-repeat: no-repeat;
+                 background-position: center center;
+                 background-size: cover;
+                 background-image:url(' . $bg_img_left . ');
+                }
+ 
+                </style>';
         }
     } //end
 }

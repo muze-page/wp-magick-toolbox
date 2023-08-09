@@ -49,8 +49,7 @@ class Magick_Mixtrue_Public
     }
     public function load()
     {
-        //加载表情包
-        require_once plugin_dir_path(__FILE__) . 'partials/class-mm-display.php';
+
         //自定义的一为登录页
         require_once plugin_dir_path(__FILE__) . 'partials/class-mm-login.php';
         /**
@@ -64,8 +63,7 @@ class Magick_Mixtrue_Public
         $style = MaMi_Admin::get_seting('style');
 
 
-        //加载前台表情
-        //Magick_Mixtrue_Display::run();
+
 
         //加载登录页
         Magick_Mixtrue_Login::run();
