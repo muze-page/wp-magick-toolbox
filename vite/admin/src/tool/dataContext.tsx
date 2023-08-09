@@ -15,7 +15,10 @@ function getDataLocal(): DataLocal {
     return option;
   } else {
     //打包
-    return (window as any).dataLocal.option;
+    //return (window as any).dataLocal.option;
+    return (window as any).dataLocal.option !== ""
+      ? (window as any).dataLocal.option
+      : {};
   }
 }
 
