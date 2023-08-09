@@ -6,6 +6,8 @@
 if (!class_exists('MaMi_Auxiliary')) {
     class MaMi_Auxiliary
     {
+
+        private static $auxiliary;
         //加载
         public static function run($config)
         {
@@ -28,6 +30,8 @@ if (!class_exists('MaMi_Auxiliary')) {
 
             //获取选项 - 功能
             $auxiliary =  MaMi_Admin::get_config($config, 'auxiliary');
+            self::$auxiliary = $auxiliary;
+
             $single_count = MaMi_Admin::get_config($auxiliary, 'single_count');
             if ($single_count) {
                 //文章统计页面
@@ -46,14 +50,8 @@ if (!class_exists('MaMi_Auxiliary')) {
 
             //屏蔽恶意关键词搜索
             $no_malice_key = MaMi_Admin::get_config($auxiliary, 'no_malice_key');
-
             if ($no_malice_key) {
-                $malice_keu_content = MaMi_Admin::get_config($auxiliary, 'malice_keu_content');
-
-                //add_action('template_redirect', array(__CLASS__, 'ytkah_search_ban'));
-                add_action('template_redirect', function () use ($malice_keu_content) {
-                    return self::ytkah_search_ban($malice_keu_content);
-                },);
+                add_action('template_redirect', array(__CLASS__, 'ytkah_search_ban'));
             }
         }
 
@@ -103,14 +101,18 @@ if (!class_exists('MaMi_Auxiliary')) {
         }
 
         //屏蔽恶意关键词搜索
-        public static function ytkah_search_ban($malice_keu_content)
+        public static function ytkah_search_ban()
         {
+            $malice_keu_content = MaMi_Admin::get_config(self::$auxiliary, 'malice_keu_content');
 
             if (is_search()) {
                 global $wp_query;
                 //拿到输入的值
                 $ytkah_search_key = $malice_keu_content;
-                //$ytkah_search_key =json_decode('"' . $malice_keu_content . '"', false, 512, JSON_UNESCAPED_UNICODE);
+                echo "<h1>";
+                echo $ytkah_search_key;
+                echo "</h1>";
+               
                 if ($ytkah_search_key) {
                     $ytkah_search_key = str_replace("\r\n", "|", $ytkah_search_key);
                     $BanKey = explode('|', $ytkah_search_key);
