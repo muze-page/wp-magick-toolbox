@@ -64,8 +64,6 @@ class MaMi_Admin
     public function load()
     {
 
-        //商城统计页面
-        require_once plugin_dir_path(__FILE__) . 'partials/census-shop.php';
 
         //优化设置
         require_once plugin_dir_path(__FILE__) . 'partials/optimize.php';
@@ -95,12 +93,14 @@ class MaMi_Admin
         // 添加Ajax请求处理函数
         add_action('wp_ajax_save_object_option', array(__CLASS__, 'save_object_option_callback'));
 
-        //优化
+        /**
+         * 优化
+         */
         MaMi_Optimize::run();
 
-       
+
         /**
-         * 权限 - 功能
+         * 权限
          */
         MaMi_Auxiliary::run();
     }

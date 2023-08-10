@@ -38,9 +38,15 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
                 return;
             }
 
+            //准备地址
+            $url_css = plugin_dir_url(dirname(__DIR__)) . 'css/mm-census-style.css';
+            $url_css = str_replace('/admin/partials/', '/admin/',  $url_css);
+            $url_js = plugin_dir_url(dirname(__DIR__)) . 'js/echarts_v5.4.0.js';
+            $url_js = str_replace('/admin/partials/', '/admin/',  $url_js);
+
             wp_enqueue_style(
                 MAGICK_MIXTURE_NAME . '_census-single',
-                plugin_dir_url(\dirname(__FILE__)) . 'css/mm-census-style.css',
+                $url_css,
                 array(),
                 MAGICK_MIXTURE_VERSION,
                 'all'
@@ -48,7 +54,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
 
             wp_enqueue_script(
                 MAGICK_MIXTURE_NAME . '_echarts-single',
-                plugin_dir_url(\dirname(__FILE__)) . 'js/echarts_v5.4.0.js',
+                $url_js,
                 array(),
                 MAGICK_MIXTURE_VERSION,
                 false

@@ -13,7 +13,7 @@ if (!class_exists('MaMi_Auxiliary')) {
         {
             //获取设置选项值
             $config = MaMi_Admin::get_seting('authority');
-            
+
             //获取选项 - 禁用
             $option =  MaMi_Admin::get_config($config, 'disable');
 
@@ -38,7 +38,7 @@ if (!class_exists('MaMi_Auxiliary')) {
             $single_count = MaMi_Admin::get_config($auxiliary, 'single_count');
             if ($single_count) {
                 //文章统计页面
-                require_once plugin_dir_path(__FILE__) . 'census-single.php';
+                require_once plugin_dir_path(__FILE__) . 'function/block/census-single.php';
                 //加载文章统计
                 Magick_Mixtrue_Census_Single::run();
             }
@@ -47,7 +47,7 @@ if (!class_exists('MaMi_Auxiliary')) {
             $b2_count = MaMi_Admin::get_config($auxiliary, 'b2_count');
             if ($b2_count) {
                 //文章统计页面
-                require_once plugin_dir_path(__FILE__) . 'census-shop.php';
+                require_once plugin_dir_path(__FILE__) . 'function/block/census-shop.php';
                 Magick_Mixtrue_Census_Shop::run();
             }
 
