@@ -88,6 +88,17 @@ const H5Home = {
   slide_all: str, //幻灯片 查看全部
   more: num,
 };
+//H5 联系
+const H5Contact = {
+  title: str, //联系标题
+  title_one: str, //小标题
+  content_one: str, //内容
+  title_two: str, //小标题
+  content_two: str, //内容
+  brand_link: str, //跳转链接
+  brand_logo: str, //LOGO
+  introduce: str, //介绍
+};
 
 const App = {
   //优化
@@ -110,6 +121,7 @@ const App = {
   //H5
   h5: {
     home: H5Home, //首页
+    contact: H5Contact, //联系
   },
 };
 

@@ -5,6 +5,7 @@ import { Switch, Form, Input } from "antd";
 import DataContext from "@/tool/dataContext";
 import { H5Home } from "@/tool/interface";
 import defaultVar from "@/tool/defaultVar";
+import Contact from "@/components/h5/contact";
 
 //选项类型
 type FieldType = H5Home;
@@ -72,16 +73,25 @@ const App: React.FC = () => {
         >
           <Switch />
         </Form.Item>
-        <Form.Item>
-          <h2>幻灯片</h2>
-        </Form.Item>
-        <Form.Item>
-          <h2>幻灯片选择</h2>
-        </Form.Item>
-        <Form.Item<FieldType> label="查看全部按钮的链接" name="slide_all">
-          <Input />
-        </Form.Item>
+        {formData.switch && (
+          <>
+            <Form.Item>
+              <h2>幻灯片</h2>
+            </Form.Item>
+            <Form.Item>
+              <h2>幻灯片选择</h2>
+            </Form.Item>
+            <Form.Item<FieldType> label="查看全部按钮的链接" name="slide_all">
+              <Input />
+            </Form.Item>
+          </>
+        )}
       </Form>
+
+      {/**
+       * 其他设置组件
+       */}
+      {formData.switch && <Contact />}
     </>
   );
 };

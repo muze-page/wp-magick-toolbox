@@ -21,6 +21,7 @@ export type DataLocal = {
   };
   h5: {
     home: H5Home;
+    contact:H5Contact;
   };
 };
 
@@ -103,4 +104,16 @@ export type H5Home = {
   slide: Array<number>; //幻灯片
   slide_all: string; //幻灯片 查看全部
   more: number;
+};
+
+//H5 联系
+export type H5Contact = {
+  title: string; //联系标题
+  title_one: string; //小标题
+  content_one: string; //内容
+  title_two: string; //小标题
+  content_two: string; //内容
+  brand_link: string; //跳转链接
+  brand_logo: string; //LOGO
+  introduce: string; //介绍
 };
