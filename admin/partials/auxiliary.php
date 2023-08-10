@@ -9,8 +9,11 @@ if (!class_exists('MaMi_Auxiliary')) {
 
         private static $auxiliary;
         //加载
-        public static function run($config)
+        public static function run()
         {
+            //获取设置选项值
+            $config = MaMi_Admin::get_seting('authority');
+            
             //获取选项 - 禁用
             $option =  MaMi_Admin::get_config($config, 'disable');
 
@@ -52,6 +55,14 @@ if (!class_exists('MaMi_Auxiliary')) {
             $no_malice_key = MaMi_Admin::get_config($auxiliary, 'no_malice_key');
             if ($no_malice_key) {
                 add_action('template_redirect', array(__CLASS__, 'ytkah_search_ban'));
+            }
+
+            //登录验证码
+            $login_code = MaMi_Admin::get_config($auxiliary, 'login_code');
+            if ($login_code !== "false") {
+                //优化设置
+                require_once plugin_dir_path(__FILE__) . 'function/class-mami-login_verify.php';
+                MaMi_Login_Verify::run($login_code);
             }
         }
 
@@ -120,7 +131,6 @@ if (!class_exists('MaMi_Auxiliary')) {
                             <button class="button" style="margin: 1em 0;">返回</button>
                             </a>';
                             wp_die($message);
-                           
                         }
                     }
                 }

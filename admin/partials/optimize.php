@@ -3,17 +3,11 @@
 /**
  * 优化选项
  */
-if (!class_exists('Magick_Mixtrue_Optimize')) {
-    class Magick_Mixtrue_Optimize
-    {
 
-        //加载
+if (!class_exists('MaMi_Optimize')) {
+    class MaMi_Optimize
+    {
         public static function run()
-        {
-            add_action('init', array(__CLASS__, 'load'));
-        }
-        //准备
-        public static function load()
         {
             //获取设置选项值
             $config = MaMi_Admin::get_seting('optimize');
@@ -48,24 +42,6 @@ if (!class_exists('Magick_Mixtrue_Optimize')) {
              */
             require_once plugin_dir_path(__FILE__) . 'optimize/other.php';
             MaMi_Optimize_Other::run($config);
-
-
-            //获取设置选项值
-            $authority = MaMi_Admin::get_seting('authority');
-            /**
-             * 权限 - 功能
-             */
-
-            require_once plugin_dir_path(__FILE__) . 'auxiliary.php';
-            MaMi_Auxiliary::run($authority);
-
-          
         }
-
-
-
-
-
-       
     }
 }

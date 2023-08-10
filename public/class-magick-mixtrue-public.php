@@ -50,8 +50,7 @@ class Magick_Mixtrue_Public
     public function load()
     {
 
-        //自定义的一为登录页
-        require_once plugin_dir_path(__FILE__) . 'partials/class-mm-login.php';
+       
         /**
          * 个性化 页面特效
          */
@@ -61,12 +60,6 @@ class Magick_Mixtrue_Public
     {
         //获取选项
         $style = MaMi_Admin::get_seting('style');
-
-
-
-
-        //加载登录页
-        Magick_Mixtrue_Login::run();
         /**
          * 个性化 - 页面特效
          */

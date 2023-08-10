@@ -109,7 +109,7 @@ const App: React.FC = () => {
               { value: "false", label: "禁用" },
               { value: "math", label: "数学验证码" },
               { value: "random", label: "随机混合验证码" },
-              { value: "tecent", label: " 腾讯验证码-功能未验证" },
+              { value: "tecent_vcode", label: " 腾讯验证码-功能未验证" },
             ]}
           />
         </Form.Item>

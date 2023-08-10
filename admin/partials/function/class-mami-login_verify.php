@@ -1,44 +1,34 @@
 <?php
-
-if (!class_exists('Magick_Mixtrue_Login')) {
-    class Magick_Mixtrue_Login
+/**
+ * 添加验证码
+ */
+if (!class_exists('MaMi_Login_Verify')) {
+    class MaMi_Login_Verify
     {
-        public function __construct()
+        public static function run($login_code)
         {
-
-        }
-        public static function run()
-        {
-
-            add_action('login_init', array(__CLASS__, 'load'));
-
-        }
-
-        public static function load()
-        {
-           
 
             //登录验证码判断
-            switch (carbon_get_theme_option('cmma_login_verify')) {
-                //添加数字运算验证码
-                case 'math_results':
+            switch ($login_code) {
+                    //添加数字运算验证码
+                case 'math':
                     self::run_math();
                     break;
-                //WordPress登陆后台随机混合数验证码
-                case 'random_mixing':
+                    //WordPress登陆后台随机混合数验证码
+                case 'random':
                     self::run_random();
                     break;
 
-                //添加腾讯验证码
-                case 'tx_vcode':
+                    //添加腾讯验证码
+                case 'tecent_vcode':
                     self::login_verify_tx_run();
                     break;
-                default:return;
+                default:
+                    return;
             }
-
         }
 
-       
+
         /**
          * 效果：添加数学验证码
          * 来源：https://blog.csdn.net/qq_39339179/article/details/119183143
@@ -71,25 +61,25 @@ if (!class_exists('Magick_Mixtrue_Login')) {
             $_POST['num2'] = isset($_POST['num2']) ? $_POST['num2'] : 0;
             $sum = $_POST['sum']; //用户提交的计算结果
             switch ($sum) {
-                //得到正确的计算结果则直接跳出
-                case $_POST['num1'] + $_POST['num2']:break;
-                //未填写结果时的错误讯息
+                    //得到正确的计算结果则直接跳出
+                case $_POST['num1'] + $_POST['num2']:
+                    break;
+                    //未填写结果时的错误讯息
                 case null:
                     function empty_captcha()
-                {
-                        return new WP_Error("empty_captcha", __('<strong>错误</strong>: 请输入验证码.', 'zaxu'));
+                    {
+                        return new WP_Error("empty_captcha", __('<strong>错误</strong>: 请输入数学验证码.', 'zaxu'));
                     }
                     add_filter("wp_authenticate_user", "empty_captcha", 10, 2);
 
                     break;
-                //计算错误时的错误讯息
+                    //计算错误时的错误讯息
                 default:
                     function incorrect_captcha()
-                {
+                    {
                         return new WP_Error("empty_captcha", __('<strong>错误</strong>: 验证码错误，请重新输入.', 'zaxu'));
                     }
                     add_filter("wp_authenticate_user", "incorrect_captcha", 10, 2);
-
             }
         }
 
@@ -120,20 +110,21 @@ if (!class_exists('Magick_Mixtrue_Login')) {
             $_POST['num1'] = isset($_POST['num1']) ? $_POST['num1'] : 0;
             $sum = $_POST['sum'];
             switch ($sum) {
-                case $_POST['num1']:break;
-                //未填写结果时的错误讯息
+                case $_POST['num1']:
+                    break;
+                    //未填写结果时的错误讯息
                 case null:
 
                     function empty_captcha()
-                {
+                    {
                         return new WP_Error("empty_captcha", __('<strong>错误</strong>: 请输入验证码.', 'zaxu'));
                     }
                     add_filter("wp_authenticate_user", "empty_captcha", 10, 2);
                     break;
-                //计算错误时的错误讯息
+                    //计算错误时的错误讯息
                 default:
                     function incorrect_captcha()
-                {
+                    {
                         return new WP_Error("empty_captcha", __('<strong>错误</strong>: 验证码错误，请重新输入.', 'zaxu'));
                     }
                     add_filter("wp_authenticate_user", "incorrect_captcha", 10, 2);
@@ -152,7 +143,6 @@ if (!class_exists('Magick_Mixtrue_Login')) {
             add_action('login_head', array(__CLASS__, 'add_login_head'));
             add_action('login_form', array(__CLASS__, 'add_captcha_body'));
             add_filter('wp_authenticate_user', array(__CLASS__, 'validate_tcaptcha_login'), 100, 1);
-
         }
 
         public static function add_login_head()
@@ -164,26 +154,26 @@ if (!class_exists('Magick_Mixtrue_Login')) {
         {
             $appid = carbon_get_theme_option('cmma_login_verify_tx_id'); //拿到 ID
 
-            ?>
-              <input type="hidden" id="wp007_tcaptcha" name="tcaptcha_007" value="" />
-              <input type="hidden" id="wp007_ticket" name="syz_ticket" value="" />
-              <input type="hidden" id="wp007_randstr" name="syz_randstr" value="" />
-              <!-- 修改下面的 data-appid 值 -->
-              <div id="TencentCaptcha" data-appid="<?php echo $appid; ?>" data-cbfn="callback" class="login_button">验证</div>
-              <script>
-                  window.callback = function(res){
-                      if(res.ret === 0){
-                          var but = document.getElementById("TencentCaptcha");
-                          document.getElementById("wp007_ticket").value = res.ticket;
-                          document.getElementById("wp007_randstr").value = res.randstr;
-                          document.getElementById("wp007_tcaptcha").value = 1;
-                          but.style.cssText = "color:#fff;background:#4fb845;border-color:#4fb845;pointer-events:none";
-                          but.innerHTML = "验证成功";
-                      }
-                  }
-              </script>
-            <?php
-}
+?>
+            <input type="hidden" id="wp007_tcaptcha" name="tcaptcha_007" value="" />
+            <input type="hidden" id="wp007_ticket" name="syz_ticket" value="" />
+            <input type="hidden" id="wp007_randstr" name="syz_randstr" value="" />
+            <!-- 修改下面的 data-appid 值 -->
+            <div id="TencentCaptcha" data-appid="<?php echo $appid; ?>" data-cbfn="callback" class="login_button">验证</div>
+            <script>
+                window.callback = function(res) {
+                    if (res.ret === 0) {
+                        var but = document.getElementById("TencentCaptcha");
+                        document.getElementById("wp007_ticket").value = res.ticket;
+                        document.getElementById("wp007_randstr").value = res.randstr;
+                        document.getElementById("wp007_tcaptcha").value = 1;
+                        but.style.cssText = "color:#fff;background:#4fb845;border-color:#4fb845;pointer-events:none";
+                        but.innerHTML = "验证成功";
+                    }
+                }
+            </script>
+<?php
+        }
 
         /**
          * 处理登录二次验证
@@ -201,7 +191,6 @@ if (!class_exists('Magick_Mixtrue_Login')) {
                     return new WP_Error('broke', $result['message']);
                 }
             }
-
         }
 
         /**
@@ -283,6 +272,5 @@ if (!class_exists('Magick_Mixtrue_Login')) {
             curl_close($ch);
             return $response;
         }
-
     }
 }

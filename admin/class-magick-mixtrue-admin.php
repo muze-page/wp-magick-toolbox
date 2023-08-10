@@ -68,10 +68,10 @@ class MaMi_Admin
         require_once plugin_dir_path(__FILE__) . 'partials/census-shop.php';
 
         //优化设置
-        require_once plugin_dir_path(__FILE__) . 'partials/option-optimize.php';
+        require_once plugin_dir_path(__FILE__) . 'partials/optimize.php';
 
-        //功能设置
-        require_once plugin_dir_path(__FILE__) . 'partials/option-function.php';
+        //权限设置
+        require_once plugin_dir_path(__FILE__) . 'partials/auxiliary.php';
     }
 
     /**
@@ -95,15 +95,14 @@ class MaMi_Admin
         // 添加Ajax请求处理函数
         add_action('wp_ajax_save_object_option', array(__CLASS__, 'save_object_option_callback'));
 
-
-
-
-
         //优化
-        Magick_Mixtrue_Optimize::run();
+        MaMi_Optimize::run();
 
-        //功能
-        Magick_Mixtrue_Fuction::run();
+       
+        /**
+         * 权限 - 功能
+         */
+        MaMi_Auxiliary::run();
     }
 
 
