@@ -34,9 +34,8 @@ const App: React.FC = () => {
       const response = await axios.post(ajaxurl, params);
 
       if (response.status === 200) {
-        console.log("设置选项已保存！");
         console.log(response);
-        alert("保存成功，现在可以使用查询功能了");
+        alert("保存成功");
       } else {
         console.error("保存设置选项时出错：" + response.data);
       }

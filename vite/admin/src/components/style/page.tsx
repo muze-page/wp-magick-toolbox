@@ -39,7 +39,6 @@ const App: React.FC = () => {
     };
   }, [formData]);
 
-  //TODO:解决颜色hec格式问题
   return (
     <>
       <Form
@@ -94,12 +93,14 @@ const App: React.FC = () => {
           <Switch />
         </Form.Item>
 
+        {/**
+         * TODO:解决颜色hec格式问题
+         */}
         {formData.custom_login_page && (
           <>
             <Form.Item<FieldType>
               label="左下角颜色"
               name="background_left"
-              valuePropName="checked"
               extra={""}
             >
               <ColorPicker />
@@ -107,7 +108,6 @@ const App: React.FC = () => {
             <Form.Item<FieldType>
               label="右上角颜色"
               name="background_right"
-              valuePropName="checked"
               extra={""}
             >
               <ColorPicker />
@@ -116,18 +116,12 @@ const App: React.FC = () => {
             <Form.Item<FieldType>
               label="LOGO尺寸(px)"
               name="logo_size"
-              valuePropName="checked"
               extra={""}
             >
               <InputNumber />
             </Form.Item>
 
-            <Form.Item<FieldType>
-              label="顶部LOGO"
-              name="top_logo"
-              valuePropName="checked"
-              extra={""}
-            >
+            <Form.Item<FieldType> label="顶部LOGO" name="top_logo" extra={""}>
               <Input
                 addonBefore={<FileImageOutlined />}
                 placeholder="图片网址"
@@ -137,7 +131,6 @@ const App: React.FC = () => {
             <Form.Item<FieldType>
               label="文字背景图"
               name="background_img"
-              valuePropName="checked"
               extra={""}
             >
               <Input
