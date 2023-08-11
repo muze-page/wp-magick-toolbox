@@ -1,12 +1,11 @@
 import React from "react";
-
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import Optimize from "@/components/optimize/index";
 import Style from "@/components/style/index";
 import Authority from "@/components/authority/index";
 import H5 from "@/components/h5/index";
-import Demo from "@/components/demo";
+//import Demo from "@/components/demo";
 
 const onChange = (key: string) => {
   console.log(key);
@@ -32,12 +31,8 @@ const items: TabsProps["items"] = [
     key: "4",
     label: `H5`,
     children: <H5 />,
-  },
-  {
-    key: "5",
-    label: `Demo`,
-    children: <Demo />,
-  },
+  }
+  
 ];
 
 const App: React.FC = () => (

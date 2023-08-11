@@ -2,7 +2,7 @@
 //将拿到的值推送到服务器端
 import { useContext } from "react";
 import axios from "axios";
-import { Button } from "antd";
+import { Button, message, Affix } from "antd";
 import DataContext from "./dataContext";
 
 //开发环境状态
@@ -22,6 +22,27 @@ function getAjaxurl(): string {
 const ajaxurl = getAjaxurl();
 
 const App: React.FC = () => {
+  //提示信息
+  const [messageApi, contextHolder] = message.useMessage();
+  const success = () => {
+    messageApi.open({
+      type: "success",
+      content: "保存成功",
+      style: {
+        marginTop: "10vh",
+      },
+    });
+  };
+  const warning = () => {
+    messageApi.open({
+      type: "warning",
+      content: "保存失败",
+      style: {
+        marginTop: "10vh",
+      },
+    });
+  };
+
   //拿到值
   const optionObj = useContext(DataContext);
 
@@ -34,10 +55,14 @@ const App: React.FC = () => {
       const response = await axios.post(ajaxurl, params);
 
       if (response.status === 200) {
+        //保存成功
         console.log(response);
-        alert("保存成功");
+
+        success();
       } else {
         console.error("保存设置选项时出错：" + response.data);
+
+        warning();
       }
     } catch (error: any) {
       console.error("保存设置选项时出错：" + error.message);
@@ -45,9 +70,12 @@ const App: React.FC = () => {
   };
   return (
     <>
-      <Button type="primary" onClick={postData}>
-        保存
-      </Button>
+      {contextHolder}
+      <Affix offsetTop={120}>
+        <Button type="primary" onClick={postData}>
+          保存
+        </Button>
+      </Affix>
     </>
   );
 };
