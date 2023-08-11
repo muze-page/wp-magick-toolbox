@@ -3,11 +3,16 @@
 if (!class_exists('MaMi_Style_Page')) {
     class MaMi_Style_Page
     {
+        //选项值
+        private static $option;
         //加载
         public static function run($config)
         {
             //获取选项
             $option =  MaMi_Admin::get_config($config, 'page');
+
+            //传值
+            self::$option = $option;
 
             //圆角彩色背景标签云
             $color_tag = MaMi_Admin::get_config($option, 'color_tag');
@@ -37,34 +42,16 @@ if (!class_exists('MaMi_Style_Page')) {
 
             //自定义登录页外观
             $custom_login_page = MaMi_Admin::get_config($option, 'custom_login_page');
-
-
             if ($custom_login_page) {
-
-                //左下角颜色
-                //右上角颜色
-                //LOGO尺寸
-                //顶部LOGO
-                //文字背景图
-                $background_left = MaMi_Admin::get_config($option, 'background_left', '#0073aa');
-                $background_right = MaMi_Admin::get_config($option, 'background_right', '#0073aa');
-                $logo_size = MaMi_Admin::get_config($option, 'logo_size', '1');
-                $top_logo = MaMi_Admin::get_config($option, 'top_logo', '1');
-                $background_img = MaMi_Admin::get_config($option, 'background_img', '1');
-
                 add_action('login_header', array(__CLASS__, 'io_login_header'));
                 add_action('login_footer', array(__CLASS__, 'io_login_footer'));
+
                 //样式配置
-                //add_action('login_head', array(__CLASS__, 'custom_login_style'));
-                add_filter('login_head', function () use ($background_left, $background_right, $logo_size, $top_logo, $background_img) {
-                    return self::custom_login_style($background_left, $background_right, $logo_size, $top_logo, $background_img);
-                }, 10, 3);
+                add_action('login_head', array(__CLASS__, 'custom_login_style'));
 
                 //加载css
                 add_action('login_enqueue_scripts', array(__CLASS__, 'load_css'));
             }
-            //self::custom_login_style($background_left, $background_right, $logo_size, $top_logo, $background_img);
-
         }
         /**
          * 添加彩色标签云
@@ -234,18 +221,18 @@ if (!class_exists('MaMi_Style_Page')) {
              </div>';
         }
 
-        public static function custom_login_style($background_left, $background_right, $logo_size, $top_logo, $background_img)
+        public static function custom_login_style()
         {
             //左下背景色
-            $bg_left = $background_left;
+            $bg_left = MaMi_Admin::get_config(self::$option, 'background_left', '#0073aa');
             //右上背景色
-            $bg_right = $background_right;
+            $bg_right = MaMi_Admin::get_config(self::$option, 'background_right', '#0073aa');
             //LOGO
-            $logo_url = $top_logo;
+            $logo_url = MaMi_Admin::get_config(self::$option, 'logo_size', '1');
             //尺寸
-            $logo_size = $logo_size;
+            $logo_size = MaMi_Admin::get_config(self::$option, 'top_logo', '1');
             //左边文字背景图
-            $bg_img_left = $background_img;
+            $bg_img_left = MaMi_Admin::get_config(self::$option, 'background_img', '1');
             echo '<style type="text/css">
              body{
                  background:-o-linear-gradient(45deg,' . $bg_left . ',' . $bg_right . ');

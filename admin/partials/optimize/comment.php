@@ -3,32 +3,28 @@
 if (!class_exists('MaMi_Optimize_Comment')) {
     class MaMi_Optimize_Comment
     {
+        //选项值
+        private static $option;
         //加载
         public static function run($config)
         {
             //获取选项
             $option =  MaMi_Admin::get_config($config, 'comment');
 
+            //类内赋值
+            self::$option = $option;
+
             //评论时间间隔
             $interval = MaMi_Admin::get_config($option, 'interval');
-            //间隔时间
-            $interval_time = MaMi_Admin::get_config($option, 'interval_time');
+
             if ($interval) {
-                //add_filter('comment_flood_filter', array(__CLASS__, 'suren_comment_flood_filter'), 10, 3);
-                add_filter('comment_flood_filter', function ($flood_control, $time_last, $time_new) use ($interval_time) {
-                    return self::suren_comment_flood_filter($flood_control, $time_last, $time_new, $interval_time);
-                }, 10, 3);
+                add_filter('comment_flood_filter', array(__CLASS__, 'suren_comment_flood_filter'), 10, 3);
             }
 
             //评论最少和最多字数
             $words_number = MaMi_Admin::get_config($option, 'words_number');
-            $words_number_min = MaMi_Admin::get_config($option, 'words_number_min');
-            $words_number_max = MaMi_Admin::get_config($option, 'words_number_max');
             if ($words_number) {
-                // add_filter('preprocess_comment', array(__CLASS__, 'set_comments_length'), 10, 3);
-                add_filter('preprocess_comment', function ($commentdata) use ($words_number_min, $words_number_max) {
-                    return self::set_comments_length($commentdata, $words_number_min, $words_number_max);
-                }, 10, 1);
+                add_filter('preprocess_comment', array(__CLASS__, 'set_comments_length'), 10, 3);
             }
 
             //禁止纯英文评论
@@ -53,9 +49,13 @@ if (!class_exists('MaMi_Optimize_Comment')) {
          * 效果：两次评论之间间隔
          * 来源：https://www.npc.ink/19960.html
          */
-        public static function suren_comment_flood_filter($flood_control, $time_last, $time_new, $interval_time)
+        public static function suren_comment_flood_filter($flood_control, $time_last, $time_new)
         {
-            $seconds = $interval_time; //间隔时间
+
+            //间隔时间
+            $seconds = MaMi_Admin::get_config(self::$option, 'interval_time');
+
+
 
             if (($time_new - $time_last) < $seconds) {
                 $time = $seconds - ($time_new - $time_last);
@@ -73,10 +73,10 @@ if (!class_exists('MaMi_Optimize_Comment')) {
          * 效果：评论所需的最少和最多字数
          * 来源：https://www.npc.ink/17995.html
          */
-        public static function set_comments_length($commentdata, $words_number_min, $words_number_max)
+        public static function set_comments_length($commentdata)
         {
-            $minCommentlength = $words_number_min; //最少字數限制
-            $maxCommentlength = $words_number_max; //最多字數限制
+            $minCommentlength =  MaMi_Admin::get_config(self::$option, 'words_number_min'); //最少字數限制
+            $maxCommentlength = MaMi_Admin::get_config(self::$option, 'words_number_max'); //最多字數限制
             $pointCommentlength = mb_strlen($commentdata['comment_content'], 'UTF8'); //mb_strlen 1個中文字符當作1個長度
             if ($pointCommentlength < $minCommentlength) {
                 header("Content-type: text/html; charset=utf-8");

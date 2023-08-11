@@ -58,6 +58,16 @@ const App: React.FC = () => {
 
   const options: SelectProps["options"] = getCatData();
 
+  //验证
+  const validateLink = (_: any, value: string) => {
+    const urlPattern =
+      /^(https?):\/\/(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)(?:\/[^\s]*)?$/;
+    if (!value || value.match(urlPattern)) {
+      return Promise.resolve();
+    }
+    return Promise.reject("请输入有效的链接 URL");
+  };
+
   return (
     <>
       <Form
@@ -100,9 +110,7 @@ const App: React.FC = () => {
             <Form.Item>
               <h2>首页</h2>
             </Form.Item>
-            {/**
-             * TODO:无法搜索
-             */}
+
             <Form.Item<FieldType> label="幻灯片文章选择" name="slide">
               <Select
                 showSearch
@@ -117,9 +125,13 @@ const App: React.FC = () => {
                 }
               />
             </Form.Item>
-            <Form.Item<FieldType> label="查看全部按钮的链接" name="slide_all">
+            <Form.Item<FieldType>
+              label="查看全部按钮的链接"
+              name="slide_all"
+              rules={[{ validator: validateLink }]}
+            >
               {/**
-               * TODO:添加链接验证
+               * TODO:完善链接验证
                */}
               <Input />
             </Form.Item>
