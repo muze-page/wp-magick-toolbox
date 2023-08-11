@@ -30,6 +30,14 @@ if (!class_exists('MaMi_Style_Page')) {
                 add_filter('wp_tag_cloud', array(__CLASS__, 'colorCloud'), 1);
             }
 
+            //屏幕上有根毛
+            $screen_hair = MaMi_Admin::get_config($option, 'screen_hair');
+            if ($screen_hair) {
+
+                add_action('wp_enqueue_scripts', array(__CLASS__, 'screen_hair'));
+            }
+
+
             //已写完的书
             $past_books = MaMi_Admin::get_config($option, 'past_books');
             if ($past_books) {
@@ -103,6 +111,29 @@ if (!class_exists('MaMi_Style_Page')) {
             $text = preg_replace($pattern, "style=\"display: inline-block; *display: inline; *zoom: 1; color: #fff; padding: 1px 5px; margin: 0 5px 5px 0; background-color: #{$color}; border-radius: 3px; -webkit-transition: background-color .4s linear; -moz-transition: background-color .4s linear; transition: background-color .4s linear;\"", $text);
             $pattern = '/style=(\'|\")(.*)(\'|\")/i';
             return "<a $text>";
+        }
+
+        /**
+         * 屏幕上有根毛
+         */
+        public static function screen_hair()
+        {
+            wp_enqueue_script(
+                MAGICK_MIXTURE_NAME . '_hair-js',
+                plugin_dir_url(dirname(__DIR__)) . 'js/hair.js',
+                array(),
+                MAGICK_MIXTURE_VERSION,
+                true
+            );
+            // 获取上一层的 image 文件夹路径
+            $image_folder_path =  plugin_dir_url(dirname(__DIR__)) . 'image/';
+
+            //传递路径
+            wp_localize_script(
+                MAGICK_MIXTURE_NAME . '_hair-js',
+                'image_folder',
+                $image_folder_path,
+            );
         }
 
         /**

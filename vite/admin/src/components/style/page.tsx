@@ -79,18 +79,33 @@ const App: React.FC = () => {
         >
           <Switch />
         </Form.Item>
+        <Form.Item<FieldType>
+          label="屏幕上的毛"
+          name="screen_hair"
+          valuePropName="checked"
+          extra={
+            <>
+              在网页上添加一根毛发，蛮有趣的
+              <a href="https://mkblog.cn/2382/" target="_blank">
+                详情
+              </a>
+            </>
+          }
+        >
+          <Switch />
+        </Form.Item>
 
         <Form.Item<FieldType>
           label="页脚添加已读完的书"
           name="past_books"
           valuePropName="checked"
           extra={
-           <>
-           统计您撰写的文章总字数，相当于那本书。
-            <a href="https://www.npc.ink/276901.html" target="_blank">
-              详细信息
-            </a>
-           </>
+            <>
+              统计您撰写的文章总字数，相当于那本书。
+              <a href="https://www.npc.ink/276901.html" target="_blank">
+                详细信息
+              </a>
+            </>
           }
         >
           <Switch />

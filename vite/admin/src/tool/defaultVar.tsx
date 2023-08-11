@@ -55,7 +55,8 @@ const OptimizeOther = {
 const StylePage = {
   particle: boo, //粒子特效
   color_tag: boo, //彩色标签云特效
-  past_books:boo,//已写完的书
+  screen_hair: boo, //屏幕上的毛
+  past_books: boo, //已写完的书
   comment_emote: boo, //评论区表情包特效
   custom_login_page: boo, //自定义登录页
   background_left: str, //左下角颜色
@@ -87,7 +88,7 @@ const H5Home = {
   switch: boo, //开关
   slide: [1], //幻灯片
   slide_all: str, //幻灯片 查看全部按钮
-  more: 1,//待展示分类
+  more: 1, //待展示分类
 };
 //H5 联系
 const H5Contact = {
