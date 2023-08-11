@@ -55,6 +55,7 @@ const OptimizeOther = {
 const StylePage = {
   particle: boo, //粒子特效
   color_tag: boo, //彩色标签云特效
+  past_books:boo,//已写完的书
   comment_emote: boo, //评论区表情包特效
   custom_login_page: boo, //自定义登录页
   background_left: str, //左下角颜色

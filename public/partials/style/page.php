@@ -14,11 +14,28 @@ if (!class_exists('MaMi_Style_Page')) {
             //传值
             self::$option = $option;
 
+            //烟花粒子特效
+            $particle = MaMi_Admin::get_config($option, 'particle');
+            if ($particle) {
+                //手机端不加载
+                if (!wp_is_mobile()) {
+                    add_action('wp_enqueue_scripts', array(__CLASS__, 'add_page_particle_js'));
+                    add_action('wp_footer', array(__CLASS__, 'add_page_particle'));
+                }
+            }
+
             //圆角彩色背景标签云
             $color_tag = MaMi_Admin::get_config($option, 'color_tag');
             if ($color_tag) {
                 add_filter('wp_tag_cloud', array(__CLASS__, 'colorCloud'), 1);
             }
+
+            //已写完的书
+            $past_books = MaMi_Admin::get_config($option, 'past_books');
+            if ($past_books) {
+                add_filter('wp_footer', array(__CLASS__, 'allwords'));
+            }
+
 
             //评论区添加表情
             $comment_emote = MaMi_Admin::get_config($option, 'comment_emote');
@@ -29,15 +46,7 @@ if (!class_exists('MaMi_Style_Page')) {
                 }
             }
 
-            //烟花粒子特效
-            $particle = MaMi_Admin::get_config($option, 'particle');
-            if ($particle) {
-                //手机端不加载
-                if (!wp_is_mobile()) {
-                    add_action('wp_enqueue_scripts', array(__CLASS__, 'add_page_particle_js'));
-                    add_action('wp_footer', array(__CLASS__, 'add_page_particle'));
-                }
-            }
+
 
 
             //自定义登录页外观
@@ -53,6 +62,30 @@ if (!class_exists('MaMi_Style_Page')) {
                 add_action('login_enqueue_scripts', array(__CLASS__, 'load_css'));
             }
         }
+
+        /**
+         * 效果：页面添加烟花粒子
+         * 来源：https://www.iowen.cn/canvas-click-effect-second-edition/
+         */
+        //添加文件
+        public static function add_page_particle()
+        {
+
+            echo '<div id="clickCanvas" style=" position:fixed;left:0;top:0;z-index:999999999;pointer-events:none;"></div>';
+        }
+        //加载js
+        public static function add_page_particle_js()
+        {
+            wp_enqueue_script(
+                MAGICK_MIXTURE_NAME . '_particle-js',
+                plugin_dir_url(dirname(__DIR__)) . 'js/style-click-particle.js',
+                array(),
+                MAGICK_MIXTURE_VERSION,
+                true
+            );
+        }
+
+
         /**
          * 添加彩色标签云
          */
@@ -71,6 +104,59 @@ if (!class_exists('MaMi_Style_Page')) {
             $pattern = '/style=(\'|\")(.*)(\'|\")/i';
             return "<a $text>";
         }
+
+        /**
+         * 已写完的书
+         * https://www.npc.ink/276901.html
+         */
+        public static function allwords()
+        {
+            global $wpdb;
+            $chars = 0;
+            $results = $wpdb->get_results("SELECT post_content FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_type = 'post'");
+            foreach ($results as $result) {
+                $chars += mb_strlen(trim($result->post_content), 'UTF-8');
+            }
+
+            $books = [
+                50000 => '埃克苏佩里的《小王子》',
+                70000 => '鲁迅的《呐喊》',
+                90000 => '林海音的《城南旧事》',
+                100000 => '马克·吐温的《王子与乞丐》',
+                110000 => '鲁迅的《彷徨》',
+                120000 => '余华的《活着》',
+                130000 => '曹禺的《雷雨》',
+                140000 => '史铁生的《宿命的写作》',
+                150000 => '伯内特的《秘密花园》',
+                160000 => '曹禺的《日出》',
+                170000 => '马克·吐温的《汤姆·索亚历险记》',
+                180000 => '沈从文的《边城》',
+                190000 => '亚米契斯的《爱的教育》',
+                200000 => '巴金的《寒夜》',
+                210000 => '东野圭吾的《解忧杂货店》',
+                220000 => '莫泊桑的《一生》',
+                230000 => '简·奥斯汀的《傲慢与偏见》',
+                250000 => '钱钟书的《围城》',
+                280000 => '张炜的《古船》',
+                300000 => '茅盾的《子夜》',
+                310000 => '阿来的《尘埃落定》',
+                320000 => '艾米莉·勃朗特的《呼啸山庄》',
+                340000 => '雨果的《巴黎圣母院》',
+                350000 => '东野圭吾的《白夜行》',
+                400000 => '我国著名的四大名著',
+                1000000 => '列夫·托尔斯泰的《战争与和平》'
+            ];
+
+            foreach ($books as $numChars => $book) {
+                if ($chars < $numChars) {
+                    echo '<p class="mami_past_books">全站共 ' . $chars . ' 字，写完一本' . $book . '了！</p>';
+                    return;
+                }
+            }
+
+            echo '<p class="mami_past_books">全站共 ' . $chars . ' 字，已写一本列夫·托尔斯泰的《战争与和平》了！</p>';
+        }
+
 
 
 
@@ -157,27 +243,7 @@ if (!class_exists('MaMi_Style_Page')) {
             return $default;
         }
 
-        /**
-         * 效果：页面添加烟花粒子
-         * 来源：https://www.iowen.cn/canvas-click-effect-second-edition/
-         */
-        //添加文件
-        public static function add_page_particle()
-        {
 
-            echo '<div id="clickCanvas" style=" position:fixed;left:0;top:0;z-index:999999999;pointer-events:none;"></div>';
-        }
-        //加载js
-        public static function add_page_particle_js()
-        {
-            wp_enqueue_script(
-                MAGICK_MIXTURE_NAME . '_particle-js',
-                plugin_dir_url(dirname(__DIR__)) . 'js/style-click-particle.js',
-                array(),
-                MAGICK_MIXTURE_VERSION,
-                true
-            );
-        }
 
 
         /**

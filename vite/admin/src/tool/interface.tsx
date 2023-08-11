@@ -72,6 +72,7 @@ export type OptimizeOther = {
 export type StylePage = {
   particle: boolean; //粒子特效
   color_tag: boolean; //彩色标签云特效
+  past_books:boolean;//已写完的书
   comment_emote: boolean; //评论区表情包特效
   custom_login_page: boolean; //自定义登录页
   background_left: string; //左下角颜色

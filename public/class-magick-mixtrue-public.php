@@ -49,8 +49,6 @@ class Magick_Mixtrue_Public
     }
     public function load()
     {
-
-       
         /**
          * 个性化 页面特效
          */
@@ -58,11 +56,26 @@ class Magick_Mixtrue_Public
     }
     public function run()
     {
+        //加载公共样式
+         add_action('wp_enqueue_scripts', array(__CLASS__, 'public_css'));
         //获取选项
         $style = MaMi_Admin::get_seting('style');
         /**
          * 个性化 - 页面特效
          */
         MaMi_Style_Page::run($style);
+    }
+
+    //添加公共样式
+    public static function public_css(){
+        //准备地址
+        $url_css = plugin_dir_url(__FILE__) . 'css/mami-public.css';
+        wp_enqueue_style(
+            MAGICK_MIXTURE_NAME . '_mami-public',
+            $url_css,
+            array(),
+            MAGICK_MIXTURE_VERSION,
+            'all'
+        );
     }
 }

@@ -79,6 +79,23 @@ const App: React.FC = () => {
         >
           <Switch />
         </Form.Item>
+
+        <Form.Item<FieldType>
+          label="页脚添加已读完的书"
+          name="past_books"
+          valuePropName="checked"
+          extra={
+           <>
+           统计您撰写的文章总字数，相当于那本书。
+            <a href="https://www.npc.ink/276901.html" target="_blank">
+              详细信息
+            </a>
+           </>
+          }
+        >
+          <Switch />
+        </Form.Item>
+
         <Form.Item<FieldType>
           label="评论区添加OWO表情包"
           name="comment_emote"
@@ -119,7 +136,11 @@ const App: React.FC = () => {
               name="logo_size"
               extra={"默认84，最大180（推荐宽高比为1:1的正方形LOGO）"}
             >
-              <InputNumber min={0} max={180}  formatter={(value) => `${value}px`}/>
+              <InputNumber
+                min={0}
+                max={180}
+                formatter={(value) => `${value}px`}
+              />
             </Form.Item>
 
             <Form.Item<FieldType> label="顶部LOGO" name="top_logo" extra={""}>

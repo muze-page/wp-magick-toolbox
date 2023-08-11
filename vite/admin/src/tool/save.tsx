@@ -29,7 +29,7 @@ const App: React.FC = () => {
       type: "success",
       content: "保存成功",
       style: {
-        marginTop: "10vh",
+        marginTop: "6vh",
       },
     });
   };
@@ -38,7 +38,7 @@ const App: React.FC = () => {
       type: "warning",
       content: "保存失败",
       style: {
-        marginTop: "10vh",
+        marginTop: "6vh",
       },
     });
   };
@@ -71,7 +71,7 @@ const App: React.FC = () => {
   return (
     <>
       {contextHolder}
-      <Affix offsetTop={120}>
+      <Affix offsetTop={180}>
         <Button type="primary" onClick={postData}>
           保存
         </Button>
