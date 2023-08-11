@@ -48,10 +48,11 @@ if (!class_exists('MaMi_Style_Page')) {
             //评论区添加表情
             $comment_emote = MaMi_Admin::get_config($option, 'comment_emote');
             if ($comment_emote) {
-                //判断当前页面是否加载评论区
-                if (comments_open()) {
-                    add_action('wp', array(__CLASS__, 'run_owo'));
-                }
+                /**
+                 * TODO:判断当前页面是否加载评论区
+                 */
+                //if (comments_open()) {}
+                add_action('wp', array(__CLASS__, 'run_owo'));
             }
 
 

@@ -41,6 +41,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             //准备地址
             $url_css = plugin_dir_url(dirname(__DIR__)) . 'css/mm-census-style.css';
             $url_css = str_replace('/admin/partials/', '/admin/',  $url_css);
+            
             $url_js = plugin_dir_url(dirname(__DIR__)) . 'js/echarts_v5.4.0.js';
             $url_js = str_replace('/admin/partials/', '/admin/',  $url_js);
 
