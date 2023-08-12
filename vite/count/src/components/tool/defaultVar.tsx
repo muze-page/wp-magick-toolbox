@@ -1,0 +1,142 @@
+export const ShopToday = [
+  {
+    title: "待发货",
+    num: 10,
+    unit: "个",
+    icon: "dashicons dashicons-store",
+  },
+  {
+    title: "总销售额",
+    num: 10,
+    unit: "个",
+    icon: "dashicons dashicons-insert",
+  },
+
+  {
+    title: "总订单",
+    num: 10,
+    unit: "个",
+    icon: "dashicons dashicons-database-add",
+  },
+  {
+    title: "总退款",
+    num: 10,
+    unit: "个",
+    icon: "dashicons dashicons-remove",
+  },
+  {
+    title: "总退款订单",
+    num: 10,
+    unit: "个",
+    icon: "dashicons dashicons-database-remove",
+  },
+];
+export const MoonShop = [
+  {
+    title: "总销售额",
+    num: 10,
+    unit: "个",
+    icon: "dashicons dashicons-insert",
+  },
+
+  {
+    title: "总订单",
+    num: 10,
+    unit: "个",
+    icon: "dashicons dashicons-database-add",
+  },
+  {
+    title: "总退款",
+    num: 10,
+    unit: "个",
+    icon: "dashicons dashicons-remove",
+  },
+  {
+    title: "总退款订单",
+    num: 10,
+    unit: "个",
+    icon: "dashicons dashicons-database-remove",
+  },
+];
+//销售表格
+export const FormShop = [
+  {
+    title: "最近7天总销售额（已减退款额）", //标题
+    x: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], //横轴数据
+    s: {
+      title: "总销售额", //提示标题
+      data: [120, 200, 150, 80, 70, 110, 130], //数据
+    },
+  },
+  {
+    title: "最近7天总销售订单（已减退款订单）", //标题
+    x: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], //横轴数据
+    s: {
+      title: "总销售订单", //提示标题
+      data: [120, 200, 150, 80, 70, 110, 130], //数据
+    },
+  },
+  {
+    title: "最近7天总退款额（已减退款订单）", //标题
+    x: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], //横轴数据
+    s: {
+      title: "总退款订单", //提示标题
+      data: [120, 200, 150, 80, 70, 110, 130], //数据
+    },
+  },
+  {
+    title: "最近7天总退款订单（已减退款订单）", //标题
+    x: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], //横轴数据
+    s: {
+      title: "总销售退款订单", //提示标题
+      data: [120, 200, 150, 80, 70, 110, 130], //数据
+    },
+  },
+];
+
+//文章统计 每天发文数量
+export const TodayUserSingle = {
+  title: "统计", //标题
+  dataset: [
+    ["time", "2015", "2016", "2017"],
+    ["Matcha Latte", 43.3, 85.8, 93.7],
+    ["Milk Tea", 83.1, 73.4, 55.1],
+    ["Cheese Cocoa", 86.4, 65.2, 82.5],
+    ["Walnut Brownie", 72.4, 53.9, 39.1],
+  ],
+};
+
+//文章统计
+export const SingleCount = [
+  {
+    title: "今日发文",
+    num: 10,
+    unit: "篇",
+    icon: "dashicons dashicons-database-remove",
+  },
+  {
+    title: "今日评论",
+    num: 10,
+    unit: "篇",
+    icon: "dashicons dashicons-database-remove",
+  },
+  {
+    title: "今日注册",
+    num: 10,
+    unit: "个",
+    icon: "dashicons dashicons-database-remove",
+  },
+];
+
+const App = {
+  shop: {
+    today: ShopToday,
+    moon: MoonShop,
+    form: FormShop,
+  },
+  single: {
+    count: SingleCount, //文章统计
+    today: TodayUserSingle, //今日发文统计
+  },
+};
+export default App;
