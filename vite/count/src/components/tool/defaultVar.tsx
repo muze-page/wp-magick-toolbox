@@ -1,3 +1,4 @@
+//今天销售
 export const ShopToday = [
   {
     title: "待发货",
@@ -31,7 +32,9 @@ export const ShopToday = [
     icon: "dashicons dashicons-database-remove",
   },
 ];
-export const MoonShop = [
+
+//月销售
+export const ShopMoon = [
   {
     title: "总销售额",
     num: 10,
@@ -58,8 +61,9 @@ export const MoonShop = [
     icon: "dashicons dashicons-database-remove",
   },
 ];
+
 //销售表格
-export const FormShop = [
+export const ShopForm = [
   {
     title: "最近7天总销售额（已减退款额）", //标题
     x: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], //横轴数据
@@ -95,7 +99,7 @@ export const FormShop = [
 ];
 
 //文章统计 每天发文数量
-export const TodayUserSingle = {
+export const SinglePublish = {
   title: "统计", //标题
   dataset: [
     ["time", "2015", "2016", "2017"],
@@ -130,13 +134,13 @@ export const SingleCount = [
 
 const App = {
   shop: {
-    today: ShopToday,
-    moon: MoonShop,
-    form: FormShop,
+    today: ShopToday, //今天的销售统计信息
+    moon: ShopMoon, //本月销售统计信息
+    form: ShopForm, //最近7天销售统计信息
   },
   single: {
     count: SingleCount, //文章统计
-    today: TodayUserSingle, //今日发文统计
+    today: SinglePublish, //今日发文统计
   },
 };
 export default App;

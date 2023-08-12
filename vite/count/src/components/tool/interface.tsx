@@ -1,10 +1,16 @@
 export type DataLocal = {
-  //小模块
-  count: Count;
-  //单柱状图
-  column: Column;
-  //多柱状图
-  ColumnMore: ColumnMore;
+  shop: {
+    today: Array<Count>;
+    moon: Array<Count>;
+    form: Array<Column>;
+  };
+  single: {
+    count: Array<Count>;
+    today: ColumnMore;
+  };
+  //count: Count; //小模块
+  //column: Column; //单柱状图
+  //ColumnMore: ColumnMore; //多柱状图
 };
 
 //模块
