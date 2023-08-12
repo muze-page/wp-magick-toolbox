@@ -1,4 +1,3 @@
-//准备数据
 //准备初始数据
 import { createContext } from "react";
 import { DataLocal } from "./interface";
@@ -7,12 +6,7 @@ import option from "./defaultVar";
 //开发环境状态
 const state: boolean = import.meta.env.VITE_STATE;
 
-//准备数据类型
-//准备默认值
-
-//组建开发环境下的对象
-
-//输出选项值
+//输出默认值
 function getDataLocal(): DataLocal {
   if (state) {
     //开发
