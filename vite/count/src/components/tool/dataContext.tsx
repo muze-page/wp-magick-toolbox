@@ -12,9 +12,11 @@ function getDataLocal(): DataLocal {
     //开发
     return option;
   } else {
+    console.log("收到的值")
+    console.log((window as any).dataLocal?.countData);
     //打包
-    return (window as any).dataLocal?.option !== ""
-      ? (window as any).dataLocal?.option
+    return (window as any).dataLocal?.countData !== ""
+      ? (window as any).dataLocal?.countData
       : {};
   }
 }

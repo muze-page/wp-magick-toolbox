@@ -87,11 +87,71 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
 
             //传输数据给JS
             $mami_array = array(
-                'countData' => "666", //统计的数据信息
+                'countData' => self::deliver_data(), //统计的数据信息
 
 
             );
             wp_localize_script(MAGICK_MIXTURE_NAME . '_index_js', 'dataLocal', $mami_array); //传给vite项目
+        }
+
+        /**
+         * 准备传递的数据
+         */
+        public static function deliver_data()
+        {
+
+            //准备对象
+            $array = array(
+                'shop' => array(
+                    'today' => "66", //今天销售数据
+                    'moon' => self::get_shop_moon(), //本月销售数据
+                    'form' => "66", //最近7天销售数据
+                ),
+                'single' => array(
+                    'count' => "66", //文统计数据
+                    'today' => "66", //今天文章发布数据
+                )
+            );
+            return $array;
+        }
+
+        /**
+         * 拿到月销售数据
+         */
+        public static function get_shop_moon()
+        {
+            //月数据
+            $option = self::get_month_order();
+
+            //准备对象
+            $array = array(
+                array(
+                    'title' => "总销售额",
+                    'num' => (int)$option['total_sales'],
+                    'unit' => "￥",
+                    'icon' => "dashicons dashicons-insert",
+                ),
+                array(
+                    'title' => "总销售额",
+                    'num' => (int)$option['total_sales'],
+                    'unit' => "￥",
+                    'icon' => "dashicons dashicons-insert",
+                ),
+                array(
+                    'title' => "总销售额",
+                    'num' => (int)$option['total_sales'],
+                    'unit' => "￥",
+                    'icon' => "dashicons dashicons-insert",
+                ),
+                array(
+                    'title' => "总销售额",
+                    'num' => (int)$option['total_sales'],
+                    'unit' => "￥",
+                    'icon' => "dashicons dashicons-insert",
+                ),
+
+            );
+            return $array;
         }
 
         /**
@@ -396,6 +456,7 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
 
 
 
+
                 <!--标题-->
                 <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
                 <hr />
@@ -426,7 +487,7 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
                 <!--四栏分隔-->
                 <?php echo self::load_echarts_js() ?>
 
-
+   
             </div><!-- end wrap-->
         <?php
         } //end load_content

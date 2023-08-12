@@ -3,12 +3,12 @@ import Count from "../block/count";
 import { ShopMoon } from "../tool/defaultVar";
 import DataContext from "../tool/dataContext";
 const App: React.FC = () => {
+  //拿到值
+  const optionObj = useContext(DataContext) ?? { shop: {} };
 
-   //拿到值
-   const optionObj = useContext(DataContext) ?? { shop: {} };
+  //给默认值
+  const Data = optionObj.shop?.moon || ShopMoon;
 
-   //给默认值
-   const Data = optionObj.shop?.moon ||  ShopMoon;
 
   return (
     <>
