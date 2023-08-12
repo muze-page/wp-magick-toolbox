@@ -103,14 +103,14 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
             //准备对象
             $array = array(
                 'shop' => array(
-                    'today' => "66", //今天销售数据
+                  //  'today' => "66", //今天销售数据
                     'moon' => self::get_shop_moon(), //本月销售数据
-                    'form' => "66", //最近7天销售数据
+                  //  'form' => "66", //最近7天销售数据
                 ),
-                'single' => array(
-                    'count' => "66", //文统计数据
-                    'today' => "66", //今天文章发布数据
-                )
+               //'single' => array(
+               //    'count' => "66", //文统计数据
+               //    'today' => "66", //今天文章发布数据
+               //)
             );
             return $array;
         }
