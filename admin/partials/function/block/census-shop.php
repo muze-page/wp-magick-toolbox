@@ -105,7 +105,7 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
                 'shop' => array(
                     'today' => self::get_shop_today(), //今天销售数据
                     'moon' => self::get_shop_moon(), //本月销售数据
-                    //  'form' => "66", //最近7天销售数据
+                    'form' => self::get_seven_data(), //最近7天销售数据
                 ),
                 //'single' => array(
                 //    'count' => "66", //文统计数据
@@ -199,6 +199,47 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
         /**
          * 最近7天销售数据
          */
+        public static function get_seven_data()
+        {
+            //最近7天数据
+            $option = self::handle_order_seven();
+
+            $array = array(
+                array(
+                    'title' => "总销售额(已减退款)",
+                    'x' => $option['time'],
+                    's' => array(
+                        'title' => "总销售额",
+                        'data' => $option['latelly']['sale'],
+                    ),
+                ),
+                array(
+                    'title' => "总销售订单(已减退款订单)",
+                    'x' => $option['time'],
+                    's' => array(
+                        'title' => "总订单",
+                        'data' => $option['latelly']['sale_order'],
+                    ),
+                ),
+                array(
+                    'title' => "总退款额",
+                    'x' => $option['time'],
+                    's' => array(
+                        'title' => "总退款额",
+                        'data' => $option['latelly']['refund'],
+                    ),
+                ),
+                array(
+                    'title' => "总退款订单",
+                    'x' => $option['time'],
+                    's' => array(
+                        'title' => "总退款订单",
+                        'data' => $option['latelly']['refund_order'],
+                    ),
+                ),
+            );
+            return $array;
+        }
 
         /**
          * 拿到指定时间内的所有数据
