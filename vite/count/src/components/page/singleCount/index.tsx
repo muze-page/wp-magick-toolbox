@@ -3,7 +3,7 @@ import { useContext } from "react";
 import DataContext from "@/components/tool/dataContext";
 import Basic from "@/components/page/singleCount/basicData";
 import Today from "@/components/page/singleCount/today";
-import Moon from "@/components/page/singleCount/moon";
+import Month from "@/components/page/singleCount/month";
 function App() {
   //拿到值
   const optionObj = useContext(DataContext);
@@ -27,7 +27,7 @@ function App() {
             </div>
           </div>
           <h3>月度</h3>
-          <Moon />
+          <Month />
         </>
       )}
     </>

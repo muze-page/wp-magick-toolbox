@@ -92,7 +92,7 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
             $array = array(
                 'shop' => array(
                     'today' => self::get_shop_today(), //今天销售数据
-                    'moon' => self::get_shop_moon(), //本月销售数据
+                    'month' => self::get_shop_month(), //本月销售数据
                     'form' => self::get_seven_data(), //最近7天销售数据
                 ),
                 //'single' => array(
@@ -148,7 +148,7 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
         /**
          * 拿到月销售数据
          */
-        public static function get_shop_moon()
+        public static function get_shop_month()
         {
             //月数据
             $option = self::get_month_order();

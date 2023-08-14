@@ -34,7 +34,7 @@ export const ShopToday = [
 ];
 
 //月销售
-export const ShopMoon = [
+export const ShopMonth = [
   {
     title: "总销售额",
     num: 10,
@@ -112,7 +112,7 @@ export const SinglePublishToday = {
   ],
 };
 
-export const SinglePublishMoon = {
+export const SinglePublishMonth = {
   width: 1200,
   height: 300,
   title: "月度统计", //标题
@@ -150,13 +150,13 @@ export const SingleCount = [
 const App = {
   shop: {
     today: ShopToday, //今天的销售统计信息
-    moon: ShopMoon, //本月销售统计信息
+    month: ShopMonth, //本月销售统计信息
     form: ShopForm, //最近7天销售统计信息
   },
   single: {
     count: SingleCount, //文章统计
     today: SinglePublishToday, //今日发文统计
-    moon: SinglePublishMoon, //月度发文统计
+    month: SinglePublishMonth, //月度发文统计
   },
 };
 export default App;

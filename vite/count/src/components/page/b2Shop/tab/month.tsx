@@ -1,13 +1,13 @@
 import { useContext } from "react";
 import Count from "@/components/block/count";
-import { ShopMoon } from "@/components/tool/defaultVar";
+import { ShopMonth } from "@/components/tool/defaultVar";
 import DataContext from "@/components/tool/dataContext";
 const App: React.FC = () => {
   //拿到值
   const optionObj = useContext(DataContext) ?? { shop: {} };
 
   //给默认值
-  const Data = optionObj.shop?.moon || ShopMoon;
+  const Data = optionObj.shop?.month || ShopMonth;
 
   return (
     <>

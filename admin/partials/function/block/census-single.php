@@ -83,7 +83,8 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             $array = array(
                 'single' => array(
                     'count' => self::get_today_data(), //今天的统计数据
-                    'today' => self::get_today_release(), //今天文章发布数据
+                    'today' => self::get_today_release()['week'], //今天文章发布数据
+                    'month' => self::get_today_release()['month'], //今天文章发布数据
                 )
             );
             return $array;
@@ -111,13 +112,13 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
                 </form>
 
                 <?php
-                echo "<h3>原始数据</h3>";
-                $user_release_arr = self::get_user_release_arr();
-                if (!empty($user_release_arr)) {
-                    echo '<pre>' . print_r($user_release_arr, true) . '</pre>';
-                } else {
-                    echo '<pre>暂无对象值</pre>';
-                }
+                //echo "<h3>原始数据</h3>";
+                //$user_release_arr = self::get_user_release_arr();
+                //if (!empty($user_release_arr)) {
+                //    echo '<pre>' . print_r($user_release_arr, true) . '</pre>';
+                //} else {
+                //    echo '<pre>暂无对象值</pre>';
+                //}
                 ?>
 
             </div><!-- /.wrap -->
@@ -158,16 +159,29 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
         }
 
         /**
-         * 今日发文信息
+         * 准备表格统计信息
          */
         public static function get_today_release()
         {
             //准备日期
 
-            $array = array(
+            $week = array(
                 "title" => "统计",
                 "dataset" => self::get_user_release_arr()["week_sum"],
             );
+
+            $month = array(
+                "width"=>1200,
+                "height"=>300,
+                "title" => "月度统计",
+                "dataset" => self::get_user_release_arr()["month_sum"],
+            );
+
+            $array = array(
+                "week" => $week,
+                "month" => $month,
+            );
+
             return $array;
         }
 
@@ -380,7 +394,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
 
             $arr['week_sum'] = self::handle_data($id, $t_week);
 
-            //$arr['months'] = self::handle_data($id, $t_month); 
+            $arr['month_sum'] = self::handle_data($id, $t_month);
 
             return $arr;
         }

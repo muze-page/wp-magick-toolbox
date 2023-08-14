@@ -1,7 +1,7 @@
 //Tab切换
 import { useState } from "react";
 import Today from "@/components/page/b2Shop/tab/today";
-import Moon from "@/components/page/b2Shop/tab/moon";
+import Month from "@/components/page/b2Shop/tab/month";
 
 const Tab = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -13,7 +13,7 @@ const Tab = () => {
     },
     {
       title: "本月",
-      content: <Moon />,
+      content: <Month />,
     },
   ];
 
