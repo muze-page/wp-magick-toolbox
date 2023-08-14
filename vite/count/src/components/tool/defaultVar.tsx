@@ -99,8 +99,19 @@ export const ShopForm = [
 ];
 
 //文章统计 每天发文数量
-export const SinglePublish = {
+export const SinglePublishToday = {
   title: "统计", //标题
+  dataset: [
+    ["time", "2015", "2016", "2017"],
+    ["Matcha Latte", 43.3, 85.8, 93.7],
+    ["Milk Tea", 83.1, 73.4, 55.1],
+    ["Cheese Cocoa", 86.4, 65.2, 82.5],
+    ["Walnut Brownie", 72.4, 53.9, 39.1],
+  ],
+};
+
+export const SinglePublishMoon = {
+  title: "月度统计", //标题
   dataset: [
     ["time", "2015", "2016", "2017"],
     ["Matcha Latte", 43.3, 85.8, 93.7],
@@ -140,7 +151,8 @@ const App = {
   },
   single: {
     count: SingleCount, //文章统计
-    today: SinglePublish, //今日发文统计
+    today: SinglePublishToday, //今日发文统计
+    moon: SinglePublishMoon, //月度发文统计
   },
 };
 export default App;

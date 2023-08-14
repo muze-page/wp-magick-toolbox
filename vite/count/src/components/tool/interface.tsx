@@ -7,6 +7,7 @@ export type DataLocal = {
   single: {
     count: Array<Count>;
     today: ColumnMore;
+    moon: ColumnMore;
   };
   //count: Count; //小模块
   //column: Column; //单柱状图

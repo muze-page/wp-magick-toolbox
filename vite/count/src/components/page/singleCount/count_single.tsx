@@ -2,7 +2,7 @@
 import { useContext } from "react";
 import ColumnMore from "@/components/block/column_more";
 import Count from "@/components/block/count";
-import { SinglePublish, SingleCount } from "@/components/tool/defaultVar";
+import { SinglePublishToday, SingleCount } from "@/components/tool/defaultVar";
 import DataContext from "@/components/tool/dataContext";
 
 const App = () => {
@@ -10,7 +10,7 @@ const App = () => {
   const optionObj = useContext(DataContext) ?? { single: {} };
 
   //表格
-  const DataPublish = optionObj.single?.today || SinglePublish;
+  const DataPublish = optionObj.single?.today || SinglePublishToday;
 
   //列表
   const DataCount = optionObj.single?.count || SingleCount;

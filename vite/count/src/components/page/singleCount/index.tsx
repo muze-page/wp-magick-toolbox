@@ -1,8 +1,8 @@
 //作者发文统计页面
 import { useContext } from "react";
-import Count from "@/components/page/singleCount/count_single";
 import DataContext from "@/components/tool/dataContext";
-
+import Count from "@/components/page/singleCount/count_single";
+import Moon from "@/components/page/singleCount/moon";
 function App() {
   //拿到值
   const optionObj = useContext(DataContext);
@@ -17,7 +17,9 @@ function App() {
         <>
           <h3>文章统计</h3>
           <hr />
+          
           <Count />
+          <Moon />
         </>
       )}
     </>
