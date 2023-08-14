@@ -32,7 +32,7 @@ const App = ({ data }: { data: ColumnMore }) => {
       text: data.title,
     },
     tooltip: {
-      valueFormatter: (value: number) => value.toFixed(0) + "个",
+      valueFormatter: (value: number) =>value.toFixed(0) + (data.tooltip ?? "篇"),
     },
     legend: {},
     dataset: {

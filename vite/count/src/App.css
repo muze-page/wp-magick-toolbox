@@ -50,6 +50,7 @@
   line-height: 1.5;
 }
 .box .child p span {
+  margin: 0 6px 0 0;
   font-size: 28px;
   font-weight: bold;
 }

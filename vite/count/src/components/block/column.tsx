@@ -24,7 +24,8 @@ const App = ({ data }: { data: Column }) => {
       text: data.title,
     },
     tooltip: {
-      valueFormatter: (value: number) => value.toFixed(0) + "个",
+      valueFormatter: (value: number) =>
+        value.toFixed(0) + (data.tooltip ?? "个"),
     },
     xAxis: {
       type: "category",

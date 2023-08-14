@@ -25,6 +25,7 @@ export type Count = {
 //单柱状图
 export type Column = {
   title: string; //标题
+  tooltip:string;//提示符
   x: Array<string>; //横轴数据
   s: {
     title: string; //提示标题
@@ -37,5 +38,6 @@ export type ColumnMore = {
   width: number; //表格宽
   height: number; //表格高
   title: string; //标题
+  tooltip:string;//提示符
   dataset: Array<Array<string | number>>; //数据
 };

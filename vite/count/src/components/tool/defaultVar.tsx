@@ -66,6 +66,7 @@ export const ShopMonth = [
 export const ShopForm = [
   {
     title: "最近7天总销售额（已减退款额）", //标题
+    tooltip: "￥", //提示符
     x: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], //横轴数据
     s: {
       title: "总销售额", //提示标题
@@ -82,6 +83,7 @@ export const ShopForm = [
   },
   {
     title: "最近7天总退款额（已减退款订单）", //标题
+    tooltip: "￥", //提示符
     x: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], //横轴数据
     s: {
       title: "总退款订单", //提示标题
