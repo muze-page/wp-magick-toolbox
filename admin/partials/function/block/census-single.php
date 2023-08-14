@@ -27,7 +27,14 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
         public static function add_menu_single()
         {
 
-            add_submenu_page('index.php', __('发文统计'), __('发文统计'), 'administrator', 'magick-census-single', array(__CLASS__, 'load_content'));
+            add_submenu_page(
+                'index.php',
+                __('发文统计'),
+                __('发文统计'),
+                'administrator',
+                'magick-census-single',
+                array(__CLASS__, 'load_content')
+            );
         }
 
         //页面加载图标用css和js
@@ -38,28 +45,48 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
                 return;
             }
 
-            //准备地址
-            $url_css = plugin_dir_url(dirname(__DIR__)) . 'css/mm-census-style.css';
-            $url_css = str_replace('/admin/partials/', '/admin/',  $url_css);
-            
-            $url_js = plugin_dir_url(dirname(__DIR__)) . 'js/echarts_v5.4.0.js';
-            $url_js = str_replace('/admin/partials/', '/admin/',  $url_js);
+            //准备打包后的数据
+            $build_css = plugin_dir_url(dirname(__DIR__)) . 'count/dist/index.css';
+            $build_css = str_replace('/admin/partials/', '/vite/',  $build_css);
 
+            $build_js = plugin_dir_url(dirname(__DIR__)) . 'count/dist/index.js';
+            $build_js = str_replace('/admin/partials/', '/vite/',  $build_js);
             wp_enqueue_style(
-                MAGICK_MIXTURE_NAME . '_census-single',
-                $url_css,
+                MAGICK_MIXTURE_NAME . '_index_css',
+                $build_css,
                 array(),
                 MAGICK_MIXTURE_VERSION,
                 'all'
             );
-
             wp_enqueue_script(
-                MAGICK_MIXTURE_NAME . '_echarts-single',
-                $url_js,
+                MAGICK_MIXTURE_NAME . '_index_js',
+                $build_js,
                 array(),
                 MAGICK_MIXTURE_VERSION,
                 false
             );
+
+            //传输数据给JS
+            $mami_array = array(
+                'countData' => self::deliver_data(), //统计的数据信息
+            );
+
+            wp_localize_script(MAGICK_MIXTURE_NAME . '_index_js', 'dataLocal', $mami_array); //传给vite项目
+        }
+
+        /**
+         * 准备传递的数据
+         */
+        public static function deliver_data()
+        {
+            //准备对象
+            $array = array(
+                'single' => array(
+                    'count' => self::get_today_data(), //今天的统计数据
+                    'today' => self::get_today_release(), //今天文章发布数据
+                )
+            );
+            return $array;
         }
 
         //待渲染的内容
@@ -71,6 +98,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
 
                 <!--标题-->
                 <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+                <div id="mami_b2_shop_count"></div>
                 <!--展示图表内容-->
                 <?php self::render_page() ?>
                 <!--在保存设置时调用WordPress函数以呈现错误。 -->
@@ -82,9 +110,65 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
                     <?php submit_button(); ?>
                 </form>
 
+                <?php
+                echo "<h3>原始数据</h3>";
+                $user_release_arr = self::get_user_release_arr();
+                if (!empty($user_release_arr)) {
+                    echo '<pre>' . print_r($user_release_arr, true) . '</pre>';
+                } else {
+                    echo '<pre>暂无对象值</pre>';
+                }
+                ?>
 
             </div><!-- /.wrap -->
             <?php
+        }
+
+        /**
+         * 今日文章信息
+         */
+        public static function get_today_data()
+        {
+            //今天的数据
+            $tool = new Magick_Mixtrue_Tool;
+            $option = $tool->get_site_census_data();
+
+            $array = array(
+                array(
+                    'title' => "已发布",
+                    'num' => (int)$option['today']['single'],
+                    'unit' => "篇",
+                    'icon' => "dashicons dashicons-universal-access",
+                ),
+                array(
+                    'title' => "已评论",
+                    'num' => (int)$option['today']['comments'],
+                    'unit' => "条",
+                    'icon' => "dashicons dashicons-format-status",
+                ),
+                array(
+                    'title' => "已注册",
+                    'num' => (int)$option['today']['register'],
+                    'unit' => "位",
+                    'icon' => "dashicons dashicons-database-add",
+                )
+
+            );
+            return $array;
+        }
+
+        /**
+         * 今日发文信息
+         */
+        public static function get_today_release()
+        {
+            //准备日期
+
+            $array = array(
+                "title" => "统计",
+                "dataset" => self::get_user_release_arr()["week_sum"],
+            );
+            return $array;
         }
 
         //添加设置选项
@@ -293,7 +377,6 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             </section>
 
             <script type="text/javascript">
-               
                 // 基于准备好的dom，初始化echarts实例
                 let myChart_week = echarts.init(document.getElementById("magick-seven-census"));
                 let myChart_month = echarts.init(document.getElementById("magick-month-census"));
@@ -337,11 +420,94 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
 <?php
         }
 
+
+        /**
+         * 临时处理
+         */
+        public static function get_article_counts($data, $id)
+        {
+            $result = array();
+
+            foreach ($data as $date) {
+                $current_date = DateTime::createFromFormat('Y-m-d', $date);
+                $current_day = $current_date->format('d');
+                $current_time = $current_date->format('H');
+
+                $counts = array($current_day); // 第一个元素是当前日期的天数
+
+                // 初始化用户发文数量为0
+                foreach ($id as $userId) {
+                    $counts[] = 0;
+                }
+
+                // 查询对应日期的文章
+                $args = array(
+                    'post_type' => 'post',
+                    'post_status' => 'publish',
+                    'date_query' => array(
+                        array(
+                            'year'  => $current_date->format('Y'),
+                            'month' => $current_date->format('m'),
+                            'day'   => $current_date->format('d'),
+                        ),
+                    ),
+                );
+                $query = new WP_Query($args);
+
+                // 统计各个作者的发文数量
+                if ($query->have_posts()) {
+                    while ($query->have_posts()) {
+                        $query->the_post();
+                        $author_id = get_the_author_meta('ID');
+
+                        if (in_array($author_id, $id)) {
+                            $index = array_search($author_id, $id);
+                            $counts[$index + 1]++;
+                        }
+                    }
+                }
+
+                wp_reset_postdata();
+
+                $result[] = $counts;
+            }
+
+            return $result;
+        }
+
+        /**
+         * 整理用户名
+         * 输入用户ID数组
+         */
+        public static function format_dates($ID)
+        {
+            $result = array();
+
+            foreach ($ID as $id) {
+                $user = get_user_by('ID', $id);
+                if ($user) {
+                    $nickname = $user->display_name;
+                    $result[] = $nickname;
+                }
+            }
+
+            return $result;
+        }
+
+
+        /**
+         * 结合
+         */
+        public static function handle_data(){
+            
+        }
+
         /**
          * 获取一批人的发文数量,一周，一个月
          */
         public static function get_user_release_arr()
         {
+            //工具函数
             $tool = new Magick_Mixtrue_Tool;
             //存储数组
             $arr = array();
@@ -351,23 +517,25 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             //默认查阅ID为1的人的发文数据
             $id = isset($options['option_id']) ? $options['option_id'] : [1];
 
-            //获取周发文数量
-            $week = array();
-            foreach ($id as $key => $value) {
-                //$week[$key] = $tool->get_count_user_week($value);
-                $week[$key] = self::get_count_release($value)['week'];
-            }
+            //拿到时间数组 - 最近一周
+            $t_week = $tool->get_time()['a'];
+            //拿到时间数组 - 本月
+            $t_month = $tool->get_time_long("this_month");
 
-            //获取月发文数量
-            $month = array();
-            foreach ($id as $key => $value) {
-                //$month[$key] = $tool->get_count_user_month($value);
-                $month[$key] = self::get_count_release($value)['month'];
-            }
 
             //将数据处理后存入数组
-            $arr['week'] = self::optimize_chart_data($week);
-            $arr['month'] = self::optimize_chart_data($month);
+
+
+            $week_time = self::format_dates($id); //整理昵称数据
+            array_unshift($week_time, "user"); //添加标识头
+            $week_time = array($week_time); //存进数组
+
+            $week_data = array_reverse(self::get_article_counts($t_week, $id)); //获取数据并反序
+
+            $arr['week_sum'] = array_merge($week_time, $week_data); //整理为所需格式
+
+
+            //$arr['months'] = self::get_article_counts($t_month, $id);
 
             return $arr;
         }
@@ -407,49 +575,5 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             }
             return $arr;
         }
-
-        /**
-         * 对拿到的列表数组进行优化，产出数组
-         */
-        public static function optimize_chart_data($chart)
-        {
-            //实例化工具
-            $tool = new Magick_Mixtrue_Tool;
-            //拿到作者名
-            $chart_user = array();
-            foreach ($chart as $key => $value) {
-                $id = $value['0']['user_id'];
-                $chart_user[$key] = $tool->get_user_data($id, 'display_name'); //拿到名字
-            }
-
-            //拿到时间
-            $chart_time = array();
-            foreach ($chart['0'] as $key => $value) {
-                $time = $value['time'];
-                $chart_time[$key] = date("d", strtotime($time));
-            }
-
-            //拿到数据
-            $chart_content = array();
-            foreach ($chart as $a => $b) {
-
-                foreach ($b as $key => $value) {
-
-                    $c[$key] = $value['total'];
-                }
-                $id = $b['0']['user_id'];
-                $chart_content[$a]['name'] = $tool->get_user_data($id, 'display_name'); //拿到名字
-                $chart_content[$a]['type'] = "bar";
-                $chart_content[$a]['data'] = $c;
-            }
-            //存储数组
-            //调整为表格用格式
-            $arr = array();
-            $arr['user'] = json_encode($chart_user);
-            $arr['time'] = json_encode($chart_time);
-            $arr['content'] = json_encode($chart_content);
-            return $arr;
-        } //end 数据优化
-
     } //end class
 }

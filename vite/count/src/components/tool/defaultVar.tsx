@@ -116,19 +116,19 @@ export const SingleCount = [
     title: "今日发文",
     num: 10,
     unit: "篇",
-    icon: "dashicons dashicons-database-remove",
+    icon: "dashicons dashicons-text-page",
   },
   {
     title: "今日评论",
     num: 10,
-    unit: "篇",
-    icon: "dashicons dashicons-database-remove",
+    unit: "条",
+    icon: "dashicons dashicons-format-status",
   },
   {
     title: "今日注册",
     num: 10,
-    unit: "个",
-    icon: "dashicons dashicons-database-remove",
+    unit: "位",
+    icon: "dashicons dashicons-universal-access",
   },
 ];
 

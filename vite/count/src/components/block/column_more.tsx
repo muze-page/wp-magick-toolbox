@@ -23,7 +23,7 @@ const App = ({ data }: { data: ColumnMore }) => {
   //准备数据
   //获取type数量
   const typeNumber = () => {
-    const num = data.dataset.length - 1;
+    const num = data.dataset[0].length - 1;
     return Array.from({ length: num }, () => ({ type: "bar" }));
   };
 
