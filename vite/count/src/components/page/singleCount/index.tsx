@@ -1,7 +1,8 @@
 //作者发文统计页面
 import { useContext } from "react";
 import DataContext from "@/components/tool/dataContext";
-import Count from "@/components/page/singleCount/count_single";
+import Basic from "@/components/page/singleCount/basicData";
+import Today from "@/components/page/singleCount/today";
 import Moon from "@/components/page/singleCount/moon";
 function App() {
   //拿到值
@@ -17,8 +18,15 @@ function App() {
         <>
           <h3>文章统计</h3>
           <hr />
-          
-          <Count />
+          <div className="single-box">
+            <div className="left">
+              <Today />
+            </div>
+            <div className="right">
+              <Basic />
+            </div>
+          </div>
+          <h3>月度统计</h3>
           <Moon />
         </>
       )}
