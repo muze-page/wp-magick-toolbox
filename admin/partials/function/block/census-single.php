@@ -98,9 +98,9 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
 
                 <!--标题-->
                 <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+                <!--展示内容-->
                 <div id="mami_b2_shop_count"></div>
-                <!--展示图表内容-->
-                <?php self::render_page() ?>
+
                 <!--在保存设置时调用WordPress函数以呈现错误。 -->
                 <?php settings_errors(); ?>
                 <!-- 创建用于呈现选项的表单 -->
@@ -259,166 +259,11 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             <!--描述-->
             <hr /><label for="option_id"> <?php echo $args[0]; ?></label>
 
-        <?php
+<?php
 
         } // end magick_show_select_callback
 
-        /**
-         * 统计页面基本框架
-         */
-        public static function render_page()
-        {
-            $tool = new Magick_Mixtrue_Tool;
 
-            /**
-             * 表格数据准备 - 周
-             */
-            $chart_data_week = self::get_user_release_arr()['week'];
-
-            /**
-             * 表格数据准备 - 月
-             */
-            $chart_data_month = self::get_user_release_arr()['month'];
-
-            //看看里面有啥
-            //$tool->p($chart);
-            //$tool->p($chart_user);
-            //$tool->p($chart_time);
-            //$tool->p($chart_content);
-
-            /**
-             * 基础数据准备
-             */
-            $arr_data = $tool->get_site_census_data();
-
-            //今天发文
-            $count_today = $arr_data['today']['single'];
-            //今天发评论
-            $today_comments = $arr_data['today']['comments'];
-            //今天注册
-            $count_register = $arr_data['today']['register'];
-            //总发文
-            $total_single = $arr_data['total']['single'];
-            //总用户
-            $total_user = $arr_data['total']['register'];
-
-        ?>
-
-            <section class="magick_section">
-                <div class="single-mixtrue">
-                    <!--放统计图-->
-                    <div id="magick-seven-census" style="width:700px;height:400px;"></div>
-                    <!--放方框-->
-                    <div class="magick-right">
-                        <div class="magick-per">
-                            <div class="per-content">
-                                <div class="black-data-box-mix">
-                                    <span>今日发文</span>
-                                    <div class="child">
-                                        <p><span><?php echo $count_today; ?></span>篇</p>
-                                        <span class="dashicons dashicons-text-page"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="per-content">
-                                <div class="black-data-box-mix">
-                                    <span>今日评论</span>
-                                    <div class="child">
-                                        <p><span><?php echo $today_comments ?></span>篇</p>
-                                        <span class="dashicons dashicons-format-status"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="per-content">
-                                <div class="black-data-box-mix">
-                                    <span>今日注册</span>
-                                    <div class="child">
-                                        <p><span><?php echo $count_register; ?></span>次</p>
-                                        <span class="dashicons dashicons-universal-access"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div>
-
-                        <div class="magick-per">
-                            <div class="per-content">
-                                <div class="black-data-box-mix">
-                                    <span>总计发文</span>
-                                    <div class="child">
-                                        <p><span><?php echo $total_single; ?></span>篇</p>
-                                        <span class="dashicons dashicons-clipboard"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="per-content ">
-                                <div class="black-data-box-mix">
-                                    <span>总计用户</span>
-                                    <div class="child">
-                                        <p><span><?php echo $total_user; ?></span>位</p>
-                                        <span class="dashicons dashicons-universal-access-alt"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-                        </div>
-                    </div>
-                </div>
-
-            </section>
-            <!--月度统计-->
-            <section class="magick-census-single-month">
-                <div id="magick-month-census" style="width:1200px;height:400px;"></div>
-            </section>
-
-            <script type="text/javascript">
-                // 基于准备好的dom，初始化echarts实例
-                let myChart_week = echarts.init(document.getElementById("magick-seven-census"));
-                let myChart_month = echarts.init(document.getElementById("magick-month-census"));
-
-                // 指定图表的配置项和数据
-                let option_week = {
-                    title: {
-                        text: "一周发文统计",
-                    },
-                    tooltip: {},
-                    legend: {
-                        data: <?php echo $chart_data_week['user'] ?>,
-                    },
-                    xAxis: {
-                        data: <?php echo $chart_data_week['time'] ?>,
-                    },
-                    yAxis: {},
-                    series: <?php echo $chart_data_week['content'] ?>,
-                };
-                // 指定图表的配置项和数据
-                let option_month = {
-                    title: {
-                        text: "月度发文统计",
-                    },
-                    tooltip: {},
-                    legend: {
-                        data: <?php echo $chart_data_month['user'] ?>,
-                    },
-                    xAxis: {
-                        data: <?php echo $chart_data_month['time'] ?>,
-                    },
-                    yAxis: {},
-                    series: <?php echo $chart_data_month['content'] ?>,
-                };
-
-                // 使用刚指定的配置项和数据显示图表。
-                myChart_week.setOption(option_week);
-                myChart_month.setOption(option_month);
-            </script>
-
-<?php
-        }
 
 
         /**
@@ -497,9 +342,18 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
 
         /**
          * 结合
+         * 用户数组，时间数组
          */
-        public static function handle_data(){
-            
+        public static function handle_data($id, $time)
+        {
+            $week_time = self::format_dates($id); //整理昵称数据
+            array_unshift($week_time, "user"); //添加标识头
+            $week_time = array($week_time); //存进数组
+
+            $week_data = array_reverse(self::get_article_counts($time, $id)); //获取数据并反序
+
+            $arr = array_merge($week_time, $week_data); //整理为所需格式
+            return $arr;
         }
 
         /**
@@ -523,56 +377,11 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             $t_month = $tool->get_time_long("this_month");
 
 
-            //将数据处理后存入数组
 
+            $arr['week_sum'] = self::handle_data($id, $t_week);
 
-            $week_time = self::format_dates($id); //整理昵称数据
-            array_unshift($week_time, "user"); //添加标识头
-            $week_time = array($week_time); //存进数组
+            //$arr['months'] = self::handle_data($id, $t_month); 
 
-            $week_data = array_reverse(self::get_article_counts($t_week, $id)); //获取数据并反序
-
-            $arr['week_sum'] = array_merge($week_time, $week_data); //整理为所需格式
-
-
-            //$arr['months'] = self::get_article_counts($t_month, $id);
-
-            return $arr;
-        }
-
-        /**
-         * 输入人员ID，返回最近7天，本月发文数量
-         * 输出：数组(array)
-         */
-        public static function get_count_release($id = '1')
-        {
-            $tool = new Magick_Mixtrue_Tool;
-            //存储数据
-            $arr = array();
-            /**
-             * 最近一周发文
-             */
-            //拿到时间数组
-            $t_week = $tool->get_time()['a'];
-            //表格需要，反转下时间
-            $t_week = array_reverse($t_week);
-            //开始循环
-            for ($i = 0; $i < count((array) $t_week); $i++) {
-                //拿到日期
-                $time = $t_week[$i];
-                $arr['week'][$i] = $tool->get_count_user($id, $time, 'publish');
-            }
-            /**
-             * 本月发文数量
-             */
-            //拿到时间数组
-            $t_month = $tool->get_time_long("this_month");
-            //循环
-            for ($i = 0; $i < count((array) $t_month); $i++) {
-                //拿到日期
-                $time = $t_month[$i];
-                $arr['month'][$i] = $tool->get_count_user($id, $time, 'publish');
-            }
             return $arr;
         }
     } //end class
