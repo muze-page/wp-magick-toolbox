@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import Count from "@/components/block/count";
-import { ShopToday } from "../../../tool/defaultVar";
-import DataContext from "../../../tool/dataContext";
+import { ShopToday } from "@/components/tool/defaultVar";
+import DataContext from "@/components/tool/dataContext";
 
 const App: React.FC = () => {
   //拿到值

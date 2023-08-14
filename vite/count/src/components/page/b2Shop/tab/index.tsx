@@ -1,7 +1,7 @@
 //Tab切换
 import { useState } from "react";
-import Today from "./today";
-import Moon from "./moon";
+import Today from "@/components/page/b2Shop/tab/today";
+import Moon from "@/components/page/b2Shop/tab/moon";
 
 const Tab = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -30,7 +30,7 @@ const Tab = () => {
       <div className="tab-header">
         {tabs.map((tab, index) => (
           <button
-          type="button"
+            type="button"
             key={index}
             className={`tab-button ${activeTab === index ? "active" : ""}`}
             onClick={() => handleTabClick(index)}
