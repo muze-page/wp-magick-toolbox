@@ -71,7 +71,7 @@ const App: React.FC = () => {
   return (
     <>
       {contextHolder}
-      <Affix offsetTop={180}>
+      <Affix offsetTop={380}>
         <Button type="primary" onClick={postData}>
           保存
         </Button>
