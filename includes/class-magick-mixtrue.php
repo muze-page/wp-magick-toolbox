@@ -77,7 +77,7 @@ class Magick_Mixtrue
          */
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-magick-mixtrue-loader.php';
 
-       
+
 
         /**
          * 负责定义后台中发生的所有操作的类。
@@ -140,6 +140,8 @@ class Magick_Mixtrue
     public function run()
     {
         $this->loader->run();
+        //对js文件进行module接入
+        add_filter('script_loader_tag', array(__CLASS__, 'refund_type_script'), 10, 2);
     }
 
     /**
@@ -174,5 +176,18 @@ class Magick_Mixtrue
     public function get_version()
     {
         return $this->version;
+    }
+
+    /**
+     * 对js文件进行module接入
+     */
+    public static function refund_type_script($tag, $handle)
+    {
+        // 在这里判断需要添加 type 属性的 JS 文件，比如文件名包含 xxx.js
+        if (strpos($tag, 'index.js') !== false) {
+            // 在 script 标签中添加 type 属性
+            $tag = str_replace('<script', '<script type="module"', $tag);
+        }
+        return $tag;
     }
 }

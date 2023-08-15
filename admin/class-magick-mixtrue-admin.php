@@ -86,8 +86,7 @@ class MaMi_Admin
         //加载菜单用的 CSS 和 JS 资源
         add_action('admin_enqueue_scripts', array(__CLASS__, 'load_admin_script'));
 
-        //对js文件进行module接入
-        add_filter('script_loader_tag', array(__CLASS__, 'refund_type_script'), 10, 2);
+       
 
        
 
@@ -185,18 +184,7 @@ class MaMi_Admin
 
 
     }
-    /**
-     * 对js文件进行module接入
-     */
-    public static function refund_type_script($tag, $handle)
-    {
-        // 在这里判断需要添加 type 属性的 JS 文件，比如文件名包含 xxx.js
-        if (strpos($tag, 'index.js') !== false) {
-            // 在 script 标签中添加 type 属性
-            $tag = str_replace('<script', '<script type="module"', $tag);
-        }
-        return $tag;
-    }
+
 
     /**
      * 整理文章数据
