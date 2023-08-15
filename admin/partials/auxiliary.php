@@ -25,8 +25,6 @@ if (!class_exists('MaMi_Auxiliary')) {
             //未登录模糊文章内图片
             $no_login_img = MaMi_Admin::get_config($option, 'no_login_img');
             if ($no_login_img) {
-
-
                 add_action('wp_footer', array(__CLASS__, 'n_yingcang_css'));
             }
 
@@ -42,13 +40,7 @@ if (!class_exists('MaMi_Auxiliary')) {
                 Magick_Mixtrue_Census_Single::run();
             }
 
-            //加载商城统计
-            $b2_count = MaMi_Admin::get_config($auxiliary, 'b2_count');
-            if ($b2_count) {
-                //文章统计页面
-                require_once plugin_dir_path(__FILE__) . 'function/block/census-shop.php';
-                Magick_Mixtrue_Census_Shop::run();
-            }
+
 
             //屏蔽恶意关键词搜索
             $no_malice_key = MaMi_Admin::get_config($auxiliary, 'no_malice_key');
@@ -62,6 +54,28 @@ if (!class_exists('MaMi_Auxiliary')) {
                 //优化设置
                 require_once plugin_dir_path(__FILE__) . 'function/class-mami-login_verify.php';
                 MaMi_Login_Verify::run($login_code);
+            }
+
+            /**
+             * B2
+             */
+            //获取选项 - B2
+            $b2 =  MaMi_Admin::get_config($config, 'b2');
+
+            //添加订单菜单
+
+            $add_order_menu = MaMi_Admin::get_config($b2, 'add_order_menu');
+            if ($add_order_menu) {
+                add_action('admin_menu', array(__CLASS__, 'add_order_menu'));
+            }
+
+
+            //加载商城统计
+            $b2_count = MaMi_Admin::get_config($b2, 'b2_count');
+            if ($b2_count) {
+                //文章统计页面
+                require_once plugin_dir_path(__FILE__) . 'function/block/census-shop.php';
+                Magick_Mixtrue_Census_Shop::run();
             }
         }
 
@@ -135,6 +149,25 @@ if (!class_exists('MaMi_Auxiliary')) {
                     }
                 }
             }
+        }
+
+        /**
+         * B2
+         */
+        /**
+         * 添加订单菜单
+         */
+        public static function add_order_menu()
+        {
+            add_menu_page(
+                '订单处理',
+                '订单处理入口',
+                'administrator',
+                'admin.php?page=b2_orders_list&order_state=f',
+                '',
+                "dashicons-list-view",
+                1
+            );
         }
     } //end
 }

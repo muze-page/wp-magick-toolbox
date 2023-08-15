@@ -18,6 +18,7 @@ export type DataLocal = {
     //禁用
     disable: AuthorityDisable;
     auxiliary: AuthorityAuxiliary;
+    b2: AuthorityB2;//B2主题
   };
   h5: {
     home: H5Home;
@@ -92,12 +93,17 @@ export type AuthorityDisable = {
 //权限 辅助
 export type AuthorityAuxiliary = {
   single_count: boolean; //文章统计
-  b2_count: boolean; //B2商城统计
   no_malice_key: boolean; //拒绝恶意关键词
   malice_keu_content: string; //恶意关键词内容
   login_code: string; //登录验证码
   tecent_id: string; //腾讯ID
   tecent_key: string; //腾讯秘钥
+};
+
+//权限 B2
+export type AuthorityB2 = {
+  add_order_menu: boolean; //添加订单菜单
+  b2_count: boolean; //B2商城统计
 };
 
 //H5 首页

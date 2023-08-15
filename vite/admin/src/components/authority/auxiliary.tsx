@@ -69,21 +69,7 @@ const App: React.FC = () => {
           <Switch />
         </Form.Item>
 
-        <Form.Item<FieldType>
-          label="B2商城统计"
-          name="b2_count"
-          valuePropName="checked"
-          extra={
-            <p>
-              开启后显示在仪表盘下,
-              <a href="https://7b2.com/shop/35736.html?=mami" target="_blank">
-                详细介绍
-              </a>
-            </p>
-          }
-        >
-          <Switch />
-        </Form.Item>
+       
 
         <Form.Item<FieldType>
           label="屏蔽恶意关键词搜索"

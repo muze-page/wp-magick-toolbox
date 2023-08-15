@@ -75,12 +75,17 @@ const AuthorityDisable = {
 //权限控制 辅助
 const AuthorityAuxiliary = {
   single_count: boo, //文章统计
-  b2_count: boo, //B2商城统计
   no_malice_key: boo, //拒绝恶意关键词
   malice_keu_content: str, //恶意关键词内容
   login_code: "false", //登录验证码
   tecent_id: str, //腾讯ID
   tecent_key: str, //腾讯秘钥
+};
+
+//权限控制 b2
+const AuthorityB2 = {
+  add_order_menu: boo, //添加订单菜单
+  b2_count: boo, //B2商城统计
 };
 
 // H5 首页
@@ -115,6 +120,7 @@ const App = {
   authority: {
     disable: AuthorityDisable, //禁用
     auxiliary: AuthorityAuxiliary, //辅助功能
+    b2: AuthorityB2, //B2
   },
   //个性化
   style: {

@@ -1,0 +1,87 @@
+//权限 - 禁用
+import React from "react";
+import { useState, useContext, useEffect } from "react";
+//import {  useContext } from "react";
+import { Switch, Form } from "antd";
+import DataContext from "@/tool/dataContext";
+import { AuthorityB2 } from "@/tool/interface";
+import defaultVar from "@/tool/defaultVar";
+
+//选项类型
+type FieldType = AuthorityB2;
+
+const App: React.FC = () => {
+  //拿到值
+  const optionObj = useContext(DataContext) ?? { authority: {} };
+
+  //简化并提供默认值
+  const publicData = optionObj.authority?.b2 || defaultVar.authority.b2;
+
+  //创建变量并设默认值
+  const [formData, setFormData] = useState(publicData);
+
+  //表单同步修改值
+  const onValuesChange = (changedValues: Partial<FieldType>) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      ...changedValues,
+    }));
+  };
+
+  // 表单值发生变化时更新dataContext的值
+  useEffect(() => {
+    optionObj.authority = {
+      ...optionObj.authority,
+      b2: formData,
+    };
+  }, [formData]);
+
+  return (
+    <>
+      <Form
+        name="b2"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        style={{ maxWidth: 800 }}
+        //表单默认值，只有初始化以及重置时生效
+        initialValues={publicData}
+        //自动填充功能禁用
+        autoComplete="off"
+        //指定当表单提交时要执行的回调函数
+        onFinish={() => {}}
+        //指定当表单字段值发生变化时要执行的回调函数
+        onValuesChange={onValuesChange}
+      >
+        <Form.Item>
+          <h2>B2</h2>
+        </Form.Item>
+
+        <Form.Item<FieldType>
+          label="添加订单菜单"
+          name="add_order_menu"
+          valuePropName="checked"
+          extra={"添加商城订单快捷菜单"}
+        >
+          <Switch />
+        </Form.Item>
+        <Form.Item<FieldType>
+          label="B2商城统计"
+          name="b2_count"
+          valuePropName="checked"
+          extra={
+            <p>
+              开启后显示在仪表盘下,
+              <a href="https://7b2.com/shop/35736.html?=mami" target="_blank">
+                详细介绍
+              </a>
+            </p>
+          }
+        >
+          <Switch />
+        </Form.Item>
+      </Form>
+    </>
+  );
+};
+
+export default App;
