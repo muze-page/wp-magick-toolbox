@@ -3,7 +3,7 @@
 Plugin Name: 魔法优化
 Plugin URI: https://www.npc.ink/277510.html
 Description: 文章统计+小功能
-Version: 0.1.2
+Version: 0.1.5
 Author: Npcink
 Author URI: https://www.npc.ink/
  */
@@ -21,7 +21,7 @@ if (!defined('WPINC')) {
 //定义插件名
 define('MAGICK_MIXTURE_NAME', 'magick-optimize');
 //定义插件版本
-define('MAGICK_MIXTURE_VERSION', '0.1.2');
+define('MAGICK_MIXTURE_VERSION', '0.1.5');
 
 /**
  * 用于定义需要用到的插件类，

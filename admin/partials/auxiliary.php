@@ -25,10 +25,9 @@ if (!class_exists('MaMi_Auxiliary')) {
             //未登录模糊文章内图片
             $no_login_img = MaMi_Admin::get_config($option, 'no_login_img');
             if ($no_login_img) {
-                //判断，没有登录
-                if (!is_user_logged_in()) {
-                    add_action('wp_footer', array(__CLASS__, 'n_yingcang_css'));
-                }
+
+
+                add_action('wp_footer', array(__CLASS__, 'n_yingcang_css'));
             }
 
             //获取选项 - 功能
@@ -98,17 +97,20 @@ if (!class_exists('MaMi_Auxiliary')) {
          */
         public static function n_yingcang_css()
         {
-            echo '<style>
-            /*仅模糊文章内图片*/
-            .entry-content img {
-            -webkit-filter: blur(10px)!important;
-              -moz-filter: blur(10px)!important;
-              -ms-filter: blur(10px)!important;
-              filter: blur(6px)!important;}
-              .entry-content img:before{
-                content:"登录可见";
-              }
-              </style>';
+            //判断是否登录
+            if (!is_user_logged_in()) {
+                echo '<style>
+                /*仅模糊文章内图片*/
+                .entry-content img {
+                -webkit-filter: blur(10px)!important;
+                  -moz-filter: blur(10px)!important;
+                  -ms-filter: blur(10px)!important;
+                  filter: blur(6px)!important;}
+                  .entry-content img:before{
+                    content:"登录可见";
+                  }
+                  </style>';
+            }
         }
 
         //屏蔽恶意关键词搜索
@@ -127,7 +129,7 @@ if (!class_exists('MaMi_Auxiliary')) {
                     foreach ($BanKey as $Key) {
                         if (stristr($S_Key['s'], $Key) != false) {
                             $message = '搜索内容包含敏感词，请换个方式搜索';
-                            $message =$message.MaMi_Admin::blank_button();
+                            $message = $message . MaMi_Admin::blank_button();
                             wp_die($message);
                         }
                     }
