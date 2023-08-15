@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: 魔法合剂
-Plugin URI: https://www.npc.ink/
+Plugin Name: 魔法优化
+Plugin URI: https://www.npc.ink/277510.html
 Description: 文章统计+小功能
 Version: 0.1.2
-Author: Muze
+Author: Npcink
 Author URI: https://www.npc.ink/
  */
 //调试内容，在后台顶部显示一个通知
@@ -19,9 +19,9 @@ if (!defined('WPINC')) {
  *重命名此插件，并在发布新版本时进行更新。
  */
 //定义插件名
-define('MAGICK_MIXTURE_NAME', 'magick-mixtrue');
+define('MAGICK_MIXTURE_NAME', 'magick-optimize');
 //定义插件版本
-define('MAGICK_MIXTURE_VERSION', '0.0.2');
+define('MAGICK_MIXTURE_VERSION', '0.1.2');
 
 /**
  * 用于定义需要用到的插件类，

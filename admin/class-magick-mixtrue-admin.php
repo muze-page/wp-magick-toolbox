@@ -121,8 +121,8 @@ class MaMi_Admin
         //添加插件菜单
 
         add_options_page(
-            '魔法合剂设置选项',             // 要在此页面的浏览器窗口中显示的标题。
-            '魔法合剂',            // 要为此菜单项显示的文本
+            '魔法优化设置选项',             // 要在此页面的浏览器窗口中显示的标题。
+            '魔法优化',            // 要为此菜单项显示的文本
             'administrator',            // 哪种类型的用户可以看到此菜单项
             'mami_config',    // The unique ID - that is, the slug - for this menu item 
             array(__CLASS__, 'mami_display')   // 呈现此菜单的页面时要调用的函数的名称
