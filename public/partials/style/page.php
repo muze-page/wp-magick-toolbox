@@ -48,10 +48,6 @@ if (!class_exists('MaMi_Style_Page')) {
             //评论区添加表情
             $comment_emote = MaMi_Admin::get_config($option, 'comment_emote');
             if ($comment_emote) {
-                /**
-                 * TODO:判断当前页面是否加载评论区
-                 */
-                //if (comments_open()) {}
                 add_action('wp', array(__CLASS__, 'run_owo'));
             }
 
@@ -198,12 +194,19 @@ if (!class_exists('MaMi_Style_Page')) {
          */
         public static function run_owo()
         {
-            //加载js和css资源
-            add_action('wp_enqueue_scripts', array(__CLASS__, 'load_owo_resouce'));
-            //加载配置js
-            add_action('wp_footer', array(__CLASS__, 'load_owo_comment_js'));
-            //加载表情包位置
-            add_filter('comment_form_defaults', array(__CLASS__, 'load_owo_content'));
+            /**
+             * TODO:判断当前页面是否加载评论区
+             */
+            //获取当前页面的帖子对象
+            $current_post = get_post();
+            if ($current_post && $current_post->comment_status === 'open') {
+                //加载js和css资源
+                add_action('wp_enqueue_scripts', array(__CLASS__, 'load_owo_resouce'));
+                //加载配置js
+                add_action('wp_footer', array(__CLASS__, 'load_owo_comment_js'));
+                //加载表情包位置
+                add_filter('comment_form_defaults', array(__CLASS__, 'load_owo_content'));
+            }
         }
 
         /**
