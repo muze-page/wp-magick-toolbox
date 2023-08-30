@@ -1,4 +1,7 @@
 <?php
+/**
+ * 微信小程序链接引导模版
+ */
 $c5_file = 'image/template/wx_one/icon_c5_wx.png';
 $c5 = plugin_dir_url(dirname(__DIR__)) . $c5_file;
 
@@ -19,7 +22,7 @@ $page_url = get_permalink();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>加载中</title>
+    <title><?php echo  get_the_title(); ?></title>
 
 </head>
 
@@ -27,6 +30,10 @@ $page_url = get_permalink();
 
     <link rel="stylesheet" type="text/css" href="<?php echo  $css ?>">
     <div id="pc" class="content">
+        <?php
+
+        echo apply_filters('the_content', get_post_field('post_content', get_the_ID()));
+        ?>
 
     </div>
     <div id="mobile" class="mobile">

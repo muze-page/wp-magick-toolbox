@@ -13,7 +13,8 @@ if (!class_exists('MaMi_Wx_Xcx')) {
             self::$option = $wx_xcx;
             $active = MaMi_Admin::get_config(self::$option, 'active'); //状态
             if ($active) {
-                add_action('wp_head', array(__CLASS__, 'add_hello_header'));
+                //展示链接到首页顶部
+                //add_action('wp_head', array(__CLASS__, 'add_hello_header'));
 
                 //注册页面模版
                 add_filter('theme_page_templates', array(__CLASS__, 'add_custom_page_template'));
