@@ -19,6 +19,7 @@ export type DataLocal = {
     disable: AuthorityDisable;
     auxiliary: AuthorityAuxiliary;
     b2: AuthorityB2; //B2主题
+    wx_xcx:AuthorityWxXcx; //微信小程序链接生成
   };
   h5: {
     home: H5Home;
@@ -106,6 +107,15 @@ export type AuthorityAuxiliary = {
 export type AuthorityB2 = {
   add_order_menu: boolean; //添加订单菜单
   b2_count: boolean; //B2商城统计
+};
+
+//权限 微信小程序
+export type AuthorityWxXcx = {
+  active:boolean;//开关状态
+  appid: string; //
+  secret: string; //
+  path: string;//路径
+  query: string;//参数
 };
 
 //H5 首页

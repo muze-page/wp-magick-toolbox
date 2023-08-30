@@ -88,6 +88,15 @@ const AuthorityB2 = {
   b2_count: boo, //B2商城统计
 };
 
+//权限 微信小程序
+const AuthorityWxXcx = {
+  active:boo,//开关状态
+  appid: str, //
+  secret: str, //
+  path: str, //路径
+  query: str, //参数
+};
+
 // H5 首页
 const H5Home = {
   switch: boo, //开关
@@ -121,6 +130,7 @@ const App = {
     disable: AuthorityDisable, //禁用
     auxiliary: AuthorityAuxiliary, //辅助功能
     b2: AuthorityB2, //B2
+    wx_xcx: AuthorityWxXcx, //微信小程序链接生成
   },
   //个性化
   style: {
