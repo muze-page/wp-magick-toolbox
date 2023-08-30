@@ -16,8 +16,8 @@ export type DataLocal = {
   //权限
   authority: {
     //禁用
-    disable: AuthorityDisable;
-    auxiliary: AuthorityAuxiliary;
+    disable: AuthorityDisable;//禁用
+    auxiliary: AuthorityAuxiliary;//辅助功能
     b2: AuthorityB2; //B2主题
     wx_xcx:AuthorityWxXcx; //微信小程序链接生成
   };

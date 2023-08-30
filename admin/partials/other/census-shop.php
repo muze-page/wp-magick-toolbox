@@ -9,15 +9,39 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
     class Magick_Mixtrue_Census_Shop
     {
 
-        public static function run()
+        public static function run($option)
         {
-           
-            //加载菜单
-            add_action('admin_menu', array(__CLASS__, 'add_menu_shop'));
-            //加载图标用js
-            add_action('admin_enqueue_scripts', array(__CLASS__, 'load_enqueue_admin_script'));
+            //是否加载商城统计
+            $b2_count = MaMi_Admin::get_config($option, 'b2_count');
+            if ($b2_count) {
+                //加载菜单
+                add_action('admin_menu', array(__CLASS__, 'add_menu_shop'));
+                //加载图标用js
+                add_action('admin_enqueue_scripts', array(__CLASS__, 'load_enqueue_admin_script'));
+            }
+
+            //是否添加订单菜单
+            $add_order_menu = MaMi_Admin::get_config($option, 'add_order_menu');
+            if ($add_order_menu) {
+                add_action('admin_menu', array(__CLASS__, 'add_order_menu'));
+            }
         }
 
+        /**
+         * 添加订单菜单
+         */
+        public static function add_order_menu()
+        {
+            add_menu_page(
+                '订单处理',
+                '订单处理入口',
+                'administrator',
+                'admin.php?page=b2_orders_list&order_state=f',
+                '',
+                "dashicons-list-view",
+                1
+            );
+        }
 
         /**
          * 添加商城菜单
@@ -81,7 +105,6 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
             $message .= '<!--准备节点-->';
             $message .= '<div id="mami_b2_shop_count"></div>';
             echo $message;
-           
         }
 
         /**
@@ -97,7 +120,7 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
                     'month' => self::get_shop_month(), //本月销售数据
                     'form' => self::get_seven_data(), //最近7天销售数据
                 ),
-               
+
             );
             return $array;
         }

@@ -7,23 +7,37 @@ if (!class_exists('MaMi_Auxiliary')) {
     class MaMi_Auxiliary
     {
 
-        private static $auxiliary;
+        private static $auxiliary; //辅助功能
         //加载
         public static function run()
         {
+            //加载文件
+            self::load();
             //获取设置选项值
             $config = MaMi_Admin::get_seting('authority');
 
-            //获取选项 - 禁用
-            $option =  MaMi_Admin::get_config($config, 'disable');
+            //禁用
+            $disable =  MaMi_Admin::get_config($config, 'disable');
+
+            //辅助功能
+            $auxiliary =  MaMi_Admin::get_config($config, 'auxiliary');
+
+            //微信生成小程序跳转链接
+            $wx_xcx =  MaMi_Admin::get_config($config, 'wx_xcx');
+            MaMi_Wx_Xcx::run($wx_xcx);
+
+            //B2 功能选项
+            $b2 =  MaMi_Admin::get_config($config, 'b2');
+            Magick_Mixtrue_Census_Shop::run($b2);
+
 
             //禁用更新
-            $renew = MaMi_Admin::get_config($option, 'renew');
+            $renew = MaMi_Admin::get_config($disable, 'renew');
             if ($renew) {
                 self::run_ban_update();
             }
             //未登录模糊文章内图片
-            $no_login_img = MaMi_Admin::get_config($option, 'no_login_img');
+            $no_login_img = MaMi_Admin::get_config($disable, 'no_login_img');
             if ($no_login_img) {
                 add_action('wp_footer', array(__CLASS__, 'n_yingcang_css'));
             }
@@ -34,8 +48,7 @@ if (!class_exists('MaMi_Auxiliary')) {
 
             $single_count = MaMi_Admin::get_config($auxiliary, 'single_count');
             if ($single_count) {
-                //文章统计页面
-                require_once plugin_dir_path(__FILE__) . 'function/block/census-single.php';
+
                 //加载文章统计
                 Magick_Mixtrue_Census_Single::run();
             }
@@ -51,36 +64,32 @@ if (!class_exists('MaMi_Auxiliary')) {
             //登录验证码
             $login_code = MaMi_Admin::get_config($auxiliary, 'login_code');
             if ($login_code !== "false") {
-                //优化设置
-                require_once plugin_dir_path(__FILE__) . 'function/class-mami-login_verify.php';
+
                 MaMi_Login_Verify::run($login_code);
             }
 
-            /**
-             * B2
-             */
-            //获取选项 - B2
-            $b2 =  MaMi_Admin::get_config($config, 'b2');
-
-            //添加订单菜单
-
-            $add_order_menu = MaMi_Admin::get_config($b2, 'add_order_menu');
-            if ($add_order_menu) {
-                add_action('admin_menu', array(__CLASS__, 'add_order_menu'));
-            }
 
 
-            //加载商城统计
-            $b2_count = MaMi_Admin::get_config($b2, 'b2_count');
-            if ($b2_count) {
-                //文章统计页面
-                require_once plugin_dir_path(__FILE__) . 'function/block/census-shop.php';
-                Magick_Mixtrue_Census_Shop::run();
-            }
 
+
+
+           
+
+
+            
+        }
+
+        //加载文件
+        public static function load()
+        {
+            //文章统计页面
+            require_once plugin_dir_path(__FILE__) . 'other/census-single.php';
+            //登录验证码
+            require_once plugin_dir_path(__FILE__) . 'other/login_verify.php';
+            //商城统计页面
+            require_once plugin_dir_path(__FILE__) . 'other/census-shop.php';
             //加载微信小程序链接生成
             require_once plugin_dir_path(__FILE__) . 'other/wx-xcx.php';
-            MaMi_Wx_Xcx::run();
         }
 
 
@@ -155,23 +164,7 @@ if (!class_exists('MaMi_Auxiliary')) {
             }
         }
 
-        /**
-         * B2
-         */
-        /**
-         * 添加订单菜单
-         */
-        public static function add_order_menu()
-        {
-            add_menu_page(
-                '订单处理',
-                '订单处理入口',
-                'administrator',
-                'admin.php?page=b2_orders_list&order_state=f',
-                '',
-                "dashicons-list-view",
-                1
-            );
-        }
+       
+       
     } //end
 }

@@ -6,35 +6,28 @@
 if (!class_exists('MaMi_Wx_Xcx')) {
     class MaMi_Wx_Xcx
     {
-        public static function run()
+        //选项值
+        private static $option;
+        public static function run($wx_xcx)
         {
-
-            add_action('wp_head', array(__CLASS__, 'add_hello_header'));
+            self::$option = $wx_xcx;
+            $active = MaMi_Admin::get_config(self::$option, 'active'); //状态
+            if ($active) {
+                add_action('wp_head', array(__CLASS__, 'add_hello_header'));
+            }
         }
 
         public static function add_hello_header()
         {
-            //获取设置选项值
-            $config = MaMi_Admin::get_seting('authority');
-
-            //获取选项 
-            $option =  MaMi_Admin::get_config($config, 'wx_xcx');
-
-            $active = MaMi_Admin::get_config($option, 'active'); //状态
-
-            $appid = MaMi_Admin::get_config($option, 'appid');
-            $secret = MaMi_Admin::get_config($option, 'secret');
-            $path = MaMi_Admin::get_config($option, 'path'); //页面参数
-            $query = MaMi_Admin::get_config($option, 'query'); //查询参数
+            $appid = MaMi_Admin::get_config(self::$option, 'appid');
+            $secret = MaMi_Admin::get_config(self::$option, 'secret');
+            $path = MaMi_Admin::get_config(self::$option, 'path'); //页面参数
+            $query = MaMi_Admin::get_config(self::$option, 'query'); //查询参数
 
             $token = self::wx_json_token($appid, $secret);
             $link = self::get_link($token, $path, $query);
-            echo $appid;
-            echo "<br/>";
-            echo $secret;
-            echo "<br/>";
-            print_r($token);
-            echo "<br/>";
+            //TODO:使用缓存技术，缓存token
+            // return $link;
             echo $link;
         }
         /**
