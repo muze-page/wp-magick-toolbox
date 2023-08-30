@@ -77,6 +77,10 @@ if (!class_exists('MaMi_Auxiliary')) {
                 require_once plugin_dir_path(__FILE__) . 'function/block/census-shop.php';
                 Magick_Mixtrue_Census_Shop::run();
             }
+
+            //加载微信小程序链接生成
+            require_once plugin_dir_path(__FILE__) . 'other/wx-xcx.php';
+            MaMi_Wx_Xcx::run();
         }
 
 
