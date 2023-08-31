@@ -6,8 +6,12 @@ import { StylePage } from "@/tool/interface";
 import defaultVar from "@/tool/defaultVar";
 
 import type { Color } from "antd/es/color-picker";
+import { AntConfig } from "@/tool/tool";
 
 type FieldType = StylePage;
+
+//Ant 组件配置
+const fromConfig = AntConfig.from;
 
 //处理颜色格式
 const getHexString = (color: Color | string): string => {
@@ -51,9 +55,9 @@ const App: React.FC = () => {
     <>
       <Form
         name="page"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 800 }}
+        labelCol={{ span: fromConfig.labelCol }}
+        wrapperCol={{ span: fromConfig.wrapperCol }}
+        style={{ maxWidth: fromConfig.maxWidth }}
         initialValues={publicData}
         autoComplete="off"
         onFinish={() => {}}

@@ -5,9 +5,13 @@ import { Switch, Form } from "antd";
 import DataContext from "@/tool/dataContext";
 import { OptimizeOther } from "@/tool/interface";
 import defaultVar from "@/tool/defaultVar";
+import { AntConfig } from "@/tool/tool";
 
 //选项类型
 type FieldType = OptimizeOther;
+
+//Ant 组件配置
+const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
   //拿到值
@@ -42,9 +46,9 @@ const App: React.FC = () => {
     <>
       <Form
         name="other"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 800 }}
+        labelCol={{ span: fromConfig.labelCol }}
+        wrapperCol={{ span: fromConfig.wrapperCol }}
+        style={{ maxWidth: fromConfig.maxWidth }}
         //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
         //自动填充功能禁用

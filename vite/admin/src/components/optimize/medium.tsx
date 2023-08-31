@@ -3,9 +3,13 @@ import { Switch, Select, Form } from "antd";
 import DataContext from "@/tool/dataContext";
 import { OptimizeMedium } from "@/tool/interface";
 import defaultVar from "@/tool/defaultVar";
+import { AntConfig } from "@/tool/tool";
 
 //选项类型
 type FieldType = OptimizeMedium;
+
+//Ant 组件配置
+const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
   //拿到公共值
@@ -33,9 +37,9 @@ const App: React.FC = () => {
   return (
     <Form
       name="medium"
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
-      style={{ maxWidth: 800 }}
+      labelCol={{ span: fromConfig.labelCol }}
+        wrapperCol={{ span: fromConfig.wrapperCol }}
+        style={{ maxWidth: fromConfig.maxWidth }}
       initialValues={publicData}
       autoComplete="off"
       onFinish={() => {}}
