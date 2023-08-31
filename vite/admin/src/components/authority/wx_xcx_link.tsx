@@ -1,13 +1,68 @@
 //微信小程序生成跳转链接
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Form, Switch, Input } from "antd";
+import { Form, Switch, Input, Collapse } from "antd";
+import type { CollapseProps } from "antd";
 import DataContext from "@/tool/dataContext";
 import { AuthorityWxXcx } from "@/tool/interface";
 import defaultVar from "@/tool/defaultVar";
 
 //选项类型
 type FieldType = AuthorityWxXcx;
+
+/**
+ * 折叠面板
+ */
+
+const link = (
+  <ul className="list-disc ml-4">
+    <li>access_token 的有效期目前为 2 个小时</li>
+    <li>每天生成 URL Scheme 总数量上限为50万</li>
+    <li>URL Scheme有效期最长 30 天</li>
+    <li>
+      每个独立的URL Scheme被用户访问后，仅此用户可以再次访问并打开对应小程序
+    </li>
+    <li>针对非个人主体小程序开放</li>
+  </ul>
+);
+const text = (
+  <ul className="list-decimal ml-4">
+    <li>配置上述设置信息</li>
+    <li>新建页面，选择对应提示的页面模版</li>
+    <li>填写标题和页面内容即可，会自动添加跳转按钮，</li>
+    <li>检测到移动端会自动申请打开微信客户端</li>
+  </ul>
+);
+//实现细节
+const achieve = (
+  <ul className="list-disc ml-4">
+    <li>本作者阅读官方文档后实现</li>
+    <li>实现细节见下方链接</li>
+    <li>
+      <a href="https://www.npc.ink/276458.html" target="_blank">
+        开发微信小程序的URL Scheme
+      </a>
+    </li>
+  </ul>
+);
+const items: CollapseProps["items"] = [
+  {
+    key: "1",
+    label: "小程序要求",
+    children: <p>{link}</p>,
+  },
+  {
+    key: "2",
+    label: "跳转页使用",
+    children: <p>{text}</p>,
+    
+  },
+  {
+    key: "3",
+    label: "实现细节",
+    children: <p>{achieve}</p>,
+  },
+];
 
 const App: React.FC = () => {
   //拿到值
@@ -39,9 +94,9 @@ const App: React.FC = () => {
     <>
       <Form
         name="wx_xcx"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 800 }}
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 18 }}
+        style={{ maxWidth: 900 }}
         //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
         //自动填充功能禁用
@@ -130,7 +185,7 @@ const App: React.FC = () => {
               name="query"
               extra={
                 <p>
-                  需跳转指定的页面，例如{" "}
+                  需跳转的指定页面，例如
                   <pre className="pre-meat">
                     pages/single/post.html?id=300485
                   </pre>
@@ -140,6 +195,9 @@ const App: React.FC = () => {
               }
             >
               <Input />
+            </Form.Item>
+            <Form.Item<FieldType> label="介绍">
+              <Collapse accordion items={items} bordered={false} />
             </Form.Item>
           </>
         )}
