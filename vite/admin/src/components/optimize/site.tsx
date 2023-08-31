@@ -74,38 +74,44 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
-          label="禁止网站title中的 “-” 被转义"
+          label="禁止title中的 “-” 被转义"
           name="no_escape"
           valuePropName="checked"
+          extra={"让网页标题符号正常显示"}
         >
           <Switch />
         </Form.Item>
         <Form.Item<FieldType>
-          label="文章关键词自动添加内链链接代码"
+          label="文章内关键词添加内链"
           name="add_inks"
           valuePropName="checked"
           extra={
+            <>
+            文章内的内容与添加的标签相同，则添加对应标签的链接
             <a
               href="https://www.npc.ink/15286.html?=magick-mami"
               target="_blank"
             >
               详细介绍
             </a>
+            </>
           }
         >
           <Switch />
         </Form.Item>
         <Form.Item<FieldType>
-          label="登录页LOGO改为首页链接"
+          label="修改登录页LOGO链接"
           name="modify_login_link"
           valuePropName="checked"
+          extra={"登录页LOGO改为首页链接"}
         >
           <Switch />
         </Form.Item>
         <Form.Item<FieldType>
-          label="移除登录页面语言选择框"
+          label="移除语言选择框"
           name="remove_langue"
           valuePropName="checked"
+          extra={"移除登录页面语言选择框"}
         >
           <Switch />
         </Form.Item>

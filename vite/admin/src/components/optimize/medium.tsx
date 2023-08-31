@@ -38,8 +38,8 @@ const App: React.FC = () => {
     <Form
       name="medium"
       labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
-        style={{ maxWidth: fromConfig.maxWidth }}
+      wrapperCol={{ span: fromConfig.wrapperCol }}
+      style={{ maxWidth: fromConfig.maxWidth }}
       initialValues={publicData}
       autoComplete="off"
       onFinish={() => {}}
@@ -58,7 +58,7 @@ const App: React.FC = () => {
         <Switch />
       </Form.Item>
       <Form.Item<FieldType>
-        label="禁用自动生成的图片尺寸"
+        label="禁用自动图片尺寸"
         name="no_auto_size"
         valuePropName="checked"
         extra={"禁用自动生成的图片尺寸、禁用缩放尺寸、禁用其他图片尺寸"}
@@ -66,7 +66,7 @@ const App: React.FC = () => {
         <Switch />
       </Form.Item>
       <Form.Item<FieldType>
-        label="添加媒体库SVG图标支持"
+        label="添加SVG图标支持"
         name="medium_add_svg"
         valuePropName="checked"
         extra={"选中后可在媒体库上传SVG图标"}

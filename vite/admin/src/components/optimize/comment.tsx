@@ -39,8 +39,8 @@ const App: React.FC = () => {
     <Form
       name="comment"
       labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
-        style={{ maxWidth: fromConfig.maxWidth }}
+      wrapperCol={{ span: fromConfig.wrapperCol }}
+      style={{ maxWidth: fromConfig.maxWidth }}
       initialValues={publicData}
       autoComplete="off"
       onFinish={() => {}}
@@ -71,7 +71,7 @@ const App: React.FC = () => {
           name="interval_time"
           extra={"指定时间后才能再次评论"}
         >
-          <InputNumber  min={0} addonAfter="秒"/>
+          <InputNumber min={0} addonAfter="秒" />
         </Form.Item>
       )}
       <Form.Item<FieldType>
@@ -92,10 +92,10 @@ const App: React.FC = () => {
       {formData.words_number && (
         <>
           <Form.Item<FieldType> label="最小字数" name="words_number_min">
-            <InputNumber min={0} addonAfter="字"/>
+            <InputNumber min={0} addonAfter="字" />
           </Form.Item>
           <Form.Item<FieldType> label="最大字数" name="words_number_max">
-            <InputNumber min={0} addonAfter="字"/>
+            <InputNumber min={0} addonAfter="字" />
           </Form.Item>
         </>
       )}

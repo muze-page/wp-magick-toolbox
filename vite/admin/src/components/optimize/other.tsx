@@ -63,17 +63,18 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
-          label="文章菜单添加作者筛选项"
+          label="添加作者筛选项"
           name="add_user"
           valuePropName="checked"
+          extra={"文章菜单添加作者筛选项"}
         >
           <Switch />
         </Form.Item>
         <Form.Item<FieldType>
-          label="文章和媒体菜单添加时间筛选项"
+          label="添加时间筛选项"
           name="add_time"
           valuePropName="checked"
-          extra={"媒体菜单需为列表布局"}
+          extra={"文章和媒体菜单添加时间筛选项，媒体菜单需为列表布局"}
         >
           <Switch />
         </Form.Item>
@@ -94,10 +95,10 @@ const App: React.FC = () => {
           <Switch />
         </Form.Item>
         <Form.Item<FieldType>
-          label="文章末尾添加最后更新时间"
+          label="添加最后更新时间"
           name="add_last_update"
           valuePropName="checked"
-          extra={"文章发布24小时后再次修改，即可展示"}
+          extra={"文章末尾添加最后更新时间，文章发布24小时后再次修改，即可展示"}
         >
           <Switch />
         </Form.Item>

@@ -64,7 +64,7 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
-          label="替换默认登录报错信息"
+          label="替换登录报错信息"
           name="replace_login_error"
           valuePropName="checked"
           extra={
@@ -77,7 +77,7 @@ const App: React.FC = () => {
           <Switch />
         </Form.Item>
         <Form.Item<FieldType>
-          label="修改评论样式中的管理员ID"
+          label="修改评论中的管理员ID"
           name="modify_comment_user"
           valuePropName="checked"
           extra={"默认的评论样式中，会包含管理员登录ID，修改后，可改善此情况"}
@@ -85,11 +85,11 @@ const App: React.FC = () => {
           <Switch />
         </Form.Item>
         <Form.Item<FieldType>
-          label="删除WordPress版本信息"
+          label="移除版本信息"
           name="remove_RSS_version"
           valuePropName="checked"
           extra={
-            "从RSS源和网站中删除，如果您无法保持您的WordPres版本为最新，推荐开启"
+            "从RSS源和网站中删除WordPress版本信息，如果您无法保持您的WordPres版本为最新，推荐开启"
           }
         >
           <Switch />
