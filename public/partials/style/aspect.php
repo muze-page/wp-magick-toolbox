@@ -16,14 +16,23 @@ if (!class_exists('MaMi_Style_Aspect')) {
 
 
             //烟花粒子特效
-            $particle = MaMi_Admin::get_config($option, 'particle');
-            if ($particle) {
+            $particle = MaMi_Admin::get_config($option, 'particle', "false");
+            //四散
+            if ($particle === "diffuse") {
                 //手机端不加载
                 if (!wp_is_mobile()) {
+                    //四散
                     add_action('wp_enqueue_scripts', array(__CLASS__, 'add_page_particle_js'));
                     add_action('wp_footer', array(__CLASS__, 'add_page_particle'));
                 }
             }
+
+            //动态标题
+            $title = MaMi_Admin::get_config($option, 'title');
+            if ($title) {
+                add_action('wp_footer', array(__CLASS__, 'tag_title'));
+            }
+
 
             //屏幕上有根毛
             $screen_hair = MaMi_Admin::get_config($option, 'screen_hair');
@@ -45,8 +54,11 @@ if (!class_exists('MaMi_Style_Aspect')) {
              */
             $lantern =  MaMi_Admin::get_config($option, 'lantern');
             if ($lantern) {
-                add_action('wp_enqueue_scripts', array(__CLASS__, 'lantern_css'));
-                add_action('wp_footer', array(__CLASS__, 'lantern'));
+                //移动端不展示
+                if (!wp_is_mobile()) {
+                    add_action('wp_enqueue_scripts', array(__CLASS__, 'lantern_css'));
+                    add_action('wp_footer', array(__CLASS__, 'lantern'));
+                }
             }
 
             /**
@@ -62,17 +74,17 @@ if (!class_exists('MaMi_Style_Aspect')) {
          * 效果：页面添加烟花粒子
          * 来源：https://www.iowen.cn/canvas-click-effect-second-edition/
          */
-        //添加文件
+        //添加四散粒子文件
         public static function add_page_particle()
         {
 
-            echo '<div id="clickCanvas" style=" position:fixed;left:0;top:0;z-index:999999999;pointer-events:none;"></div>';
+            echo '<div id="clickCanvas"  style=" position:fixed;left:0;top:0;z-index:999999999;pointer-events:none;"></div>';
         }
-        //加载js
+        //加载四散js
         public static function add_page_particle_js()
         {
             wp_enqueue_script(
-                MAGICK_MIXTURE_NAME . '_particle-js',
+                MAGICK_MIXTURE_NAME . '_particle',
                 plugin_dir_url(dirname(__DIR__)) . 'js/style-click-particle.js',
                 array(),
                 MAGICK_MIXTURE_VERSION,
@@ -80,6 +92,33 @@ if (!class_exists('MaMi_Style_Aspect')) {
             );
         }
 
+        //动态标题
+        public static function tag_title()
+        {
+            $title_front = MaMi_Admin::get_config(self::$option, 'title_front', "(/≧▽≦/)你又回来啦！");
+            $title_after = MaMi_Admin::get_config(self::$option, 'title_after', "你别走吖 Σ(っ °Д °;)っ");
+            echo '
+    <script>
+    //网站动态标题开始 
+var OriginTitile = document.title,
+titleTime;
+document.addEventListener("visibilitychange",
+function() {
+    if (document.hidden) {
+        document.title = "' . $title_after . '";
+        clearTimeout(titleTime)
+    } else {
+        document.title = "' . $title_front . '" ;
+        titleTime = setTimeout(function() {
+            document.title = OriginTitile
+        },
+        2000)
+    }
+});
+//网站动态标题结束
+    </script>
+    ';
+        }
 
 
         /**
@@ -140,13 +179,15 @@ if (!class_exists('MaMi_Style_Aspect')) {
          */
         public static function lantern()
         {
+            $lantern_left =  MaMi_Admin::get_config(self::$option, 'lantern_left', "春");
+            $lantern_right =  MaMi_Admin::get_config(self::$option, 'lantern_right', "节");
             echo '
 <div id="lantern">
 <div class="deng-box">
 <div class="deng">
     <div class="xian"></div>
     <div class="deng-a">
-        <div class="deng-b"><div class="deng-t">节</div></div>
+        <div class="deng-b"><div class="deng-t">' . $lantern_right . '</div></div>
     </div>
     <div class="shui shui-a"><div class="shui-c"></div><div class="shui-b"></div></div>
 </div>
@@ -157,7 +198,7 @@ if (!class_exists('MaMi_Style_Aspect')) {
 <div class="deng">
     <div class="xian"></div>
     <div class="deng-a">
-        <div class="deng-b"><div class="deng-t">春</div></div>
+        <div class="deng-b"><div class="deng-t">' . $lantern_left . '</div></div>
     </div>
     <div class="shui shui-a"><div class="shui-c"></div><div class="shui-b"></div></div>
 </div>

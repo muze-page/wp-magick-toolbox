@@ -16,7 +16,46 @@ count 文件夹下，是图表展示内容
 - 添加闭站倒计时功能
 - 添加设置选项导入导出功能
 - 设置选项内容添加移动端适配
-- 添加灯笼效果、飘樱花效果
+
+# 功能
+
+- 去除分类 category https://www.npc.ink/5783.html
+- 复制文字跳出弹窗提示 https://www.npc.ink/5032.html https://www.npc.ink/12196.html
+- 站内跳转站外添加中转页提示
+- 重复标题文章 https://www.npc.ink/5867.html
+- 禁用自动保存等 https://www.npc.ink/5002.html
+- 转义邮箱 https://www.npc.ink/11809.html
+- 防止打开 F12 https://www.npc.ink/6764.html https://juejin.cn/post/7262175454714626108
+- 指定邮箱可注册 https://www.npc.ink/19117.html
+- 支持 webp https://www.npc.ink/18850.html
+- 支持 exe\app\
+- 裁剪图片下侧去水印 https://www.npc.ink/276026.html
+- 首行缩进两字符 https://www.npc.ink/4639.html
+- 添加顶部统计代码和底部统计代码 https://www.npc.ink/13225.html
+
+- 公告单页 https://www.npc.ink/14482.html
+- 所有文中链接从新窗口打开 https://www.npc.ink/17846.html
+- 用户根据文章数量排序 https://www.npc.ink/17135.html
+- 文章添加缩略图展示 https://www.npc.ink/17087.html
+- 添加客服按钮 https://www.npc.ink/14571.html
+
+# 外观特效
+- 烟花粒子 demo2 带圆圈 https://www.npc.ink/14512.html
+
+- 添加动态标题 https://www.cnblogs.com/HaoranZing/p/16917421.html
+- 美化滚动条 https://www.npc.ink/6217.html
+- 添加细线链接特效 https://blog.csdn.net/weixin_42077074/article/details/121031327
+
+
+- 点击出现数字 https://www.npc.ink/5955.html
+- 点击出现文字 https://www.npc.ink/11756.html
+
+- 添加魔方 https://www.npc.ink/12188.html
+
+# 功能特效
+
+- 写了多少字+阅读时间 https://www.npc.ink/6896.html
+- 文章底部添加赞赏引导按钮 https://www.npc.ink/6613.html
 
 # 更新记录
 
@@ -26,6 +65,7 @@ count 文件夹下，是图表展示内容
 - 添加微信小程序跳转页面模版功能（启用生成跳转链接功能才有此模版）
 - 添加网页变灰功能
 - 添加一键黑白功能
+- 添加灯笼效果、全屏飘樱花效果
 - 修复 B2 商城统计时间倒叙问题
 - 修复月度统计数据不准的问题
 
