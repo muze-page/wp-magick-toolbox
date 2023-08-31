@@ -39,9 +39,9 @@ count 文件夹下，是图表展示内容
 - 文章添加缩略图展示 https://www.npc.ink/17087.html
 - 添加客服按钮 https://www.npc.ink/14571.html
 
-## 外观特效
 
-- 烟花粒子 demo2 带圆圈 https://www.npc.ink/14512.html
+## 外观特效
+- 评论框打字特效
 
 - 点击出现数字 https://www.npc.ink/5955.html
 - 点击出现文字 https://www.npc.ink/11756.html
