@@ -14,15 +14,7 @@ if (!class_exists('MaMi_Style_Page')) {
             //传值
             self::$option = $option;
 
-            //烟花粒子特效
-            $particle = MaMi_Admin::get_config($option, 'particle');
-            if ($particle) {
-                //手机端不加载
-                if (!wp_is_mobile()) {
-                    add_action('wp_enqueue_scripts', array(__CLASS__, 'add_page_particle_js'));
-                    add_action('wp_footer', array(__CLASS__, 'add_page_particle'));
-                }
-            }
+           
 
             //圆角彩色背景标签云
             $color_tag = MaMi_Admin::get_config($option, 'color_tag');
@@ -30,12 +22,7 @@ if (!class_exists('MaMi_Style_Page')) {
                 add_filter('wp_tag_cloud', array(__CLASS__, 'colorCloud'), 1);
             }
 
-            //屏幕上有根毛
-            $screen_hair = MaMi_Admin::get_config($option, 'screen_hair');
-            if ($screen_hair) {
-
-                add_action('wp_enqueue_scripts', array(__CLASS__, 'screen_hair'));
-            }
+           
 
 
             //已写完的书
@@ -68,28 +55,7 @@ if (!class_exists('MaMi_Style_Page')) {
             }
         }
 
-        /**
-         * 效果：页面添加烟花粒子
-         * 来源：https://www.iowen.cn/canvas-click-effect-second-edition/
-         */
-        //添加文件
-        public static function add_page_particle()
-        {
-
-            echo '<div id="clickCanvas" style=" position:fixed;left:0;top:0;z-index:999999999;pointer-events:none;"></div>';
-        }
-        //加载js
-        public static function add_page_particle_js()
-        {
-            wp_enqueue_script(
-                MAGICK_MIXTURE_NAME . '_particle-js',
-                plugin_dir_url(dirname(__DIR__)) . 'js/style-click-particle.js',
-                array(),
-                MAGICK_MIXTURE_VERSION,
-                true
-            );
-        }
-
+       
 
         /**
          * 添加彩色标签云
@@ -110,28 +76,7 @@ if (!class_exists('MaMi_Style_Page')) {
             return "<a $text>";
         }
 
-        /**
-         * 屏幕上有根毛
-         */
-        public static function screen_hair()
-        {
-            wp_enqueue_script(
-                MAGICK_MIXTURE_NAME . '_hair-js',
-                plugin_dir_url(dirname(__DIR__)) . 'js/hair.js',
-                array(),
-                MAGICK_MIXTURE_VERSION,
-                true
-            );
-            // 获取上一层的 image 文件夹路径
-            $image_folder_path =  plugin_dir_url(dirname(__DIR__)) . 'image/';
-
-            //传递路径
-            wp_localize_script(
-                MAGICK_MIXTURE_NAME . '_hair-js',
-                'image_folder',
-                $image_folder_path,
-            );
-        }
+       
 
         /**
          * 已写完的书

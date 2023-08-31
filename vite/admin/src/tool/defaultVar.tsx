@@ -53,9 +53,7 @@ const OptimizeOther = {
 
 //个性化 页面特效
 const StylePage = {
-  particle: boo, //粒子特效
   color_tag: boo, //彩色标签云特效
-  screen_hair: boo, //屏幕上的毛
   past_books: boo, //已写完的书
   comment_emote: boo, //评论区表情包特效
   custom_login_page: boo, //自定义登录页
@@ -68,6 +66,8 @@ const StylePage = {
 
 //外观特效
 const StyleAspect = {
+  particle: boo, //粒子特效
+  screen_hair: boo, //屏幕上的毛
   site_grey: boo, //网站变灰
 };
 

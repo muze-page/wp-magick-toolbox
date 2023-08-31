@@ -60,6 +60,29 @@ const App: React.FC = () => {
         <Form.Item>
           <h2>外观特效</h2>
         </Form.Item>
+        <Form.Item<FieldType>
+          label="粒子特效"
+          name="particle"
+          valuePropName="checked"
+          extra={"考虑到性能以及操作问题，移动端不加载此特效"}
+        >
+          <Switch />
+        </Form.Item>
+        <Form.Item<FieldType>
+          label="屏幕上的毛"
+          name="screen_hair"
+          valuePropName="checked"
+          extra={
+            <>
+              在网页上添加一根毛发，蛮有趣的
+              <a href="https://mkblog.cn/2382/" target="_blank">
+                详情
+              </a>
+            </>
+          }
+        >
+          <Switch />
+        </Form.Item>
 
         <Form.Item<FieldType>
           label="全站变灰"

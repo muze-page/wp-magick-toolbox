@@ -75,9 +75,7 @@ export type OptimizeOther = {
 
 //个性化
 export type StylePage = {
-  particle: boolean; //粒子特效
   color_tag: boolean; //彩色标签云特效
-  screen_hair: boolean; //屏幕上的毛
   past_books: boolean; //已写完的书
   comment_emote: boolean; //评论区表情包特效
   custom_login_page: boolean; //自定义登录页
@@ -90,6 +88,8 @@ export type StylePage = {
 
 //外观特效
 export type StyleAspect = {
+  particle: boolean; //粒子特效
+  screen_hair: boolean; //屏幕上的毛
   site_grey: boolean; //网站变灰
 };
 
