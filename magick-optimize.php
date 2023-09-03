@@ -29,10 +29,10 @@ define('MAGICK_MIXTURE_VERSION', '0.1.6');
  * 用于定义需要用到的插件类，
  */
 require plugin_dir_path(__FILE__) . 'includes/class-magick-mixtrue.php';
-require plugin_dir_path(__FILE__) . 'index.php';
+
 
 //测试类
-//require plugin_dir_path(__FILE__) . 'index.php';
+require plugin_dir_path(__FILE__) . 'index.php';
 
 /**
  * 开始执行插件。

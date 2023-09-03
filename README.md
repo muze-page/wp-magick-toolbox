@@ -22,6 +22,9 @@ count 文件夹下，是图表展示内容
 - 去除分类 category https://www.npc.ink/5783.html
 - 复制文字跳出弹窗提示 https://www.npc.ink/5032.html https://www.npc.ink/12196.html
 - 站内跳转站外添加中转页提示
+
+
+
 - 重复标题文章 https://www.npc.ink/5867.html
 - 禁用自动保存等 https://www.npc.ink/5002.html
 - 转义邮箱 https://www.npc.ink/11809.html
@@ -33,7 +36,7 @@ count 文件夹下，是图表展示内容
 - 首行缩进两字符 https://www.npc.ink/4639.html
 - 添加顶部统计代码和底部统计代码 https://www.npc.ink/13225.html
 
-- 公告单页 https://www.npc.ink/14482.html
+- 公告单页模版 https://www.npc.ink/14482.html
 - 所有文中链接从新窗口打开 https://www.npc.ink/17846.html
 - 用户根据文章数量排序 https://www.npc.ink/17135.html
 - 文章添加缩略图展示 https://www.npc.ink/17087.html
