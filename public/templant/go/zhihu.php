@@ -3,12 +3,13 @@
  Go中间页跳转 - 知乎
  */
 //拿到的链接：
-$external_url = isset($_GET['url']) ? $_GET['url'] : '';
+$external_url = isset($_GET['url']) ? $_GET['url'] : '暂无';
+
 //网站名：
-//$site_name = get_bloginfo('name');
-$site_name = '666';
+$site_name = get_bloginfo('name');
 
-
+//ico图标
+$favicon_url = get_site_icon_url();
 ?>
 
 <html lang="zh-CN">
@@ -20,7 +21,9 @@ $site_name = '666';
     <meta name="renderer" content="webkit">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title><?php echo $site_name ?> - 安全中心</title>
-    <link rel="shortcut icon" href="https://staticoffice.zhihu.com/static/favicon.ico" type="image/x-icon">
+
+    <link rel="shortcut icon" href="<?php echo $favicon_url ?>" type="image/x-icon">
+
     <style>
         body,
         h1,

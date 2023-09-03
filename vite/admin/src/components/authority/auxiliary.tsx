@@ -142,7 +142,7 @@ const App: React.FC = () => {
             options={[
               { value: "false", label: "禁用" },
               { value: "zhihu", label: "知乎" },
-              { value: "tecent", label: "腾讯云" },
+              { value: "tencent", label: "腾讯云" },
             ]}
           />
         </Form.Item>

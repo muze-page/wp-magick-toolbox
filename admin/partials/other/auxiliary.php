@@ -103,10 +103,18 @@ if (!class_exists('MaMi_Auxiliary_Index')) {
         public static  function go_to_new_link_move()
         {
             global $wp;
+            //跳转中间页
+            $go_middle = MaMi_Admin::get_config(self::$auxiliary, 'go_middle');
 
             if ($wp->request === 'too') {
                 $path = plugin_dir_path(dirname(dirname(dirname(__FILE__))));
-                include  $path . 'public/templant/go/zhihu.php'; // 知乎
+                if ($go_middle === "zhihu") {
+                    include  $path . 'public/templant/go/zhihu.php'; // 知乎
+                }
+                if ($go_middle === "tencent") {
+                    include  $path . 'public/templant/go/tencent.php'; // 腾讯
+                }
+
                 exit();
             }
         }
