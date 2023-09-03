@@ -68,10 +68,10 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
 
             //准备打包后的数据
             $build_css = plugin_dir_url(dirname(__DIR__)) . 'count/dist/index.css';
-            $build_css = str_replace('/admin/partials/', '/vite/',  $build_css);
+            $build_css = str_replace('/admin/', '/vite/',  $build_css);
 
             $build_js = plugin_dir_url(dirname(__DIR__)) . 'count/dist/index.js';
-            $build_js = str_replace('/admin/partials/', '/vite/',  $build_js);
+            $build_js = str_replace('/admin/', '/vite/',  $build_js);
             wp_enqueue_style(
                 MAGICK_MIXTURE_NAME . '_index_css',
                 $build_css,

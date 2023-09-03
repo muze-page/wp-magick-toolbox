@@ -47,10 +47,10 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
 
             //准备打包后的数据
             $build_css = plugin_dir_url(dirname(__DIR__)) . 'count/dist/index.css';
-            $build_css = str_replace('/admin/partials/', '/vite/',  $build_css);
+            $build_css = str_replace('/admin/', '/vite/',  $build_css);
 
             $build_js = plugin_dir_url(dirname(__DIR__)) . 'count/dist/index.js';
-            $build_js = str_replace('/admin/partials/', '/vite/',  $build_js);
+            $build_js = str_replace('/admin/', '/vite/',  $build_js);
             wp_enqueue_style(
                 MAGICK_MIXTURE_NAME . '_index_css',
                 $build_css,
@@ -171,8 +171,8 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             );
 
             $month = array(
-                "width"=>1200,
-                "height"=>300,
+                "width" => 1200,
+                "height" => 300,
                 "title" => "月度统计",
                 "dataset" => self::get_user_release_arr()["month_sum"],
             );
@@ -388,7 +388,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             //拿到时间数组 - 最近一周
             $t_week = $tool->get_time()['a'];
             //拿到时间数组 - 本月
-            $t_month =  array_reverse($tool->get_time_long("this_month"));//获取时间并取反
+            $t_month =  array_reverse($tool->get_time_long("this_month")); //获取时间并取反
 
 
 
