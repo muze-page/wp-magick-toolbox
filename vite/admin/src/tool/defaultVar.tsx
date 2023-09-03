@@ -95,6 +95,7 @@ const AuthorityAuxiliary = {
   login_code: "false", //登录验证码
   tecent_id: str, //腾讯ID
   tecent_key: str, //腾讯秘钥
+  go_middle:"false",//链接跳转中间页
 };
 
 //权限控制 b2

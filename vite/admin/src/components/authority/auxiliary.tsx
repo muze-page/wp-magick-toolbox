@@ -77,6 +77,7 @@ const App: React.FC = () => {
           label="屏蔽恶意关键词搜索"
           name="no_malice_key"
           valuePropName="checked"
+          extra={"禁止搜索指定词汇"}
         >
           <Switch />
         </Form.Item>
@@ -90,7 +91,11 @@ const App: React.FC = () => {
           </Form.Item>
         )}
 
-        <Form.Item<FieldType> label="登录验证码" name="login_code">
+        <Form.Item<FieldType>
+          label="登录验证码"
+          name="login_code"
+          extra={"登录时需填写验证码才可登录"}
+        >
           <Select
             style={{ width: 200 }}
             options={[
@@ -120,6 +125,27 @@ const App: React.FC = () => {
             </Form.Item>
           </>
         )}
+        <Form.Item<FieldType>
+          label="外链跳转中间页"
+          name="go_middle"
+          extra={
+            <>
+              文章中的外链会先跳转到中间页，再跳转第三方，此选项仅外观不同，功能相同
+              <a href="https://www.dujin.org/12762.html" target="_blank">
+                详情
+              </a>
+            </>
+          }
+        >
+          <Select
+            style={{ width: 200 }}
+            options={[
+              { value: "false", label: "禁用" },
+              { value: "zhihu", label: "知乎" },
+              { value: "tecent", label: "腾讯云" },
+            ]}
+          />
+        </Form.Item>
       </Form>
     </>
   );

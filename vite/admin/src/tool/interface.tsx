@@ -89,18 +89,18 @@ export type StylePage = {
 //外观特效
 export type StyleAspect = {
   particle: string; //粒子特效
-  title:boolean; //动态标题
-  title_front:string;//回到当前标签
-  title_after:string;//离开标签后
-  scrol:string; //美化滚动条
-  coupling:boolean; //细线联结
+  title: boolean; //动态标题
+  title_front: string; //回到当前标签
+  title_after: string; //离开标签后
+  scrol: string; //美化滚动条
+  coupling: boolean; //细线联结
 
   screen_hair: boolean; //屏幕上的毛
   site_grey: boolean; //网站变灰
-  lantern:boolean;//灯笼效果
-  lantern_left:string;//左边的字
-  lantern_right:string;//右边的字
-  sakura:boolean;//樱花效果
+  lantern: boolean; //灯笼效果
+  lantern_left: string; //左边的字
+  lantern_right: string; //右边的字
+  sakura: boolean; //樱花效果
 };
 
 //权限 禁用
@@ -117,6 +117,7 @@ export type AuthorityAuxiliary = {
   login_code: string; //登录验证码
   tecent_id: string; //腾讯ID
   tecent_key: string; //腾讯秘钥
+  go_middle: string; //链接跳转中间页
 };
 
 //权限 B2

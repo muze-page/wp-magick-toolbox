@@ -21,6 +21,7 @@ if (!class_exists('MaMi_Auxiliary')) {
 
             //辅助功能
             $auxiliary =  MaMi_Admin::get_config($config, 'auxiliary');
+            MaMi_Auxiliary_Index::run($auxiliary);
 
             //微信生成小程序跳转链接
             $wx_xcx =  MaMi_Admin::get_config($config, 'wx_xcx');
@@ -41,45 +42,23 @@ if (!class_exists('MaMi_Auxiliary')) {
             if ($no_login_img) {
                 add_action('wp_footer', array(__CLASS__, 'n_yingcang_css'));
             }
-
-            //获取选项 - 功能
-            $auxiliary =  MaMi_Admin::get_config($config, 'auxiliary');
-            self::$auxiliary = $auxiliary;
-
-            $single_count = MaMi_Admin::get_config($auxiliary, 'single_count');
-            if ($single_count) {
-
-                //加载文章统计
-                Magick_Mixtrue_Census_Single::run();
-            }
-
-
-
-            //屏蔽恶意关键词搜索
-            $no_malice_key = MaMi_Admin::get_config($auxiliary, 'no_malice_key');
-            if ($no_malice_key) {
-                add_action('template_redirect', array(__CLASS__, 'ytkah_search_ban'));
-            }
-
-            //登录验证码
-            $login_code = MaMi_Admin::get_config($auxiliary, 'login_code');
-            if ($login_code !== "false") {
-
-                MaMi_Login_Verify::run($login_code);
-            }  
         }
 
         //加载文件
         public static function load()
         {
-            //文章统计页面
-            require_once plugin_dir_path(__FILE__) . 'other/census-single.php';
-            //登录验证码
-            require_once plugin_dir_path(__FILE__) . 'other/login_verify.php';
+           
+
+          
+
             //商城统计页面
-            require_once plugin_dir_path(__FILE__) . 'other/census-shop.php';
+            require_once plugin_dir_path(__FILE__) . 'other/block/census-shop.php';
+
             //加载微信小程序链接生成
             require_once plugin_dir_path(__FILE__) . 'other/wx-xcx.php';
+
+            //辅助功能
+            require_once plugin_dir_path(__FILE__) . 'other/auxiliary.php';
         }
 
         /**
@@ -128,31 +107,6 @@ if (!class_exists('MaMi_Auxiliary')) {
             }
         }
 
-        //屏蔽恶意关键词搜索
-        public static function ytkah_search_ban()
-        {
-            $malice_keu_content = MaMi_Admin::get_config(self::$auxiliary, 'malice_keu_content');
-
-            if (is_search()) {
-                global $wp_query;
-                //拿到输入的值
-                $ytkah_search_key = $malice_keu_content;
-                if ($ytkah_search_key) {
-                    $ytkah_search_key = str_replace("\n", "|", $ytkah_search_key);
-                    $BanKey = explode('|', $ytkah_search_key);
-                    $S_Key = $wp_query->query_vars;
-                    foreach ($BanKey as $Key) {
-                        if (stristr($S_Key['s'], $Key) != false) {
-                            $message = '搜索内容包含敏感词，请换个方式搜索';
-                            $message = $message . MaMi_Admin::blank_button();
-                            wp_die($message);
-                        }
-                    }
-                }
-            }
-        }
-
-       
        
     } //end
 }
