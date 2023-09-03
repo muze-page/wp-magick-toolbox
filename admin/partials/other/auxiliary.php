@@ -40,6 +40,8 @@ if (!class_exists('MaMi_Auxiliary_Index')) {
             //跳转中间页
             $go_middle = MaMi_Admin::get_config($auxiliary, 'go_middle');
             if ($go_middle !== "false") {
+                //改造链接
+                add_filter('the_content', array(__CLASS__, 'the_content_nofollowss'), 999);
                 //添加重定向
                 register_activation_hook(__FILE__, array(__CLASS__, 'go_to_new_link'));
                 add_action('init', array(__CLASS__, 'go_to_new_link'));
@@ -85,11 +87,28 @@ if (!class_exists('MaMi_Auxiliary_Index')) {
         /**
          * 跳转中间页
          */
+        /**
+         * WordPress外链新窗口打开并使用php页面go跳转
+         * https://www.dujin.org/12762.html
+         */
+        public static function the_content_nofollowss($content)
+        {
+            preg_match_all('/<a(.*?)href="(.*?)"(.*?)>/', $content, $matches);
+            if ($matches) {
+                foreach ($matches[2] as $val) {
+                    if (strpos($val, '://') !== false && strpos($val, home_url()) === false && !preg_match('/\.(jpg|jepg|png|ico|bmp|gif|tiff)/i', $val)) {
+                        $content = str_replace("href=\"$val\"", "href=\"" . home_url() . "/go_to/?url=$val\" ", $content);
+                    }
+                }
+            }
+            return $content;
+        }
+        //注册
 
         public static function go_to_new_link()
         {
             add_rewrite_rule(
-                'too', // 设置你的链接格式，例如 /too/
+                'go_to', // 设置你的链接格式，例如 /too/
                 '', // 空字符串表示不指定自定义模板文件的路径
                 'top'
             );
@@ -106,7 +125,7 @@ if (!class_exists('MaMi_Auxiliary_Index')) {
             //跳转中间页
             $go_middle = MaMi_Admin::get_config(self::$auxiliary, 'go_middle');
 
-            if ($wp->request === 'too') {
+            if ($wp->request === 'go_to') {
                 $path = plugin_dir_path(dirname(dirname(dirname(__FILE__))));
                 if ($go_middle === "zhihu") {
                     include  $path . 'public/templant/go/zhihu.php'; // 知乎
