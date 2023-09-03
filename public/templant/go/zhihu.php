@@ -2,14 +2,7 @@
 /*
  Go中间页跳转 - 知乎
  */
-//拿到的链接：
-$external_url = isset($_GET['url']) ? $_GET['url'] : '暂无';
-
-//网站名：
-$site_name = get_bloginfo('name');
-
-//ico图标
-$favicon_url = get_site_icon_url();
+include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
 ?>
 
 <html lang="zh-CN">
@@ -228,53 +221,9 @@ $favicon_url = get_site_icon_url();
             <p class="link"><?php echo esc_url($external_url); ?></p>
         </div>
         <div class="actions">
-            <a class="button" href="<?php echo esc_url($external_url); ?>">继续访问</a>
+            <a class="button" href="<?php echo esc_url($external_url); ?>" target="_blank">继续访问</a>
         </div>
     </div>
-    <script>
-        var showTipButton = document.querySelector('.js-show-tip');
-        var tipEl = document.querySelector('.tip');
-        var showTip = function() {
-            tipEl.style.display = 'block';
-            tipEl.offsetWidth; // force reflow
-            tipEl.className = 'tip is-visible';
-            return false;
-        };
-
-        var linkEl = document.querySelector('.link');
-        var selectLink = function() {
-            linkEl.className = 'link is-expanded';
-            if (document.body.createTextRange) {
-                range = document.body.createTextRange();
-                range.moveToElementText(linkEl);
-                range.select();
-            } else if (window.getSelection) {
-                selection = window.getSelection();
-                range = document.createRange();
-                range.selectNodeContents(linkEl);
-                selection.removeAllRanges();
-                selection.addRange(range);
-            };
-        };
-
-        if (window.addEventListener) {
-            if (showTipButton) {
-                showTipButton.addEventListener('click', showTip);
-            }
-            if (linkEl) {
-                linkEl.addEventListener('click', selectLink);
-            }
-        } else {
-            if (showTipButton) {
-                showTipButton.attachEvent('onclick', showTip);
-            }
-            if (linkEl) {
-                linkEl.attachEvent('onclick', selectLink);
-            }
-        }
-    </script>
-
-
 </body>
 
 </html>

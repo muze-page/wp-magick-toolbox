@@ -133,6 +133,11 @@ if (!class_exists('MaMi_Auxiliary_Index')) {
                 if ($go_middle === "tencent") {
                     include  $path . 'public/templant/go/tencent.php'; // 腾讯
                 }
+                if ($go_middle === "shimo") {
+                    include  $path . 'public/templant/go/shimo.php'; // 石墨文档
+                }
+
+
 
                 exit();
             }
