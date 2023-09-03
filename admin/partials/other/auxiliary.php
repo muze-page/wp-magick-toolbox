@@ -43,7 +43,7 @@ if (!class_exists('MaMi_Auxiliary_Index')) {
                 //改造文章中的链接
                 add_filter('the_content', array(__CLASS__, 'the_content_nofollowss'), 999);
 
-                 //改造评论中的链接
+                //改造评论中的链接
                 add_filter('get_comment_text', array(__CLASS__, 'the_content_nofollowss'), 999);
 
                 //添加重定向
@@ -98,7 +98,7 @@ if (!class_exists('MaMi_Auxiliary_Index')) {
         public static function the_content_nofollowss($content)
         {
             $pattern = '/<a(.*?)href="(.*?)"(.*?)>(.*?)<\/a>/';
-            $content = preg_replace_callback($pattern, function($matches) {
+            $content = preg_replace_callback($pattern, function ($matches) {
                 $url = $matches[2];
                 if (strpos($url, '://') !== false && strpos($url, home_url()) === false && !preg_match('/\.(jpg|jpeg|png|ico|bmp|gif|tiff)/i', $url)) {
                     $new_link = home_url('/go_to/?url=' . urlencode($url));
@@ -107,9 +107,9 @@ if (!class_exists('MaMi_Auxiliary_Index')) {
                 }
                 return $matches[0];
             }, $content);
-            
+
             // 处理纯链接内容
-            $content = preg_replace_callback('/(https?:\/\/[^\s]+)/i', function($matches) {
+            $content = preg_replace_callback('/(https?:\/\/[^\s]+)/i', function ($matches) {
                 $url = $matches[1];
                 if (strpos($url, home_url()) === false && !preg_match('/\.(jpg|jpeg|png|ico|bmp|gif|tiff)/i', $url)) {
                     $new_link = home_url('/go_to/?url=' . urlencode($url));
@@ -119,8 +119,9 @@ if (!class_exists('MaMi_Auxiliary_Index')) {
                 return $matches[0];
             }, $content);
 
-            
-        
+            // 替换评论者填写了网站地址的链接TODO:未完成
+
+
             return $content;
         }
         //注册

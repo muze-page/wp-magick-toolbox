@@ -130,7 +130,12 @@ const App: React.FC = () => {
           name="go_middle"
           extra={
             <>
-              文章中的外链会先跳转到中间页，再跳转第三方，此选项仅外观不同，功能相同
+              文章中的外链会先跳转到中间页，再跳转第三方，
+              <br />
+              此选项仅外观不同，功能相同;
+              <br /> 推荐给robots.txt添加内容：
+              <pre className="pre-meat">Disallow: /go_to/=*</pre>
+              屏蔽搜索引擎对中间页的抓取,
               <a href="https://www.dujin.org/12762.html" target="_blank">
                 详情
               </a>
