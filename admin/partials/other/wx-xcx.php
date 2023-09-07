@@ -21,6 +21,9 @@ if (!class_exists('MaMi_Wx_Xcx')) {
 
                 //置顶模版路径
                 add_filter('template_include', array(__CLASS__, 'get_custom_template'));
+
+                //添加接口
+                add_action('rest_api_init', array(__CLASS__, 'mytheme_register_rest_endpoints'));
             }
         }
 
@@ -34,7 +37,7 @@ if (!class_exists('MaMi_Wx_Xcx')) {
             $token = self::wx_json_token($appid, $secret);
             $link = self::get_link($token, $path, $query);
             //TODO:使用缓存技术，缓存token
-             return $link;
+            return $link;
             //echo $link;
         }
         /**
@@ -151,6 +154,33 @@ if (!class_exists('MaMi_Wx_Xcx')) {
             }
 
             return $template;
+        }
+
+        /**
+         * 接口
+         */
+        //TODO:添加权限控制
+        public static function mytheme_register_rest_endpoints()
+        {
+            //http://localhost:10020/wp-json/wx_xcx/v1/qy
+            // Get theme options
+            register_rest_route('wx_xcx/v1', 'qy', array(
+                'methods' => 'GET',
+                //'callback' => array(__CLASS__, 'mytheme_get_theme_options'),
+                'callback' => array(__CLASS__, 'get_h5_options'),
+                // 权限控制
+                // 'permission_callback' => function () {
+                //     return current_user_can('manage_options');
+                // },
+            ));
+        }
+        public static function get_h5_options()
+        {
+            $data = array(
+                "data" => self::add_hello_header(),
+            );
+
+            return $data;
         }
     } //end
 }
