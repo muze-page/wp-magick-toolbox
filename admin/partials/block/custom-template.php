@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 微信小程序链接引导模版
  */
@@ -15,6 +16,8 @@ $link = MaMi_Wx_Xcx::add_hello_header();
 
 //当前页面链接
 $page_url = get_permalink();
+
+$site_url = home_url(); // 获取当前网站的URL
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,7 +61,18 @@ $page_url = get_permalink();
     <script>
         //打开链接
         function onJumpWxBtn() {
-            window.location.href = '<?php echo $link ?>';
+            //TODO:待验证
+            fetch(
+                    ' <?php echo $site_url . '/wp-json/wx_xcx/v1/qy' ?>'
+                ) //当前接口
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    window.location.href = data.data;
+                })
+                .catch(error => {
+                    alert(error);
+                });
         }
 
         function isMobile() {
