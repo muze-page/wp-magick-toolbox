@@ -8,24 +8,25 @@ count 文件夹下，是图表展示内容
 您可以自行修改后分别打包，仅保留 dist 内文件即可。
 
 # 修复
+
 - 统一接口
 - 小程序接口添加错误提示
 
 # 计划
+
+- 集成百度文本审核 https://ai.baidu.com/ai-doc/REFERENCE/Ck3dwjgn3
 - 撰写文章类型，模仿日记格式https://www.dratk.com/
 - 文章显示最后更新时间 https://www.landafu.com/29563.html
 
 - 添加闭站倒计时功能
 - 添加设置选项导入导出功能
 - 设置选项内容添加移动端适配
+- 隐藏指定分类、标签，登录可见
 
 ## 功能
 
 - 去除分类 category https://www.npc.ink/5783.html
 - 复制文字跳出弹窗提示 https://www.npc.ink/5032.html https://www.npc.ink/12196.html
-
-
-
 
 - 重复标题文章 https://www.npc.ink/5867.html
 - 禁用自动保存等 https://www.npc.ink/5002.html
@@ -44,8 +45,8 @@ count 文件夹下，是图表展示内容
 - 文章添加缩略图展示 https://www.npc.ink/17087.html
 - 添加客服按钮 https://www.npc.ink/14571.html
 
-
 ## 外观特效
+
 - 评论框打字特效
 
 - 点击出现数字 https://www.npc.ink/5955.html
@@ -59,6 +60,9 @@ count 文件夹下，是图表展示内容
 
 # 更新记录
 
+### 0.1.7
+
+- 修复 解决启用文章统计导致的语法错误
 
 ### 0.1.6
 

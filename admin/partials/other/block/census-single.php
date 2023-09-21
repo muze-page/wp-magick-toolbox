@@ -218,7 +218,7 @@ if (!class_exists('Magick_Mixtrue_Census_Single')) {
             //注册这个设置
             register_setting(
                 'sandbox_theme_display_options', //选项组
-                'magick_plugin_config', //选项名称
+                'magick_plugin_config' //选项名称
             );
         } //结束magick_plugin_options
 
