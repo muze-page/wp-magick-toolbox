@@ -14,6 +14,8 @@ count 文件夹下，是图表展示内容
 
 # 计划
 
+- 开启严格模式下开发
+
 - 集成百度文本审核 https://ai.baidu.com/ai-doc/REFERENCE/Ck3dwjgn3
 - 撰写文章类型，模仿日记格式https://www.dratk.com/
 - 文章显示最后更新时间 https://www.landafu.com/29563.html
@@ -63,6 +65,7 @@ count 文件夹下，是图表展示内容
 ### 0.1.7
 
 - 修复 解决启用文章统计导致的语法错误
+- 修复 商城统计中的错误文本信息
 
 ### 0.1.6
 

@@ -8,7 +8,7 @@ const Tab = () => {
 
   const tabs = [
     {
-      title: "本周",
+      title: "今天",
       content: <Today />,
     },
     {
