@@ -18,8 +18,7 @@ class MaMi_Interface
 
         // 处理请求，并生成响应数据
         $response = array(
-            'status' => '200',
-            'message' =>  $table_names,
+            'data' =>  $table_names,
         );
 
       

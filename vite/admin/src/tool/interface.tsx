@@ -154,3 +154,9 @@ export type H5Contact = {
   brand_logo: string; //LOGO
   introduce: string; //介绍
 };
+
+//下拉列表类型
+export type ListData = {
+  label: string;
+  value: string ;
+};

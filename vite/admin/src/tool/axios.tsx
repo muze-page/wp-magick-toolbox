@@ -26,6 +26,7 @@ export const get_all_table_name = async () => {
     if (response.status === 200) {
       //保存成功
       console.log(response);
+      return response.data.data;
     } else {
       console.error("出错：" + response.data);
     }
