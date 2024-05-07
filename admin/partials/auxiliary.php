@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 权限 辅助
+ * 功能
  */
 if (!class_exists('MaMi_Auxiliary')) {
     class MaMi_Auxiliary

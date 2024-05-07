@@ -26,7 +26,7 @@ const App: React.FC = () => {
   return (
     <div className="mami_option">
       <Layout>
-        <Affix offsetTop={0}>
+        <Affix offsetTop={20}>
           <Header style={headerStyle}>
             <HeaderBlock />
           </Header>
@@ -48,7 +48,7 @@ const HeaderBlock: React.FC = () => {
   return (
     <>
       <h1 className="text-2xl leading-7 font-medium">
-        CAPSULE 胶囊
+       魔法优化
         <small className="text-xs font-light text-gray-400 ml-2 ">
           For Npcink
         </small>
