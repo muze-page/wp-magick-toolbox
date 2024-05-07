@@ -1,6 +1,6 @@
 <?php
 /**
- * 添加验证码
+ * 添加登录验证码
  */
 if (!class_exists('MaMi_Login_Verify')) {
     class MaMi_Login_Verify

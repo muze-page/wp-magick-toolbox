@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 文章统计菜单
+ * 文章统计功能
  */
 
 if (!class_exists('Magick_Mixtrue_Census_Single')) {
