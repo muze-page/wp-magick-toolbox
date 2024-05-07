@@ -49,7 +49,7 @@ if (!class_exists('MaMi_Function')) {
             require_once plugin_dir_path(__FILE__) . 'function/wx_xcx_link/index.php';
 
             //商城统计页面
-            require_once plugin_dir_path(__FILE__) . 'other/block/census-shop.php';
+            require_once plugin_dir_path(__FILE__) . 'function/b2/index.php';
         }
     } //end
 }
