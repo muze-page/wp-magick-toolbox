@@ -25,6 +25,10 @@ if (!class_exists('Magick_Mixtrue_Census_Shop')) {
             if ($add_order_menu) {
                 add_action('admin_menu', array(__CLASS__, 'add_order_menu'));
             }
+
+            //载入每日统计文件
+            require_once plugin_dir_path(__FILE__) . 'day.php';
+            Npcink_B2_Shop_Day::run();
         }
 
         /**
