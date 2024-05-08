@@ -9,7 +9,6 @@ import zhCN from "antd/locale/zh_CN";
 function App() {
   return (
     <ConfigProvider locale={zhCN}>
-      <Demo />
       {/**
        * 销售统计
        */}
@@ -20,6 +19,10 @@ function App() {
        */}
 
       <SingleCount />
+      {/**
+       * 年度数据预览
+       */}
+      <Demo />
     </ConfigProvider>
   );
 }

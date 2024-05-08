@@ -1,10 +1,7 @@
 import React from "react";
-import type { CalendarProps } from "antd";
-import { Calendar } from "antd";
+import { Calendar, CalendarProps, theme } from "antd";
 import type { Dayjs } from "dayjs";
 import { day_data } from "./tool/dataContext";
-
-
 
 //月度
 const getListData = (value: Dayjs) => {
@@ -55,7 +52,22 @@ const App: React.FC = () => {
     return info.originNode;
   };
 
-  return <Calendar cellRender={cellRender} />;
+  //卡片
+  const { token } = theme.useToken();
+  const wrapperStyle: React.CSSProperties = {
+    width: 900,
+    border: `1px solid ${token.colorBorderSecondary}`,
+    borderRadius: token.borderRadiusLG,
+  };
+
+  return (
+    <>
+    <h2>年度销售额</h2>
+      <div style={wrapperStyle}>
+        <Calendar cellRender={cellRender} fullscreen={false} />
+      </div>
+    </>
+  );
 };
 
 export default App;
