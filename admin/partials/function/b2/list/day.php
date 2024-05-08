@@ -68,7 +68,7 @@ if (!class_exists('Npcink_B2_Shop_Day')) {
                 return '#f87171';
             } // 继续添加更多的条件
             else {
-                return '#e2e8f0';
+                return '#94a3b8';
             }
         }
     }

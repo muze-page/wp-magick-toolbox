@@ -17,16 +17,45 @@ const getListData = (value: Dayjs) => {
   return null;
 };
 
+//对比时间
+const compareDates = (date1: string, date2: string) => {
+  // 将字符串形式的时间转换为日期对象
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+
+  // 使用时间戳进行比较
+  if (d1.getTime() === d2.getTime()) {
+    return 0; // 时间相等
+  } else if (d1.getTime() < d2.getTime()) {
+    return -1; // 第一个时间小于第二个时间
+  } else {
+    return 1; // 第一个时间大于第二个时间
+  }
+};
+
+//拿到今天的时间
+const getCurrentDate = () => {
+  const today = new Date();
+
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0"); // 月份从 0 开始，需要加 1
+  const day = String(today.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
 const dateCellRender = (value: Dayjs) => {
   const listData = getListData(value);
 
   const styles = { "--bgColor": listData?.color } as React.CSSProperties;
 
   //当前时间大于表格时间为true
-  const switchTime = listData?.time > value.format("YYYY-MM-DD");
+  const today = getCurrentDate();
+  const tableTime = value.format("YYYY-MM-DD");
+  const switchTime = compareDates(today, tableTime) === 1;
   return (
     <div className="calendar-box" style={styles}>
-      <span> {listData?.total ?? "0"}</span>
+      <span>{switchTime ? listData?.total ?? "0" : ""}</span>
     </div>
   );
 };
@@ -67,7 +96,11 @@ const App: React.FC = () => {
     <>
       <h2>年度销售额</h2>
       <div style={wrapperStyle}>
-        <Calendar cellRender={cellRender} fullscreen={false} />
+        <Calendar
+          cellRender={cellRender}
+          fullscreen={false}
+          style={{ overflow: "hidden" }}
+        />
       </div>
     </>
   );
