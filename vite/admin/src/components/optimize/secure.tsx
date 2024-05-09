@@ -63,19 +63,7 @@ const App: React.FC = () => {
           <h2>安全</h2>
         </Form.Item>
 
-        <Form.Item<FieldType>
-          label="替换登录报错信息"
-          name="replace_login_error"
-          valuePropName="checked"
-          extra={
-            <span>
-              默认登录报错信息会透露用户是用户名错误还是密码错误，统一信息后，可改善此情况，
-              <b style={{ color: "red" }}>会影响验证码错误提示！</b>
-            </span>
-          }
-        >
-          <Switch />
-        </Form.Item>
+       
         <Form.Item<FieldType>
           label="修改评论中的管理员ID"
           name="modify_comment_user"

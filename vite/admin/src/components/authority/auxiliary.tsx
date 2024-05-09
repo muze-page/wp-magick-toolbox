@@ -91,40 +91,9 @@ const App: React.FC = () => {
           </Form.Item>
         )}
 
-        <Form.Item<FieldType>
-          label="登录验证码"
-          name="login_code"
-          extra={"登录时需填写验证码才可登录"}
-        >
-          <Select
-            style={{ width: 200 }}
-            options={[
-              { value: "false", label: "禁用" },
-              { value: "math", label: "数学验证码" },
-              { value: "random", label: "随机混合验证码" },
-              { value: "tecent_vcode", label: " 腾讯验证码-功能未验证" },
-            ]}
-          />
-        </Form.Item>
+        
 
-        {formData.login_code === "tecent" && (
-          <>
-            <Form.Item<FieldType>
-              label="App ID"
-              name="no_malice_key"
-              extra={"貌似随便填也能用"}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="App Secret Key"
-              name="no_malice_key"
-              extra={"貌似随便填也能用"}
-            >
-              <Input.Password />
-            </Form.Item>
-          </>
-        )}
+       
         <Form.Item<FieldType>
           label="外链跳转中间页"
           name="go_middle"

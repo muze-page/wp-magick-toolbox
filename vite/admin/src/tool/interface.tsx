@@ -29,7 +29,7 @@ export type DataLocal = {
   //登录
   login: {
     beautify: LoginBeautify; //美化
-    //security: LoginSecurity;//安全
+    security: LoginSecurity;//安全
   };
 };
 
@@ -60,7 +60,7 @@ export type OptimizeComment = {
 
 //优化 安全
 export type OptimizeSecure = {
-  replace_login_error: boolean; //替换登录报错信息
+  
   modify_comment_user: boolean; //修改评论区管理员样式ID
   remove_RSS_version: boolean; //从RSS源中删除WordPress版本信息
 };
@@ -111,9 +111,7 @@ export type AuthorityAuxiliary = {
   single_count: boolean; //文章统计
   no_malice_key: boolean; //拒绝恶意关键词
   malice_keu_content: string; //恶意关键词内容
-  login_code: string; //登录验证码
-  tecent_id: string; //腾讯ID
-  tecent_key: string; //腾讯秘钥
+ 
   go_middle: string; //链接跳转中间页
 };
 
@@ -164,6 +162,14 @@ export type LoginBeautify = {
   top_logo: string; //顶部LOGO
   background_img: string; //文字背景图
 };
+
+//登录安全
+export type LoginSecurity={
+  replace_login_error: boolean; //替换登录报错信息
+  login_code: string; //登录验证码
+  tecent_id: string; //腾讯ID
+  tecent_key: string; //腾讯秘钥
+}
 
 //下拉列表类型
 export type ListData = {

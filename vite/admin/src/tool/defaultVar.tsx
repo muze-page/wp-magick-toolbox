@@ -35,7 +35,7 @@ const OptimizeComment = {
 
 //优化 安全
 const OptimizeSecure = {
-  replace_login_error: boo, //替换登录报错信息
+  
   modify_comment_user: boo, //修改评论区管理员样式ID
   remove_RSS_version: boo, //从RSS源中删除WordPress版本信息
 };
@@ -84,9 +84,6 @@ const AuthorityAuxiliary = {
   single_count: boo, //文章统计
   no_malice_key: boo, //拒绝恶意关键词
   malice_keu_content: str, //恶意关键词内容
-  login_code: "false", //登录验证码
-  tecent_id: str, //腾讯ID
-  tecent_key: str, //腾讯秘钥
   go_middle: "false", //链接跳转中间页
 };
 
@@ -137,6 +134,14 @@ const LoginBeautify = {
   background_img: str, //文字背景图
 };
 
+//登录安全
+const LoginSecurity = {
+  replace_login_error: boo, //替换登录报错信息
+  login_code: "false", //登录验证码
+  tecent_id: str, //腾讯ID
+  tecent_key: str, //腾讯秘钥
+};
+
 const App = {
   //优化
   optimize: {
@@ -165,6 +170,7 @@ const App = {
   },
   login: {
     beautify: LoginBeautify, //美化
+    security: LoginSecurity, //安全
   },
 };
 
