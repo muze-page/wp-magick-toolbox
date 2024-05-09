@@ -1,7 +1,6 @@
 /**
  *
  * 介绍：美化
- * 自定义登录页 修改登录页LOGO链接 移除语言选择框
  */
 //站点 - 模版
 import { useState, useContext, useEffect } from "react";
@@ -77,6 +76,22 @@ const App: React.FC = () => {
         <Form.Item>
           <h2>美化</h2>
           <button onClick={printOption}>打印</button>
+        </Form.Item>
+        <Form.Item<FieldType>
+          label="LOGO链接"
+          name="modify_login_link"
+          valuePropName="checked"
+          extra={"改为首页链接"}
+        >
+          <Switch />
+        </Form.Item>
+        <Form.Item<FieldType>
+          label="移除语言选择框"
+          name="remove_langue"
+          valuePropName="checked"
+          extra={"移除登录页面语言选择框"}
+        >
+          <Switch />
         </Form.Item>
 
         <Form.Item<FieldType>

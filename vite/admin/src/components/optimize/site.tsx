@@ -99,22 +99,8 @@ const App: React.FC = () => {
         >
           <Switch />
         </Form.Item>
-        <Form.Item<FieldType>
-          label="修改登录页LOGO链接"
-          name="modify_login_link"
-          valuePropName="checked"
-          extra={"登录页LOGO改为首页链接"}
-        >
-          <Switch />
-        </Form.Item>
-        <Form.Item<FieldType>
-          label="移除语言选择框"
-          name="remove_langue"
-          valuePropName="checked"
-          extra={"移除登录页面语言选择框"}
-        >
-          <Switch />
-        </Form.Item>
+        
+       
       </Form>
     </>
   );

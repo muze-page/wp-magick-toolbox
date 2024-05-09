@@ -12,8 +12,6 @@ const num: number = 0;
 const OptimizeSite = {
   no_escape: boo, //禁止转义
   add_inks: boo, //关键词自动添加链接
-  modify_login_link: boo, //登录页LOGO改首页链接
-  remove_langue: boo, //移除登录页语言选择框
 };
 
 //优化  媒体
@@ -56,7 +54,6 @@ const StylePage = {
   color_tag: boo, //彩色标签云特效
   past_books: boo, //已写完的书
   comment_emote: boo, //评论区表情包特效
-  
 };
 
 //外观特效
@@ -130,6 +127,8 @@ const H5Contact = {
 
 //登录页 美化
 const LoginBeautify = {
+  modify_login_link: boo, //登录页LOGO改首页链接
+  remove_langue: boo, //移除登录页语言选择框
   custom_login_page: boo, //自定义登录页
   background_left: str, //左下角颜色
   background_right: str, //右上角颜色

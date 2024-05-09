@@ -37,8 +37,6 @@ export type DataLocal = {
 export type OptimizeSite = {
   no_escape: boolean; //禁止转义
   add_inks: boolean; //关键词自动添加链接
-  modify_login_link: boolean; //登录页LOGO改首页链接
-  remove_langue: boolean; //移除登录页语言选择框
 };
 
 //优化 媒体
@@ -157,6 +155,8 @@ export type H5Contact = {
 
 //登录 美化
 export type LoginBeautify = {
+  modify_login_link: boolean; //登录页LOGO改首页链接
+  remove_langue: boolean; //移除登录页语言选择框
   custom_login_page: boolean; //自定义登录页
   background_left: string; //左下角颜色
   background_right: string; //右上角颜色
