@@ -87,8 +87,11 @@ export type OptimizeOther = {
   add_last_update: boolean; //添加最后更新时间
 };
 
-//个性化
+//功能特效
 export type StylePage = {
+  title: boolean; //动态标题
+  title_front: string; //回到当前标签
+  title_after: string; //离开标签后
   color_tag: boolean; //彩色标签云特效
   past_books: boolean; //已写完的书
   comment_emote: boolean; //评论区表情包特效
@@ -97,9 +100,8 @@ export type StylePage = {
 //外观特效
 export type StyleAspect = {
   particle: string; //粒子特效
-  title: boolean; //动态标题
-  title_front: string; //回到当前标签
-  title_after: string; //离开标签后
+
+
   scrol: string; //美化滚动条
   coupling: boolean; //细线联结
 

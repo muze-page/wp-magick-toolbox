@@ -15,7 +15,7 @@ const items: TabsProps["items"] = [
   },
   {
     key: "2",
-    label: `风格`,
+    label: `页面`,
     children: <Style />,
   },
   {

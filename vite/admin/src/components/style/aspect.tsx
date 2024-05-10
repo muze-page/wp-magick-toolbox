@@ -74,34 +74,8 @@ const App: React.FC = () => {
             ]}
           />
         </Form.Item>
-        <Form.Item<FieldType>
-          label="动态标题"
-          name="title"
-          valuePropName="checked"
-          extra={
-            <>
-              离开当前页面后，在标签页上显示有趣的文本，
-              <a
-                href="https://www.cnblogs.com/HaoranZing/p/16917421.html"
-                target="_blank"
-              >
-                详情
-              </a>
-            </>
-          }
-        >
-          <Switch />
-        </Form.Item>
-        {formData.title && (
-          <>
-            <Form.Item<FieldType> label="回到当前页" name="title_front">
-              <Input style={{ width: "50%" }} />
-            </Form.Item>
-            <Form.Item<FieldType> label="离开当前页" name="title_after">
-              <Input style={{ width: "50%" }} />
-            </Form.Item>
-          </>
-        )}
+        
+        
 
         <Form.Item<FieldType>
           label="美化滚动条"
