@@ -38,4 +38,17 @@ export default defineConfig({
   },
     //媒体资源打包前缀，避免图片无法正常显示
     //base: site + "admin-vite/dist/",
+      //代理
+  server: {
+    //host: "0.0.0.0",
+    //port: 3000,
+    //open: true,
+    proxy: {
+      "/api": {
+        target: "http://localhost:10027/",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
 });
