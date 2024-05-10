@@ -2,8 +2,8 @@
 /**
  * 添加登录验证码
  */
-if (!class_exists('MaMi_Login_Verify')) {
-    class MaMi_Login_Verify
+if (!class_exists('Npcink_Login_Verify')) {
+    class Npcink_Login_Verify
     {
         public static function run($login_code)
         {
