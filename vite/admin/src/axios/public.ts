@@ -1,9 +1,14 @@
 import axios from "axios";
 import { message } from "antd";
+//import { Ajaxurl } from "@/tool/dataContext";
 // 创建 axios 实例
 export const instance = axios.create({
   //baseURL: Ajaxurl, // 设置请求的基础URL
 });
+
+//添加一个请求拦截器
+// 设置默认的请求配置
+//instance.defaults.baseURL = Ajaxurl;
 
 // 响应拦截器
 instance.interceptors.response.use(

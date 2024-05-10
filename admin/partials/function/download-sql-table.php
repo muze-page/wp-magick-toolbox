@@ -7,11 +7,9 @@ if (!class_exists('MaMi_Download_SQL_Table')) {
         {
             // 提供数据库表格数据
             add_action('wp_ajax_get_all_table_names', array(__CLASS__, 'get_all_table_names'));
-            // add_action('wp_ajax_nopriv_get_all_table_names', array(__CLASS__, 'get_all_table_names'));
 
             // 提供数据库表格数据下载
             add_action('wp_ajax_get_table_data', array(__CLASS__, 'get_table_data'));
-            // add_action('wp_ajax_nopriv_get_table_data', array(__CLASS__, 'get_table_data'));
         }
 
         //获取所有的数据库表名
@@ -28,22 +26,20 @@ if (!class_exists('MaMi_Download_SQL_Table')) {
             foreach ($results as $result) {
                 $table_names[] = $result[0];
             }
-
-
-            // 处理请求，并生成响应数据
-            $response = array(
-                'data' =>  $table_names,
-            );
-
-            // 返回响应数据
-            wp_send_json($response);
+            // 如果 $table_names 是空数组，则返回空数据
+            if (empty($table_names)) {
+                wp_send_json_error(['error' => '获取表格数据失败', 'data' => []], 404);
+            } else {
+                // 返回响应数据
+                wp_send_json_success(['data' => $table_names]);
+            }
         }
 
         //获取表格数据
         public static function get_table_data()
         {
             global $wpdb;
-            $databaseName = $_POST['databaseName']; // 假设数据库名通过 POST 请求传递
+            $databaseName = $_POST['databaseName']; // 数据库名通过 POST 请求传递
 
             $query = "SELECT * FROM $databaseName"; // 根据数据库名构建查询语句
             $results = $wpdb->get_results($query); // 执行查询
@@ -66,7 +62,7 @@ if (!class_exists('MaMi_Download_SQL_Table')) {
             header('Content-Disposition: attachment; filename=' . $filename);
             header('Pragma: no-cache');
             readfile($filename);
-
+            wp_send_json_success(['data' => $filename]);
             // 删除临时文件
             unlink($filename);
         }

@@ -1,23 +1,17 @@
 //各种请求
-import axios from "axios";
-import { Ajaxurl } from "../tool/dataContext";
+import { Ajaxurl } from "@/tool/dataContext";
+import { instance, addParamIfDefined } from "@/axios/public";
 
 //获取所有数据库表名字
 export const get_all_table_name = async () => {
   const params = new URLSearchParams();
   params.append("action", "get_all_table_names");
   try {
-    const response = await axios.post(Ajaxurl, params);
-
-    if (response.status === 200) {
-      //保存成功
-      console.log(response);
-      return response.data.data;
-    } else {
-      console.error("出错：" + response.data);
-    }
+    const response = await instance.post(Ajaxurl, params);
+    console.log(response.data.data);
+    return response.data.data;
   } catch (error: any) {
-    console.error("出错：" + error.message);
+    console.error("出错：" + error);
   }
 };
 
@@ -42,20 +36,36 @@ function downloadCSV(csvString: string, filename: string) {
   }
 }
 
+//获取表格数据
 export const get_table_data = async (type: string) => {
   const params = new URLSearchParams();
   params.append("action", "get_table_data");
-  params.append("databaseName", type);
+  addParamIfDefined(params, "databaseName", type);
   try {
-    const response = await axios.post(Ajaxurl, params);
-
-    if (response.status === 200) {
-      //保存成功
-      downloadCSV(response.data, type + ".csv");
-    } else {
-      console.error("出错：" + response.data);
-    }
+    const response = await instance.post(Ajaxurl, params);
+    console.log(response);
+    console.log('666');
+    downloadCSV(response.data, type + ".csv");
   } catch (error: any) {
-    console.error("出错：" + error.message);
+
+    console.log('666');
+    console.error("出错拉：" + error);
   }
 };
+
+//替换列表
+//const b: { [key: string]: string } = {
+//  users: "用户",
+//  usermeta: "用户元数据",
+//  posts: "文章",
+//  comments: "评论",
+//  links: "友情链接",
+//  options: "选项",
+//  postmeta: "文章元数据",
+//  terms: "目录、分类和标签",
+//  term_taxonomy: "目录或标签对应的分类关系",
+//  term_relationships: "文章或链接的分类关系",
+//  termmeta: "分类的元数据",
+//  commentmeta: "评论元数据12",
+//  zrz_order: "B2订单数据",
+//};
