@@ -1,6 +1,20 @@
-/*已读完的书*/
-.mami_past_books {
+/**
+ * 前端样式
+ */
+/**
+ * 已读完的书
+ */
+.completed_book {
   text-align: center;
   font-size: initial;
   margin: 1em 0;
+}
+
+/**
+ * 返回按钮
+ */
+.back_button {
+  padding: 0 10px;
+  margin: 10px 0 0 0;
+  cursor: pointer;
 }

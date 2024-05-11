@@ -284,7 +284,7 @@ class MaMi_Admin
     }
 
     //公用返回按钮
-    public static function back_button($text = '返回', $class = 'btn')
+    public static function back_button($text = '返回', $class = 'back_button')
     {
         $button = sprintf(
             '<br/><a href="javascript:void(0);" onclick="window.history.back();" class="%s">

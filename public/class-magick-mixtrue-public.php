@@ -49,29 +49,14 @@ class Magick_Mixtrue_Public
     }
     public function load()
     {
-        /**
-         * 个性化 页面特效
-         */
-        require_once plugin_dir_path(__FILE__) . 'partials/style/page.php';
-        /**
-         * 外观特效
-         */
-        require_once plugin_dir_path(__FILE__) . 'partials/style/aspect.php';
+      
+       
     }
     public function run()
     {
         //加载公共样式
         add_action('wp_enqueue_scripts', array(__CLASS__, 'public_css'));
-        //获取选项
-        $style = MaMi_Admin::get_seting('style');
-        /**
-         * 个性化 - 页面特效
-         */
-        MaMi_Style_Page::run($style);
-        /**
-         * 个性化 - 外观特效
-         */
-        MaMi_Style_Aspect::run($style);
+
     }
 
     //添加公共样式
