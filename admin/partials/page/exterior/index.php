@@ -47,6 +47,14 @@ if (!class_exists('Npcink_Page_Exterior')) {
                 require_once plugin_dir_path(__FILE__) . 'all_grey.php';
                 Npcink_Page_All_Grey::run();
             }
+            /**
+             * 添加灯笼
+             */
+            $lantern =  MaMi_Admin::get_config($option, 'lantern');
+            if ($lantern === true) {
+                require_once plugin_dir_path(__FILE__) . 'lantern.php';
+                Npcink_Page_Lantern::run($option);
+            }
         }
     }
 }
