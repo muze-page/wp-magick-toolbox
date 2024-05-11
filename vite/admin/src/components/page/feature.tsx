@@ -15,10 +15,10 @@ const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
   //拿到值
-  const optionObj = useContext(DataContext) ?? { style: {} };
+  const optionObj = useContext(DataContext) ?? { page: {} };
 
   //简化并提供默认值
-  let publicData = optionObj.style?.aspect || defaultVar.style.aspect;
+  let publicData = optionObj.page?.feature || defaultVar.page.feature;
 
   //创建变量并设默认值
   const [formData, setFormData] = useState(publicData || {});
@@ -35,9 +35,9 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    optionObj.style = {
-      ...optionObj.style,
-      aspect: formData,
+    optionObj.page = {
+      ...optionObj.page,
+      feature: formData,
     };
   }, [formData]);
 

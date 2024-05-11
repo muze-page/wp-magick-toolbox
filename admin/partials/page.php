@@ -10,20 +10,20 @@ if (!class_exists('Npcink_Page')) {
         public static function run()
         {
             //获取设置选项值
-            $config = MaMi_Admin::get_seting('style');
+            $config = MaMi_Admin::get_seting('page');
 
             /**
              * 页面 - 外观特效
              */
             require_once plugin_dir_path(__FILE__) . 'page/exterior/index.php';
-            $aspect =  MaMi_Admin::get_config($config, 'aspect');
+            $aspect =  MaMi_Admin::get_config($config, 'feature');
             Npcink_Page_Exterior::run($aspect);
 
             /**
-             * 页面 - 其他特效
+             * 页面 - 评论
              */
             require_once plugin_dir_path(__FILE__) . 'page/about/index.php';
-            $page =  MaMi_Admin::get_config($config, 'page');
+            $page =  MaMi_Admin::get_config($config, 'comment');
             Npcink_Page_About::run($page);
         }
     }

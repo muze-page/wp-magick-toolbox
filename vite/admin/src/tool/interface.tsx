@@ -10,9 +10,9 @@ export type DataLocal = {
     other: OptimizeOther;
   };
   //个性化
-  style: {
-    page: StylePage;
-    aspect: StyleAspect;
+  page: {
+    comment: StylePage;//评论
+    feature: StyleAspect;//外观
   };
   //权限
   authority: {

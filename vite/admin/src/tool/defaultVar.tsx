@@ -160,9 +160,9 @@ const App = {
     wx_xcx: AuthorityWxXcx, //微信小程序链接生成
   },
   //个性化
-  style: {
-    page: StylePage, //页面特效
-    aspect: StyleAspect, //外观特效
+  page: {
+    comment: StylePage, //评论
+    feature: StyleAspect, //外观特效
   },
   //H5
   h5: {

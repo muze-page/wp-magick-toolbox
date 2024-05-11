@@ -15,8 +15,8 @@ const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
   //准备默认值
-  const optionObj = useContext(DataContext) ?? { style: {} };
-  const publicData = optionObj.style?.page || defaultVar.style.page;
+  const optionObj = useContext(DataContext) ?? { page: {} };
+  const publicData = optionObj.page?.comment || defaultVar.page.comment;
 
   //存储表单值
   const [formData, setFormData] = useState(publicData || {});
@@ -34,16 +34,16 @@ const App: React.FC = () => {
 
   //修改公共值
   useEffect(() => {
-    optionObj.style = {
-      ...optionObj.style,
-      page: formData,
+    optionObj.page = {
+      ...optionObj.page,
+      comment: formData,
     };
   }, [formData]);
 
   return (
     <>
       <Form
-        name="page"
+        name="comment"
         labelCol={{ span: fromConfig.labelCol }}
         wrapperCol={{ span: fromConfig.wrapperCol }}
         style={{ maxWidth: fromConfig.maxWidth }}
@@ -53,7 +53,7 @@ const App: React.FC = () => {
         onValuesChange={onValuesChange}
       >
         <Form.Item>
-          <h2>其他特效</h2>
+          <h2>评论</h2>
         </Form.Item>
         
 
