@@ -2,7 +2,7 @@ import React from "react";
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import Optimize from "@/components/optimize/index";
-import Style from "@/components/style/index";
+import Page from "@/components/page/index";
 import Authority from "@/components/authority/index";
 import Login from "@/components/login/index";
 import H5 from "@/components/h5/index";
@@ -16,7 +16,7 @@ const items: TabsProps["items"] = [
   {
     key: "2",
     label: `页面`,
-    children: <Style />,
+    children: <Page />,
   },
   {
     key: "3",
