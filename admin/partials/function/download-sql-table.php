@@ -28,10 +28,10 @@ if (!class_exists('MaMi_Download_SQL_Table')) {
             }
             // 如果 $table_names 是空数组，则返回空数据
             if (empty($table_names)) {
-                wp_send_json_error(['error' => '获取表格数据失败', 'data' => []], 404);
+                wp_send_json_error(['error' => '获取数据库表名失败', 'data' => []], 404);
             } else {
                 // 返回响应数据
-                wp_send_json_success(['data' => $table_names]);
+                wp_send_json_success(['message' => '成功获取数据库表名','data' => $table_names]);
             }
         }
 

@@ -9,6 +9,12 @@ if (!class_exists('Npcink_Page_Exterior')) {
     {
         public static function run($option)
         {
+            //动态标题
+            $title = MaMi_Admin::get_config($option, 'title');
+            if ($title === true) {
+                require_once plugin_dir_path(__FILE__) . 'dynamic_title.php';
+                Npcink_Page_Dynamic_Title::run($option);
+            }
 
 
             //烟花特效
