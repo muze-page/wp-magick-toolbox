@@ -23,7 +23,7 @@ if (!class_exists('Npcink_Page_Comment_Interval')) {
                 $time = $seconds - ($time_new - $time_last);
                 $message = '评论过快！请' . $time . '秒后再来评论';
 
-                $message = $message . MaMi_Admin::blank_button();
+                $message = $message . MaMi_Admin::back_button();
                 wp_die($message);
             } else {
                 return false;

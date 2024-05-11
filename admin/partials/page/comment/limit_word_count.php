@@ -23,7 +23,7 @@ if (!class_exists('Npcink_Comment_Limit_Word_Count')) {
             if ($pointCommentlength < $minCommentlength) {
                 header("Content-type: text/html; charset=utf-8");
                 $message = '抱歉，您的评论字数过少，请至少输入' . $minCommentlength . '个字（目前字数：' . $pointCommentlength . '个字）';
-                $message = $message . MaMi_Admin::blank_button();
+                $message = $message . MaMi_Admin::back_button();
                 wp_die($message);
 
 
@@ -32,7 +32,7 @@ if (!class_exists('Npcink_Comment_Limit_Word_Count')) {
             if ($pointCommentlength > $maxCommentlength) {
                 header("Content-type: text/html; charset=utf-8");
                 $message = '对不起，您的评论字数过多，请少于' . $maxCommentlength . '个字（目前字数：' . $pointCommentlength . '个字）';
-                $message = $message . MaMi_Admin::blank_button();
+                $message = $message . MaMi_Admin::back_button();
                 wp_die($message);
 
                 exit;

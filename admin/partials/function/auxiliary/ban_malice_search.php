@@ -35,7 +35,7 @@ if (!class_exists('Npcink_Ban_Malice_Search')) {
                     foreach ($BanKey as $Key) {
                         if (stristr($S_Key['s'], $Key) != false) {
                             $message = '搜索内容包含敏感词，请换个关键词搜索';
-                            $message = $message . MaMi_Admin::blank_button();
+                            $message = $message . MaMi_Admin::back_button();
                             wp_die($message);
                         }
                     }

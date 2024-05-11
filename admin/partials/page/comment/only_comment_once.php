@@ -32,7 +32,7 @@ if (!class_exists('Npcink_Comment_Only_Once')) {
 
                 if ($bool) {
                     $message = '本站每篇文章仅允许评论一次。';
-                    $message = $message . MaMi_Admin::blank_button();
+                    $message = $message . MaMi_Admin::back_button();
                     wp_die($message);
                 }
             }

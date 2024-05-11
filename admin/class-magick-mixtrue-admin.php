@@ -98,7 +98,6 @@ class MaMi_Admin
 
         // 添加Ajax请求处理函数
         add_action('wp_ajax_save_object_option', array(__CLASS__, 'save_object_option_callback'));
-        
     }
 
 
@@ -285,11 +284,16 @@ class MaMi_Admin
     }
 
     //公用返回按钮
-    public static function blank_button()
+    public static function back_button($text = '返回', $class = 'btn')
     {
-        $message = '<br/><a href="#" onclick="history.back();">
-        <button class="button" style="margin: 1em 0;">返回</button>
-        </a>';
-        return $message;
+        $button = sprintf(
+            '<br/><a href="javascript:void(0);" onclick="window.history.back();" class="%s">
+            <button class="%s">%s</button>
+        </a>',
+            $class,
+            $class,
+            esc_html($text)
+        );
+        return $button;
     }
 }//end

@@ -18,7 +18,7 @@ if (!class_exists('Npcink_Comment_Ban_Pure_English')) {
             $pattern = '/[一-龥]/u';
             if (!preg_match($pattern, $incoming_comment['comment_content'])) {
                 $message = '您的评论中必须包含汉字!';
-                $message = $message . MaMi_Admin::blank_button();
+                $message = $message . MaMi_Admin::back_button();
                 wp_die($message);
             }
             return $incoming_comment;
