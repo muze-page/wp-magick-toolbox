@@ -29,11 +29,7 @@ if (!class_exists('MaMi_Optimize_Other')) {
 
            
 
-            //文章末尾添加最后更新时间
-            $add_last_update = MaMi_Admin::get_config($option, 'add_last_update');
-            if ($add_last_update) {
-                add_filter('the_content', array(__CLASS__, 'add_last_updated_date'));
-            }
+           
         }
 
 
@@ -259,18 +255,6 @@ if (!class_exists('MaMi_Optimize_Other')) {
 
        
 
-        //在更新过的文章和页面结尾添加最后更新时间
-        public static function add_last_updated_date($content)
-        {
-            $u_time = get_the_time('U');//发布时间
-            $u_modified_time = get_the_modified_time('U');//修改时间
-            $custom_content = '';
-            if ($u_modified_time >= $u_time + 86400) {
-                $updated_date = get_the_modified_time('Y-m-d H:i'); //Y-m-d H:i
-                $custom_content .= '<div class="last-updated" style="color: #8590a6;font-size: 14px;">最后编辑于：' . $updated_date . ' </div>';
-            }
-            $content .= $custom_content;
-            return $content;
-        }
+       
     } //end
 }

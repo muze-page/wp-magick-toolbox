@@ -29,10 +29,16 @@ if (!class_exists('Npcink_Page_Function')) {
                 Npcink_Page_Color_Tags::run();
             }
 
+            //文章末尾添加最后更新时间
+            $add_last_update = MaMi_Admin::get_config($option, 'add_last_update');
+            if ($add_last_update === true) {
+                require_once plugin_dir_path(__FILE__) . 'add_article_update_time.php';
+                Npcink_Single_Add_Last_Updated_Date::run();
+            }
+
             //跳转中间页
             $go_middle = MaMi_Admin::get_config($option, 'go_middle');
             if ($go_middle !== false) {
-                //跳转中间页
                 require_once plugin_dir_path(__FILE__) . 'jump_middle_page.php';
                 Npcink_Jump_Middle_Page::run($go_middle);
             }
