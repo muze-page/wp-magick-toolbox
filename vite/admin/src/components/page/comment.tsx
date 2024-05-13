@@ -57,14 +57,7 @@ const App: React.FC = () => {
         </Form.Item>
         
 
-        <Form.Item<FieldType>
-          label="彩色背景标签云"
-          name="color_tag"
-          valuePropName="checked"
-          extra={"可在小工具中添加圆角彩色背景标签云，前台即可看到效果"}
-        >
-          <Switch />
-        </Form.Item>
+       
 
        
 

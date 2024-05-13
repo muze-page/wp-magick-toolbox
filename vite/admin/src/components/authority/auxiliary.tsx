@@ -1,7 +1,7 @@
 //权限 - 辅助功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Switch, Form, Input, Select } from "antd";
+import { Switch, Form, Input,  } from "antd";
 import DataContext from "@/tool/dataContext";
 import { AuthorityAuxiliary } from "@/tool/interface";
 import defaultVar from "@/tool/defaultVar";
@@ -94,37 +94,7 @@ const App: React.FC = () => {
         
 
        
-        <Form.Item<FieldType>
-          label="外链跳转中间页"
-          name="go_middle"
-          extra={
-            <>
-              文章中的外链会先跳转到中间页，再跳转第三方，
-              <br />
-              此选项仅外观不同，功能相同;
-              <br /> 推荐给robots.txt添加内容：
-              <pre className="pre-meat">Disallow: /go_to/=*</pre>
-              屏蔽搜索引擎对中间页的抓取,
-              <a href="https://www.dujin.org/12762.html" target="_blank">
-                详情
-              </a>
-            </>
-          }
-        >
-          <Select
-            style={{ width: 200 }}
-            options={[
-              { value: "false", label: "禁用" },
-              { value: "zhihu", label: "知乎" },
-              { value: "tencent", label: "腾讯云" },
-              { value: "shimo", label: "石墨文档" },
-              { value: "jianshu", label: "简书" },
-              { value: "csdn", label: "CSDN" },
-              { value: "wx_community", label: "微信社区" },
-              { value: "ssp", label: "少数派" },
-            ]}
-          />
-        </Form.Item>
+       
       </Form>
     </>
   );

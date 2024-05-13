@@ -39,7 +39,7 @@ const OptimizeOther = {
 
 //页面 功能特效
 const PageComment = {
-  color_tag: boo, //彩色标签云特效
+
   comment_emote: boo, //评论区表情包特效
   interval: boo, //两次评论间隔
   interval_time: 5, //两次评论间隔
@@ -67,6 +67,12 @@ const PageFeature = {
   past_books: boo, //已写完的书
 };
 
+//页面 功能
+const PageFunction = {
+  go_middle: "false", //链接跳转中间页
+  color_tag: boo, //彩色标签云特效
+};
+
 //权限控制 禁用
 const AuthorityDisable = {
   renew: boo, //自动更新
@@ -78,7 +84,6 @@ const AuthorityAuxiliary = {
   single_count: boo, //文章统计
   no_malice_key: boo, //拒绝恶意关键词
   malice_keu_content: str, //恶意关键词内容
-  go_middle: "false", //链接跳转中间页
 };
 
 //权限控制 b2
@@ -152,10 +157,11 @@ const App = {
     b2: AuthorityB2, //B2
     wx_xcx: AuthorityWxXcx, //微信小程序链接生成
   },
-  //个性化
+  //页面
   page: {
     comment: PageComment, //评论
     feature: PageFeature, //外观特效
+    function: PageFunction, //页面功能
   },
   //H5
   h5: {

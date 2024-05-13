@@ -12,6 +12,7 @@ export type DataLocal = {
   page: {
     comment: PageComment; //评论
     feature: PageFeature; //外观
+    function: PageFunction; //功能
   };
   //权限
   authority: {
@@ -75,9 +76,9 @@ export type OptimizeOther = {
   add_last_update: boolean; //添加最后更新时间
 };
 
-//功能特效
+//页面 - 评论
 export type PageComment = {
-  color_tag: boolean; //彩色标签云特效
+
   comment_emote: boolean; //评论区表情包特效
   interval: boolean; //两次评论间隔
   interval_time: number; //间隔时间
@@ -88,7 +89,7 @@ export type PageComment = {
   only: boolean; //单篇文章仅限评论一次
 };
 
-//外观特效
+//页面 - 外观特效
 export type PageFeature = {
   title: boolean; //动态标题
   title_front: string; //回到当前标签
@@ -105,6 +106,11 @@ export type PageFeature = {
   past_books: boolean; //已写完的书
 };
 
+export type PageFunction = {
+  go_middle: string; //链接跳转中间页
+  color_tag: boolean; //彩色标签云特效
+};
+
 //权限 禁用
 export type AuthorityDisable = {
   renew: boolean; //禁用自动更新
@@ -116,8 +122,6 @@ export type AuthorityAuxiliary = {
   single_count: boolean; //文章统计
   no_malice_key: boolean; //拒绝恶意关键词
   malice_keu_content: string; //恶意关键词内容
-
-  go_middle: string; //链接跳转中间页
 };
 
 //权限 B2
