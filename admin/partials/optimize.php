@@ -21,7 +21,7 @@ if (!class_exists('MaMi_Optimize')) {
             /**
              * 优化 - 媒体
              */
-            require_once plugin_dir_path(__FILE__) . 'optimize/medium.php';
+            require_once plugin_dir_path(__FILE__) . 'optimize/medium/index.php';
             MaMi_Optimize_Medium::run($config);
 
             /**

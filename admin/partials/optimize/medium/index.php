@@ -11,8 +11,9 @@ if (!class_exists('MaMi_Optimize_Medium')) {
 
             //自动给图片添加Alt标签
             $img_add_tag = MaMi_Admin::get_config($option, 'img_add_tag');
-            if ($img_add_tag) {
-                add_filter('the_content', array(__CLASS__, 'image_alt_tag'), 99999);
+            if ($img_add_tag === true) {
+                require_once plugin_dir_path(__FILE__) . 'image_add_tag.php';
+                Npcink_Image_Add_Tag::run();
             }
 
             // 禁用自动生成的图片尺寸
@@ -44,19 +45,7 @@ if (!class_exists('MaMi_Optimize_Medium')) {
             }
         }
 
-        //自动给图片添加Alt标签
-        public static function image_alt_tag($content)
-        {
-            //global $post;
-            preg_match_all('/<img (.*?)\/>/', $content, $images);
-            if (!is_null($images)) {
-                foreach ($images[1] as $index => $value) {
-                    $new_img = str_replace('<img', '<img alt="' . get_the_title() . ' - ' . get_bloginfo('name') . '"', $images[0][$index]);
-                    $content = str_replace($images[0][$index], $new_img, $content);
-                }
-            }
-            return $content;
-        }
+       
 
         // 禁用自动生成的图片尺寸
         public static function run_ban_auto_size()
