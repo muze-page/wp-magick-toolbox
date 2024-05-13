@@ -87,14 +87,7 @@ const App: React.FC = () => {
           <Switch />
         </Form.Item>
         
-        <Form.Item<FieldType>
-          label="添加最后更新时间"
-          name="add_last_update"
-          valuePropName="checked"
-          extra={"文章末尾添加最后更新时间，文章发布24小时后再次修改，即可展示"}
-        >
-          <Switch />
-        </Form.Item>
+        
       </Form>
     </>
   );

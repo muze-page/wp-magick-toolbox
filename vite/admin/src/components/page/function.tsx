@@ -61,6 +61,14 @@ const App: React.FC = () => {
           <h2>功能</h2>
         </Form.Item>
         <Form.Item<FieldType>
+          label="彩色背景标签云"
+          name="color_tag"
+          valuePropName="checked"
+          extra={"可在小工具中添加圆角彩色背景标签云，前台即可看到效果"}
+        >
+          <Switch />
+        </Form.Item>
+        <Form.Item<FieldType>
           label="文章内关键词添加内链"
           name="add_inks"
           valuePropName="checked"
@@ -87,10 +95,10 @@ const App: React.FC = () => {
           <Switch />
         </Form.Item>
         <Form.Item<FieldType>
-          label="彩色背景标签云"
-          name="color_tag"
+          label="添加最后更新时间"
+          name="add_last_update"
           valuePropName="checked"
-          extra={"可在小工具中添加圆角彩色背景标签云，前台即可看到效果"}
+          extra={"文章末尾添加最后更新时间，文章发布24小时后再次修改，即可展示"}
         >
           <Switch />
         </Form.Item>

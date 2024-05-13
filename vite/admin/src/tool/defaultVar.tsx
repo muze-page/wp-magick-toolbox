@@ -27,7 +27,7 @@ const OptimizeOther = {
   add_user: boo, //作者筛选
   add_time: boo, //时间筛选
   show_id: boo, //列表显示ID
-  add_last_update: boo, //添加最后更新时间
+ 
 };
 
 //页面 功能特效
@@ -66,6 +66,7 @@ const PageFunction = {
   go_middle: "false", //链接跳转中间页
   remove_single_link: boo, //移除文章内超链接
   color_tag: boo, //彩色标签云特效
+  add_last_update: boo, //添加最后更新时间
 };
 
 //权限控制 禁用
