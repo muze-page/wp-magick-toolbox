@@ -2,7 +2,8 @@
 
 /**
  * 效果：点击特效
- * 来源：https://www.iowen.cn/canvas-click-effect-second-edition/
+ * 来源1：https://www.iowen.cn/canvas-click-effect-second-edition/
+ * 来源2：https://blog.csdn.net/m0_58849641/article/details/126126951
  */
 if (!class_exists('Npcink_Page_Add_Click_Effect')) {
     class Npcink_Page_Add_Click_Effect
@@ -18,10 +19,19 @@ if (!class_exists('Npcink_Page_Add_Click_Effect')) {
             if ($config === "text") {
                 add_action('wp_footer', array(__CLASS__, 'text'));
             }
-            //文字
+            //数字
             if ($config === "number") {
                 add_action('wp_footer', array(__CLASS__, 'number'));
             }
+
+            //爱心
+            if ($config === "love") {
+                add_action('wp_footer', array(__CLASS__, 'love'));
+            }
+            //圆圈烟花
+            if ($config === "scattered_fireworks") {
+               
+            } add_action('wp_footer', array(__CLASS__, 'scattered_fireworks'));
         }
 
         //添加四散粒子文件
@@ -34,7 +44,7 @@ if (!class_exists('Npcink_Page_Add_Click_Effect')) {
         {
             wp_enqueue_script(
                 MAGICK_MIXTURE_NAME . '_particle',
-                plugin_dir_url(__FILE__) . 'js/style-click-particle.js',
+                plugin_dir_url(__FILE__) . 'js/click_style_particle.js',
                 array(),
                 MAGICK_MIXTURE_VERSION,
                 true
@@ -67,6 +77,38 @@ if (!class_exists('Npcink_Page_Add_Click_Effect')) {
             wp_enqueue_script(
                 MAGICK_MIXTURE_NAME . '_click_style_number.js',
                 plugin_dir_url(__FILE__) . 'js/click_style_number.js',
+                array('jquery'),
+                MAGICK_MIXTURE_VERSION,
+                true
+            );
+        }
+
+        /**
+         * 爱心
+         */
+        public static function love()
+        {
+            wp_enqueue_script('jquery');
+
+            wp_enqueue_script(
+                MAGICK_MIXTURE_NAME . '_click_style_love.js',
+                plugin_dir_url(__FILE__) . 'js/click_style_love.js',
+                array('jquery'),
+                MAGICK_MIXTURE_VERSION,
+                true
+            );
+        }
+
+        /**
+         * 圆圈烟花
+         */
+        public static function scattered_fireworks()
+        {
+            wp_enqueue_script('jquery');
+
+            wp_enqueue_script(
+                MAGICK_MIXTURE_NAME . '_click_style_scattered_fireworks.js',
+                plugin_dir_url(__FILE__) . 'js/click_style_scattered_fireworks.js',
                 array('jquery'),
                 MAGICK_MIXTURE_VERSION,
                 true
