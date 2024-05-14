@@ -24,21 +24,26 @@ if (!class_exists('Npcink_Page_Add_Click_Effect')) {
                 add_action('wp_enqueue_scripts', array(__CLASS__, 'number'));
             }
 
-            //爱心
+            //七彩爱心
             if ($config === "love") {
                 add_action('wp_enqueue_scripts', array(__CLASS__, 'love'));
             }
-            //圆圈烟花
+            //四散烟花
             if ($config === "scattered_fireworks") {
                 add_action('wp_enqueue_scripts', array(__CLASS__, 'scattered_fireworks'));
             }
 
             //星星拖尾
             if ($config === "star_trail") {
+                add_action('wp_enqueue_scripts', array(__CLASS__, 'star_trail'));
+                add_action('wp_footer', array(__CLASS__, 'add_page_star_trail'));
             }
-            add_action('wp_enqueue_scripts', array(__CLASS__, 'star_trail'));
-            add_action('wp_footer', array(__CLASS__, 'add_page_star_trail'));
-            
+
+            //圆圈烟花
+            if ($config === "circle_fireworks") {
+                add_action('wp_footer', array(__CLASS__, 'add_page_circle_fireworks'));
+                add_action('wp_enqueue_scripts', array(__CLASS__, 'circle_fireworks'));
+            }
         }
 
         //添加四散粒子文件
@@ -125,7 +130,6 @@ if (!class_exists('Npcink_Page_Add_Click_Effect')) {
         /**
          * 星星拖尾
          */
-        //添加四散粒子文件
         public static function add_page_star_trail()
         {
             echo '<span class="js-cursor-container"></span>';
@@ -139,6 +143,29 @@ if (!class_exists('Npcink_Page_Add_Click_Effect')) {
                 plugin_dir_url(__FILE__) . 'js/click_style_star_trail.js',
                 array('jquery'),
                 MAGICK_MIXTURE_VERSION,
+                true
+            );
+        }
+
+        /**
+         * 圆圈烟花
+         */
+        public static function add_page_circle_fireworks()
+        {
+            echo '<canvas class="fireworks" style="position:fixed;left:0;top:0;z-index:99999999;pointer-events:none;"></canvas>
+            <style>
+              </style>
+              ';
+        }
+        public static function circle_fireworks()
+        {
+            wp_enqueue_script('jquery');
+
+            wp_enqueue_script(
+                MAGICK_MIXTURE_NAME . '_click_style_circle_fireworks.js',
+                plugin_dir_url(__FILE__) . 'js/click_style_circle_fireworks.js',
+                array('jquery'),
+                'MAGICK_MIXTURE_VERSION',
                 true
             );
         }

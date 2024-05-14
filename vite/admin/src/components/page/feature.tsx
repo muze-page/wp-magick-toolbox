@@ -98,10 +98,13 @@ const App: React.FC = () => {
             //TODO:默认值有问题
             options={[
               { value: "false", label: "禁用" },
-              { value: "diffuse", label: "爆炸粒子" },
-              { value: "text", label: "循环文字" },
+              { value: "diffuse", label: "爆炸烟花" },
+              { value: "circle_fireworks", label: "圆圈烟花" },
+              { value: "scattered_fireworks", label: "四散烟花" },
+              { value: "text", label: "随机文字" },
               { value: "number", label: "随机数字" },
-              
+              { value: "love", label: "七彩爱心" },
+              { value: "star_trail", label: "星星拖尾" },
             ]}
           />
         </Form.Item>
