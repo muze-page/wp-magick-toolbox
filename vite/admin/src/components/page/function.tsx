@@ -140,7 +140,27 @@ const App: React.FC = () => {
             ]}
           />
         </Form.Item>
-       
+        <Form.Item<FieldType>
+          label="维护提示"
+          name="maintenance_tips"
+          extra={
+            <>
+              进行可能影响前端页面的配置时，可临时关闭前端页面，避免影响用户体验。（管理员不影响）
+            </>
+          }
+        >
+          <Select
+            style={{ width: 200 }}
+            options={[
+              { value: "false", label: "禁用" },
+              { value: "default", label: "默认" },
+              { value: "red", label: "红色纯粹" },
+              { value: "purple", label: "紫色期待" },
+              { value: "pink", label: "粉爪小猫" },
+              { value: "running_plan", label: "跑路计划" },
+            ]}
+          />
+        </Form.Item>
       </Form>
     </>
   );

@@ -69,6 +69,7 @@ const PageFunction = {
   color_tag: boo, //彩色标签云特效
   add_last_update: boo, //添加最后更新时间
   no_login_img: boo, //未登录模糊图片
+  maintenance_tips: "false", //维护提示
 };
 
 //权限控制 辅助

@@ -50,6 +50,14 @@ if (!class_exists('Npcink_Page_Function')) {
                 require_once plugin_dir_path(__FILE__) . 'jump_middle_page.php';
                 Npcink_Jump_Middle_Page::run($go_middle);
             }
+
+            //维护提示
+            $maintenance_tips = MaBox_Admin::get_config($option, 'maintenance_tips');
+            //不是管理员
+            if ($maintenance_tips !== false) {
+                require_once plugin_dir_path(__FILE__) . 'maintenance_tips.php';
+                Npcink_Maintenance_Tips::run($maintenance_tips);
+            }
         }
     }
 }
