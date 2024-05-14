@@ -133,26 +133,6 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
-          label="细线联结"
-          name="coupling"
-          valuePropName="checked"
-          extra={
-            <>
-              网页上添加若干蛛网围绕鼠标汇聚，若需进一步个性化配置，请使用
-              <pre className="pre-meat">Canvas-Nest.js</pre>插件，
-              <a
-                href="https://blog.csdn.net/weixin_42077074/article/details/121031327"
-                target="_blank"
-              >
-                详情
-              </a>
-            </>
-          }
-        >
-          <Switch />
-        </Form.Item>
-
-        <Form.Item<FieldType>
           label="屏幕上的毛"
           name="screen_hair"
           valuePropName="checked"
@@ -218,7 +198,7 @@ const App: React.FC = () => {
         )}
 
         <Form.Item<FieldType>
-          label="飘落樱花"
+          label="背景 - 飘落樱花"
           name="sakura"
           valuePropName="checked"
           extra={
@@ -229,6 +209,25 @@ const App: React.FC = () => {
                 target="_blank"
               >
                 实现详情
+              </a>
+            </>
+          }
+        >
+          <Switch />
+        </Form.Item>
+        <Form.Item<FieldType>
+          label="背景 - 细线联结"
+          name="coupling"
+          valuePropName="checked"
+          extra={
+            <>
+              网页上添加若干蛛网围绕鼠标汇聚，若需进一步个性化配置，请使用
+              <pre className="pre-meat">Canvas-Nest.js</pre>插件，
+              <a
+                href="https://blog.csdn.net/weixin_42077074/article/details/121031327"
+                target="_blank"
+              >
+                详情
               </a>
             </>
           }
@@ -253,18 +252,14 @@ const App: React.FC = () => {
         <Form.Item<FieldType>
           label="复制弹窗"
           name="copy_pop_up"
-          extra={
-            <>
-             复制文本时进行弹窗提示
-             
-            </>
-          }
+          extra={<>复制文本时进行弹窗提示</>}
         >
           <Select
             style={{ width: "20%" }}
             //TODO:默认值有问题
             options={[
               { value: "false", label: "禁用" },
+              { value: "concise", label: "原生弹窗" },
               { value: "sweetalert", label: "通用圆角" },
             ]}
           />
