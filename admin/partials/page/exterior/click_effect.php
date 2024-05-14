@@ -17,21 +17,28 @@ if (!class_exists('Npcink_Page_Add_Click_Effect')) {
             }
             //文字
             if ($config === "text") {
-                add_action('wp_footer', array(__CLASS__, 'text'));
+                add_action('wp_enqueue_scripts', array(__CLASS__, 'text'));
             }
             //数字
             if ($config === "number") {
-                add_action('wp_footer', array(__CLASS__, 'number'));
+                add_action('wp_enqueue_scripts', array(__CLASS__, 'number'));
             }
 
             //爱心
             if ($config === "love") {
-                add_action('wp_footer', array(__CLASS__, 'love'));
+                add_action('wp_enqueue_scripts', array(__CLASS__, 'love'));
             }
             //圆圈烟花
             if ($config === "scattered_fireworks") {
-               
-            } add_action('wp_footer', array(__CLASS__, 'scattered_fireworks'));
+                add_action('wp_enqueue_scripts', array(__CLASS__, 'scattered_fireworks'));
+            }
+
+            //星星拖尾
+            if ($config === "star_trail") {
+            }
+            add_action('wp_enqueue_scripts', array(__CLASS__, 'star_trail'));
+            add_action('wp_footer', array(__CLASS__, 'add_page_star_trail'));
+            
         }
 
         //添加四散粒子文件
@@ -109,6 +116,27 @@ if (!class_exists('Npcink_Page_Add_Click_Effect')) {
             wp_enqueue_script(
                 MAGICK_MIXTURE_NAME . '_click_style_scattered_fireworks.js',
                 plugin_dir_url(__FILE__) . 'js/click_style_scattered_fireworks.js',
+                array('jquery'),
+                MAGICK_MIXTURE_VERSION,
+                true
+            );
+        }
+
+        /**
+         * 星星拖尾
+         */
+        //添加四散粒子文件
+        public static function add_page_star_trail()
+        {
+            echo '<span class="js-cursor-container"></span>';
+        }
+        public static function star_trail()
+        {
+            wp_enqueue_script('jquery');
+
+            wp_enqueue_script(
+                MAGICK_MIXTURE_NAME . '_click_style_star_trail.js',
+                plugin_dir_url(__FILE__) . 'js/click_style_star_trail.js',
                 array('jquery'),
                 MAGICK_MIXTURE_VERSION,
                 true
