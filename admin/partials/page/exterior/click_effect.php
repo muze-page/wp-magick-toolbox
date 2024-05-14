@@ -18,6 +18,10 @@ if (!class_exists('Npcink_Page_Add_Click_Effect')) {
             if ($config === "text") {
                 add_action('wp_footer', array(__CLASS__, 'text'));
             }
+            //文字
+            if ($config === "number") {
+                add_action('wp_footer', array(__CLASS__, 'number'));
+            }
         }
 
         //添加四散粒子文件
@@ -46,7 +50,23 @@ if (!class_exists('Npcink_Page_Add_Click_Effect')) {
 
             wp_enqueue_script(
                 MAGICK_MIXTURE_NAME . '_click_text',
-                plugin_dir_url(__FILE__) . 'js/click-text-style.js',
+                plugin_dir_url(__FILE__) . 'js/click_style_text.js',
+                array('jquery'),
+                MAGICK_MIXTURE_VERSION,
+                true
+            );
+        }
+
+        /**
+         * 数字
+         */
+        public static function number()
+        {
+            wp_enqueue_script('jquery');
+
+            wp_enqueue_script(
+                MAGICK_MIXTURE_NAME . '_click_style_number.js',
+                plugin_dir_url(__FILE__) . 'js/click_style_number.js',
                 array('jquery'),
                 MAGICK_MIXTURE_VERSION,
                 true
