@@ -58,9 +58,9 @@ const HeaderBlock: React.FC = () => {
   return (
     <>
       <h1 className="text-2xl leading-7 font-medium">
-        魔法优化
+        魔法工具箱
         <small className="text-xs font-light text-gray-400 ml-2 ">
-          For Npcink
+          <a target="_blank" href="https://www.npc.ink" > For Npcink</a>
         </small>
       </h1>
       <Save />

@@ -99,6 +99,13 @@ const AuthorityWxXcx = {
   query: str, //参数
 };
 
+//简单SEO功能
+const FunctionSeo = {
+  title: str, //网站标题
+  keywords: str, //网站关键字
+  description: str, //网站描述
+};
+
 // H5 首页
 const H5Home = {
   switch: boo, //开关
@@ -150,6 +157,7 @@ const App = {
     auxiliary: AuthorityAuxiliary, //辅助功能
     b2: AuthorityB2, //B2
     wx_xcx: AuthorityWxXcx, //微信小程序链接生成
+    seo: FunctionSeo, //简单 SEO 功能
   },
   //页面
   page: {

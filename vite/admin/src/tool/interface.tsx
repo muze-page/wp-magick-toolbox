@@ -18,6 +18,7 @@ export type DataLocal = {
     auxiliary: AuthorityAuxiliary; //辅助功能
     b2: AuthorityB2; //B2主题
     wx_xcx: AuthorityWxXcx; //微信小程序链接生成
+    seo: FunctionSeo; //简单 SEO 功能
   };
   h5: {
     home: H5Home;
@@ -133,6 +134,12 @@ export type AuthorityWxXcx = {
   site: string; //小程序中打开的网址
   path: string; //路径
   query: string; //参数
+};
+
+export type FunctionSeo = {
+  title: string; //网站标题
+  keywords: string; //网站关键字
+  description: string; //网站描述
 };
 
 //H5 首页

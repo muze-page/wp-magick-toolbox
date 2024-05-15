@@ -5,7 +5,7 @@ import { Collapse } from "antd";
 import {
   AboutPlugin,
   Proposal,
-  Link,
+  Links,
 } from "@/components/about/collapse";
 
 const items: CollapseProps["items"] = [
@@ -22,7 +22,7 @@ const items: CollapseProps["items"] = [
   {
     key: "3",
     label: "联系方式",
-    children: <Link />,
+    children: <Links />,
   },
 ];
 const App: React.FC = () => {
