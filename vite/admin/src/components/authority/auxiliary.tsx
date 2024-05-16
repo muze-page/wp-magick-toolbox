@@ -1,7 +1,7 @@
 //权限 - 辅助功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Switch, Form, Input } from "antd";
+import { Switch, Form, Input, Button, Space } from "antd";
 import DataContext from "@/tool/dataContext";
 import { AuthorityAuxiliary } from "@/tool/interface";
 import defaultVar from "@/tool/defaultVar";
@@ -127,7 +127,10 @@ const App: React.FC = () => {
             </p>
           }
         >
-          <Input placeholder="自动处理" />
+          <Space.Compact style={{ width: "100%" }}>
+            <Input placeholder="自动处理"  />
+            <Button >清空</Button>
+          </Space.Compact>
         </Form.Item>
         <Form.Item<FieldType>
           label="谷歌统计"
@@ -145,11 +148,13 @@ const App: React.FC = () => {
               <pre className="pre-meat">
                 &lt;meta name="google-site-verification" content="HB..." /&gt;
               </pre>
-              '
             </p>
           }
         >
-          <Input />
+         <Space.Compact style={{ width: "100%" }}>
+            <Input placeholder="自动处理"  />
+            <Button >清空</Button>
+          </Space.Compact>
         </Form.Item>
         <Form.Item<FieldType>
           label="必应统计"
@@ -164,11 +169,16 @@ const App: React.FC = () => {
               <pre className="pre-meat">
                 &lt;meta name="msvalidate.01" content="CF..." /&gt;
               </pre>
-              '
             </p>
           }
         >
-          <Input />
+          
+          <Space style={{ width: '100%' }}>
+          <Input placeholder="自动处理" />
+          <Button >清空</Button>
+        </Space>
+           
+         
         </Form.Item>
       </Form>
     </>
