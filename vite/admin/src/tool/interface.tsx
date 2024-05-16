@@ -118,6 +118,7 @@ export type AuthorityAuxiliary = {
   baidu_tonji: string; //  百度统计
   google_tonji: string; // 谷歌统计
   biying_tonji: string; // 必应统计
+  uniqueKey: number;
 };
 
 //权限 B2

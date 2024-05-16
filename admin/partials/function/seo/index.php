@@ -22,11 +22,6 @@ if (!class_exists('Npcink_Easy_Seo')) {
             if (is_front_page()) {
                 //翻页是第一页
                 if (get_query_var('paged') < 2) {
-
-                    //判断，是否已存在目标meta
-                    // 在 wp_head 钩子中执行自定义函数
-                    add_action('wp_head', array(__CLASS__, 'capture_and_output_head_content'));
-
                     //准备选项
                     $option = self::$config;
                     //站点标题

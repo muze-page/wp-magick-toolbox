@@ -81,6 +81,7 @@ const AuthorityAuxiliary = {
   baidu_tonji: str, //  百度统计
   google_tonji: str, // 谷歌统计
   biying_tonji: str, // 必应统计
+  uniqueKey:0,
 };
 
 //权限控制 b2

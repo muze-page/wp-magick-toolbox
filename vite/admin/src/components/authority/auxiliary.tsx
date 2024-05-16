@@ -1,6 +1,6 @@
 //权限 - 辅助功能
 import React from "react";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { Switch, Form, Input, Button, Space } from "antd";
 import DataContext from "@/tool/dataContext";
 import { AuthorityAuxiliary } from "@/tool/interface";
@@ -61,6 +61,18 @@ const App: React.FC = () => {
     let regex = /content="([A-Za-z0-9]+)"/;
     let match = value.match(regex);
     return match[1];
+  };
+
+  //重置必应统计
+  const tongji_reset = () => {
+    setFormData({
+      ...formData,
+      biying_tonji: "",
+      // 其他需要修改的属性和值
+      uniqueKey: Math.random(), // 添加一个随机数作为唯一标识符
+    });
+
+    console.log(formData);
   };
 
   return (
@@ -127,10 +139,7 @@ const App: React.FC = () => {
             </p>
           }
         >
-          <Space.Compact style={{ width: "100%" }}>
-            <Input placeholder="自动处理"  />
-            <Button >清空</Button>
-          </Space.Compact>
+          <Input placeholder="自动处理" />
         </Form.Item>
         <Form.Item<FieldType>
           label="谷歌统计"
@@ -151,10 +160,7 @@ const App: React.FC = () => {
             </p>
           }
         >
-         <Space.Compact style={{ width: "100%" }}>
-            <Input placeholder="自动处理"  />
-            <Button >清空</Button>
-          </Space.Compact>
+          <Input placeholder="自动处理" />
         </Form.Item>
         <Form.Item<FieldType>
           label="必应统计"
@@ -172,16 +178,36 @@ const App: React.FC = () => {
             </p>
           }
         >
-          
-          <Space style={{ width: '100%' }}>
-          <Input placeholder="自动处理" />
-          <Button >清空</Button>
-        </Space>
-           
-         
+          <BiYing />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" onClick={tongji_reset}>
+            重置必应统计
+          </Button>
         </Form.Item>
       </Form>
     </>
+  );
+};
+
+//必应
+const BiYing = (props: any) => {
+  const inputRef = useRef(null);
+
+  const resetInputValue = () => {
+    if (inputRef.current) {
+      // 如果输入框引用存在，则清空输入框的值
+      (inputRef.current as any).input.value = "";
+    }
+  };
+
+  return (
+    <div>
+      <Space.Compact style={{ width: "100%" }}>
+        <Input ref={inputRef} {...props} placeholder="自动处理" />
+        <Button onClick={resetInputValue}>重置</Button>
+      </Space.Compact>
+    </div>
   );
 };
 
