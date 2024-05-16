@@ -53,9 +53,11 @@ if (!class_exists('Npcink_Easy_Seo')) {
             }
         }
 
+        //运行 - 检查head标签中是否存在指定meta
+        //add_action('wp', array(__CLASS__, 'head_meta'));
         // 添加一个标志变量来确保代码只运行一次
-        private static  $head_content_captured = false;
-        public static function capture_and_output_head_content()
+       /* private static  $head_content_captured = false;
+        public static function head_meta()
         {
 
             // 检查标志变量，确保代码只运行一次
@@ -74,6 +76,7 @@ if (!class_exists('Npcink_Easy_Seo')) {
             $default_value = strpos($head_content, '<meta name="description"') !== false;
             printf('<script>console.log(%s)</script>', json_encode($default_value));
         }
+        */
         /*
           <meta name='description' content='SEO 描述' />
           <meta name='keywords' content='1,2222,3，5' />
