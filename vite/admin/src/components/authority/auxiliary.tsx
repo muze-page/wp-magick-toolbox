@@ -140,7 +140,10 @@ const App: React.FC = () => {
             </p>
           }
         >
-          <Input placeholder="自动处理" />
+          <SiteInput
+            tongji_reset={tongji_reset}
+            name={"baidu_tonji"}
+          />
         </Form.Item>
         <Form.Item<FieldType>
           label="谷歌统计"
@@ -161,7 +164,10 @@ const App: React.FC = () => {
             </p>
           }
         >
-          <Input placeholder="自动处理" />
+          <SiteInput
+            tongji_reset={tongji_reset}
+            name={"google_tonji"}
+          />
         </Form.Item>
         <Form.Item<FieldType>
           label="必应统计"
@@ -179,9 +185,8 @@ const App: React.FC = () => {
             </p>
           }
         >
-          <BiYing
+          <SiteInput
             tongji_reset={tongji_reset}
-            form={form}
             name={"biying_tonji"}
           />
         </Form.Item>
@@ -190,25 +195,20 @@ const App: React.FC = () => {
   );
 };
 
-//必应
-const BiYing = (props: any) => {
+//网址输入框
+const SiteInput = (props: any) => {
   const inputRef = useRef(null);
 
   //不能直接执行，得用函数装起来
   const handleReset = () => {
-    resetInputValue(props.name);
-  };
-
-  const resetInputValue = (name: string) => {
-    props.form.resetFields([name]); // 重置指定字段的值
-    props.tongji_reset(name);//更新穿出的值
+    props.tongji_reset(props.name);//更新传出的值
   };
 
   return (
     <div>
       <Space.Compact style={{ width: "100%" }}>
-        <Input ref={inputRef} {...props} placeholder="自动处理" />
-        <Button onClick={handleReset}>重置</Button>
+        <Input ref={inputRef} {...props} placeholder="自动处理网址" />
+        <Button onClick={handleReset}>清空</Button>
       </Space.Compact>
     </div>
   );
