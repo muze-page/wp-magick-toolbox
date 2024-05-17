@@ -13,6 +13,9 @@ if (!class_exists('Npcink_Easy_Seo')) {
         {
             self::$config = $option;
             add_action('wp', array(__CLASS__, 'add_meta_home'));
+
+            //文章SEO
+            add_action('wp',  array(__CLASS__, 'single_seo'));
         }
 
         public static function add_meta_home()
@@ -48,10 +51,23 @@ if (!class_exists('Npcink_Easy_Seo')) {
             }
         }
 
+        //文章SEO
+        public static function single_seo()
+        {
+            $option = self::$config;
+            $single = MaBox_Admin::get_config($option, 'single_seo');
+            if ($single === true) {
+                require_once plugin_dir_path(__FILE__) . 'site_single.php'; //载入文件
+                Npcink_Seo_Single::run();
+            }
+        }
+
+
+
         //运行 - 检查head标签中是否存在指定meta
         //add_action('wp', array(__CLASS__, 'head_meta'));
         // 添加一个标志变量来确保代码只运行一次
-       /* private static  $head_content_captured = false;
+        /* private static  $head_content_captured = false;
         public static function head_meta()
         {
 
