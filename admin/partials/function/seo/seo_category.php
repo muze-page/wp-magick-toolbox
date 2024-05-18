@@ -53,8 +53,9 @@ if (!class_exists('Npcink_Seo_Category')) {
             if ($category) {
                 $description_data = $category->description; // 获取分类描述
             }
-            $description = mb_substr($description_data, 0, 55, 'utf-8'); //只取前40个字
-            if ($description !== '' &&  $description !== false) {
+           
+            if ($description_data !== '' &&  $description_data !== false) {
+                $description = mb_substr($description_data, 0, 55, 'utf-8'); //只取前40个字
                 echo '<meta name="description" content="' . $description . '" />';
                 echo "\n";
             }

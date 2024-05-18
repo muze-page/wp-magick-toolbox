@@ -20,28 +20,32 @@ if (!class_exists('Npcink_Seo_Single')) {
             //是文章
             if (is_singular()) {
                 if (get_query_var('paged') < 2) {
-                    //文章ID
-                    //拿到文章的描述，关键词
-                    $description_data = get_the_excerpt();
-
-                    $description = mb_substr($description_data, 0, 55, 'utf-8'); //只取前40个字
-
-                    //拿到文章的关键词
-                    $tags = get_the_tags();
-                    $keywords = '';
-                    if ($tags) {
-                        foreach ($tags as $tag) {
-                            $keywords .= $tag->name . ', ';
-                        }
-                        $keywords = rtrim($keywords, ', '); // 去除最后一个逗号和空格
+                     //拿到文章的关键词
+                     $tags = get_the_tags();
+                     $keywords = '';
+                     if ($tags) {
+                         foreach ($tags as $tag) {
+                             $keywords .= $tag->name . ', ';
+                         }
+                         $keywords = rtrim($keywords, ', '); // 去除最后一个逗号和空格
+                     }
+                     if ($keywords !== '' && $keywords !== false) {
+                        echo '<meta name="keywords" content="' . $keywords . '" />';
+                        echo "\n";
                     }
+
+                    //拿到文章的描述
+                    $description_data = get_the_excerpt();
+                    if ($description_data !== '' &&  $description_data !== false) {
+                        $description = mb_substr($description_data, 0, 55, 'utf-8'); //只取前40个字
+                        echo '<meta name="description" content="' . $description . '" />';
+                        echo "\n";
+                    }
+                   
 
                     //echo $description . $keywords;
 
-                    echo '<meta name="keywords" content="' . $keywords . '" />';
-                    echo "\n";
-                    echo '<meta name="description" content="' . $description . '" />';
-                    echo "\n";
+                  
                 }
             }
         }

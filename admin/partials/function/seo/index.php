@@ -29,9 +29,13 @@ if (!class_exists('Npcink_Easy_Seo')) {
                 //添加输入框
                 require_once plugin_dir_path(__FILE__) . 'seo_category_add_meat.php'; //载入文件
                 Npcink_Seo_Category_Add_Meat::run();
-                //添加TDK
+                //分类添加TDK
                 require_once plugin_dir_path(__FILE__) . 'seo_category.php'; //载入文件
                 Npcink_Seo_Category::run();
+
+                //标签
+                require_once plugin_dir_path(__FILE__) . 'seo_tag.php';
+                Npcink_Seo_Tag::run();
             }
         }
 
