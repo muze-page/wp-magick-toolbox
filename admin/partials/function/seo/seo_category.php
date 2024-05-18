@@ -9,11 +9,53 @@ if (!class_exists('Npcink_Seo_Category')) {
     {
         public static function run()
         {
-            add_action('wp_head', array(__CLASS__, 'add_hello_header'));
+            add_action('wp', array(__CLASS__, 'add_meta'));
         }
-        public static function add_hello_header()
+
+        public static function add_meta()
         {
-            echo '<div style="background-color: yellow; text-align: center;">你好</div>';
+            //判断是分类
+            if (is_category()) {
+                add_action('wp_head', array(__CLASS__, 'seo_category'), 1);
+                //分类ID
+                $term_id = get_query_var('cat');
+                //分类标题
+                $title = get_option('cat-title-' . $term_id);
+                if ($title !== '' && $title !== false) {
+                    remove_action('wp_head', '_wp_render_title_tag', 1); //移除默认标题
+                }
+            }
+        }
+
+        public static function seo_category()
+        {
+            //分类ID
+            $term_id = get_query_var('cat');
+
+            //分类标题
+            $title = get_option('cat-title-' . $term_id);
+            if ($title !== '' && $title !== false) {
+                echo '<title>' . $title . '</title>';
+                echo "\n";
+            }
+
+            //分类关键词
+            $keywords = get_option('cat-words-' . $term_id);
+            if ($keywords !== '' && $keywords !== false) {
+                echo '<meta name="keywords" content="' . $keywords . '" />';
+                echo "\n";
+            }
+
+            //分类描述，
+            $category = get_queried_object(); // 获取当前分类对象
+            if ($category) {
+                $description_data = $category->description; // 获取分类描述
+            }
+            $description = mb_substr($description_data, 0, 55, 'utf-8'); //只取前40个字
+            if ($description !== '' &&  $description !== false) {
+                echo '<meta name="description" content="' . $description . '" />';
+                echo "\n";
+            }
         }
     }
 }
