@@ -22,6 +22,17 @@ if (!class_exists('Npcink_Easy_Seo')) {
                 require_once plugin_dir_path(__FILE__) . 'seo_single.php'; //载入文件
                 Npcink_Seo_Single::run();
             }
+
+            //分类和标签SEO
+            $category = MaBox_Admin::get_config($option, 'seo_category');
+            if ($category === true) {
+                //添加输入框
+                require_once plugin_dir_path(__FILE__) . 'seo_category_add_meat.php'; //载入文件
+                Npcink_Seo_Category_Add_Meat::run();
+                //添加TDK
+                require_once plugin_dir_path(__FILE__) . 'seo_category.php'; //载入文件
+                Npcink_Seo_Category::run();
+            }
         }
 
 

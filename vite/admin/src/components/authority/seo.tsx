@@ -96,7 +96,7 @@ const App: React.FC = () => {
           name="seo_category"
           valuePropName="checked"
           extra={
-            <p>title 是分类名称，keywords 是分类名称，description 是分类描述</p>
+            <p>title 是分类名称，keywords 是分类关键词，description 是分类描述</p>
           }
         >
           <Switch />
