@@ -1,7 +1,8 @@
 //页面 - 功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Form, Switch, Select } from "antd";
+import { Form, Switch, Select, DatePicker, TimePicker } from "antd";
+import type { DatePickerProps, TimePickerProps } from "antd";
 import DataContext from "@/tool/dataContext";
 import defaultVar from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
@@ -41,9 +42,23 @@ const App: React.FC = () => {
     };
   }, [formData]);
 
+  //更新时间
+  const updataTime = (timeData: string) => {
+    const updatedFormData = {
+      ...formData,
+      countdown: timeData,
+      // 其他需要修改的属性和值
+      uniqueKey: Math.random(), // 添加一个随机数作为唯一标识符
+    };
+    setFormData(updatedFormData); //更新传输的值
+    form.setFieldsValue(updatedFormData); // 更新表单中的值
+  };
+  const [form] = Form.useForm();
+
   return (
     <>
       <Form
+        form={form}
         name="aspect"
         labelCol={{ span: fromConfig.labelCol }}
         wrapperCol={{ span: fromConfig.wrapperCol }}
@@ -59,6 +74,13 @@ const App: React.FC = () => {
       >
         <Form.Item>
           <h2>功能</h2>
+          <button
+            onClick={() => {
+              console.log(formData);
+            }}
+          >
+            打印数据
+          </button>
         </Form.Item>
         <Form.Item<FieldType>
           label="彩色背景标签云"
@@ -161,9 +183,51 @@ const App: React.FC = () => {
             ]}
           />
         </Form.Item>
+
+        <Form.Item label="倒计时" name="countdown">
+          <Countdown updataTime={updataTime} />
+        </Form.Item>
       </Form>
     </>
   );
 };
 
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
+
+//倒计时
+const Countdown = (props: any) => {
+  //创建变量并设默认值
+  const [choiceDate, setChoiceDate] = useState("");
+  //创建变量并设默认值
+  const [choiceTime, setChoiceTime] = useState("");
+  const onChange: DatePickerProps["onChange"] = (date, dateString) => {
+    console.log(date, dateString);
+    setChoiceDate(dateString);
+  };
+  const onChanges: TimePickerProps["onChange"] = (time, timeString) => {
+    console.log(time, timeString);
+    setChoiceTime(timeString);
+  };
+  const choiceData = choiceDate + "T" + choiceTime;
+  const show = () => {
+    console.log(choiceDate);
+    console.log(choiceTime);
+    console.log(choiceData);
+    props.updataTime(choiceData); //更新值
+  };
+  return (
+    <div>
+      <DatePicker onChange={onChange} />
+      &nbsp;&nbsp;：
+      <TimePicker
+        onChange={onChanges}
+        defaultOpenValue={dayjs("12:00:00", "HH:mm:ss")}
+      />
+      <button onClick={show}>提交</button>
+    </div>
+  );
+};
 export default App;

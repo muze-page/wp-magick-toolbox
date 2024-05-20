@@ -86,7 +86,7 @@ const App: React.FC = () => {
           name="seo_single"
           valuePropName="checked"
           extra={
-            <p>title是文章标题，keywords是文章标签，description是文章描述</p>
+            <p>title是文章标题，keywords是文章标签，description是文章描述或文章首段前40字</p>
           }
         >
           <Switch />
@@ -96,7 +96,7 @@ const App: React.FC = () => {
           name="seo_category"
           valuePropName="checked"
           extra={
-            <p>title 是分类名称，keywords 是分类关键词，description 是分类描述</p>
+            <p>T 是分类名称，K 是分类关键词，D 是分类描述，标签只做了D ，是标签描述</p>
           }
         >
           <Switch />
