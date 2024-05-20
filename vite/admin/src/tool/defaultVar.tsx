@@ -71,7 +71,8 @@ const PageFunction = {
   add_last_update: boo, //添加最后更新时间
   no_login_img: boo, //未登录模糊图片
   maintenance_tips: "false", //维护提示
-  countdown:"2024-05-20T14:49:09",//维护结束倒计时
+  //countdown:"2024-05-20T14:49:09",//维护结束倒计时
+  countdown:"",//维护结束倒计时
 };
 
 //权限控制 辅助
