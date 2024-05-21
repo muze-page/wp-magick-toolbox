@@ -15,7 +15,7 @@ if (!class_exists('Npcink_Biying_Tonji')) {
         }
         public static function biying()
         {
-            echo '<meta name="msvalidate.01" content="' . self::$option . '"/>';
+            echo '<meta name="msvalidate.01" content="' . self::$option . '" />';
             echo "\n";
         }
     }

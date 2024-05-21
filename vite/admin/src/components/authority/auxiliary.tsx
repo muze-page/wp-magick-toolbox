@@ -1,6 +1,6 @@
 //权限 - 辅助功能
 import React from "react";
-import { useState, useContext, useEffect, useRef } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Switch, Form, Input, Button, Space, message } from "antd";
 import DataContext from "@/tool/dataContext";
 import { AuthorityAuxiliary } from "@/tool/interface";
@@ -48,6 +48,10 @@ const App: React.FC = () => {
 
   //提取百度统计标识符
   const handleValueChange = (e: { target: { value: any } }) => {
+    //设为空值，避免报错
+    if (!e) {
+      return;
+    }
     let value = e.target.value;
     let regex = /hm\.js\?([A-Za-z0-9]+)/;
     let match = value.match(regex);
@@ -61,23 +65,33 @@ const App: React.FC = () => {
     }
   };
 
-    //提取谷歌标识符
-    const extract_google = (e: { target: { value: any } }) => {
-      let value = e.target.value;
-      let regex =
-        /<meta\s+.*?name="google-site-verification".*?content="([A-Za-z0-9]+)".*?>/i;
-      let match = value.match(regex);
-      if (match) {
-        return match[1];
-      } else {
-        message.error("处理失败，请输入谷歌平台完整 HTML 标记");
-        return "";
-      }
-    };
+  //提取谷歌标识符
+  const extract_google = (e: { target: { value: any } }) => {
+    //设为空值，避免报错
+    if (!e) {
+      return;
+    }
+    let value = e.target.value;
+    let regex =
+      /<meta\s+.*?name="google-site-verification".*?content="([A-Za-z0-9_\-]+)".*?>/i;
+
+    let match = value.match(regex);
+    if (match) {
+      return match[1];
+    } else {
+      message.error("处理失败，请输入谷歌平台完整 HTML 标记");
+      return "";
+    }
+  };
 
   //提取必应标识符
   const extract_biying = (e: { target: { value: any } }) => {
+    //设为空值，避免报错
+    if (!e) {
+      return;
+    }
     let value = e.target.value;
+
     let regex =
       /<meta\s+.*?name="msvalidate\.01".*?content="([A-Za-z0-9]+)".*?>/i;
     let match = value.match(regex);
@@ -89,22 +103,9 @@ const App: React.FC = () => {
     }
   };
 
-  //重置必应统计
-  const tongji_reset = (name: string) => {
-    const updatedFormData = {
-      ...formData,
-      [name]: "",
-      // 其他需要修改的属性和值
-      uniqueKey: Math.random(), // 添加一个随机数作为唯一标识符
-    };
-    setFormData(updatedFormData); //更新传输的值
-    form.setFieldsValue(updatedFormData); // 更新表单中的值
-  };
-  const [form] = Form.useForm();
   return (
     <>
       <Form
-        form={form}
         name="auxiliary"
         labelCol={{ span: fromConfig.labelCol }}
         wrapperCol={{ span: fromConfig.wrapperCol }}
@@ -166,7 +167,7 @@ const App: React.FC = () => {
             </p>
           }
         >
-          <SiteInput tongji_reset={tongji_reset} name={"baidu_tonji"} />
+          <SiteInput />
         </Form.Item>
         <Form.Item<FieldType>
           label="谷歌统计"
@@ -187,7 +188,7 @@ const App: React.FC = () => {
             </p>
           }
         >
-          <SiteInput tongji_reset={tongji_reset} name={"google_tonji"} />
+          <SiteInput />
         </Form.Item>
         <Form.Item<FieldType>
           label="必应统计"
@@ -205,7 +206,7 @@ const App: React.FC = () => {
             </p>
           }
         >
-          <SiteInput tongji_reset={tongji_reset} name={"biying_tonji"} />
+          <SiteInput />
         </Form.Item>
       </Form>
     </>
@@ -214,17 +215,17 @@ const App: React.FC = () => {
 
 //网址输入框
 const SiteInput = (props: any) => {
-  const inputRef = useRef(null);
+  // const inputRef = useRef(null);
 
   //不能直接执行，得用函数装起来
   const handleReset = () => {
-    props.tongji_reset(props.name); //更新传出的值
+    props.onChange(""); //更新传出的值
   };
 
   return (
     <div>
       <Space.Compact style={{ width: "100%" }}>
-        <Input ref={inputRef} {...props} placeholder="自动处理代码" />
+        <Input {...props} placeholder="自动处理代码" />
         <Button onClick={handleReset}>清空</Button>
       </Space.Compact>
     </div>

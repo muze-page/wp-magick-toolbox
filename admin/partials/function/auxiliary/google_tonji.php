@@ -16,7 +16,7 @@ if (!class_exists('Npcink_Google_Tonji')) {
         }
         public static function google()
         {
-            echo '<meta name="google-site-verification" content="' . self::$option . '"/>';
+            echo '<meta name="google-site-verification" content="' . self::$option . '" />';
             echo "\n";
         }
     }
