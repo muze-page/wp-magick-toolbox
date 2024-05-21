@@ -189,6 +189,8 @@ const App: React.FC = () => {
               { value: "red", label: "红色纯粹" },
               { value: "purple", label: "紫色期待" },
               { value: "lighting", label: "灯光聚焦" },
+              { value: "masking", label: "高级遮罩" },
+              { value: "rotate", label: "旋转时钟" },
             ]}
           />
         </Form.Item>
@@ -204,7 +206,15 @@ const App: React.FC = () => {
             <Form.Item label="倒计时标题" name="countdown_title">
               <Input />
             </Form.Item>
-            <Form.Item label="倒计时图片" name="countdown_image"extra={<>不同模版位置不一样，请手动确认效果</>}>
+            <Form.Item
+              label="倒计时图片"
+              name="countdown_image"
+              extra={
+                <>
+                  不同模版位置不一样，请手动确认效果，，全屏显示时，推荐使用1920×1080像素的图片
+                </>
+              }
+            >
               <Input />
             </Form.Item>
             <Form.Item

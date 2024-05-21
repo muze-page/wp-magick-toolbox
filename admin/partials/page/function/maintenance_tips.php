@@ -48,6 +48,12 @@ if (!class_exists('Npcink_Maintenance_Tips')) {
                     case "lighting":
                         add_action('get_header', array(__CLASS__, 'lighting'));
                         break;
+                    case "masking": //大气遮罩
+                        add_action('get_header', array(__CLASS__, 'masking'));
+                        break;
+                    case "rotate": //时钟
+                        add_action('get_header', array(__CLASS__, 'rotate'));
+                        break;
                     default:
                         break;
                 }
@@ -85,6 +91,24 @@ if (!class_exists('Npcink_Maintenance_Tips')) {
         {
             // 检查条件，如果满足则执行跳转
             $php_page_path =  self::$path . 'lighting.php';
+            include($php_page_path);
+            exit; // 重定向后立即退出
+        }
+
+        //背景遮罩
+        public static  function masking()
+        {
+            // 检查条件，如果满足则执行跳转
+            $php_page_path =  self::$path . 'masking.php';
+            include($php_page_path);
+            exit; // 重定向后立即退出
+        }
+
+        //旋转时钟
+        public static  function rotate()
+        {
+            // 检查条件，如果满足则执行跳转
+            $php_page_path =  self::$path . 'rotate.php';
             include($php_page_path);
             exit; // 重定向后立即退出
         }
