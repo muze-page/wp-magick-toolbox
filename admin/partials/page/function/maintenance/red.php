@@ -29,28 +29,51 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
 
 
 
-        <!--
-        <h2 class="n-title main"></h2>
--->
+
+        <h2 class="n-title main">
+            <?php
+            $countdown_title = isset($countdown_title) && !empty($countdown_title) ? $countdown_title : "升级维护中";
+            echo $countdown_title;
+            ?>
+        </h2>
+
         <div class="box">
             <p class="n-meat main">
-                <?php
-                $countdown_title = isset($countdown_title) && !empty($countdown_title) ? $countdown_title : "升级维护中";
-                echo $countdown_title;
-                ?>
+                <?php echo $countdown_content; ?>
             </p>
-            <p class="n-description main"><span><?php echo $countdown_content; ?></span< /p>
+            <!--
+            <p class="n-description main"> </p>-->
+
+
+            <!--倒计时开始-->
+            <div class="boxs">
+                <?php include 'countdown.php'; ?>
+            </div>
+            <style>
+                .boxs {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    color: #fff;
+                }
+            </style>
+            <!--倒计时结束-->
+
+
+
+
         </div>
 
         <style type="text/css">
             body {
                 background-color: #b52424;
-                margin-top: 20vh;
+                margin-top: 10vh;
+                padding: 0 10vw;
             }
 
             .box {
-                display: flex;
-                padding: 10rem;
+                margin-top: 5vh;
             }
 
             .main {

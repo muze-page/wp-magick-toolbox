@@ -42,9 +42,22 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
   </style>
   <div class="main">
     <div class="waitimg">
-      
-      <div class="beian">  <?php echo $countdown_content; ?></div>
-  
+      <!--倒计时开始-->
+      <div class="box">
+        <?php include 'countdown.php'; ?>
+      </div>
+      <style>
+        .box {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-top: 60vh;
+          color: #fff;
+        }
+      </style>
+      <!--倒计时结束-->
+      <div class="beian"> <?php echo $countdown_content; ?></div>
+
     </div>
   </div>
 
