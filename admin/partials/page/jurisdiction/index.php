@@ -10,9 +10,12 @@ if (!class_exists('Npcink_Page_Jurisdiction')) {
         public static function run($option)
         {
 
-
+            //分类数组
             $category_id = MaBox_Admin::get_config($option, 'category_id');
+
+            //标签数组
             $tag_id = MaBox_Admin::get_config($option, 'tag_id');
+            
             //分类数组或标签数组是非空数组才开启接口
             if (!empty($category_id) || !empty($tag_id)) {
                 //添加分类数据接口
@@ -24,6 +27,12 @@ if (!class_exists('Npcink_Page_Jurisdiction')) {
             if (!empty($category_id)) {
                 require_once plugin_dir_path(__FILE__) . 'hide_category.php';
                 Npcink_Page_Hide_Category::run($category_id);
+            }
+
+            //隐藏指定标签
+            if (!empty($category_id)) {
+                require_once plugin_dir_path(__FILE__) . 'hide_tag.php';
+                Npcink_Page_Hide_Tag::run($tag_id);
             }
         }
     }

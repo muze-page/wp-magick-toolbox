@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 未登录隐藏指定分类
+ * 未登录隐藏指定分类下的文章
  */
 
 if (!class_exists('Npcink_Page_Hide_Category')) {
@@ -12,16 +12,7 @@ if (!class_exists('Npcink_Page_Hide_Category')) {
         {
             self::$id_array = $array;
             add_action('pre_get_posts', array(__CLASS__, 'exclude_category_from_query'));
-           // add_action('wp_head', array(__CLASS__, 'add_hello_header'));
         }
-        public static function add_hello_header()
-        {
-            $default_value = self::$id_array;
-
-            printf('<script>console.log(%s)</script>', json_encode($default_value));
-            echo '<div style="background-color: yellow; text-align: center;">你好</div>';
-        }
-
 
         public static  function exclude_category_from_query($query)
         {
