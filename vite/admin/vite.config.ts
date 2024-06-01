@@ -30,6 +30,7 @@ export default defineConfig({
         chunkFileNames: "[name].js",
       },
     },
+    //sourcemap: true,//保留映射关系，方便调试
   },
   resolve: {
     alias: {

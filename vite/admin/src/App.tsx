@@ -80,6 +80,8 @@ const Save: React.FC = () => {
 
   //提交动作
   const postData = async () => {
+    //console.log("提交动作");
+   // console.log(optionObj);
     saceOption(optionObj);
   };
   return (

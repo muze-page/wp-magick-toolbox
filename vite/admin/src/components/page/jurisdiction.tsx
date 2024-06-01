@@ -15,8 +15,10 @@ type FieldType = PageJurisdiction;
 const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
-  //准备默认值
-  const optionObj = useContext(DataContext) ?? { page: {} };
+  //拿到默认选项值
+  const { page: optionPage } = useContext(DataContext) ?? {};
+  const optionObj = { page: optionPage || {} };
+
   const publicData =
     optionObj.page?.jurisdiction || defaultVarOption.page.jurisdiction;
 

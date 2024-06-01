@@ -18,7 +18,7 @@ class MaBox_Admin
     /**
      * 选项
      */
-    public static $option = "MaBox_object_option_f";
+    public static $option = "Magick_ToolBox_option";
     /**
      * 此插件的ID。
      *
@@ -236,6 +236,7 @@ class MaBox_Admin
         if (empty($object)) {
             return wp_send_json_error([
                 'error' => '设置选项为空',
+                'data'=>$object_data,
             ], 403);
         }
 

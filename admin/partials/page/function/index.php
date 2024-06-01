@@ -61,16 +61,21 @@ if (!class_exists('Npcink_Page_Function')) {
             //倒计时时间段
             $countdown = MaBox_Admin::get_config($option, 'countdown');
 
-            //若时间段不存在，给默认值
-            if (!empty($countdown)) {
-                $countdown = array('2024-01-01 00:00:00', '2024-01-01 23:59:59');
-            }
+            //选项非关闭
+            if ($maintenance_tips !== false) {
+                //若时间段不存在，给默认值
+                if (count($countdown) !== 2) {
+                    $countdown = array('2024-01-01 00:00:00', '2024-01-01 23:59:59');
+                }
 
-            //判断
-            $result = self::isCurrentTimeInRange($countdown);
+                //判断当前时间，是否在时间段中
+                $result = self::isCurrentTimeInRange($countdown);
 
-            //选项非关闭，且时间有效
-            if ($maintenance_tips !== false && $result) {
+                //当前时间不在此时间段，则跳过
+                if ($result !== true) {
+                    return;
+                }
+
                 require_once plugin_dir_path(__FILE__) . 'maintenance_tips.php';
                 Npcink_Maintenance_Tips::run($maintenance_tips);
             }

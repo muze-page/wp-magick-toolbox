@@ -15,7 +15,8 @@ const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
   //准备默认值
-  const optionObj = useContext(DataContext) ?? { page: {} };
+  const { page: optionPage } = useContext(DataContext) ?? {};
+  const optionObj = { page: optionPage || {} };
   const publicData = optionObj.page?.comment || defaultVarOption.page.comment;
 
   //存储表单值

@@ -8,6 +8,30 @@ const str: string = "";
 //准备数字
 const num: number = 0;
 
+//准备昨天的时间
+// 获取昨天的日期
+var yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+
+// 设置开始时间和结束时间
+var startTime = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 9, 0, 0);
+var endTime = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 12, 0, 0);
+
+// 格式化时间
+function formatTime(date: Date) {
+    var year = date.getFullYear();
+    var month = (date.getMonth() + 1).toString().padStart(2, '0');
+    var day = date.getDate().toString().padStart(2, '0');
+    var hours = date.getHours().toString().padStart(2, '0');
+    var minutes = date.getMinutes().toString().padStart(2, '0');
+    var seconds = date.getSeconds().toString().padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+// 构建数组
+const timeArray = [formatTime(startTime), formatTime(endTime)];
+
+
 //优化 站点
 const OptimizeSite = {
   no_escape: boo, //禁止转义
@@ -71,8 +95,8 @@ const PageFunction = {
   add_last_update: boo, //添加最后更新时间
   no_login_img: boo, //未登录模糊图片
   maintenance_tips: "false", //维护提示
-  //countdown:"2024-05-20T14:49:09",//维护结束倒计时
-  countdown: [""], //维护结束倒计时
+  //countdown: ["2024-06-01 00:00:00","2024-06-02 00:00:00"], //维护结束倒计时
+  countdown:timeArray,
   countdown_title: "", //维护标题
   countdown_image: "", //维护图片
   countdown_content: "", //维护内容

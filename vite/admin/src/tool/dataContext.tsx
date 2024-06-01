@@ -37,6 +37,7 @@ function getAjaxurl(): string {
 
 //传值
 const dataObject: DataLocal = getDataLocal();
+//console.log("拿到的选项");
 //console.log(dataObject);
 
 //组件间传递选项数据
