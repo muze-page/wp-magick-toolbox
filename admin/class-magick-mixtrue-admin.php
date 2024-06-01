@@ -246,7 +246,7 @@ class MaBox_Admin
             return wp_send_json_success(['message' => '设置选项已保存', 'msg' => $object,]);
         } else {
             // 选项未改变会返回false
-            return wp_send_json_error(['error' => '保存设置选项失败', 'reason' => $wpdb->last_error, 'msg' => $result, 'msg2' => $object], 500);
+            return wp_send_json_error(['error' => '没有保存，没有设置新选项', 'reason' => $wpdb->last_error, 'msg' => $result, 'msg2' => $object], 500);
         }
     }
 

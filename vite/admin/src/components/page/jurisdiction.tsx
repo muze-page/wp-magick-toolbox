@@ -47,10 +47,7 @@ const App: React.FC = () => {
     console.log(formData);
   };
 
-  //打印表单
-  const handleChange = (value: string[]) => {
-    console.log(`selected ${value}`);
-  };
+
 
   //存储表单值
   interface TagData {
@@ -102,8 +99,6 @@ const App: React.FC = () => {
             allowClear
             style={{ width: "100%" }}
             placeholder="请选择要隐藏的分类"
-            defaultValue={["19", "27"]}
-            onChange={handleChange}
             options={tagArray?.categorys}
           />
         </Form.Item>
@@ -117,8 +112,6 @@ const App: React.FC = () => {
             allowClear
             style={{ width: "100%" }}
             placeholder="请选择要隐藏的标签"
-            defaultValue={[]}
-            onChange={handleChange}
             options={tagArray?.tags}
           />
         </Form.Item>
