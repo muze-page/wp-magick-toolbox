@@ -14,8 +14,9 @@ type FieldType = H5Contact;
 //Ant 组件配置
 const fromConfig = AntConfig.from;
 const App: React.FC = () => {
-  //拿到值
-  const optionObj = useContext(DataContext) ?? { h5: {} };
+  //拿到默认选项值
+  const { h5: optionData } = useContext(DataContext) ?? {};
+  const optionObj = { h5: optionData || {} };
 
   //简化并提供默认值
   const publicData = optionObj.h5?.contact || defaultVarOption.h5.contact;

@@ -18,7 +18,7 @@ class MaBox_Admin
     /**
      * 选项
      */
-    public static $option = "Magick_ToolBox_option";
+    public static $option = "Magick_ToolBox_Option";
     /**
      * 此插件的ID。
      *

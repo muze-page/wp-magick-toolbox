@@ -15,8 +15,8 @@ const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
   //拿到默认选项值
-  const { page: optionPage } = useContext(DataContext) ?? {};
-  const optionObj = { page: optionPage || {} };
+  const { page: optionData } = useContext(DataContext) ?? {};
+  const optionObj = { page: optionData || {} };
 
   //简化并提供默认值
   let publicData = optionObj.page?.feature || defaultVarOption.page.feature;

@@ -24,8 +24,10 @@ const getHexString = (color: Color | string): string => {
 };
 
 const App: React.FC = () => {
-  //准备默认值
-  const optionObj = useContext(DataContext) ?? { login: {} };
+  //拿到默认选项值
+  const { login: optionData } = useContext(DataContext) ?? {};
+  const optionObj = { login: optionData || {} };
+
   const publicData =
     optionObj.login?.beautify || defaultVarOption.login.beautify;
 

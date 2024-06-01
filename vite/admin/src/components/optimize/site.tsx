@@ -14,8 +14,9 @@ type FieldType = OptimizeSite;
 const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
-  //拿到值
-  const optionObj = useContext(DataContext) ?? { optimize: {} };
+  //拿到默认选项值
+  const { optimize: optionData } = useContext(DataContext) ?? {};
+  const optionObj = { optimize: optionData || {} };
 
   //简化并提供默认值
   let publicData = optionObj.optimize?.site || defaultVarOption.optimize.site;
