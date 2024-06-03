@@ -1,6 +1,6 @@
 //基础组件 - 选中媒体库图片
 import { useState } from "react";
-import { Input, Space, Button, Modal, List, Radio } from "antd";
+import { Input, Space, Button, Modal, List, Radio, Popover, Image } from "antd";
 import { FileImageOutlined } from "@ant-design/icons";
 
 import type { RadioChangeEvent } from "antd";
@@ -50,21 +50,29 @@ const SelectImage: React.FC = (props: any) => {
   //接收传来的值
 
   //选中
-  const [imageValue, setImageValue] = useState(1);
+  const [imageValue, setImageValue] = useState(props.value);
 
   //选中方法
   const onChange = (e: RadioChangeEvent) => {
     console.log("radio checked", e.target.value);
     setImageValue(e.target.value);
   };
+
+  //准备图片预览内容
+  const content = (
+    <>{props.value ? <Image src={imageValue} width={200} /> : "暂无选中图片"}</>
+  );
   return (
     <>
       <Space.Compact style={{ width: "100%" }}>
-        <Input
-          {...props}
-          placeholder="图片地址"
-          addonBefore={<FileImageOutlined />}
-        />
+        <Popover content={content} title="预览">
+          <Input
+            {...props}
+            placeholder="图片地址"
+            addonBefore={<FileImageOutlined />}
+          />
+        </Popover>
+
         <Button onClick={showModal}>选择</Button>
       </Space.Compact>
 
