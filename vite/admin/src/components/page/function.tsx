@@ -1,12 +1,19 @@
 //页面 - 功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Form, Switch, Select, DatePicker, Input } from "antd";
+import {
+  Form,
+  Switch,
+  Select,
+  DatePicker,
+  Input,
+} from "antd";
 
 import { DataContext } from "@/tool/dataContext";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
 import { PageFunction } from "@/tool/interface";
+import SelectImage from "@/basic/selectImage";
 
 //选项类型
 type FieldType = PageFunction;
@@ -186,7 +193,7 @@ const App: React.FC = () => {
                 </>
               }
             >
-              <Input />
+              <SelectImage />
             </Form.Item>
             <Form.Item
               label="倒计时内容"
@@ -295,4 +302,5 @@ const TextAreaHtml: React.FC = (props: any) => {
     </>
   );
 };
+
 export default App;

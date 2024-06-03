@@ -62,10 +62,7 @@ export const getCategoryData = async () => {
   }
 };
 
-//获取媒体库数据
-export const getMediaData = async () => {
 
-};
 
 //替换列表
 //const b: { [key: string]: string } = {
