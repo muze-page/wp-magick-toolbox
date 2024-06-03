@@ -97,7 +97,7 @@ class MaBox_Admin
         add_action('admin_enqueue_scripts', array(__CLASS__, 'load_admin_script'));
 
         // 添加Ajax请求处理函数
-        add_action('wp_ajax_save_object_option', array(__CLASS__, 'save_object_option_callback'));
+        add_action('wp_ajax_save_option_wmt', array(__CLASS__, 'save_option_wmt_callback'));
     }
 
 
@@ -170,7 +170,7 @@ class MaBox_Admin
             'option' => get_option(self::$option), //传递选项
             'cat_arr' => self::get_cat_data(), //分类信息
             'single_arr' => self::get_single_data(), //文章信息
-            'url_site'=> get_site_url(),//当前首页网址
+            'url_site' => get_site_url(), //当前首页网址
 
         );
         wp_localize_script($name, 'dataLocal', $MaBox_array); //传给vite项目
@@ -224,7 +224,7 @@ class MaBox_Admin
      */
 
 
-    public static  function save_object_option_callback()
+    public static  function save_option_wmt_callback()
     {
         global $wpdb;
         // 获取通过 Ajax POST 请求传递的对象数据
@@ -236,7 +236,7 @@ class MaBox_Admin
         if (empty($object)) {
             return wp_send_json_error([
                 'error' => '设置选项为空',
-                'data'=>$object_data,
+                'data' => $object_data,
             ], 403);
         }
 
@@ -248,7 +248,7 @@ class MaBox_Admin
             return wp_send_json_success(['message' => '设置选项已保存', 'msg' => $object,]);
         } else {
             // 选项未改变会返回false
-            return wp_send_json_error(['error' => '没有保存，没有设置新选项', 'reason' => $wpdb->last_error, 'msg' => $result, 'msg2' => $object], 500);
+            return wp_send_json_error(['error' => '请设置选项后再保存', 'reason' => $wpdb->last_error, 'msg' => $result, 'msg2' => $object], 500);
         }
     }
 

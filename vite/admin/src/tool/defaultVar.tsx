@@ -104,10 +104,10 @@ const PageFunction = {
 
 // 页面 - 权限
 const PageJurisdiction = {
-  category_id: [19], //分类ID
-  tag_id: [1], //标签ID
-  page_id: [1], //页面ID
-  single_id: [19], //文章ID
+  category_id: [], //分类ID
+  tag_id: [], //标签ID
+  page_id: [], //页面ID
+  single_id: [], //文章ID
 };
 
 //权限控制 辅助

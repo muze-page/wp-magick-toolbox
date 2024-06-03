@@ -6,7 +6,7 @@ import { defaultVarOption } from "@/tool/defaultVar";
 //接收选项
 export const saceOption = async (data: Option) => {
   const params = new URLSearchParams();
-  params.append("action", "save_object_option");
+  params.append("action", "save_option_wmt");
 
   if (data) {
     addParamIfDefined(params, "object_data", JSON.stringify(data));

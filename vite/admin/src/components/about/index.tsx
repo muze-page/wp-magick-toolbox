@@ -2,11 +2,9 @@
 import type { CollapseProps } from "antd";
 import { Collapse } from "antd";
 
-import {
-  AboutPlugin,
-  Proposal,
-  Links,
-} from "@/components/about/collapse";
+import { AboutPlugin, Proposal, Links } from "@/components/about/collapse";
+
+import Source from "@/components/about/table";
 
 const items: CollapseProps["items"] = [
   {
@@ -23,6 +21,11 @@ const items: CollapseProps["items"] = [
     key: "3",
     label: "联系方式",
     children: <Links />,
+  },
+  {
+    key: "4",
+    label: "来源",
+    children: <Source />,
   },
 ];
 const App: React.FC = () => {
