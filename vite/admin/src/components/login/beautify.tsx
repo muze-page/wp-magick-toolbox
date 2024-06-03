@@ -4,14 +4,15 @@
  */
 //站点 - 模版
 import { useState, useContext, useEffect } from "react";
-import { Switch, Form, ColorPicker, Input, InputNumber } from "antd";
-import { FileImageOutlined } from "@ant-design/icons";
+import { Switch, Form, ColorPicker, InputNumber } from "antd";
+
 import { DataContext } from "@/tool/dataContext";
 import { LoginBeautify } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 
 import type { Color } from "antd/es/color-picker";
 import { AntConfig } from "@/tool/tool";
+import SelectImage from "@/basic/selectImage";
 
 type FieldType = LoginBeautify;
 
@@ -28,7 +29,7 @@ const App: React.FC = () => {
   const { optionData, updateOption } = useContext(DataContext);
 
   const publicData =
-  optionData.login?.beautify || defaultVarOption.login.beautify;
+    optionData.login?.beautify || defaultVarOption.login.beautify;
 
   //存储表单值
   const [formData, setFormData] = useState(publicData || {});
@@ -126,10 +127,7 @@ const App: React.FC = () => {
             </Form.Item>
 
             <Form.Item<FieldType> label="顶部LOGO" name="top_logo" extra={""}>
-              <Input
-                addonBefore={<FileImageOutlined />}
-                placeholder="图片网址"
-              />
+              <SelectImage />
             </Form.Item>
 
             <Form.Item<FieldType>
@@ -137,10 +135,7 @@ const App: React.FC = () => {
               name="background_img"
               extra={""}
             >
-              <Input
-                addonBefore={<FileImageOutlined />}
-                placeholder="图片网址"
-              />
+              <SelectImage />
             </Form.Item>
           </>
         )}

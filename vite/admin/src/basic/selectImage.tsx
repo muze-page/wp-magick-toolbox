@@ -1,6 +1,8 @@
 //基础组件 - 选中媒体库图片
-import { Input, Space, Button, Modal, List, Radio } from "antd";
 import { useState } from "react";
+import { Input, Space, Button, Modal, List, Radio } from "antd";
+import { FileImageOutlined } from "@ant-design/icons";
+
 import type { RadioChangeEvent } from "antd";
 
 const SelectImage: React.FC = (props: any) => {
@@ -21,6 +23,8 @@ const SelectImage: React.FC = (props: any) => {
       setMediaImage(data);
     } catch (error: any) {
       console.error("出错：" + error.message);
+      //TODO:完善报错
+      alert("请开启 REST API 功能");
     }
   };
 
@@ -56,7 +60,11 @@ const SelectImage: React.FC = (props: any) => {
   return (
     <>
       <Space.Compact style={{ width: "100%" }}>
-        <Input {...props} placeholder="图片地址" />
+        <Input
+          {...props}
+          placeholder="图片地址"
+          addonBefore={<FileImageOutlined />}
+        />
         <Button onClick={showModal}>选择</Button>
       </Space.Compact>
 
@@ -65,7 +73,6 @@ const SelectImage: React.FC = (props: any) => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-        
       >
         <List
           grid={{
@@ -80,8 +87,13 @@ const SelectImage: React.FC = (props: any) => {
           dataSource={mediaImage}
           renderItem={(item: any) => (
             <Radio.Group onChange={onChange} value={imageValue}>
-              <Radio  value={item.source_url}>
-                <img alt={item.slug} src={item.source_url} width={200} height={200}/>
+              <Radio value={item.source_url}>
+                <img
+                  alt={item.slug}
+                  src={item.source_url}
+                  width={200}
+                  height={200}
+                />
               </Radio>
             </Radio.Group>
           )}

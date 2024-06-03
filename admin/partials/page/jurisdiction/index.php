@@ -16,12 +16,12 @@ if (!class_exists('Npcink_Page_Jurisdiction')) {
             //标签数组
             $tag_id = MaBox_Admin::get_config($option, 'tag_id');
 
-            //分类数组或标签数组是非空数组才开启接口
-            if (!empty($category_id) || !empty($tag_id)) {
-                //添加分类数据接口
-                require_once plugin_dir_path(__FILE__) . 'interface_category_data.php';
-                Npcink_Interface_Category_Data::run();
-            }
+
+            //总有默认分类，添加判断意义不大
+            //添加分类数据接口
+            require_once plugin_dir_path(__FILE__) . 'interface_category_data.php';
+            Npcink_Interface_Category_Data::run();
+
 
             //隐藏指定分类
             if (!empty($category_id)) {
