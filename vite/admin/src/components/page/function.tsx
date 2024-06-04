@@ -294,14 +294,15 @@ import Jianshu from "@/assets/go/简书.png";
 import Wx_community from "@/assets/go/微信社区.png";
 import CSDN from "@/assets/go/CSDN.png";
 import SSP from "@/assets/go/少数派.png";
+
 const goLink = [
-  { value: "zhihu", label: Zhihu },
-  { value: "tencent", label: Tencent },
-  { value: "shimo", label: Shimo },
-  { value: "jianshu", label: Jianshu },
-  { value: "wx_community", label: Wx_community },
-  { value: "csdn", label: CSDN },
-  { value: "ssp", label: SSP },
+  { value: "zhihu", label: Zhihu, title: "知乎" },
+  { value: "tencent", label: Tencent, title: "腾讯云" },
+  { value: "shimo", label: Shimo, title: "石墨" },
+  { value: "jianshu", label: Jianshu, title: "简书" },
+  { value: "wx_community", label: Wx_community, title: "微信社区" },
+  { value: "csdn", label: CSDN, title: "CSDN" },
+  { value: "ssp", label: SSP, title: "少数派" },
 ];
 
 export default App;
