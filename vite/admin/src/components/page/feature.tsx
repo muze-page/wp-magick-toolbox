@@ -1,7 +1,7 @@
 //页面 - 外观优化
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Form, Switch, Input, Select } from "antd";
+import { Form, Switch, Input } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
@@ -91,7 +91,7 @@ const App: React.FC = () => {
           name="particle"
           extra={"考虑到性能以及操作问题，移动端不加载此特效"}
         >
-          <FixedImage alists={effectsList}/>
+          <FixedImage alists={effectsList} />
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -106,15 +106,7 @@ const App: React.FC = () => {
             </>
           }
         >
-          <Select
-            style={{ width: "20%" }}
-            //TODO:默认值有问题
-            options={[
-              { value: "default", label: "默认" },
-              { value: "color", label: "彩条" },
-              { value: "false", label: "禁用" },
-            ]}
-          />
+          <FixedImage alists={scrollBarList} />
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -239,15 +231,7 @@ const App: React.FC = () => {
           name="copy_pop_up"
           extra={<>复制文本时进行弹窗提示</>}
         >
-          <Select
-            style={{ width: "20%" }}
-            //TODO:默认值有问题
-            options={[
-              { value: "false", label: "禁用" },
-              { value: "concise", label: "原生弹窗" },
-              { value: "sweetalert", label: "通用圆角" },
-            ]}
-          />
+          <FixedImage alists={popUpList} />
         </Form.Item>
       </Form>
     </>
@@ -262,16 +246,34 @@ import Text from "@/assets/effects/随机文字.png";
 import Number from "@/assets/effects/随机数字.png";
 import Love from "@/assets/effects/七彩爱心.png";
 import Star_trail from "@/assets/effects/星星拖尾.png";
-const effectsList=[
+const effectsList = [
   { value: "diffuse", label: Diffuse, title: "爆炸烟花" },
   { value: "circle_fireworks", label: Circle_fireworks, title: "圆圈烟花" },
-  { value: "scattered_fireworks", label: Scattered_fireworks, title: "四散烟花" },
+  {
+    value: "scattered_fireworks",
+    label: Scattered_fireworks,
+    title: "四散烟花",
+  },
   { value: "text", label: Text, title: "随机文字" },
   { value: "number", label: Number, title: "随机数字" },
   { value: "love", label: Love, title: "七彩爱心" },
   { value: "star_trail", label: Star_trail, title: "星星拖尾" },
-  
-]
+];
 
+//滚动条
+import DiffuseBar from "@/assets/scrollBar/默认.png";
+import Color from "@/assets/scrollBar/彩条.png";
+const scrollBarList = [
+  { value: "default", label: DiffuseBar, title: "默认" },
+  { value: "color", label: Color, title: "彩条" },
+];
+
+//弹窗
+import Concise from "@/assets/popUp/原生弹窗.png";
+import Sweetalert from "@/assets/popUp/通用圆角.png";
+const popUpList = [
+  { value: "concise", label: Concise, title: "原生弹窗" },
+  { value: "sweetalert", label: Sweetalert, title: "通用圆角" },
+];
 
 export default App;

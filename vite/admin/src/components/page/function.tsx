@@ -1,7 +1,7 @@
 //页面 - 功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Form, Switch, Select, DatePicker, Input } from "antd";
+import { Form, Switch, DatePicker, Input } from "antd";
 
 import { DataContext } from "@/tool/dataContext";
 import { defaultVarOption } from "@/tool/defaultVar";
