@@ -16,11 +16,21 @@ interface AppProps {
 }
 
 const App: React.FC<AppProps> = ({ toggleDrawer }) => {
+  //当前页面标题
+  const page_title = document.title;
   //准备当前网页链接
-  const url_site = window.location.href;
+  const site_url = encodeURIComponent(window.location.href);
+
+  //准备宣传语
+  const site_title = encodeURIComponent(
+    "发现一个蛮有意思的站点，分享给你看看 - " + page_title + "："
+  );
+
+  //生成海报
+  
   //复制当前链接
   const copyLink = () => {
-    navigator.clipboard.writeText(url_site).then(() => {
+    navigator.clipboard.writeText(site_url).then(() => {
       message.info("链接已复制到剪贴板");
     });
   };
@@ -32,7 +42,7 @@ const App: React.FC<AppProps> = ({ toggleDrawer }) => {
       type: "success",
       content: (
         <>
-          <QRCode errorLevel="H" value={url_site} icon={WeXin} />
+          <QRCode errorLevel="H" value={site_url} icon={WeXin} />
           <span>微信扫一扫浏览本页</span>
         </>
       ),
@@ -62,8 +72,8 @@ const App: React.FC<AppProps> = ({ toggleDrawer }) => {
   //分享到微博
   const shareWeibo = () => {
     // 替换下面的 URL 和文本为你想分享的内容
-    const url = encodeURIComponent("https://www.npc.ink");
-    const text = encodeURIComponent("发现一个蛮有意思的站点，分享给你看看：");
+    const url = site_url;
+    const text = site_title;
 
     // 构建微博分享链接
     const shareUrl =
@@ -76,8 +86,8 @@ const App: React.FC<AppProps> = ({ toggleDrawer }) => {
   //分享到QQ 空间
   const shareQzone = () => {
     // 替换下面的 URL 和标题为你想分享的内容
-    const url = encodeURIComponent("https://sofile.cn");
-    const title = encodeURIComponent("发现一个蛮有意思的站点，分享给你看看：");
+    const url = site_url;
+    const title = site_title;
 
     // 构建QQ空间分享链接
     const shareUrl =
@@ -93,7 +103,7 @@ const App: React.FC<AppProps> = ({ toggleDrawer }) => {
   //分享到FacebookTODO:待验证
   const shareToFacebook = () => {
     // 替换下面的 URL 为你想分享的网站链接
-    const url = encodeURIComponent("https://www.npc.ink");
+    const url = site_url;
 
     // 构建 Facebook 分享链接
     const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + url;
@@ -105,8 +115,8 @@ const App: React.FC<AppProps> = ({ toggleDrawer }) => {
   //分享到X
   const shareToX = () => {
     // 替换下面的 URL 和文本为你想分享的内容
-    const url = encodeURIComponent("https://www.npc.ink");
-    const text = encodeURIComponent("发现一个蛮有意思的站点，分享给你看看：");
+    const url = site_url;
+    const text = site_title;
 
     // 构建 Twitter 分享链接
     const shareUrl = "https://x.com/intent/tweet?url=" + url + "&text=" + text;
