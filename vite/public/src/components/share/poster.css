@@ -3,6 +3,9 @@
   overflow: hidden !important;
   border-radius: 2rem !important;
 }
+.poster_canvas .canvas-container {
+  display: flex;
+}
 .poster {
   position: relative;
   color: #333;
@@ -11,8 +14,9 @@
   height: auto;
   margin: 0 auto;
   background-color: #f4f4f4;
-  border-radius: 2rem;
+  /*border-radius: 2rem;
   overflow: hidden;
+  */
 }
 .box {
   width: 400px;

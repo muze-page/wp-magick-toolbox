@@ -12,16 +12,30 @@ const App: React.FC = () => {
   const site_url = encodeURIComponent(window.location.href);
 
   //海报
-  const posterRef = useRef(null); // 创建一个持久的引用
+  const posterRef = useRef<HTMLDivElement>(null); // 创建一个持久的引用
 
   //海报图
-  const aaaRef = useRef(null);
+  const aaaRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const capturePoster = async () => {
-      if (posterRef.current) {
+      if (posterRef.current && aaaRef.current) {
         // 确保引用已经存在
         const canvas = await html2canvas(posterRef.current);
-        document.body.appendChild(canvas);
+        const canvasContainer = document.createElement("div");
+        canvasContainer.classList.add("canvas-container");
+        canvasContainer.appendChild(canvas);
+
+        // 清空节点b中的内容
+        aaaRef.current.innerHTML = "";
+
+        // 将生成的canvas元素添加到节点b中
+        aaaRef.current.appendChild(canvasContainer);
+
+        // 销毁节点a
+        const posterNode = posterRef.current;
+        if (posterNode && posterNode.parentNode) {
+            posterNode.parentNode.removeChild(posterNode);
+        }
       }
     };
 
@@ -34,8 +48,8 @@ const App: React.FC = () => {
   }, []); // 空数组表示只在组件挂载时执行一次
   return (
     <>
-      <div className="poster">
-        <div className="box" ref={posterRef}>
+      <div className="poster" ref={posterRef}>
+        <div className="box">
           <div className="bg">
             <img src={DefaultImg} />
             <div className="meat">
@@ -62,7 +76,8 @@ const App: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="pos" ref={aaaRef}></div>
+      {/**放图 */}
+      <div className="poster_canvas" ref={aaaRef}></div>
     </>
   );
 };
