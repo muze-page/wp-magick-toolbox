@@ -4,15 +4,38 @@
  */
 import "./poster.css";
 import DefaultImg from "@/assets/default/file-dark-1920x1280.jpg";
+import { useRef, useEffect } from "react";
 import { QRCode } from "antd";
+import html2canvas from "html2canvas";
 const App: React.FC = () => {
   //准备当前网页链接
   const site_url = encodeURIComponent(window.location.href);
 
+  //海报
+  const posterRef = useRef(null); // 创建一个持久的引用
+
+  //海报图
+  const aaaRef = useRef(null);
+  useEffect(() => {
+    const capturePoster = async () => {
+      if (posterRef.current) {
+        // 确保引用已经存在
+        const canvas = await html2canvas(posterRef.current);
+        document.body.appendChild(canvas);
+      }
+    };
+
+    capturePoster();
+
+    return () => {
+      // 在组件卸载时清除副作用
+      // 这里可以做一些清理操作，比如移除添加到 box 的 canvas 容器
+    };
+  }, []); // 空数组表示只在组件挂载时执行一次
   return (
     <>
       <div className="poster">
-        <div className="box">
+        <div className="box" ref={posterRef}>
           <div className="bg">
             <img src={DefaultImg} />
             <div className="meat">
@@ -28,12 +51,18 @@ const App: React.FC = () => {
               Website Develo...
             </div>
             <div className="qr">
-              <QRCode errorLevel="H" value={site_url} size={150} style={{border:"0px"}} />
+              <QRCode
+                errorLevel="H"
+                value={site_url}
+                size={150}
+                style={{ border: "0px" }}
+              />
               <p>扫描二维码了解详情</p>
             </div>
           </div>
         </div>
       </div>
+      <div className="pos" ref={aaaRef}></div>
     </>
   );
 };
