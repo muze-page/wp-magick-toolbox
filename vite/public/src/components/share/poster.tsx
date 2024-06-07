@@ -2,7 +2,7 @@
  * 生成海报
  * @returns
  */
-import "./poster.css";
+import "@/components/share/poster.css";
 import DefaultImg from "@/assets/default/file-dark-1920x1280.jpg";
 import { useRef, useEffect } from "react";
 import { QRCode, Button } from "antd";

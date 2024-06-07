@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Drawer, Button } from "antd";
 import { ShareAltOutlined } from "@ant-design/icons";
 import ShareContent from "@/components/share/content";
-import "./index.css";
+import "@/components/share/index.css";
+
 const App: React.FC = () => {
   const [open, setOpen] = useState(false);
 

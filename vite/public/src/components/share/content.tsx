@@ -57,7 +57,12 @@ const App: React.FC<AppProps> = ({ toggleDrawer }) => {
       type: "success",
       content: (
         <>
-          <QRCode errorLevel="H" value={site_url} icon={WeXin} />
+          <QRCode
+            errorLevel="H"
+            value={site_url}
+            icon={WeXin}
+            style={{ border: "0px" }}
+          />
           <span>微信扫一扫浏览本页</span>
         </>
       ),
