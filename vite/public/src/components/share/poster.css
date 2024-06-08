@@ -29,6 +29,7 @@
   height: auto;
   margin: 0 auto;
   background-color: #f4f4f4;
+
   border-radius: 20px;
   overflow: hidden;
 
@@ -38,7 +39,7 @@
   top: -9999px;
   */
 }
-
+/*
 .bg {
   width: 400px;
   height: 250px;
@@ -52,6 +53,16 @@
   transform: translate(-50%, -50%);
   min-width: 100%;
   min-height: 100%;
+}*/
+
+.bg {
+  position: relative;
+}
+.bg img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 .bg .meat {
   position: absolute;
