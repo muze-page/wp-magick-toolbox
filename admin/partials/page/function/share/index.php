@@ -56,9 +56,8 @@ if (!class_exists('Npcink_Public_Add_Share')) {
             //  //传输数据给JS $share = MaBox_Admin::get_config($option, 'share');
             $info = array();
             $info['pageData'] = self::get_page_meat(); //页面数据
-            $info['sharePosition'] = MaBox_Admin::get_config(self::$config, 'share_position');
-            $info['shareTop'] = MaBox_Admin::get_config(self::$config, 'share_top');
-
+            $info['sharePosition'] = MaBox_Admin::get_config(self::$config, 'share_position');//位置
+            $info['shareTop'] = MaBox_Admin::get_config(self::$config, 'share_top');//距离
 
             wp_localize_script(MAGICK_MIXTURE_NAME . '_public_index_js', 'dataLocal', $info); //传给vite项目
         }

@@ -7,10 +7,6 @@
 if (!class_exists('Npcink_Page_Function')) {
     class Npcink_Page_Function
     {
-
-
-
-
         public static function run($option)
         {
             //文章关键词自动添加内链链接代码
@@ -55,12 +51,7 @@ if (!class_exists('Npcink_Page_Function')) {
                 Npcink_Jump_Middle_Page::run($go_middle);
             }
 
-            //添加分享按钮
-            $share = MaBox_Admin::get_config($option, 'share');
-            if ($share !== false) {
-                require_once plugin_dir_path(__FILE__) . 'share/index.php';
-                Npcink_Public_Add_Share::run($option);
-            }
+
 
 
             //维护提示
@@ -80,13 +71,17 @@ if (!class_exists('Npcink_Page_Function')) {
                 $result = self::isCurrentTimeInRange($countdown);
 
                 //当前时间不在此时间段，则跳过
-                if ($result !== true) {
-                    //TODO:这段会影响后续代码的执行，待优化
-                    return;
+                if ($result === true) {
+                    require_once plugin_dir_path(__FILE__) . 'maintenance_tips.php';
+                    Npcink_Maintenance_Tips::run($maintenance_tips);
                 }
+            }
 
-                require_once plugin_dir_path(__FILE__) . 'maintenance_tips.php';
-                Npcink_Maintenance_Tips::run($maintenance_tips);
+            //添加分享按钮
+            $share = MaBox_Admin::get_config($option, 'share');
+            if ($share !== false) {
+                require_once plugin_dir_path(__FILE__) . 'share/index.php';
+                Npcink_Public_Add_Share::run($option);
             }
         }
 
