@@ -233,6 +233,16 @@ const App: React.FC = () => {
         >
           <FixedImage alists={popUpList} />
         </Form.Item>
+        <Form.Item<FieldType>
+          label="平滑滚动"
+          name="page_scrolling"
+          valuePropName="checked"
+          extra={
+            "让页面滚动起来更丝滑，页面会加载一个10K的jS文件，不支持火狐和苹果浏览器"
+          }
+        >
+          <Switch />
+        </Form.Item>
       </Form>
     </>
   );

@@ -74,6 +74,7 @@ const App: React.FC = () => {
         <Form.Item>
           <h2>功能</h2>
         </Form.Item>
+       
         <Form.Item<FieldType>
           label="彩色背景标签云"
           name="color_tag"
@@ -248,7 +249,7 @@ const App: React.FC = () => {
             </Form.Item>
             <Form.Item label="分享">
               <h3>
-                邮箱 -  
+                邮箱 -
                 <Popover content={<img src={Email} width={500} />} title="预览">
                   预览
                 </Popover>

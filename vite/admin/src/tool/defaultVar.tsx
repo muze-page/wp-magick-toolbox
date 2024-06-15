@@ -97,10 +97,12 @@ const PageFeature = {
   sakura: boo, //樱花效果
   past_books: boo, //已写完的书
   copy_pop_up: "false", //鼠标点击复制弹窗
+  page_scrolling: boo, //平滑滚动
 };
 
 //页面 功能
 const PageFunction = {
+
   add_inks: boo, //关键词自动添加链接
   go_middle: "false", //链接跳转中间页
   remove_single_link: boo, //移除文章内超链接
