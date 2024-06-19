@@ -28,7 +28,7 @@ if (!class_exists('Npcink_Page_Back_Top_Cat')) {
             }
 ?>
 
-            <div class="back-to-top cd-top faa-float animated cd-is-visible" style="top: -600px;">9527</div>
+            <div class="back-to-top cd-top faa-float animated cd-is-visible" style="top: -600px;"></div>
             <style>
                 /*隐藏网页滚动条*/
                 ::-webkit-scrollbar {
@@ -61,7 +61,7 @@ if (!class_exists('Npcink_Page_Back_Top_Cat')) {
                 $build_js,
                 array('jquery'),
                 MAGICK_MIXTURE_VERSION,
-                false
+                true
             );
 
             wp_enqueue_style(

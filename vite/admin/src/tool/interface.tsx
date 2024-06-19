@@ -92,6 +92,7 @@ export type PageFeature = {
   title: boolean; //动态标题
   title_front: string; //回到当前标签
   title_after: string; //离开标签后
+  top_loading: boolean; //顶部加载进度条
   particle: string; //粒子特效
   scrol: string; //美化滚动条
   coupling: boolean; //细线联结

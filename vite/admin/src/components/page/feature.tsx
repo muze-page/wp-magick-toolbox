@@ -87,6 +87,15 @@ const App: React.FC = () => {
           </>
         )}
         <Form.Item<FieldType>
+          label="顶部加载进度条"
+          name="top_loading"
+          valuePropName="checked"
+          extra={<>火狐浏览器不显示</>}
+        >
+          <Switch />
+        </Form.Item>
+
+        <Form.Item<FieldType>
           label="点击特效"
           name="particle"
           extra={"考虑到性能以及操作问题，移动端不加载此特效"}

@@ -16,6 +16,14 @@ if (!class_exists('Npcink_Page_Exterior')) {
                 Npcink_Page_Dynamic_Title::run($option);
             }
 
+            //顶部加载进度条
+            $top_loading = MaBox_Admin::get_config($option, 'top_loading');
+            //有值
+            if ($top_loading === true) {
+                require_once plugin_dir_path(__FILE__) . 'top_loading/index.php';
+                Npcink_Page_Top_Loading::run();
+            }
+
 
             //点击特效
             $particle = MaBox_Admin::get_config($option, 'particle', "false");

@@ -86,6 +86,7 @@ const PageFeature = {
   title: boo, //动态标题
   title_front: "(/≧▽≦/)你又回来啦！", //回到当前标签
   title_after: "你别走吖 Σ(っ °Д °;)っ", //离开标签后
+  top_loading: boo, //顶部加载进度条
   particle: "false", //粒子特效
   scrol: "false", //美化滚动条
   coupling: boo, //细线联结
@@ -99,12 +100,11 @@ const PageFeature = {
   copy_pop_up: "false", //鼠标点击复制弹窗
   page_scrolling: boo, //平滑滚动
   page_back_top_cat: boo, //上吊猫
-  page_back_top_cat_right:60,//右边距
+  page_back_top_cat_right: 60, //右边距
 };
 
 //页面 功能
 const PageFunction = {
-
   add_inks: boo, //关键词自动添加链接
   go_middle: "false", //链接跳转中间页
   remove_single_link: boo, //移除文章内超链接
@@ -120,11 +120,11 @@ const PageFunction = {
   share: boo, //分享
   share_position: "right", //按钮位置
   share_top: "200", //按钮距离顶部距离
-  share_margins:"20",//按钮距离侧边位置
-  share_text:"发现一个蛮有意思的网站，分享给你看看 - ",//分享用文本
-  share_email_email:"test@npc.ink",//邮箱地址
-  share_email_title:"发现有趣的链接",//邮箱标题
-  share_email_content:"发现一个有趣的网站，分享给你看看",//邮箱内容
+  share_margins: "20", //按钮距离侧边位置
+  share_text: "发现一个蛮有意思的网站，分享给你看看 - ", //分享用文本
+  share_email_email: "test@npc.ink", //邮箱地址
+  share_email_title: "发现有趣的链接", //邮箱标题
+  share_email_content: "发现一个有趣的网站，分享给你看看", //邮箱内容
   share_img_home: "", //首页默认图
   share_img_page: "", //页面默认图
   share_img_about: "", //其他默认图
