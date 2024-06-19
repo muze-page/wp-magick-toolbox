@@ -85,6 +85,20 @@ if (!class_exists('Npcink_Page_Exterior')) {
                 require_once plugin_dir_path(__FILE__) . 'copy_pop_up.php';
                 Npcink_Page_Copy_Pop_Up::run($copy_pop_up);
             }
+
+            //平滑滚动
+            $page_scrolling = MaBox_Admin::get_config($option, 'page_scrolling');
+            if ($page_scrolling === true) {
+                require_once plugin_dir_path(__FILE__) . 'scrolling/index.php';
+                Npcink_Page_Scrolling::run();
+            }
+
+            //上吊猫
+            $page_back_top_cat = MaBox_Admin::get_config($option, 'page_back_top_cat');
+            if ($page_back_top_cat === true) {
+                require_once plugin_dir_path(__FILE__) . 'back_top_cat/index.php';
+                Npcink_Page_Back_Top_Cat::run();
+            }
         }
     }
 }

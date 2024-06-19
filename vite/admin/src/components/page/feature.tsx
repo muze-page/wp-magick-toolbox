@@ -238,7 +238,17 @@ const App: React.FC = () => {
           name="page_scrolling"
           valuePropName="checked"
           extra={
-            "让页面滚动起来更丝滑，页面会加载一个10K的jS文件，不支持火狐和苹果浏览器"
+            "让页面滚动起来更丝滑，部分浏览器不支持"
+          }
+        >
+          <Switch />
+        </Form.Item>
+        <Form.Item<FieldType>
+          label="上吊猫"
+          name="page_back_top_cat"
+          valuePropName="checked"
+          extra={
+            "添加一个可爱的猫猫，点击即可返回页面顶部"
           }
         >
           <Switch />

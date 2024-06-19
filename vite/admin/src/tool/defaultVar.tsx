@@ -98,6 +98,7 @@ const PageFeature = {
   past_books: boo, //已写完的书
   copy_pop_up: "false", //鼠标点击复制弹窗
   page_scrolling: boo, //平滑滚动
+  page_back_top_cat: boo, //上吊猫
 };
 
 //页面 功能

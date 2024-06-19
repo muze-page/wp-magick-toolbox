@@ -2,7 +2,7 @@
 
 /**
  * 页面平滑滚动 page_scrolling
- * 来源：
+ * 来源：https://7b2.com/circle/64661.html
  */
 if (!class_exists('Npcink_Page_Scrolling')) {
     class Npcink_Page_Scrolling
