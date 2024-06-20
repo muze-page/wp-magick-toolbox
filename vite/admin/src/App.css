@@ -42,3 +42,8 @@
 .mabox_content{
   margin-top: 1em;
 }
+
+/* 分类菜单 */
+.menu-header{
+  font-weight: bold;
+}

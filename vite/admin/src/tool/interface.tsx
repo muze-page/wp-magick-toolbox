@@ -95,19 +95,17 @@ export type PageFeature = {
   top_loading: boolean; //顶部加载进度条
   particle: string; //粒子特效
   scrol: string; //美化滚动条
-  coupling: boolean; //细线联结
   screen_hair: boolean; //屏幕上的毛
   site_grey: boolean; //网站变灰
   lantern: boolean; //灯笼效果
   lantern_left: string; //左边的字
   lantern_right: string; //右边的字
-  sakura: boolean; //樱花效果
   past_books: boolean; //已写完的书
   copy_pop_up: string; //鼠标点击复制弹窗
   page_scrolling: boolean; //平滑滚动
   page_back_top_cat: boolean; //上吊猫
   page_back_top_cat_right: number; //右边距
-  footer_star: boolean; //底部漂浮星星
+  background_effect: string;//背景特效
 };
 
 //页面 - 功能

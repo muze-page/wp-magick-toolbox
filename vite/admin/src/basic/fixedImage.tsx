@@ -54,7 +54,8 @@ const FixedImage: React.FC<FixedImageProps> = (props: any) => {
         {props.value === "false" ? (
           "禁用"
         ) : (
-          <Image src={result.label} width={300}  />
+          //TODO:label的值为空时，会报错
+          <Image src={result.label || Disabled} width={120} />
         )}
 
         <Button onClick={showModal}>更换</Button>
@@ -75,7 +76,7 @@ const FixedImage: React.FC<FixedImageProps> = (props: any) => {
                   <Popover
                     placement="rightTop"
                     content={
-                      <Image src={item.label} width={300} alt={item.title} />
+                      <Image src={item.label} width={120} alt={item.title} />
                     }
                     title={"预览样式：" + item.title}
                   >

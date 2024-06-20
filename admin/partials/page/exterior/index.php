@@ -33,19 +33,9 @@ if (!class_exists('Npcink_Page_Exterior')) {
                 Npcink_Page_Add_Click_Effect::run($particle);
             }
 
-            //汇聚线条
-            $coupling = MaBox_Admin::get_config($option, 'coupling');
-            if ($coupling === true) {
-                require_once plugin_dir_path(__FILE__) . 'convergence_line/index.php';
-                Npcink_Page_Add_Convergence_Line::run();
-            }
+           
 
-            //底部漂浮星星
-            $footer_star = MaBox_Admin::get_config($option, 'footer_star');
-            if ($footer_star === true) {
-                require_once plugin_dir_path(__FILE__) . 'footer-star/index.php';
-                Npcink_Page_Footer_Star::run();
-            }
+    
 
             //美化滚动条
             $scrol = MaBox_Admin::get_config($option, 'scrol');
@@ -78,14 +68,7 @@ if (!class_exists('Npcink_Page_Exterior')) {
                 Npcink_Page_Lantern::run($option);
             }
 
-            /**
-             * 添加樱花
-             */
-            $sakura =  MaBox_Admin::get_config($option, 'sakura');
-            if ($sakura === true) {
-                require_once plugin_dir_path(__FILE__) . 'sakura_drops/index.php';
-                Npcink_Page_Sakura_Drops::run();
-            }
+ 
 
             //已写完的书
             $past_books = MaBox_Admin::get_config($option, 'past_books');
@@ -114,6 +97,13 @@ if (!class_exists('Npcink_Page_Exterior')) {
                 require_once plugin_dir_path(__FILE__) . 'back_top_cat/index.php';
                 Npcink_Page_Back_Top_Cat::run($option);
             }
+
+             //背景特效
+             $background_effect = MaBox_Admin::get_config($option, 'background_effect');
+             if ($background_effect !== 'false') {
+                 require_once plugin_dir_path(__FILE__) . 'background_effect/index.php';
+                 Npcink_Page_Background_Effect::run($background_effect);
+             }
         }
     }
 }

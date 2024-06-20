@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 效果：汇聚线条
+ * 效果：细线联结
  * 来源：https://blog.csdn.net/weixin_42077074/article/details/121031327
  */
 

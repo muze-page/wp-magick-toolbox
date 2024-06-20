@@ -89,19 +89,17 @@ const PageFeature = {
   top_loading: boo, //顶部加载进度条
   particle: "false", //粒子特效
   scrol: "false", //美化滚动条
-  coupling: boo, //细线联结
   screen_hair: boo, //屏幕上的毛
   site_grey: boo, //网站变灰
   lantern: boo, //灯笼效果
   lantern_left: "春", //左边的字
   lantern_right: "节", //右边的字
-  sakura: boo, //樱花效果
   past_books: boo, //已写完的书
   copy_pop_up: "false", //鼠标点击复制弹窗
   page_scrolling: boo, //平滑滚动
   page_back_top_cat: boo, //上吊猫
   page_back_top_cat_right: 60, //右边距
-  footer_star: boo, //底部漂浮星星
+  background_effect: "false", //背景特效
 };
 
 //页面 功能

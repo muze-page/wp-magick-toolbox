@@ -56,7 +56,10 @@ const App: React.FC = () => {
         onValuesChange={onValuesChange}
       >
         <Form.Item>
-          <h2>外观特效</h2>
+          <h2>外观</h2>
+        </Form.Item>
+        <Form.Item>
+          <h3 className="menu-header">特效</h3>
         </Form.Item>
         <Form.Item<FieldType>
           label="动态标题"
@@ -94,6 +97,30 @@ const App: React.FC = () => {
         >
           <Switch />
         </Form.Item>
+        <Form.Item<FieldType>
+          label="全站变灰"
+          name="site_grey"
+          valuePropName="checked"
+          extra={
+            <>
+              特殊时间下让网站变灰，有特别的意义，
+              <a href="https://www.npc.ink/14874.html" target="_blank">
+                实现详情
+              </a>
+            </>
+          }
+        >
+          <Switch />
+        </Form.Item>
+
+        <Form.Item<FieldType>
+          label="平滑滚动"
+          name="page_scrolling"
+          valuePropName="checked"
+          extra={"让页面滚动起来更丝滑，部分浏览器不支持"}
+        >
+          <Switch />
+        </Form.Item>
 
         <Form.Item<FieldType>
           label="点击特效"
@@ -104,7 +131,26 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
-          label="美化滚动条"
+          label="背景特效"
+          name="background_effect"
+          extra={"考虑到性能以及操作问题，移动端不加载此特效"}
+        >
+          <FixedImage alists={backgroundList} />
+        </Form.Item>
+        <Form.Item<FieldType>
+          label="复制弹窗"
+          name="copy_pop_up"
+          extra={<>复制文本时进行弹窗提示</>}
+        >
+          <FixedImage alists={popUpList} />
+        </Form.Item>
+
+        <Form.Item>
+          <h3 className="menu-header">美化</h3>
+        </Form.Item>
+
+        <Form.Item<FieldType>
+          label="美化 - 美化滚动条"
           name="scrol"
           extra={
             <>
@@ -118,6 +164,9 @@ const App: React.FC = () => {
           <FixedImage alists={scrollBarList} />
         </Form.Item>
 
+        <Form.Item>
+          <h3 className="menu-header">挂件</h3>
+        </Form.Item>
         <Form.Item<FieldType>
           label="屏幕上的毛"
           name="screen_hair"
@@ -134,21 +183,6 @@ const App: React.FC = () => {
           <Switch />
         </Form.Item>
 
-        <Form.Item<FieldType>
-          label="全站变灰"
-          name="site_grey"
-          valuePropName="checked"
-          extra={
-            <>
-              特殊时间下让网站变灰，有特别的意义，
-              <a href="https://www.npc.ink/14874.html" target="_blank">
-                实现详情
-              </a>
-            </>
-          }
-        >
-          <Switch />
-        </Form.Item>
         <Form.Item<FieldType>
           label="添加喜庆灯笼"
           name="lantern"
@@ -176,66 +210,6 @@ const App: React.FC = () => {
           </>
         )}
 
-        <Form.Item<FieldType>
-          label="背景 - 飘落樱花"
-          name="sakura"
-          valuePropName="checked"
-          extra={
-            <>
-              全站飘洒樱花，
-              <a
-                href="https://www.cnblogs.com/quaint/p/12291936.html"
-                target="_blank"
-              >
-                实现详情
-              </a>
-            </>
-          }
-        >
-          <Switch />
-        </Form.Item>
-        <Form.Item<FieldType>
-          label="背景 - 细线联结"
-          name="coupling"
-          valuePropName="checked"
-          extra={
-            <>
-              网页上添加若干蛛网围绕鼠标汇聚，若需进一步个性化配置，请使用
-              <pre className="pre-meat">Canvas-Nest.js</pre>插件，
-              <a
-                href="https://blog.csdn.net/weixin_42077074/article/details/121031327"
-                target="_blank"
-              >
-                详情
-              </a>
-            </>
-          }
-        >
-          <Switch />
-        </Form.Item>
-        <Form.Item<FieldType>
-          label="背景-底部漂浮星星"
-          name="footer_star"
-          valuePropName="checked"
-        >
-          <Switch />
-        </Form.Item>
-
-        <Form.Item<FieldType>
-          label="复制弹窗"
-          name="copy_pop_up"
-          extra={<>复制文本时进行弹窗提示</>}
-        >
-          <FixedImage alists={popUpList} />
-        </Form.Item>
-        <Form.Item<FieldType>
-          label="平滑滚动"
-          name="page_scrolling"
-          valuePropName="checked"
-          extra={"让页面滚动起来更丝滑，部分浏览器不支持"}
-        >
-          <Switch />
-        </Form.Item>
         <Form.Item<FieldType>
           label="上吊猫"
           name="page_back_top_cat"
@@ -293,6 +267,16 @@ const effectsList = [
   { value: "number", label: Number, title: "随机数字" },
   { value: "love", label: Love, title: "七彩爱心" },
   { value: "star_trail", label: Star_trail, title: "星星拖尾" },
+];
+
+//背景特效
+import Star from "@/assets/backgroundEffect/漂浮星星.png";
+import Sakura from "@/assets/backgroundEffect/樱花.png";
+import Coupling from "@/assets/backgroundEffect/细线联结.png";
+const backgroundList = [
+  { value: "star", label: Star, title: "漂浮星星" },
+  { value: "sakura", label: Sakura, title: "樱花效果" },
+  { value: "coupling", label: Coupling, title: "细线联结" },
 ];
 
 //滚动条
