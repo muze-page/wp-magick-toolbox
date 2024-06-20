@@ -132,6 +132,7 @@ export type PageFunction = {
   share_img_home: string; //首页默认图
   share_img_page: string; //页面默认图
   share_img_about: string; //其他默认图
+  runcode: boolean;//运行代码
 };
 
 // 页面 - 权限

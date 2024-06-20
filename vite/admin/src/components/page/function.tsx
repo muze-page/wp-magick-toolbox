@@ -292,6 +292,13 @@ const App: React.FC = () => {
             </Form.Item>
           </>
         )}
+         <Form.Item<FieldType>
+          label="运行代码的短代码"
+          name="runcode"
+          extra={<>文章中添加短代码，其中可运行前端代码</>}
+        >
+          <Switch />
+        </Form.Item>
       </Form>
     </>
   );
