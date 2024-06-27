@@ -29,6 +29,13 @@ if (!class_exists('MaBox_Optimize_Admin')) {
                 require_once plugin_dir_path(__FILE__) . 'single_show_id.php';
                 Npcink_Admin_Single_Show_ID::run();
             }
+
+             //缩略图切换
+             $thumbnail_switcher = MaBox_Admin::get_config($option, 'thumbnail_switcher');
+             if ($thumbnail_switcher === true) {
+                 require_once plugin_dir_path(__FILE__) . 'thumbnail_switcher/index.php';
+                 Npcink_Admin_Single_Thumbnail_Switcher::run();
+             }
         }
     } //end
 }

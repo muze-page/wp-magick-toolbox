@@ -66,6 +66,7 @@ const OptimizeAdmin = {
   add_user: boo, //作者筛选
   add_time: boo, //时间筛选
   show_id: boo, //列表显示ID
+  thumbnail_switcher: boo, //缩略图切换
 };
 
 //页面 功能特效

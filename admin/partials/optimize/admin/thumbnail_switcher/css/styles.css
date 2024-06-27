@@ -1,0 +1,19 @@
+@media screen and (min-width: 783px) {
+    
+    #the-list td, #the-list th {
+        vertical-align: middle;
+    }
+    
+    #the-list .check-column input[type=checkbox] {
+        margin-top: -16px;
+    }
+    
+    th#ts-ets-option {
+        width: 150px;
+    }
+
+    td.ts-ets-option.column-ts-ets-option {
+        text-align: center;
+    }
+    
+}

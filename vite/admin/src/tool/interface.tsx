@@ -70,8 +70,8 @@ export type OptimizeAdmin = {
   //筛选
   add_user: boolean; //作者筛选
   add_time: boolean; //时间筛选
-  //显示ID
   show_id: boolean; //列表显示ID
+  thumbnail_switcher: boolean;//缩略图切换
 };
 
 //页面 - 评论

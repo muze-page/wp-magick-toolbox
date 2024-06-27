@@ -84,6 +84,14 @@ const App: React.FC = () => {
         >
           <Switch />
         </Form.Item>
+        <Form.Item<FieldType>
+          label="缩略图切换"
+          name="thumbnail_switcher"
+          valuePropName="checked"
+          extra={"展示、添加、删除缩略图"}
+        >
+          <Switch />
+        </Form.Item>
       </Form>
     </>
   );
