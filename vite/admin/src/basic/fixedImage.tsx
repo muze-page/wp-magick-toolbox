@@ -16,7 +16,7 @@ const FixedImage: React.FC<FixedImageProps> = (props: any) => {
   //默认媒体图片
   const defaultList = [{ value: "false", label: Disabled, title: "禁用" }];
   const mediaImage = [...defaultList, ...props.alists];
- 
+
   //默认图片
   const result = mediaImage.find((item) => item.value === props.value);
 
@@ -54,14 +54,14 @@ const FixedImage: React.FC<FixedImageProps> = (props: any) => {
         {props.value === "false" ? (
           "禁用"
         ) : (
-          //TODO:label的值为空时，会报错
-       <>
-        
-         <Image src={result.label || Disabled} width={120} />
-
-         </>
+          <>
+            {result && result.label ? (
+              <Image src={result.label} width={120} />
+            ) : (
+              <Image src={Disabled} width={120} />
+            )}
+          </>
         )}
-
         <Button onClick={showModal}>更换</Button>
       </Space>
 
