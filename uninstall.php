@@ -35,7 +35,7 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 require plugin_dir_path(__FILE__) . 'admin/class-magick-mixtrue-admin.php';
 function run_mare_uninstall()
 {
-	$plugin = new MaBox_Admin();
+	$plugin = new MaBox_Admin("1","1");
 	$plugin->get_seting('function');
 	$plugin->get_config($plugin, 'config');
 	$plugin->get_config($plugin, 'remove_config');
