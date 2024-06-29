@@ -35,6 +35,11 @@ if (!class_exists('MaBox_Function')) {
             require_once plugin_dir_path(__FILE__) . 'function/seo/index.php';
             $b2 =  MaBox_Admin::get_config($config, 'seo');
             Npcink_Easy_Seo::run($b2);
+
+            //插件设置
+            require_once plugin_dir_path(__FILE__) . 'function/config/index.php';
+            $config_data =  MaBox_Admin::get_config($config, 'config');
+            MaBox_Config::run($config_data);
         }
     } //end
 }

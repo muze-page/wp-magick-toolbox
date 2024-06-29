@@ -18,18 +18,11 @@ const items: TabsProps["items"] = [
     label: `页面`,
     children: <Page />,
   },
-
-  {
-    key: "2",
-    label: `功能`,
-    children: <Function />,
-  },
   {
     key: "3",
     label: `优化`,
     children: <Optimize />,
   },
-
   {
     key: "4",
     label: `登录页`,
@@ -39,6 +32,11 @@ const items: TabsProps["items"] = [
     key: "5",
     label: `H5`,
     children: <H5 />,
+  },
+  {
+    key: "2",
+    label: `功能`,
+    children: <Function />,
   },
   {
     key: "6",

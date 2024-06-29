@@ -245,10 +245,10 @@ class MaBox_Admin
         $result =  update_option(self::$option, $object);
         if ($result !== false) {
             // 发送成功响应
-            return wp_send_json_success(['message' => '设置选项已保存', 'msg' => $object,]);
+            return wp_send_json_success(['message' => '保存成功', 'msg' => $object,]);
         } else {
             // 选项未改变会返回false
-            return wp_send_json_error(['error' => '请设置选项后再保存', 'reason' => $wpdb->last_error, 'msg' => $result, 'msg2' => $object], 500);
+            return wp_send_json_error(['error' => '选项无变化，保存失败', 'reason' => $wpdb->last_error, 'result' => $result, 'msg' => $object], 500);
         }
     }
 

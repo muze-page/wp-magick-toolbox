@@ -25,6 +25,7 @@ export type Option = {
     b2: FunctionB2; //B2主题
     wx_xcx: FunctionWxXcx; //微信小程序链接生成
     seo: FunctionSeo; //简单 SEO 功能
+    config: FunctionConfig; //插件设置
   };
   h5: {
     home: H5Home;
@@ -71,7 +72,7 @@ export type OptimizeAdmin = {
   add_user: boolean; //作者筛选
   add_time: boolean; //时间筛选
   show_id: boolean; //列表显示ID
-  thumbnail_switcher: boolean;//缩略图切换
+  thumbnail_switcher: boolean; //缩略图切换
 };
 
 //页面 - 评论
@@ -146,7 +147,7 @@ export type PageJurisdiction = {
   single_id: number[]; //文章ID
 };
 
-//权限 辅助
+//功能 辅助
 export type FunctionAuxiliary = {
   single_count: boolean; //文章统计
   no_malice_key: boolean; //拒绝恶意关键词
@@ -157,13 +158,18 @@ export type FunctionAuxiliary = {
   uniqueKey: number;
 };
 
-//权限 B2
+//功能 B2
 export type FunctionB2 = {
   add_order_menu: boolean; //添加订单菜单
   b2_count: boolean; //B2商城统计
 };
 
-//权限 微信小程序
+//功能 插件设置
+export type FunctionConfig = {
+  remove_config: boolean; //移除设置选项
+};
+
+//功能 微信小程序
 export type FunctionWxXcx = {
   active: boolean; //开关状态
   appid: string; //

@@ -1,4 +1,5 @@
 //默认变量
+
 //准备布尔值
 const boo: boolean = import.meta.env.VITE_BOOLEAN === true;
 
@@ -179,6 +180,11 @@ const FunctionSeo = {
   seo_category: boo, //分类和标签SEO
 };
 
+//功能 插件设置
+const FunctionConfig = {
+  remove_config: boo, //移除设置选项
+};
+
 // H5 首页
 const H5Home = {
   switch: boo, //开关
@@ -231,6 +237,7 @@ export const defaultVarOption = {
     b2: FunctionB2, //B2
     wx_xcx: FunctionWxXcx, //微信小程序链接生成
     seo: FunctionSeo, //简单 SEO 功能
+    config:FunctionConfig,//设置
   },
   //页面
   page: {
