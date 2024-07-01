@@ -9,25 +9,47 @@ if (!class_exists('MaBox_Config_Remove_Config')) {
         //卸载插件时执行
         public static function run()
         {
-            /**
-             * 引入获取选项的方法
-             */
-            require plugin_dir_path(__FILE__) . '../../../class-magick-mixtrue-admin.php';
+            $function =  self::get_seting('function');
+            $config = self::get_config($function, 'config');
+            $remove_config =  self::get_config($config, 'remove_config');
 
-            $function =  MaBox_Admin::get_seting('function');
-            $config = MaBox_Admin::get_config($function, 'config');
-            $remove_config =  MaBox_Admin::get_config($config, 'remove_config');
 
             if ($remove_config === true) {
-                $deleted = delete_option(MAGICK_MIXTURE_OPTION);
-
-                if ($deleted) {
-                    // 成功删除选项的逻辑
-                    echo '选项 MAGICK_MIXTURE_OPTION 已成功删除。';
-                } else {
-                    // 未能删除选项的逻辑
-                    echo '无法删除选项 MAGICK_MIXTURE_OPTION。';
-                }
+                
+                //$default_value = MAGICK_MIXTURE_OPTION;
+               // printf('<script>console.log(%s)</script>', json_encode($default_value));
+            }
+        }
+        /**
+         * 提供选项
+         */
+        public static function get_seting($option)
+        {
+            //拿到选项值
+            $config = get_option(MAGICK_MIXTURE_OPTION);
+            $value =  self::get_config($config, $option);
+            return $value;
+        }
+        /**
+         * 从对象中获取属性值
+         *
+         * @param object $config 对象
+         * @param string $property 从对象中获取的属性名
+         * @param string $defaultValue 默认值（可选）
+         * @return mixed 属性值或默认值
+         */
+        public static function get_config($config, $property, $defaultValue = false)
+        {
+            /**
+             * 是否是对象
+             * 对象中是否有此键名
+             * 在对象中的此值是否为空
+             */
+            if (is_object($config) && property_exists($config, $property) && !empty($config->$property)) {
+                return $config->$property;
+            } else {
+                //不存在则输出默认值
+                return $defaultValue;
             }
         }
     }

@@ -25,7 +25,7 @@ define('MAGICK_MIXTURE_NAME', 'magick-optimize');
 //定义插件版本
 define('MAGICK_MIXTURE_VERSION', '2.0.7');
 //定义保存选项字段
-define('MAGICK_MIXTURE_OPTION', "Magick_ToolBox_Option_207");
+define('MAGICK_MIXTURE_OPTION', "Magick_ToolBox_Option");
 
 /**
  * 用于定义需要用到的插件类，
@@ -63,4 +63,6 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links)
 
 //测试类 - 开发用，正式用记得注释掉
 //require plugin_dir_path(__FILE__) . 'index.php';
+
+
 

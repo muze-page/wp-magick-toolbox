@@ -31,11 +31,14 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 }
 
 
+
 //执行卸载插件时的动作
-require plugin_dir_path(__FILE__) . 'admin/partials/function/config/remove_config.php';
-function run_mare_uninstall()
-{
-	$plugin = new MaBox_Config_Remove_Config();
-	$plugin->run();
-}
-run_mare_uninstall();
+//require plugin_dir_path(__FILE__) . 'admin/partials/function/config/remove_config.php';
+//function run_mare_uninstall()
+//{
+//	$plugin = new MaBox_Config_Remove_Config();
+//	$plugin->run();
+//}
+//run_mare_uninstall();
+
+delete_option("Magick_ToolBox_Option");
