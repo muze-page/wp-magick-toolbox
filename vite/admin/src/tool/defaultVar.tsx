@@ -224,6 +224,11 @@ const LoginSecurity = {
   tecent_key: str, //腾讯秘钥
 };
 
+//短代码
+const CodeCompose = {
+  single_list: boo, //开启
+};
+
 export const defaultVarOption = {
   //优化
   optimize: {
@@ -251,9 +256,14 @@ export const defaultVarOption = {
     home: H5Home, //首页
     contact: H5Contact, //联系
   },
+  //登录
   login: {
     beautify: LoginBeautify, //美化
     security: LoginSecurity, //安全
+  },
+  //短代码
+  shortcode: {
+    compose: CodeCompose, //短代码
   },
 };
 export const defaultVarData = {

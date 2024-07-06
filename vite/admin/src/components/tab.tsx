@@ -11,6 +11,7 @@ import Function from "@/components/function/index";
 import Login from "@/components/login/index";
 import H5 from "@/components/h5/index";
 import About from "@/components/about/index";
+import Shortcode from "@/components/shortcode/index";
 
 const items: TabsProps["items"] = [
   {
@@ -19,27 +20,32 @@ const items: TabsProps["items"] = [
     children: <Page />,
   },
   {
-    key: "3",
+    key: "2",
     label: `优化`,
     children: <Optimize />,
   },
   {
-    key: "4",
+    key: "3",
     label: `登录页`,
     children: <Login />,
   },
   {
-    key: "5",
+    key: "4",
     label: `H5`,
     children: <H5 />,
   },
   {
-    key: "2",
+    key: "5",
     label: `功能`,
     children: <Function />,
   },
   {
-    key: "6",
+    key: "7",
+    label: `短代码`,
+    children: <Shortcode />,
+  },
+  {
+    key: "8",
     label: `关于`,
     children: <About />,
   },

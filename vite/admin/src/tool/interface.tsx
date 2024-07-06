@@ -5,6 +5,8 @@ export type DataLocal = {
   option: Option;
   url_site: string;
 };
+
+//选项
 export type Option = {
   [key: string]: any;
   optimize: {
@@ -35,6 +37,10 @@ export type Option = {
   login: {
     beautify: LoginBeautify; //美化
     security: LoginSecurity; //安全
+  };
+  //短代码
+  shortcode:{
+    compose:CodeCompose;//板式
   };
 };
 
@@ -226,6 +232,12 @@ export type LoginSecurity = {
   tecent_id: string; //腾讯ID
   tecent_key: string; //腾讯秘钥
 };
+
+//板式
+export type CodeCompose = {
+  //首页
+  single_list: boolean; //文章列表
+}
 
 //下拉列表类型
 export type ListData = {
