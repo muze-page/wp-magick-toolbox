@@ -31,6 +31,16 @@ if (!class_exists('MaBox_ShortCode_Compose')) {
                  <option value="[mabox_copy_btn name=&quot;按钮名称&quot; alert=&quot;复制成功&quot; link=&quot;#&quot;]待复制内容[/mabox_copy_btn]">复制按钮</option>
                ';
             }
+             //在线运行代码的短代码
+             $runcode = MaBox_Admin::get_config($option, 'runcode');
+             if ($runcode === true) {
+                 require_once plugin_dir_path(__FILE__) . 'runcode/index.php';
+                 Npcink_Page_Runcode::run();
+                 self::$option_list .= '
+                 <option value="<runcode>">在线运行代码-开始</option>
+                 <option value="</runcode>">在线运行代码-结束</option>
+               ';
+             }
         }
     } //end
 }

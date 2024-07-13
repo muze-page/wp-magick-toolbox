@@ -129,7 +129,7 @@ const PageFunction = {
   share_img_home: "", //首页默认图
   share_img_page: "", //页面默认图
   share_img_about: "", //其他默认图
-  runcode:boo,//运行代码
+
   switch_lang_jf:boo,//简繁切换
  
 };
@@ -226,8 +226,9 @@ const LoginSecurity = {
 
 //短代码
 const CodeCompose = {
-  single_list: boo, //开启
+  single_list: boo, //文章列表
   single_copy: boo,//复制
+  runcode:boo,//运行代码
 };
 
 export const defaultVarOption = {

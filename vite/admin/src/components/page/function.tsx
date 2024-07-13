@@ -19,7 +19,7 @@ import SelectImage from "@/basic/selectImage";
 import FixedImage from "@/basic/fixedImage";
 import Email from "@/assets/share/email.png";
 import WeiBo from "@/assets/share/weibo.png";
-import Runcode from "@/assets/pageFunction/运行代码.png";
+
 
 //选项类型
 type FieldType = PageFunction;
@@ -293,21 +293,7 @@ const App: React.FC = () => {
             </Form.Item>
           </>
         )}
-        <Form.Item<FieldType>
-          label="运行代码的短代码"
-          name="runcode"
-          extra={
-            <>
-              文章中添加短代码，其中可运行前端代码,
-              <pre className="pre-meat">&lt;runcode&gt;&lt;/runcode&gt;</pre>；
-              <Popover content={<img src={Runcode} width={500} />} title="预览">
-                预览
-              </Popover>
-            </>
-          }
-        >
-          <Switch />
-        </Form.Item>
+       
         <Form.Item<FieldType>
           label="简繁切换"
           name="switch_lang_jf"

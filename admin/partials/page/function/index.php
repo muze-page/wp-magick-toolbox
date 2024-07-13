@@ -84,12 +84,7 @@ if (!class_exists('Npcink_Page_Function')) {
                 Npcink_Public_Add_Share::run($option);
             }
 
-            //在线运行代码的短代码
-            $runcode = MaBox_Admin::get_config($option, 'runcode');
-            if ($runcode !== false) {
-                require_once plugin_dir_path(__FILE__) . 'runcode/index.php';
-                Npcink_Page_Runcode::run();
-            }
+           
 
             //添加简体繁体切换按钮
             $switch_lang_jf = MaBox_Admin::get_config($option, 'switch_lang_jf');

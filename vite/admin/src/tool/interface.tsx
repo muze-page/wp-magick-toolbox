@@ -139,7 +139,7 @@ export type PageFunction = {
   share_img_home: string; //首页默认图
   share_img_page: string; //页面默认图
   share_img_about: string; //其他默认图
-  runcode: boolean; //运行代码
+
   switch_lang_jf: boolean; //简繁切换
 };
 
@@ -235,9 +235,9 @@ export type LoginSecurity = {
 
 //板式
 export type CodeCompose = {
-  //首页
   single_list: boolean; //文章列表
   single_copy: boolean; //复制
+  runcode: boolean; //运行代码
 };
 
 //下拉列表类型

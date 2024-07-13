@@ -1,12 +1,13 @@
 /**
- * 页面优化 - 评论
+ * 短代码 功能
  */
 import { useState, useContext, useEffect } from "react";
-import { Form, Switch } from "antd";
+import { Form, Switch, Popover } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { CodeCompose } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
+import Runcode from "@/assets/shortcode/compose/运行代码.png";
 
 type FieldType = CodeCompose;
 
@@ -16,7 +17,8 @@ const fromConfig = AntConfig.from;
 const App: React.FC = () => {
   //拿到默认选项值和修改方法
   const { optionData, updateOption } = useContext(DataContext);
-  const publicData = optionData.shortcode?.compose || defaultVarOption.shortcode.compose;
+  const publicData =
+    optionData.shortcode?.compose || defaultVarOption.shortcode.compose;
 
   //存储表单值
   const [formData, setFormData] = useState(publicData || {});
@@ -65,7 +67,24 @@ const App: React.FC = () => {
           label="复制"
           name="single_copy"
           valuePropName="checked"
-          extra={"第一个属性是弹窗的内容，第二个属性是跳转的地址，第三个属性是微信中不跳转"}
+          extra={
+            "第一个属性是弹窗的内容，第二个属性是跳转的地址，第三个属性是微信中不跳转"
+          }
+        >
+          <Switch />
+        </Form.Item>
+        <Form.Item<FieldType>
+          label="运行代码的短代码"
+          name="runcode"
+          extra={
+            <>
+              文章中添加短代码，其中可运行前端代码,
+              <pre className="pre-meat">&lt;runcode&gt;&lt;/runcode&gt;</pre>；
+              <Popover content={<img src={Runcode} width={500} />} title="预览">
+                预览
+              </Popover>
+            </>
+          }
         >
           <Switch />
         </Form.Item>

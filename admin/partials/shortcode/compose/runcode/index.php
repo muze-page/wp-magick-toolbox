@@ -18,7 +18,7 @@ if (!class_exists('Npcink_Page_Runcode')) {
 
             add_filter('the_content', array(__CLASS__, 'part_one'), -500);
             add_filter('the_content', array(__CLASS__, 'part_two'), 500);
-            add_action('after_wp_tiny_mce', array(__CLASS__, 'add_custom_button'));
+            //add_action('after_wp_tiny_mce', array(__CLASS__, 'add_custom_button'));
         }
         public static function add_runcode()
         {
@@ -110,6 +110,7 @@ if (!class_exists('Npcink_Page_Runcode')) {
             return $content;
         }
 
+        //添加菜单按钮
         public static function add_custom_button($mce_settings)
         {
         ?>
