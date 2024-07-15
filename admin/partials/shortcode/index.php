@@ -22,6 +22,13 @@ if (!class_exists('MaBox_ShortCode')) {
             $compose =  MaBox_Admin::get_config($config, 'compose');
             MaBox_ShortCode_Compose::runs($compose);
 
+            /**
+             * 短代码 - 挂件
+             */
+            require_once plugin_dir_path(__FILE__) . '/pendant/index.php';
+            $pendant =  MaBox_Admin::get_config($config, 'pendant');
+            MaBox_ShortCode_Pendant::runs($pendant);
+
             if (!empty(self::$option_list)) {
                 //经典编辑器添加下拉按钮
                 add_action('admin_init', array(__CLASS__, 'custom_function_for_media_buttons'));
@@ -71,7 +78,7 @@ if (!class_exists('MaBox_ShortCode')) {
         //载入古登堡模块
         public static  function create_block_todo_list_block_init()
         {
-          
+
             register_block_type(__DIR__ . '/build');
         }
     } //end

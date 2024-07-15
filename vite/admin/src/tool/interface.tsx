@@ -41,6 +41,7 @@ export type Option = {
   //短代码
   shortcode: {
     compose: CodeCompose; //板式
+    pendant:CodePendant,//挂件
   };
 };
 
@@ -241,6 +242,10 @@ export type CodeCompose = {
   runcode: boolean; //运行代码
 };
 
+//挂件
+export type CodePendant = {
+  merc_map: boolean; //足迹
+};
 //下拉列表类型
 export type ListData = {
   label: string;

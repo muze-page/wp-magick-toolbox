@@ -232,6 +232,11 @@ const CodeCompose = {
   runcode:boo,//运行代码
 };
 
+//挂件
+const CodePendant = {
+  merc_map: boo, //足迹
+};
+
 export const defaultVarOption = {
   //优化
   optimize: {
@@ -267,6 +272,7 @@ export const defaultVarOption = {
   //短代码
   shortcode: {
     compose: CodeCompose, //短代码
+    pendant:CodePendant,//挂件
   },
 };
 export const defaultVarData = {
