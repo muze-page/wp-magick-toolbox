@@ -66,3 +66,36 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links)
 
 
 
+// 创建空白页面函数
+function create_blank_page_with_content()
+{
+    // 检查是否已经创建过页面，避免重复创建
+    if (get_page_by_title('Blank Page') === null) {
+        // 设置页面标题和内容
+        $page_title = 'Blank Page';
+        $page_content = '666';
+
+        // 创建页面对象
+        $new_page = array(
+            'post_title'    => $page_title,
+            'post_content'  => $page_content,
+            'post_status'   => 'publish',
+            'post_type'     => 'page',  // 指定为页面类型
+        );
+
+        // 插入页面到数据库
+        $new_page_id = wp_insert_post($new_page);
+
+        // 检查页面是否成功创建
+        if ($new_page_id) {
+            echo "Blank page successfully created with ID: " . $new_page_id;
+        } else {
+            echo "Failed to create blank page. Please try again.";
+        }
+    } else {
+        echo "The blank page already exists.";
+    }
+}
+
+// 在 init 钩子后执行创建页面操作
+//add_action('init', 'create_blank_page_with_content');
