@@ -126,11 +126,13 @@ const App: React.FC = () => {
 
   const [count, setCount] = useState(2);
 
+  //删除数据
   const handleDelete = (key: React.Key) => {
     const newData = dataSource.filter((item) => item.key !== key);
     setDataSource(newData);
   };
 
+  //准备表头
   const defaultColumns: (ColumnTypes[number] & {
     editable?: boolean;
     dataIndex: string;
@@ -218,11 +220,11 @@ const App: React.FC = () => {
         添加
       </Button>
       <Table
-        components={components}
-        rowClassName={() => "editable-row"}
+        components={components} //覆盖默认的 table 元素
+        rowClassName={() => "editable-row"} //表格行的类名
         bordered
-        dataSource={dataSource}
-        columns={columns as ColumnTypes}
+        dataSource={dataSource} //数据数组
+        columns={columns as ColumnTypes} //表格列的配置描述
       />
     </div>
   );
