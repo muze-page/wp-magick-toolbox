@@ -76,7 +76,7 @@ const App: React.FC = () => {
               name="merc_location"
               extra={
                 <>
-                  需填写地址和经纬度，保留两位小数
+                  需填写地址和经纬度，保留两位小数；
                   <a href="https://jingweidu.bmcx.com/" target="_blank">
                     经纬度查询
                   </a>
