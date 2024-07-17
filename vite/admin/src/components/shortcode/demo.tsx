@@ -1,3 +1,4 @@
+//地图编辑表格
 import React, { useContext, useEffect, useRef, useState } from "react";
 import type { GetRef, InputRef } from "antd";
 import { Button, Form, Input, Popconfirm, Table } from "antd";
@@ -134,7 +135,7 @@ const markers = [
 //转化方法 地图数据转表格数据
 const convertMarkers = (markers: MarkersType[]) => {
   return markers.map((marker, index) => ({
-    key: (index + 1),
+    key: index + 1,
     name: marker.name,
     longitude: marker.latLng[1], // 经度在数组的第二个位置
     latitude: marker.latLng[0], // 纬度在数组的第一个位置
@@ -156,7 +157,7 @@ const App: React.FC = () => {
   const [dataSource, setDataSource] = useState<DataType[]>(convertedMarkers);
 
   //添加数据的序号
-  const [count, setCount] = useState(markers.length+1);
+  const [count, setCount] = useState(markers.length + 1);
 
   //删除数据
   const handleDelete = (key: React.Key) => {
@@ -258,7 +259,8 @@ const App: React.FC = () => {
 
   //打印当前数组内容
   const printData = () => {
-    console.log(dataSource);
+    const data = convertBackToOriginal(dataSource);
+    console.log(data);
   };
 
   return (
