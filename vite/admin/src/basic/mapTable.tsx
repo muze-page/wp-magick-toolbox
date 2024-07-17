@@ -225,6 +225,7 @@ const App: React.FC = (props: any) => {
     setCount(count + 1);
   };
 
+  //实现表格数据的动态更新和展示，提升了用户交互的实时性和友好性
   const handleSave = (row: DataType) => {
     const newData = [...dataSource];
     const index = newData.findIndex((item) => row.key === item.key);
@@ -234,6 +235,10 @@ const App: React.FC = (props: any) => {
       ...row,
     });
     setDataSource(newData);
+
+    //传出数据
+    const data = convertBackToOriginal(dataSource);
+    props.onChange(data);
   };
 
   const components = {
@@ -243,6 +248,7 @@ const App: React.FC = (props: any) => {
     },
   };
 
+  //动态生成可编辑列配置
   const columns = defaultColumns.map((col) => {
     if (!col.editable) {
       return col;
@@ -263,7 +269,6 @@ const App: React.FC = (props: any) => {
   const printData = () => {
     const data = convertBackToOriginal(dataSource);
     console.log(data);
-    props.onChange(data);
   };
 
   return (
@@ -272,7 +277,7 @@ const App: React.FC = (props: any) => {
         <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
           添加
         </Button>
-        <Button onClick={printData}>保存</Button>
+        <Button onClick={printData}>打印</Button>
       </Space>
       <Table
         components={components} //覆盖默认的 table 元素

@@ -11,10 +11,6 @@ if (!class_exists('MaBox_ShortCode_Merc_Map')) {
         public static function run($merc_location)
         {
             self::$location = $merc_location;
-
-            $default_value = self::$location;
-
-            printf('<script>console.log(%s)</script>', json_encode($default_value));
             //添加短代码
             add_shortcode('mabox_cn_map', array(__CLASS__, 'mabox_cn_map_shortcode'));
 
