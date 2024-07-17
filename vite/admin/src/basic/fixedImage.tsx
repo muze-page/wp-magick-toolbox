@@ -80,7 +80,7 @@ const FixedImage: React.FC<FixedImageProps> = (props: any) => {
                   <Popover
                     placement="rightTop"
                     content={
-                      <Image src={item.label} width={120} alt={item.title} />
+                      <Image src={item.label} width={200} alt={item.title} />
                     }
                     title={"预览样式：" + item.title}
                   >
