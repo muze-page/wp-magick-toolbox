@@ -1,15 +1,7 @@
 //页面 - 功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import {
-  Form,
-  Switch,
-  DatePicker,
-  Input,
-  Radio,
-  InputNumber,
-  Popover,
-} from "antd";
+import { Form, Switch, DatePicker, Input, Radio, InputNumber } from "antd";
 
 import { DataContext } from "@/tool/dataContext";
 import { defaultVarOption } from "@/tool/defaultVar";
@@ -19,6 +11,7 @@ import SelectImage from "@/basic/selectImage";
 import FixedImage from "@/basic/fixedImage";
 import Email from "@/assets/page/function/share/email.png";
 import WeiBo from "@/assets/page/function/share/weibo.png";
+import Preview from "@/basic/preview";
 
 //选项类型
 type FieldType = PageFunction;
@@ -236,12 +229,7 @@ const App: React.FC = () => {
               extra={
                 <>
                   前往第三方平台分享时展示的文本：
-                  <Popover
-                    content={<img src={WeiBo} width={500} />}
-                    title="预览"
-                  >
-                    预览
-                  </Popover>
+                  <Preview title="分享文本" img={WeiBo} />
                 </>
               }
             >
@@ -250,9 +238,7 @@ const App: React.FC = () => {
             <Form.Item label="分享">
               <h3>
                 邮箱 -
-                <Popover content={<img src={Email} width={500} />} title="预览">
-                  预览
-                </Popover>
+                <Preview title="邮箱" img={Email} />
               </h3>
             </Form.Item>
             <Form.Item<FieldType>
