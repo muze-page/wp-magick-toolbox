@@ -385,13 +385,13 @@ const TextAreaHtml: React.FC = (props: any) => {
 };
 
 //准备跳转链接用数组对象
-import Zhihu from "@/assets/go/知乎.png";
-import Tencent from "@/assets/go/腾讯云.png";
-import Shimo from "@/assets/go/石墨文档.png";
-import Jianshu from "@/assets/go/简书.png";
-import Wx_community from "@/assets/go/微信社区.png";
-import CSDN from "@/assets/go/CSDN.png";
-import SSP from "@/assets/go/少数派.png";
+import Zhihu from "@/assets/page/function/go/知乎.png";
+import Tencent from "@/assets/page/function/go/腾讯云.png";
+import Shimo from "@/assets/page/function/go/石墨文档.png";
+import Jianshu from "@/assets/page/function/go/简书.png";
+import Wx_community from "@/assets/page/function/go/微信社区.png";
+import CSDN from "@/assets/page/function/go/CSDN.png";
+import SSP from "@/assets/page/function/go/少数派.png";
 
 const goLink = [
   { value: "zhihu", label: Zhihu, title: "知乎" },
@@ -404,13 +404,13 @@ const goLink = [
 ];
 
 //准备维护界面
-import Default from "@/assets/service/默认简洁.png";
-import Default_img from "@/assets/service/默认带图.png";
-import Red from "@/assets/service/红色纯粹.png";
-import Purple from "@/assets/service/紫色期待.png";
-import Lighting from "@/assets/service/灯光聚焦.png";
-import Masking from "@/assets/service/高级遮罩.png";
-import Rotate from "@/assets/service/炫彩时钟.png";
+import Default from "@/assets/page/function/service/默认简洁.png";
+import Default_img from "@/assets/page/function/service/默认带图.png";
+import Red from "@/assets/page/function/service/红色纯粹.png";
+import Purple from "@/assets/page/function/service/紫色期待.png";
+import Lighting from "@/assets/page/function/service/灯光聚焦.png";
+import Masking from "@/assets/page/function/service/高级遮罩.png";
+import Rotate from "@/assets/page/function/service/炫彩时钟.png";
 const serviceList = [
   { value: "default", label: Default, title: "默认简洁" },
   { value: "default_img", label: Default_img, title: "默认带图" },
