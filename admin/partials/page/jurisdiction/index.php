@@ -9,6 +9,20 @@ if (!class_exists('Npcink_Page_Jurisdiction')) {
     {
         public static function run($option)
         {
+             //禁止在微信中打开
+             $ban_open_weixing = MaBox_Admin::get_config($option, 'ban_open_weixing');
+             if ($ban_open_weixing === true) {
+                 require_once plugin_dir_path(__FILE__) . 'ban_open_weixing.php';
+                 Npcink_Page_Ban_Open_WeiXing::run();
+             }
+              //禁止在 QQ 中打开
+            $ban_open_qq = MaBox_Admin::get_config($option, 'ban_open_qq');
+            if ($ban_open_qq === true) {
+                require_once plugin_dir_path(__FILE__) . 'ban_open_qq.php';
+                Npcink_Page_Ban_Open_QQ::run();
+            }
+
+
 
             //禁止复制
             $ban_copy = MaBox_Admin::get_config($option, 'ban_copy');

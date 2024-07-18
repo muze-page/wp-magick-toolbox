@@ -137,6 +137,8 @@ const PageFunction = {
 
 // 页面 - 权限
 const PageJurisdiction = {
+  ban_open_weixing: boo, //禁止在微信中打开
+  ban_open_qq: boo, //禁止在QQ中打开
   front_debug: boo, //前端调试
   ban_copy: boo, //禁止复制
   category_id: [], //分类ID

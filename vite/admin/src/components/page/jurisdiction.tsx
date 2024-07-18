@@ -82,6 +82,20 @@ const App: React.FC = () => {
         <Form.Item>
           <h3 className="menu-header">隐私权限</h3>
         </Form.Item>
+        <Form.Item<FieldType>
+          label="禁止在微信中打开"
+          name="ban_open_weixing"
+          extra={<>（可能防红）</>}
+        >
+          <Switch />
+        </Form.Item>
+        <Form.Item<FieldType>
+          label="禁止在 QQ 中打开"
+          name="ban_open_qq"
+          extra={<>（可能防红）</>}
+        >
+          <Switch />
+        </Form.Item>
         <Form.Item<FieldType> label="禁止复制" name="ban_copy">
           <Switch />
         </Form.Item>

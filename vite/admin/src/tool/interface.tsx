@@ -119,7 +119,7 @@ export type PageFeature = {
 
 //页面 - 功能
 export type PageFunction = {
-  first_picture:boolean;//首图作特色图
+  first_picture: boolean; //首图作特色图
   add_inks: boolean; //关键词自动添加链接
   go_middle: string; //链接跳转中间页
   remove_single_link: boolean; //移除文章内超链接
@@ -148,6 +148,8 @@ export type PageFunction = {
 
 // 页面 - 权限
 export type PageJurisdiction = {
+  ban_open_weixing: boolean; //禁止在微信中打开
+  ban_open_qq: boolean; //禁止在QQ中打开
   front_debug: boolean; //前端调试
   ban_copy: boolean; //禁止复制
   category_id: number[]; //分类ID

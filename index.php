@@ -24,3 +24,33 @@ function allow_cors()
     header("Access-Control-Allow-Origin: *");
 }
 //add_action('init', 'allow_cors');
+
+//判断是微信中打开
+
+
+function add_hello_footer()
+{
+?>
+    <script>
+        function is_weixn_qq() {
+            var ua = navigator.userAgent.toLowerCase();
+            if (ua.match(/MicroMessenger/i) == "micromessenger") {
+                alert('微信中打开');
+            } else if (ua.match(/QQ/i) == "qq") {
+                alert('QQ中打开');
+            }
+            return false;
+        }
+        is_weixn_qq();
+        /*
+                var ua = navigator.userAgent.toLowerCase();
+                var isWeixin = ua.indexOf('micromessenger') != -1;
+                if (isWeixin) {
+                    console.log('微信中打开');
+                    alert('微信中打开');
+                } 
+                    */
+    </script>
+<?php
+}
+//add_action('wp_footer', 'add_hello_footer');
