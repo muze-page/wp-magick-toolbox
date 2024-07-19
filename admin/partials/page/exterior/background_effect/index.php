@@ -24,6 +24,10 @@ if (!class_exists('Npcink_Page_Background_Effect')) {
                     require_once plugin_dir_path(__FILE__) . 'convergence_line/index.php';
                     Npcink_Page_Add_Convergence_Line::run();
                     break;
+                case 'flowing_lines': //流动线条
+                    require_once plugin_dir_path(__FILE__) . 'flowing_lines/index.php';
+                    Npcink_Page_Flowing_Lines::run();
+                    break;
                 case 'drip_ink': //滴墨水
                     require_once plugin_dir_path(__FILE__) . 'drip_ink/index.php';
                     Npcink_Page_Drip_Ink::run();

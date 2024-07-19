@@ -25,16 +25,6 @@ if (!class_exists('Npcink_Page_Random_Ribbon')) {
                 MAGICK_MIXTURE_VERSION,
                 true
             );
-            wp_localize_script(
-                MAGICK_MIXTURE_NAME . '_sliding_ribbon',
-                'magick_mixture_sliding_ribbon_params',
-                array(
-                    'zIndex' => -2,  // 设置 zIndex 属性为 -2
-                    'size' => -2,
-                    'alpha' => 0.3
-                    //size="150" alpha='0.3' zIndex="-2"
-                )
-            );
         }
     }
 }
