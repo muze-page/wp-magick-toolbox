@@ -1,6 +1,6 @@
 import React from "react";
 import "@/App.css";
-import { ConfigProvider, message, Layout, Affix } from "antd";
+import { ConfigProvider, message, Layout, Affix, Space } from "antd";
 import zhCN from "antd/locale/zh_CN";
 import Tab from "@/components/tab";
 //统一弹窗
@@ -60,7 +60,9 @@ const HeaderBlock: React.FC = () => {
       <h1 className="text-2xl leading-7 font-medium">
         魔法工具箱
         <small className="text-xs font-light text-gray-400 ml-2 ">
-          <a target="_blank" href="https://www.npc.ink" > For Npcink</a>
+          <a target="_blank" href="https://www.npc.ink">
+            For Npcink
+          </a>
         </small>
       </h1>
       <Save />
@@ -70,26 +72,61 @@ const HeaderBlock: React.FC = () => {
 
 //保存按钮
 //将拿到的值推送到服务器端
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Button } from "antd";
-import {DataContext} from "@/tool/dataContext";
+import { DataContext } from "@/tool/dataContext";
 import { saceOption } from "@/axios/save";
 const Save: React.FC = () => {
   //拿到值
-  const {optionData} = useContext(DataContext);
+  const { optionData } = useContext(DataContext);
 
   //提交动作
   const postData = async () => {
     //console.log("提交动作");
-   // console.log(optionObj);
+    // console.log(optionObj);
     saceOption(optionData);
   };
+
+  //返回顶部
+  const [showButton, setShowButton] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      // 获取当前滚动的垂直距离
+      const scrollY = window.scrollY || window.pageYOffset;
+      // 设置一个阈值，例如 50vh，即页面高度的一半
+      const threshold = window.innerHeight * 0.5;
+
+      if (scrollY > threshold) {
+        setShowButton(true);
+      } else {
+        setShowButton(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const handleButtonClick = () => {
+    // 滚动到页面顶部
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <>
-      <Button type="primary" onClick={postData}>
-        保存
-      </Button>
-    </>
+    <div>
+      <Space>
+        {showButton && (
+          <Button type="text" onClick={handleButtonClick}>
+            返回顶部
+          </Button>
+        )}
+        <Button type="primary" onClick={postData}>
+          保存
+        </Button>
+      </Space>
+    </div>
   );
 };
 
