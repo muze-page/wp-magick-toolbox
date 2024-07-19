@@ -27,7 +27,7 @@ const headerStyle: React.CSSProperties = {
 
 const footerStyle: React.CSSProperties = {
   float: "right",
-  borderBottom: "1px solid #ccd0d4",
+  /*borderBottom: "1px solid #ccd0d4",*/
   background: "linear-gradient(#fefefe, #f5f5f5)",
 };
 const App: React.FC = () => {
