@@ -59,6 +59,7 @@ export interface axiosType {
 
 //优化 站点
 export type OptimizeSite = {
+  hide_top_toolbar: boolean;//隐藏顶部工具条
   no_escape: boolean; //禁止转义
   remove_RSS_version: boolean; //从RSS源中删除WordPress版本信息
   renew: boolean; //禁用自动更新

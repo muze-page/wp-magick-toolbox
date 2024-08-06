@@ -16,6 +16,14 @@ if (!class_exists('MaBox_Optimize_Site')) {
                 add_filter('run_wptexturize', '__return_false');
             };
 
+             //隐藏顶部工具条
+             $hide_top_toolbar = MaBox_Admin::get_config($option, 'hide_top_toolbar');
+             if ($hide_top_toolbar === true) {
+                require_once plugin_dir_path(__FILE__) . 'hide_top_toolbar.php';
+                Npcink_Hide_Top_Toolbar::run();
+             };
+ 
+
             //禁用自动更新
             $renew = MaBox_Admin::get_config($option, 'renew');
             if ($renew === true) {

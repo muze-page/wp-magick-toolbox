@@ -60,6 +60,14 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
+          label="隐藏顶部工具条"
+          name="hide_top_toolbar"
+          valuePropName="checked"
+          extra={"WordPress、主题和插件不再提示更新"}
+        >
+          <Switch />
+        </Form.Item>
+        <Form.Item<FieldType>
           label="禁用自动更新"
           name="renew"
           valuePropName="checked"

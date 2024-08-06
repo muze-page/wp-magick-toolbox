@@ -48,6 +48,7 @@ const timeArray = [formatTime(startTime), formatTime(endTime)];
 
 //优化 站点
 const OptimizeSite = {
+  hide_top_toolbar: boo, //隐藏顶部工具条
   no_escape: boo, //禁止转义
   remove_RSS_version: boo, //从RSS源中删除WordPress版本信息
   renew: boo, //自动更新
