@@ -64,6 +64,7 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links)
 //测试类 - 开发用，正式用记得注释掉
 //require plugin_dir_path(__FILE__) . 'index.php';
 // 添加可用的页面模板
+//添加页面模版 ： https://www.huitheme.com/wordpress-search.html
 function custom_page_templates($templates)
 {
     // 添加新的页面模板

@@ -93,9 +93,11 @@ if (!class_exists('Npcink_Page_Exterior')) {
 
             //页底特效TODO:移动端不展示
             $bottom_effect = MaBox_Admin::get_config($option, 'bottom_effect');
-            if ($bottom_effect !== "false") {
-                require_once plugin_dir_path(__FILE__) . 'bottom_effect/index.php';
-                Npcink_Page_Bottom_Effect::run($bottom_effect);
+            if (!wp_is_mobile()) {
+                if ($bottom_effect !== "false") {
+                    require_once plugin_dir_path(__FILE__) . 'bottom_effect/index.php';
+                    Npcink_Page_Bottom_Effect::run($bottom_effect);
+                }
             }
 
             //平滑滚动

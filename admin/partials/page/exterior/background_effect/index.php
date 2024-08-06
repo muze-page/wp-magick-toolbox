@@ -40,6 +40,10 @@ if (!class_exists('Npcink_Page_Background_Effect')) {
                     require_once plugin_dir_path(__FILE__) . 'random_ribbon/index.php';
                     Npcink_Page_Random_Ribbon::run();
                     break;
+                case 'floating_sphere': //漂浮球体
+                    require_once plugin_dir_path(__FILE__) . 'floating_sphere/index.php';
+                    Npcink_Page_Floating_Sphere::run();
+                    break;
             }
         }
     }

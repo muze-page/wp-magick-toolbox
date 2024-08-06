@@ -270,7 +270,7 @@ const App: React.FC = () => {
   );
 };
 
-//准备特效
+//点击特效
 import Diffuse from "@/assets/page/feature/effects/爆炸烟花.png";
 import CircleFireworks from "@/assets/page/feature/effects/圆圈烟花.png";
 import ScatteredFireworks from "@/assets/page/feature/effects/四散烟花.png";
@@ -303,6 +303,7 @@ import Flowing_lines from "@/assets/page/feature/backgroundEffect/流动线条.p
 import Drip_ink from "@/assets/page/feature/backgroundEffect/滴墨水.png";
 import Sliding_ribbon from "@/assets/page/feature/backgroundEffect/流动彩带.png";
 import Random_ribbon from "@/assets/page/feature/backgroundEffect/随机彩带.png";
+import Floating_sphere from "@/assets/page/feature/backgroundEffect/质感圆球.png";
 const backgroundList = [
   { value: "star", label: Star, title: "漂浮星星" },
   { value: "sakura", label: Sakura, title: "樱花效果" },
@@ -311,6 +312,7 @@ const backgroundList = [
   { value: "drip_ink", label: Drip_ink, title: "滴墨水" },
   { value: "sliding_ribbon", label: Sliding_ribbon, title: "流动彩带" },
   { value: "random_ribbon", label: Random_ribbon, title: "随机彩带" },
+  { value: "floating_sphere", label: Floating_sphere, title: "质感圆球" },
 ];
 
 //滚动条
