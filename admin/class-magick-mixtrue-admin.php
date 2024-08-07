@@ -83,9 +83,9 @@ class MaBox_Admin
         require_once plugin_dir_path(__FILE__) . 'partials/page.php';
         Npcink_Page::run();
 
-         //短代码设置
-         require_once plugin_dir_path(__FILE__) . 'partials/shortcode/index.php';
-         MaBox_ShortCode::run();
+        //短代码设置
+        require_once plugin_dir_path(__FILE__) . 'partials/shortcode/index.php';
+        MaBox_ShortCode::run();
     }
 
     /**
@@ -252,15 +252,27 @@ class MaBox_Admin
             ], 403);
         }
 
+        // 备份旧选项数据
+        $old_option_backup = get_option(MAGICK_MIXTURE_OPTION);
 
-        // 保存设置选项
-        $result =  update_option(MAGICK_MIXTURE_OPTION, $object);
-        if ($result !== false) {
-            // 发送成功响应
-            return wp_send_json_success(['message' => '保存成功', 'msg' => $object,]);
-        } else {
-            // 选项未改变会返回false
-            return wp_send_json_error(['error' => '选项无变化，保存失败', 'reason' => $wpdb->last_error, 'result' => $result, 'msg' => $object], 500);
+        try {
+            // 删除原有选项
+            delete_option(MAGICK_MIXTURE_OPTION);
+
+            // 保存新选项
+            $result = update_option(MAGICK_MIXTURE_OPTION, $object);
+
+            if ($result === false) {
+                // 如果保存新选项失败，恢复备份数据
+                update_option(MAGICK_MIXTURE_OPTION, $old_option_backup);
+                // 可以在这里记录错误或者执行其他的错误处理逻辑
+                error_log('Failed to update option, rolled back to previous state');
+                return wp_send_json_error(['error' => '选项无变化，保存失败', 'reason' => $wpdb->last_error, 'result' => $result, 'msg' => $object], 500);
+            } else {
+                return wp_send_json_success(['message' => '保存成功', 'msg' => $object,]);
+            }
+        } catch (Exception $e) {
+            // 可能的异常处理代码
         }
     }
 
