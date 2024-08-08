@@ -317,14 +317,14 @@ const TimePeriod: React.FC = (props: any) => {
   const nextDay = dayjs().add(1, "day").format(dateFormat);
 
   //触发
-  const onChange = (value: any, dateString: any) => {
-    console.log("Selected Time: ", value);
-    console.log("Formatted Selected Time: ", dateString);
+  const onChange = (_value: any, dateString: any) => {
+    //console.log("Selected Time: ", value);
+    //console.log("Formatted Selected Time: ", dateString);
     //格式化时间
     const data = dateString.map((item: any) =>
       dayjs(item).format("YYYY-MM-DD HH:mm")
     );
-    console.log(data);
+    //console.log(data);
     props.onChange(data);
   };
   return (
@@ -361,7 +361,7 @@ const TextAreaHtml: React.FC = (props: any) => {
   const handleTextAreaChange = (e: any) => {
     //对字符串进行转化
     const data = e.target.value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    console.log(data);
+    //console.log(data);
     setTextAreaValue(e.target.value); // 更新 textAreaValue 的值
     props.onChange(data); //传出值
   };

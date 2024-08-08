@@ -14,6 +14,7 @@ export const instance = axios.create({
 instance.interceptors.response.use(
   (response) => {
     const responseData = response.data;
+    //console.log(responseData);
     if (responseData.success) {
       if (responseData.data.message) {
         message.success(responseData.data.message);

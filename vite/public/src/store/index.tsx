@@ -20,4 +20,4 @@ const getDataLocal = () => {
 
 //对硬件值进行处理后传出
 export const publicShareData: PublicShareData = getDataLocal();
-console.log(publicShareData);
+//console.log(publicShareData);

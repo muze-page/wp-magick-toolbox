@@ -36,7 +36,6 @@ const App: React.FC = () => {
   //表单值发生变化时更新选项值
   useEffect(() => {
     updateOption("template", "static", formData);
-    console.log(formData);
   }, [formData]);
 
   return (

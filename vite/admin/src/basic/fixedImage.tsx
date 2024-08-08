@@ -44,7 +44,7 @@ const FixedImage: React.FC<FixedImageProps> = (props: any) => {
 
   //选中方法
   const onChange = (e: RadioChangeEvent) => {
-    console.log("radio checked", e.target.value);
+    //console.log("radio checked", e.target.value);
     setImageValue(e.target.value);
   };
 

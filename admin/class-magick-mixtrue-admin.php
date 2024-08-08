@@ -86,6 +86,10 @@ class MaBox_Admin
         //短代码设置
         require_once plugin_dir_path(__FILE__) . 'partials/shortcode/index.php';
         MaBox_ShortCode::run();
+
+        //页面模版设置
+        require_once plugin_dir_path(__FILE__) . 'partials/template/index.php';
+        Npcink_Template::run();
     }
 
     /**
