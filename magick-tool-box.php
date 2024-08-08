@@ -63,47 +63,4 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links)
 
 //测试类 - 开发用，正式用记得注释掉
 //require plugin_dir_path(__FILE__) . 'index.php';
-// 添加可用的页面模板
-//添加页面模版 ： https://www.huitheme.com/wordpress-search.html
-function custom_page_templates($templates)
-{
-    // 添加新的页面模板
-    $new_templates = array(
-        'template-one.php' => 'Custom Template one',
-        'template-two.php' => 'Another Custom Template two'
-        // 添加更多页面模板，按照相同的格式进行添加
-    );
 
-    // 合并新的模板数组到现有的模板数组中
-    $templates = array_merge($templates, $new_templates);
-
-    return $templates;
-}
-//add_filter('theme_page_templates', 'custom_page_templates');
-
-
-
-// 根据选择的页面模板加载指定模板文件
-function load_custom_template($template)
-{
-    global $post;
-
-    // 定义页面模板数组
-    $custom_templates = array(
-        'template-one.php' => 'template/template-one.php',
-        'template-two.php' => 'template/template-two.php'
-        // 添加更多页面模板和对应的文件路径，按照相同的格式进行添加
-    );
-
-    // 获取当前页面模板的文件路径
-    $current_template_slug = get_page_template_slug($post->ID);
-    $current_template_path = isset($custom_templates[$current_template_slug]) ? plugin_dir_path(__FILE__) . $custom_templates[$current_template_slug] : '';
-
-    // 如果找到匹配的模板文件路径，则返回该路径
-    if (!empty($current_template_path)) {
-        return $current_template_path;
-    }
-
-    return $template;
-}
-//add_filter('template_include', 'load_custom_template');

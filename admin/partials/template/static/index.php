@@ -4,19 +4,18 @@
  * 静态页面模版
  */
 if (!class_exists('Npcink_Template_Static')) {
-    class Npcink_Template_Static
+    class Npcink_Template_Static extends Npcink_Template
     {
-        public static function run($option)
+        public static function runs($option)
         {
             //爱心页面
             $love = MaBox_Admin::get_config($option, 'love');
             if ($love === true) {
-                add_action('wp_head', array(__CLASS__, 'add_hello_header'));
+                self::$add_template['template-one.php'] = 'Custom Template one';
+                self::$load_template['template-one.php'] = 'static/template-one.php';
+                self::$add_template['template-two.php'] = 'Custom Template Two';
+                self::$load_template['template-two.php'] = 'static/template-two.php';
             }
-        }
-        public static function add_hello_header()
-        {
-            echo '<div style="background-color: yellow; text-align: center;">你好</div>';
         }
     } //end
 }
