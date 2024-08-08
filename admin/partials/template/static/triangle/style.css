@@ -1,0 +1,11 @@
+.triangle {
+  max-width: 1250px;
+  margin: 0 auto;
+}
+.triangle .triangle-center {
+  display: block;
+  margin: 0 auto;
+}
+.triangle .entry-header {
+  max-width: calc(100vw - 100px);
+}
