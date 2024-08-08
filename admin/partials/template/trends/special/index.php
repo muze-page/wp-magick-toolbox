@@ -38,11 +38,11 @@ if (!class_exists('Npcink_Template_Special')) {
         public static function render_custom_fields($post)
         {
             // 获取存储在自定义字段中的值
-            $custom_field_1_value = get_post_meta($post->ID, 'custom_field_1', true);
+            $value = get_post_meta($post->ID, 'mabox_trends_special', true);
 ?>
 
-            <label for="custom-field-1">标题关键词：</label>
-            <input type="text" name="custom_field_1" id="custom-field-1" value="<?php echo esc_attr($custom_field_1_value); ?>">
+            <label for="trends-special">标题关键词：</label>
+            <input type="text" name="special_data" id="trends-special" value="<?php echo esc_attr($value); ?>">
             <p>根据填入的关键词搜索标题，将包含此关键词的标题列表</p>
 
 <?php
@@ -50,8 +50,8 @@ if (!class_exists('Npcink_Template_Special')) {
 
         public static function save_custom_fields($post_id)
         {
-            if (isset($_POST['custom_field_1'])) {
-                update_post_meta($post_id, 'custom_field_1', sanitize_text_field($_POST['custom_field_1']));
+            if (isset($_POST['special_data'])) {
+                update_post_meta($post_id, 'mabox_trends_special', sanitize_text_field($_POST['special_data']));
             }
         }
     }

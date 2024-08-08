@@ -41,4 +41,33 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 //}
 //run_mare_uninstall();
 
-delete_option("Magick_ToolBox_Option");
+//TODO:待检查
+function delete_custom_field_from_all_posts($field_key)
+{
+	$args = array(
+		'post_type' => array('post', 'page'),  // 可以修改为其他自定义文章类型
+		'posts_per_page' => -1,  // 获取所有文章
+		'post_status' => 'any',  // 获取所有状态的文章
+	);
+
+	$posts = get_posts($args);
+
+	foreach ($posts as $post) {
+		$post_id = $post->ID;
+		$existing_value = get_post_meta($post_id, $field_key, true);
+
+		if (!empty($existing_value)) {
+			delete_post_meta($post_id, $field_key);
+			echo "Deleted custom field '{$field_key}' from post {$post_id}.<br>";
+		} else {
+			echo "Custom field '{$field_key}' not found in post {$post_id}.<br>";
+		}
+	}
+}
+
+// 使用示例：删除名为 'custom_field_options' 的自定义字段
+delete_custom_field_from_all_posts('mabox_trends_special');
+
+
+//delete_option("Magick_ToolBox_Option");
+delete_option(MAGICK_MIXTURE_OPTION);

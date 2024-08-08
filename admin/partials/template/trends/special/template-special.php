@@ -8,17 +8,17 @@ get_header();
 $post_id = get_the_ID();
 
 // 获取自定义字段的值
-$custom_field_1_value = get_post_meta($post_id, 'custom_field_1', true);
+$value = get_post_meta($post_id, 'mabox_trends_special', true);
 
 // 如果自定义字段的值为空，则显示提示信息并退出
-if (empty($custom_field_1_value)) {
+if (empty($value)) {
     echo '暂未设置';
     return get_footer(); // 获取页脚;
 }
 
 // 构建查询参数
 $args = array(
-    's' => $custom_field_1_value, // 搜索标题中包含指定值的文章
+    's' => $value, // 搜索标题中包含指定值的文章
     'post_type' => 'post', // 文章类型为post（可根据需要修改）
     'posts_per_page' => -1, // 显示所有符合条件的文章
 );
