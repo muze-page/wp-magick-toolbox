@@ -12,6 +12,9 @@ if (!class_exists('Npcink_Template_Special')) {
             //添加meta box
             add_action('add_meta_boxes', array(__CLASS__, 'custom_theme_options_metabox'));
             add_action('save_post', array(__CLASS__, 'save_custom_fields'));
+
+            //加载样式
+            add_action('wp_enqueue_scripts', array(__CLASS__, 'styles'));
         }
 
         public static function custom_theme_options_metabox()
@@ -52,6 +55,16 @@ if (!class_exists('Npcink_Template_Special')) {
         {
             if (isset($_POST['special_data'])) {
                 update_post_meta($post_id, 'mabox_trends_special', sanitize_text_field($_POST['special_data']));
+            }
+        }
+
+        //加载样式
+        public static function styles()
+        {
+            $style_css =  plugin_dir_url(__DIR__) . 'special/style.css';
+            // 如果当前页面模板是 template-aaa.php，则加载特定的 CSS 文件
+            if (is_page_template('template-special.php')) {
+                wp_enqueue_style(MAGICK_MIXTURE_NAME . '_special-style', $style_css, array(), MAGICK_MIXTURE_VERSION, 'all');
             }
         }
     }

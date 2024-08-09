@@ -8,10 +8,11 @@ if (!class_exists('Npcink_Template_Triangle')) {
     {
         public static function run()
         {
-            add_action('wp_enqueue_scripts', array(__CLASS__, 'theme_enqueue_styles'));
+            //加载样式
+            add_action('wp_enqueue_scripts', array(__CLASS__, 'styles'));
         }
 
-        public static function theme_enqueue_styles()
+        public static function styles()
         {
 
             $build_css =  plugin_dir_url(__DIR__) . 'triangle/triangle.css';
