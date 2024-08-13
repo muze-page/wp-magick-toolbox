@@ -1,6 +1,5 @@
 /**
  * 短代码 挂件
- * 删除后新增他序号不会1234
  */
 import { useState, useContext, useEffect } from "react";
 import { Form, Switch } from "antd";

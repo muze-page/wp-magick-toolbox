@@ -52,7 +52,7 @@ if (!class_exists('Npcink_Page_Function')) {
 
             //跳转中间页
             $go_middle = MaBox_Admin::get_config($option, 'go_middle');
-            if ($go_middle !== false) {
+            if ($go_middle !== "false") {
                 require_once plugin_dir_path(__FILE__) . 'jump_middle_page.php';
                 Npcink_Jump_Middle_Page::run($go_middle);
             }
