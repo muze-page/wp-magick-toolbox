@@ -46,8 +46,14 @@ require plugin_dir_path(__FILE__) . 'includes/class-magick-mixtrue.php';
 function run_magick_mixture()
 {
 
-    $plugin = new Magick_Mixtrue();
-    $plugin->run();
+    //获取选项
+    $option = get_option(MAGICK_MIXTURE_OPTION);
+
+    //选项非空才执行
+    if (!empty($option)) {
+        $plugin = new Magick_Mixtrue();
+        $plugin->run();
+    }
 }
 run_magick_mixture();
 
@@ -63,4 +69,3 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links)
 
 //测试类 - 开发用，正式用记得注释掉
 //require plugin_dir_path(__FILE__) . 'index.php';
-
