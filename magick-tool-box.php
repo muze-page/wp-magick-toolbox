@@ -45,15 +45,9 @@ require plugin_dir_path(__FILE__) . 'includes/class-magick-mixtrue.php';
  */
 function run_magick_mixture()
 {
-
-    //获取选项
-    $option = get_option(MAGICK_MIXTURE_OPTION);
-
-    //选项非空才执行
-    if (!empty($option)) {
         $plugin = new Magick_Mixtrue();
         $plugin->run();
-    }
+    
 }
 run_magick_mixture();
 

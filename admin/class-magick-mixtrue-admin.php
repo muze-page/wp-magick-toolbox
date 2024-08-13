@@ -62,6 +62,12 @@ class MaBox_Admin
      */
     public function load()
     {
+        //获取选项
+        $option = get_option(MAGICK_MIXTURE_OPTION);
+        //选项为空，不执行下拉代码
+        if (empty($option)) {
+            return;
+        }
 
         //优化设置
         require_once plugin_dir_path(__FILE__) . 'partials/optimize/index.php';

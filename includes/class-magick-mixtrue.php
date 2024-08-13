@@ -43,7 +43,7 @@ class Magick_Mixtrue
             //没有的话，设置默认插件版本号值
             $this->version = '1.0.3';
         }
-        $this->plugin_name = 'magick-mixtrue';
+        $this->plugin_name = 'magick-tool-box';
 
         $this->load_dependencies(); //加载此插件所需的依赖项
         $this->define_admin_hooks(); //注册与后台功能相关的所有挂钩
