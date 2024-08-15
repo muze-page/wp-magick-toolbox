@@ -17,7 +17,7 @@ if (!class_exists('Npcink_Page_Go_Top')) {
             }
             //平滑箭头
             if ($config === "smooth_arrow") {
-                require_once plugin_dir_path(__FILE__) . 'smooth_arrow.php';
+                require_once plugin_dir_path(__FILE__) . 'smooth_arrow/index.php';
                 Npcink_Page_Go_Top_Smooth_Arrow::run();
             }
             //抓绳猫猫
