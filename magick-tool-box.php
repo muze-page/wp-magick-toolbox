@@ -45,9 +45,8 @@ require plugin_dir_path(__FILE__) . 'includes/class-magick-mixtrue.php';
  */
 function run_magick_mixture()
 {
-        $plugin = new Magick_Mixtrue();
-        $plugin->run();
-    
+    $plugin = new Magick_Mixtrue();
+    $plugin->run();
 }
 run_magick_mixture();
 
