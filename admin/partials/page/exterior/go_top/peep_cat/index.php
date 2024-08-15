@@ -11,7 +11,9 @@ if (!class_exists('Npcink_Page_Go_Top_Peep_Cat')) {
         public static function run()
         {
             //偷瞄猫猫
-            add_action('wp_footer', array(__CLASS__, 'peep_cat'), 100);
+            add_action('wp_head', array(__CLASS__, 'peep_cat'), 100);
+            //加载jS
+            add_action('wp_enqueue_scripts', array(__CLASS__, 'load_js'));
             //add_action('wp_enqueue_scripts', array(__CLASS__, 'peep_cat_js'));//纯jS方案
         }
         //偷瞄猫猫
@@ -23,22 +25,6 @@ if (!class_exists('Npcink_Page_Go_Top_Peep_Cat')) {
             <div id="topcontrol" onclick="goTop()">
                 <img src="<?php echo $cat_url ?>" alt="偷瞄猫猫" title="偷瞄猫猫">
             </div>
-            <script>
-                const goTop = () => {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: "smooth"
-                    });
-                }
-                const topControl = document.getElementById('topcontrol');
-                window.addEventListener('scroll', () => {
-                    if (window.scrollY > 600) {
-                        topControl.classList.add('npcShow');
-                    } else {
-                        topControl.classList.remove('npcShow');
-                    }
-                });
-            </script>
             <style>
                 #topcontrol {
                     position: fixed;
@@ -50,6 +36,7 @@ if (!class_exists('Npcink_Page_Go_Top_Peep_Cat')) {
                     transition: opacity 0.3s ease;
                     /* 动画效果 */
                     cursor: pointer;
+                    z-index: 99;
                 }
 
                 #topcontrol.npcShow {
@@ -68,6 +55,25 @@ if (!class_exists('Npcink_Page_Go_Top_Peep_Cat')) {
                 MAGICK_MIXTURE_NAME . '_go_top_cat',
                 plugin_dir_url(__FILE__) . 'peep_cat/cat.js',
                 array("jquery"),
+                MAGICK_MIXTURE_VERSION,
+                true
+            );
+        }
+        public static function load_js()
+        {
+            //加载jS
+            //判断下，是否在前端页中
+            if (is_admin()) {
+                return;
+            }
+
+            //准备数据
+            $build_js =  plugin_dir_url(__DIR__) . 'go_top.js';
+
+            wp_enqueue_script(
+                MAGICK_MIXTURE_NAME . '_public_go_top_js',
+                $build_js,
+                array(),
                 MAGICK_MIXTURE_VERSION,
                 true
             );
