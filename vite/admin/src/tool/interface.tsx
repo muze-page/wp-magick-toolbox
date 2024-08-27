@@ -167,6 +167,7 @@ export type PageJurisdiction = {
   tag_id: number[]; //标签ID
   page_id: number[]; //页面ID
   single_id: number[]; //文章ID
+  tip_content: string; //提示内容
 };
 
 //功能 辅助

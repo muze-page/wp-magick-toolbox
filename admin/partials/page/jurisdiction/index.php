@@ -43,6 +43,11 @@ if (!class_exists('Npcink_Page_Jurisdiction')) {
             //标签数组
             $tag_id = MaBox_Admin::get_config($option, 'tag_id');
 
+            //提示内容
+            $tip_content_basic = MaBox_Admin::get_config($option, 'tip_content');
+            //反转义
+            $tip_content = html_entity_decode($tip_content_basic);
+
 
             //总有默认分类，添加判断意义不大
             //添加分类数据接口
@@ -53,7 +58,7 @@ if (!class_exists('Npcink_Page_Jurisdiction')) {
             //隐藏指定分类
             if (!empty($category_id)) {
                 require_once plugin_dir_path(__FILE__) . 'hide_category.php';
-                Npcink_Page_Hide_Category::run($category_id);
+                Npcink_Page_Hide_Category::run($category_id,$tip_content);
             }
 
             //隐藏指定标签

@@ -151,6 +151,7 @@ const PageJurisdiction = {
   tag_id: [], //标签ID
   page_id: [], //页面ID
   single_id: [], //文章ID
+  tip_content:str, //提示内容
 };
 
 //权限控制 辅助
