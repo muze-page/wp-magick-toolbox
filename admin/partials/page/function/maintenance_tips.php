@@ -33,28 +33,33 @@ if (!class_exists('Npcink_Maintenance_Tips')) {
             // if (!current_user_can('edit_themes') || !is_user_logged_in()) {
             if (!current_user_can('administrator')) {
                 switch (self::$configs) {
-                    case "default":
+                    case "default": //默认
                         wp_die(self::$blogname . ' 升级维护中，过一会再来吧！');
                         break;
-                    case "default_img":
-                        add_action('get_header', array(__CLASS__, 'lxtx_wp_maintenance_mode'));
+                    case "default_img": //默认带图
+                        self::default_img();
                         break;
-                    case "red":
-
+                    case "red": //红色纯粹
                         include(self::$path . 'red.php');
                         exit; // 重定向后立即退出
                         break;
-                    case "purple":
-                        add_action('get_header', array(__CLASS__, 'purple'));
+
+                    case "purple": //紫色期待
+                        include(self::$path . 'purple.php');
+                        exit;
                         break;
-                    case "lighting":
-                        add_action('get_header', array(__CLASS__, 'lighting')); //灯光聚焦
+
+                    case "lighting": //灯光聚焦
+                        include(self::$path . 'lighting.php');
+                        exit;
                         break;
                     case "masking": //大气遮罩
-                        add_action('get_header', array(__CLASS__, 'masking'));
+                        include(self::$path . 'masking.php');
+                        exit;
                         break;
-                    case "rotate": //时钟
-                        add_action('get_header', array(__CLASS__, 'rotate'));
+                    case "rotate": //旋转时钟
+                        include(self::$path . 'rotate.php');
+                        exit;
                         break;
                     default:
                         break;
@@ -62,57 +67,13 @@ if (!class_exists('Npcink_Maintenance_Tips')) {
             }
         }
 
-        public static function lxtx_wp_maintenance_mode()
+        //默认带图
+        public static function default_img()
         {
             $logo = self::$url . 'image/tips.svg';
             wp_die('<div style="text-align:center">
             
             <img src="' . $logo . '" alt="' . self::$blogname . '" /><br /><br />' . self::$blogname . ' 正在例行维护中，请稍候...</div>', '站点维护中 - ' . self::$blogname . ' - ' . self::$blogdescription, array('response' => '503'));
-        }
-
-        //红色纯粹
-        public static  function red()
-        {
-            // 检查条件，如果满足则执行跳转
-            $php_page_path =  self::$path . 'red.php';
-            include($php_page_path);
-            exit; // 重定向后立即退出
-        }
-
-        //紫色期待
-        public static  function purple()
-        {
-            // 检查条件，如果满足则执行跳转
-            $php_page_path =  self::$path . 'purple.php';
-            include($php_page_path);
-            exit; // 重定向后立即退出
-        }
-
-        //灯光聚焦
-        public static  function lighting()
-        {
-            // 检查条件，如果满足则执行跳转
-            $php_page_path =  self::$path . 'lighting.php';
-            include($php_page_path);
-            exit; // 重定向后立即退出
-        }
-
-        //背景遮罩
-        public static  function masking()
-        {
-            // 检查条件，如果满足则执行跳转
-            $php_page_path =  self::$path . 'masking.php';
-            include($php_page_path);
-            exit; // 重定向后立即退出
-        }
-
-        //旋转时钟
-        public static  function rotate()
-        {
-            // 检查条件，如果满足则执行跳转
-            $php_page_path =  self::$path . 'rotate.php';
-            include($php_page_path);
-            exit; // 重定向后立即退出
         }
     }
 }

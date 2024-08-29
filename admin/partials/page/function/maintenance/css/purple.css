@@ -39,7 +39,7 @@ body {
 .waitimg {
   width: 100%;
   height: 100%;
-  
+
   -webkit-background-size: 100%;
   background-size: 100%;
   position: relative;
@@ -57,7 +57,7 @@ body {
   content: "";
   display: block;
   width: 100%;
-  height: 3px;
+  height: 1.6px;
   background: #7417ff;
   position: absolute;
   bottom: 0;
@@ -81,7 +81,7 @@ body {
 @media screen and (min-width: 750px) {
   .waitimg {
     /*height: 1080px*/
-  
+
     -webkit-background-size: 100%;
     background-size: 100%;
   }
