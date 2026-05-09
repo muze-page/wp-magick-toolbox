@@ -94,8 +94,8 @@ const App: React.FC = () => {
     <>
       <Form
         name="wx_xcx"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}

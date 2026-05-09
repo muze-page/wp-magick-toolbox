@@ -57,48 +57,6 @@ class MaBox_Admin
 
 
     /**
-     *
-     * 加载一些文件吧
-     */
-    public function load()
-    {
-        //获取选项
-        $option = get_option(MAGICK_MIXTURE_OPTION);
-        //选项为空，不执行下拉代码
-        if (empty($option)) {
-            return;
-        }
-
-        //优化设置
-        require_once plugin_dir_path(__FILE__) . 'partials/optimize/index.php';
-        MaBox_Optimize::run();
-
-        //功能设置
-        require_once plugin_dir_path(__FILE__) . 'partials/function/index.php';
-        MaBox_Function::run();
-
-        //h5设置
-        require_once plugin_dir_path(__FILE__) . 'partials/h5.php';
-        MaBox_H5::run();
-
-        //登录页
-        require_once plugin_dir_path(__FILE__) . 'partials/login/index.php';
-        Npcink_Login::run();
-
-        //页面设置
-        require_once plugin_dir_path(__FILE__) . 'partials/page/index.php';
-        Npcink_Page::run();
-
-        //短代码设置
-        require_once plugin_dir_path(__FILE__) . 'partials/shortcode/index.php';
-        MaBox_ShortCode::run();
-
-        //页面模版设置
-        require_once plugin_dir_path(__FILE__) . 'partials/template/index.php';
-        Npcink_Template::run();
-    }
-
-    /**
      * 启动
      */
     public function run()
@@ -146,13 +104,45 @@ class MaBox_Admin
      */
     public static function MaBox_display()
     {
-        //准备默认样式
         echo '<div class="wrap"> <h2>';
-
-        //准备菜单标题
-        //echo esc_html(get_admin_page_title());
-        //准备节点
         echo '</h2><div id="root"></div>';
+
+        if (isset($_GET['mabox_debug'])) {
+            self::render_debug_panel();
+        }
+    }
+
+    /**
+     * 路由表调试面板
+     */
+    private static function render_debug_panel()
+    {
+        $active_modules = get_option(MAGICK_TOOLBOX_ACTIVE_MODULES, array());
+        $cache = false;
+        if (function_exists('wp_cache_get')) {
+            $cache = wp_cache_get('mabox_active_modules', 'mabox');
+        }
+
+        echo '<div class="postbox" style="margin-top:20px;padding:15px;">';
+        echo '<h3>🔧 按需加载调试面板</h3>';
+        echo '<p>访问地址添加 <code>?mabox_debug=1</code> 查看此面板</p>';
+        echo '<table class="widefat" style="margin-top:10px;">';
+        echo '<tr><th style="width:200px;">路由表模块数</th><td>' . count($active_modules) . ' 个</td></tr>';
+        echo '<tr><th>缓存命中</th><td>' . ($cache !== false ? '✅ 是' : '❌ 否（从数据库读取）') . '</td></tr>';
+        echo '<tr><th>加载模式</th><td>' . (empty($active_modules) ? '⚠️ 传统模式（降级回退）' : '✅ 按需加载模式') . '</td></tr>';
+
+        if (!empty($active_modules)) {
+            echo '<tr><th>已激活模块</th><td><ul style="margin:5px 0;columns:2;">';
+            foreach ($active_modules as $module) {
+                echo '<li>' . esc_html($module) . '</li>';
+            }
+            echo '</ul></td></tr>';
+        }
+
+        echo '</table>';
+        echo '<p style="margin-top:10px;"><a href="' . esc_url(remove_query_arg('mabox_debug')) . '" class="button">关闭调试面板</a>';
+        echo ' <a href="' . esc_url(add_query_arg('mabox_debug', '1')) . '" class="button">刷新路由表</a></p>';
+        echo '</div>';
     }
 
     /**
@@ -175,15 +165,40 @@ class MaBox_Admin
         wp_enqueue_style($name, $index_css, array(), $ver, false);
         wp_enqueue_script($name, $index_js, array(), $ver, true);
 
+        // 移动端适配
+        wp_add_inline_style($name, '
+            @media (max-width: 768px) {
+                #root { margin: 0 -10px; }
+                .ant-form-item-label { width: 100% !important; padding-right: 0 !important; }
+                .ant-form-item-control-wrapper { width: 100% !important; }
+                .ant-tabs-nav { overflow-x: auto !important; }
+                .ant-tabs-nav-list { white-space: nowrap !important; }
+                .ant-anchor { display: none !important; }
+                .ant-form { max-width: 100% !important; }
+                .ant-card-body { padding: 12px !important; }
+                .ant-statistic { margin-bottom: 12px !important; }
+                .ant-layout-header { padding-inline: 16px !important; height: auto !important; line-height: 1.5 !important; flex-wrap: wrap !important; }
+                .ant-layout-header h1 { font-size: 18px !important; width: 100%; margin-bottom: 8px; }
+                .ant-tabs-tabpane { padding: 8px !important; }
+                .ant-form-item { margin-bottom: 16px !important; }
+                .ant-switch { min-width: 36px; height: 20px; }
+                .ant-btn { font-size: 13px; padding: 4px 12px; }
+            }
+            @media (min-width: 769px) and (max-width: 1024px) {
+                .ant-form-item-label { width: 120px !important; }
+                .ant-form-item-control-wrapper { width: calc(100% - 120px) !important; }
+            }
+        ');
+
 
 
         $MaBox_array = array(
-            'option' => get_option(MAGICK_MIXTURE_OPTION), //传递选项
-            'cat_arr' => self::get_cat_data(), //分类信息
-            'single_arr' => self::get_single_data(), //文章信息
-            'url_site' => get_site_url(), //当前首页网址
-            'ajaxurl' => admin_url('admin-ajax.php'), // AJAX 地址
-            'nonce' => wp_create_nonce('mabox_save_nonce'), // 安全令牌
+            'option' => MaBox_Config_Manager::get_merged_config(),
+            'cat_arr' => self::get_cat_data(),
+            'single_arr' => self::get_single_data(),
+            'url_site' => get_site_url(),
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('mabox_save_nonce'),
 
         );
         wp_localize_script($name, 'dataLocal', $MaBox_array); //传给vite项目
@@ -237,38 +252,41 @@ class MaBox_Admin
      */
     public static function save_option_wmt_callback()
     {
-        // 1. 权限检查
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['error' => '权限不足，仅管理员可操作'], 403);
         }
 
-        // 2. Nonce 验证
         check_ajax_referer('mabox_save_nonce', 'nonce');
 
-        // 3. 接收并解析数据
         if (empty($_POST['object_data'])) {
             wp_send_json_error(['error' => '未接收到有效的设置数据'], 400);
         }
 
         $raw_data = wp_unslash($_POST['object_data']);
-        $object = json_decode($raw_data, true); // 解码为关联数组
+        $object = json_decode($raw_data, true);
 
         if (!is_array($object) || empty($object)) {
             wp_send_json_error(['error' => '设置数据格式无效'], 400);
         }
 
-        // 4. 备份旧数据（失败时回滚）
-        $old_option_backup = get_option(MAGICK_MIXTURE_OPTION);
+        $old_option_backup = MaBox_Config_Manager::get_merged_config();
 
-        // 5. 保存新选项
-        $result = update_option(MAGICK_MIXTURE_OPTION, $object);
+        $result = MaBox_Config_Manager::save_full_config($object);
 
-        if ($result === false) {
-            // 保存失败，恢复旧数据
-            update_option(MAGICK_MIXTURE_OPTION, $old_option_backup);
+        if (!$result['success']) {
+            MaBox_Config_Manager::save_full_config($old_option_backup);
             error_log('[MaBox] Failed to update option, rolled back to previous state');
             wp_send_json_error(['error' => '保存失败，已恢复为之前的设置'], 500);
         }
+
+        $active_modules = MaBox_Module_Loader::get_active_modules($object);
+        update_option(MAGICK_TOOLBOX_ACTIVE_MODULES, $active_modules);
+
+        if (function_exists('wp_cache_set')) {
+            wp_cache_set('mabox_active_modules', $active_modules, 'mabox', HOUR_IN_SECONDS);
+        }
+
+        self::clear_config_cache();
 
         wp_send_json_success(['message' => '保存成功']);
     }
@@ -282,7 +300,7 @@ class MaBox_Admin
             wp_send_json_error('权限不足', 403);
         }
 
-        $settings = get_option(MAGICK_MIXTURE_OPTION, array());
+        $settings = MaBox_Config_Manager::export_config();
         $json = json_encode($settings, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
         header('Content-Type: application/json');
@@ -317,13 +335,20 @@ class MaBox_Admin
             wp_send_json_error('JSON 格式无效', 400);
         }
 
-        $old_backup = get_option(MAGICK_MIXTURE_OPTION);
-        $result = update_option(MAGICK_MIXTURE_OPTION, $settings);
+        $result = MaBox_Config_Manager::import_config($settings);
 
-        if ($result === false) {
-            update_option(MAGICK_MIXTURE_OPTION, $old_backup);
-            wp_send_json_error('导入失败，已恢复原设置', 500);
+        if (!$result['success']) {
+            wp_send_json_error($result['error'], 500);
         }
+
+        $active_modules = MaBox_Module_Loader::get_active_modules($settings);
+        update_option(MAGICK_TOOLBOX_ACTIVE_MODULES, $active_modules);
+
+        if (function_exists('wp_cache_set')) {
+            wp_cache_set('mabox_active_modules', $active_modules, 'mabox', HOUR_IN_SECONDS);
+        }
+
+        self::clear_config_cache();
 
         wp_send_json_success('导入成功');
     }
@@ -342,14 +367,23 @@ class MaBox_Admin
             return new \WP_Error('rest_invalid_data', '设置数据格式无效', array('status' => 400));
         }
 
-        $old_option_backup = get_option(MAGICK_MIXTURE_OPTION);
-        $result = update_option(MAGICK_MIXTURE_OPTION, $body);
+        $old_option_backup = MaBox_Config_Manager::get_merged_config();
+        $result = MaBox_Config_Manager::save_full_config($body);
 
-        if ($result === false) {
-            update_option(MAGICK_MIXTURE_OPTION, $old_option_backup);
+        if (!$result['success']) {
+            MaBox_Config_Manager::save_full_config($old_option_backup);
             error_log('[MaBox] REST API: Failed to update option, rolled back');
             return new \WP_Error('rest_save_failed', '保存失败，已恢复为之前的设置', array('status' => 500));
         }
+
+        $active_modules = MaBox_Module_Loader::get_active_modules($body);
+        update_option(MAGICK_TOOLBOX_ACTIVE_MODULES, $active_modules);
+
+        if (function_exists('wp_cache_set')) {
+            wp_cache_set('mabox_active_modules', $active_modules, 'mabox', HOUR_IN_SECONDS);
+        }
+
+        self::clear_config_cache();
 
         return rest_ensure_response([
             'success' => true,
@@ -357,16 +391,13 @@ class MaBox_Admin
         ]);
     }
 
-    /**
-     * REST API: 获取设置
-     */
     public static function rest_get_settings($request)
     {
         if (!current_user_can('manage_options')) {
             return new \WP_Error('rest_forbidden', '权限不足', array('status' => 403));
         }
 
-        $settings = get_option(MAGICK_MIXTURE_OPTION, array());
+        $settings = MaBox_Config_Manager::get_merged_config();
         return rest_ensure_response([
             'success' => true,
             'data' => $settings,
@@ -399,21 +430,23 @@ class MaBox_Admin
     /**
      * 提供选项
      */
+    private static $config_cache = null;
+
     public static function get_seting($option)
     {
-        //拿到选项值
-        $config = get_option(MAGICK_MIXTURE_OPTION);
-        $value =  self::get_config($config, $option);
+        if (self::$config_cache === null) {
+            self::$config_cache = MaBox_Config_Manager::get_merged_config();
+        }
+        $value = self::get_config(self::$config_cache, $option);
         return $value;
     }
-    /**
-     * 从对象中获取属性值
-     *
-     * @param object $config 对象
-     * @param string $property 从对象中获取的属性名
-     * @param string $defaultValue 默认值（可选）
-     * @return mixed 属性值或默认值
-     */
+
+    public static function clear_config_cache()
+    {
+        self::$config_cache = null;
+        MaBox_Config_Manager::clear_cache();
+    }
+
     public static function get_config($config, $property, $defaultValue = false)
     {
         if (is_array($config) && isset($config[$property]) && !empty($config[$property])) {
@@ -423,6 +456,34 @@ class MaBox_Admin
             return $config->$property;
         }
         return $defaultValue;
+    }
+
+    public function load()
+    {
+        MaBox_Config_Manager::migrate();
+
+        $option = MaBox_Config_Manager::get_merged_config();
+        if (empty($option)) {
+            return;
+        }
+
+        $active_modules = false;
+        if (function_exists('wp_cache_get')) {
+            $active_modules = wp_cache_get('mabox_active_modules', 'mabox');
+        }
+
+        if ($active_modules === false) {
+            $active_modules = MaBox_Module_Loader::get_active_modules($option);
+            update_option(MAGICK_TOOLBOX_ACTIVE_MODULES, $active_modules);
+
+            if (function_exists('wp_cache_set')) {
+                wp_cache_set('mabox_active_modules', $active_modules, 'mabox', HOUR_IN_SECONDS);
+            }
+        }
+
+        foreach ($active_modules as $module_id) {
+            MaBox_Module_Loader::load_module($module_id, $option);
+        }
     }
 
     //公用返回按钮

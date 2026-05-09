@@ -1,17 +1,15 @@
-//ant 组件公共配置信息
 interface AntFrom {
   from: {
-    labelCol: number;
-    wrapperCol: number;
+    labelCol: number | Record<string, number>;
+    wrapperCol: number | Record<string, number>;
     maxWidth: number;
   };
 }
 
 export const AntConfig: AntFrom = {
-  //表单配置
   from: {
-    labelCol: 6,
-    wrapperCol: 18,
+    labelCol: { xs: 24, sm: 8, md: 6 },
+    wrapperCol: { xs: 24, sm: 16, md: 18 },
     maxWidth: 900,
   },
 };

@@ -4,7 +4,7 @@
  */
 //站点 - 模版
 import { useState, useContext, useEffect } from "react";
-import { Switch, Form, ColorPicker, InputNumber } from "antd";
+import { Form, ColorPicker, InputNumber } from "antd";
 
 import { DataContext } from "@/tool/dataContext";
 import { LoginBeautify } from "@/tool/interface";
@@ -13,6 +13,7 @@ import { defaultVarOption } from "@/tool/defaultVar";
 import type { Color } from "antd/es/color-picker";
 import { AntConfig } from "@/tool/tool";
 import SelectImage from "@/basic/selectImage";
+import FeatureSwitch from "@/basic/feature-switch";
 
 type FieldType = LoginBeautify;
 
@@ -60,8 +61,8 @@ const App: React.FC = () => {
     <>
       <Form
         name="login_beautify"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         initialValues={publicData}
         autoComplete="off"
@@ -72,29 +73,32 @@ const App: React.FC = () => {
           <h2>美化</h2>
         </Form.Item>
         <Form.Item<FieldType>
+          id="login-beautify-modify_login_link"
           label="LOGO链接"
           name="modify_login_link"
           valuePropName="checked"
           extra={"改为首页链接"}
         >
-          <Switch />
+          <FeatureSwitch featureId="login-beautify-modify_login_link" />
         </Form.Item>
         <Form.Item<FieldType>
+          id="login-beautify-remove_langue"
           label="移除语言选择框"
           name="remove_langue"
           valuePropName="checked"
           extra={"移除登录页面语言选择框"}
         >
-          <Switch />
+          <FeatureSwitch featureId="login-beautify-remove_langue" />
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="login-beautify-custom_login_page"
           label="自定义登录页"
           name="custom_login_page"
           valuePropName="checked"
           extra={""}
         >
-          <Switch />
+          <FeatureSwitch featureId="login-beautify-custom_login_page" />
         </Form.Item>
 
         {formData.custom_login_page && (

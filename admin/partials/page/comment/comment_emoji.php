@@ -40,7 +40,7 @@ if (!class_exists('Npcink_Page_Comment_Emoji')) {
                 plugin_dir_url(__FILE__) . 'emoji/OwO.min.js',
                 array(),
                 MAGICK_MIXTURE_VERSION,
-                false
+                true
             );
 
             wp_enqueue_style(
@@ -57,26 +57,9 @@ if (!class_exists('Npcink_Page_Comment_Emoji')) {
          */
         public static function load_owo_comment_js()
         {
-            //输入框定位
-            $target_id = 'comment';
-
-            //拿到表情包用js地址
-            $json_src = plugin_dir_url(__FILE__) . 'emoji/OwO.json';
-?>
-            <script>
-                let $src = '<?php echo $json_src ?>';
-                let $target = '<?php echo $target_id ?>'
-                var OwO_demo = new OwO({
-                    logo: 'OωO表情',
-                    container: document.getElementsByClassName('OwO')[0],
-                    target: document.getElementById($target),
-                    api: $src,
-                    position: 'down',
-                    width: '100%',
-                    maxHeight: '250px'
-                });
-            </script>
-<?php
+            $target_id = esc_js('comment');
+            $json_src = esc_js(plugin_dir_url(__FILE__) . 'emoji/OwO.json');
+            echo '<script>var OwO_demo=new OwO({logo:"OωO表情",container:document.getElementsByClassName("OwO")[0],target:document.getElementById("' . $target_id . '"),api:"' . $json_src . '",position:"down",width:"100%",maxHeight:"250px"})</script>' . "\n";
         }
 
         /**
@@ -84,19 +67,14 @@ if (!class_exists('Npcink_Page_Comment_Emoji')) {
          */
         public static function load_owo_content($default)
         {
-            //$commenter = wp_get_current_commenter();
-            $default['comment_field'] .= '<div class="OwO"></div>
-        <style>
-        .OwO {
-            padding: 0 0 20px 0;
-        }
-        .OwO .OwO-body {
-            position: initial!important;
-        }
-        </style>
-        ';
-
+            $default['comment_field'] .= '<div class="OwO"></div>';
+            add_action('wp_head', array(__CLASS__, 'render_owo_inline_css'), 999);
             return $default;
+        }
+
+        public static function render_owo_inline_css()
+        {
+            echo '<style>.OwO{padding:0 0 20px 0}.OwO .OwO-body{position:initial!important}</style>' . "\n";
         }
     }
 }

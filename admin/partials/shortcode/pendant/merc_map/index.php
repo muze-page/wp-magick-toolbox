@@ -124,16 +124,16 @@ if (!class_exists('MaBox_ShortCode_Merc_Map')) {
                 $build_js,
                 array('jquery'),
                 MAGICK_MIXTURE_VERSION,
-                false
+                true
             );
-            //准备js 
+            //准备js
             $merc_js =  plugin_dir_url(__DIR__) . 'merc_map/jquery-jvectormap-cn-merc-en.js';
             wp_enqueue_script(
                 MAGICK_MIXTURE_NAME . '_public_cn-merc_js',
                 $merc_js,
                 array('jquery'),
                 MAGICK_MIXTURE_VERSION,
-                false
+                true
             );
         }
     }

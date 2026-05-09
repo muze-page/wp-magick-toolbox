@@ -2,39 +2,53 @@
  * 页面优化 - 权限
  */
 import { useState, useContext, useEffect } from "react";
-import { Form, Select, Switch } from "antd";
+import { Form, Select, Input, Radio } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { PageJurisdiction, ListData } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
 import { getCategoryData } from "@/axios/axios";
 import TextAreaHtml from "@/basic/htmlInput";
+import { checkRiskyFeature } from "@/tool/riskyFeature.tsx";
+import FeatureSwitch from "@/basic/feature-switch";
 
 type FieldType = PageJurisdiction;
 
-//Ant 组件配置
 const fromConfig = AntConfig.from;
 
-const App: React.FC = () => {
-  //拿到默认选项值和修改方法
-  const { optionData, updateOption } = useContext(DataContext);
+const RISKY_FIELDS: Record<string, string> = {
+  ban_copy: "page-jurisdiction-ban_copy",
+};
 
-  //准备选项默认值
+const App: React.FC = () => {
+  const { optionData, updateOption } = useContext(DataContext);
   const publicData =
     optionData.page?.jurisdiction || defaultVarOption.page.jurisdiction;
-
-  //存储表单值
   const [formData, setFormData] = useState(publicData || {});
 
-  //修改表单值
-  const onValuesChange = (
-    changedValues: Partial<FieldType>,
-    _allValues: FieldType
-  ) => {
+  const applyChange = (changedValues: Partial<FieldType>) => {
     setFormData((prevState) => ({
       ...prevState,
       ...changedValues,
     }));
+  };
+
+  const onValuesChange = (
+    changedValues: Partial<FieldType>,
+    _allValues: FieldType
+  ) => {
+    const fieldKey = Object.keys(changedValues)[0];
+    const featureId = RISKY_FIELDS[fieldKey];
+    if (featureId) {
+      const newValue = changedValues[fieldKey as keyof FieldType];
+      const shouldProceed = checkRiskyFeature(featureId, newValue as any, () => {
+        applyChange(changedValues);
+      });
+      if (!shouldProceed) {
+        return;
+      }
+    }
+    applyChange(changedValues);
   };
 
   //表单值发生变化时更新选项值
@@ -70,8 +84,8 @@ const App: React.FC = () => {
     <>
       <Form
         name="jurisdiction"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         initialValues={publicData}
         autoComplete="off"
@@ -85,28 +99,76 @@ const App: React.FC = () => {
           <h3 className="menu-header">隐私权限</h3>
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-jurisdiction-ban_open_weixing"
           label="禁止在微信中打开"
           name="ban_open_weixing"
+          valuePropName="checked"
           extra={<>（可能有防红功能）</>}
         >
-          <Switch />
+          <FeatureSwitch featureId="page-jurisdiction-ban_open_weixing" />
         </Form.Item>
+        {formData.ban_open_weixing && (
+          <>
+            <Form.Item<FieldType>
+              label="处理方式"
+              name="ban_open_weixing_mode"
+            >
+              <Radio.Group>
+                <Radio value="alert">弹窗提示</Radio>
+                <Radio value="optimize">优化体验+引导</Radio>
+              </Radio.Group>
+            </Form.Item>
+            {formData.ban_open_weixing_mode === 'optimize' && (
+              <>
+                <Form.Item<FieldType> label="引导文字" name="wechat_guide_text">
+                  <Input style={{ width: "70%" }} placeholder="点击右上角 ··· 在浏览器中打开" />
+                </Form.Item>
+                <Form.Item<FieldType>
+                  label="小程序引导"
+                  name="wechat_xcx_guide"
+                  valuePropName="checked"
+                >
+                  <FeatureSwitch featureId="page-jurisdiction-wechat_xcx_guide" />
+                </Form.Item>
+                {formData.wechat_xcx_guide && (
+                  <>
+                    <Form.Item<FieldType> label="小程序引导文字" name="wechat_xcx_guide_text">
+                      <Input style={{ width: "50%" }} placeholder="在小程序中打开" />
+                    </Form.Item>
+                    <Form.Item<FieldType> label="小程序链接" name="wechat_xcx_link">
+                      <Input style={{ width: "70%" }} placeholder="weixin://dl/business/..." />
+                    </Form.Item>
+                  </>
+                )}
+              </>
+            )}
+          </>
+        )}
         <Form.Item<FieldType>
+          id="page-jurisdiction-ban_open_qq"
           label="禁止在 QQ 中打开"
           name="ban_open_qq"
+          valuePropName="checked"
           extra={<>（可能有防红功能）</>}
         >
-          <Switch />
-        </Form.Item>
-        <Form.Item<FieldType> label="禁止复制" name="ban_copy">
-          <Switch />
+          <FeatureSwitch featureId="page-jurisdiction-ban_open_qq" />
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-jurisdiction-ban_copy"
+          label="禁止复制"
+          name="ban_copy"
+          valuePropName="checked"
+        >
+          <FeatureSwitch featureId="page-jurisdiction-ban_copy" />
+        </Form.Item>
+        <Form.Item<FieldType>
+          id="page-jurisdiction-front_debug"
           label="禁用F12前端调试"
           name="front_debug"
+          valuePropName="checked"
           extra={<>打开浏览器控制台显示空白内容</>}
         >
-          <Switch />
+          <FeatureSwitch featureId="page-jurisdiction-front_debug" />
         </Form.Item>
         <Form.Item>
           <h3 className="menu-header">未登录权限</h3>

@@ -2,13 +2,14 @@
  * 页面模版 静态
  */
 import { useState, useContext, useEffect } from "react";
-import { Form, Switch } from "antd";
+import { Form } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { TemplateStatic } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
 import Preview from "@/basic/preview";
 import TrianglePng from "@/assets/template/static/立体三角.png";
+import FeatureSwitch from "@/basic/feature-switch";
 
 type FieldType = TemplateStatic;
 
@@ -44,8 +45,8 @@ const App: React.FC = () => {
     <>
       <Form
         name="static"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         initialValues={publicData}
         autoComplete="off"
@@ -57,6 +58,7 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="template-static-triangle"
           label="立体三角"
           name="triangle"
           valuePropName="checked"
@@ -67,7 +69,7 @@ const App: React.FC = () => {
             </>
           }
         >
-          <Switch />
+          <FeatureSwitch featureId="template-static-triangle" />
         </Form.Item>
       </Form>
     </>

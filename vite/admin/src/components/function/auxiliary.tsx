@@ -1,11 +1,12 @@
 //权限 - 辅助功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Switch, Form, Input, Button, Space, message } from "antd";
+import { Form, Input, Button, Space, message } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { FunctionAuxiliary } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
+import FeatureSwitch from "@/basic/feature-switch";
 
 //选项类型
 type FieldType = FunctionAuxiliary;
@@ -104,8 +105,8 @@ const App: React.FC = () => {
     <>
       <Form
         name="auxiliary"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         //表单默认值，只有初始化以及重置时生效
         initialValues={formData}
@@ -121,21 +122,23 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="function-auxiliary-single_count"
           label="文章统计"
           name="single_count"
           valuePropName="checked"
           extra={"开启后显示在仪表盘下"}
         >
-          <Switch />
+          <FeatureSwitch featureId="function-auxiliary-single_count" />
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="function-auxiliary-no_malice_key"
           label="屏蔽恶意关键词搜索"
           name="no_malice_key"
           valuePropName="checked"
           extra={"禁止搜索指定词汇"}
         >
-          <Switch />
+          <FeatureSwitch featureId="function-auxiliary-no_malice_key" />
         </Form.Item>
         {formData.no_malice_key && (
           <Form.Item<FieldType>

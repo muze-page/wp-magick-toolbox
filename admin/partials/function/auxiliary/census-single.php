@@ -40,30 +40,25 @@ if (!class_exists('MaBox_Census_Single')) {
         //页面加载图标用css和js
         public static function load_enqueue_admin_script($hook)
         {
-            //判断下，是否在文章统计页中
             if ('dashboard_page_magick-census-single' != $hook) {
                 return;
             }
 
-            //准备打包后的数据
-            $build_css = plugin_dir_url(dirname(__DIR__)) . 'count/dist/index.css';
-            $build_css = str_replace('admin/partials', 'vite/',  $build_css);
-
-            $build_js = plugin_dir_url(dirname(__DIR__)) . 'count/dist/index.js';
-            $build_js = str_replace('admin/partials', 'vite/',  $build_js);
+            $build_css = plugin_dir_url(dirname(dirname(dirname(__DIR__)))) . 'vite/count/dist/index.css';
+            $build_js = plugin_dir_url(dirname(dirname(dirname(__DIR__)))) . 'vite/count/dist/index.js';
             wp_enqueue_style(
-                MAGICK_MIXTURE_NAME . '_index_css',
+                MAGICK_MIXTURE_NAME . '_census_css',
                 $build_css,
                 array(),
                 MAGICK_MIXTURE_VERSION,
                 'all'
             );
             wp_enqueue_script(
-                MAGICK_MIXTURE_NAME . '_index_js',
+                MAGICK_MIXTURE_NAME . '_census_js',
                 $build_js,
                 array(),
                 MAGICK_MIXTURE_VERSION,
-                false
+                true
             );
 
             //传输数据给JS
@@ -71,7 +66,7 @@ if (!class_exists('MaBox_Census_Single')) {
                 'countData' => self::deliver_data(), //统计的数据信息
             );
 
-            wp_localize_script(MAGICK_MIXTURE_NAME . '_index_js', 'dataLocal', $MaBox_array); //传给vite项目
+            wp_localize_script(MAGICK_MIXTURE_NAME . '_census_js', 'dataLocal', $MaBox_array); //传给vite项目
         }
 
         /**

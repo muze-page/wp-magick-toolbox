@@ -1,0 +1,237 @@
+import React, { useState, useMemo, useCallback } from "react";
+import { Input, List, Typography, Tag, Button } from "antd";
+import { SearchOutlined, StarOutlined, StarFilled } from "@ant-design/icons";
+import { isFavorite, toggleFavorite } from "@/tool/favorites";
+
+const { Text } = Typography;
+
+export interface SearchItem {
+  id: string;
+  label: string;
+  tabKey: string;
+  tabLabel: string;
+  section?: string;
+  keywords?: string[];
+  tags?: string[];
+}
+
+export const searchIndex: SearchItem[] = [
+  // 优化 - 站点
+  { id: "optimize-site-hide_top_toolbar", label: "隐藏顶部工具条", tabKey: "2", tabLabel: "优化", section: "站点", keywords: ["toolbar", "顶部", "工具栏"], tags: ["推荐", "仅后台"] },
+  { id: "optimize-site-no_escape", label: "禁止 Title 转义", tabKey: "2", tabLabel: "优化", section: "站点", keywords: ["title", "转义"], tags: ["推荐"] },
+  { id: "optimize-site-remove_RSS_version", label: "移除 WP 版本号", tabKey: "2", tabLabel: "优化", section: "站点", keywords: ["version", "版本", "rss"], tags: ["推荐", "安全"] },
+  { id: "optimize-site-renew", label: "禁用自动更新", tabKey: "2", tabLabel: "优化", section: "站点", keywords: ["update", "更新"], tags: ["谨慎"] },
+  { id: "optimize-site-cdn_replace", label: "国内 CDN 替换", tabKey: "2", tabLabel: "优化", section: "站点", keywords: ["cdn", "加速"], tags: ["性能"] },
+  { id: "optimize-medium-img_add_tag", label: "图片自动添加 Alt", tabKey: "2", tabLabel: "优化", section: "媒体", keywords: ["alt", "图片", "seo"], tags: ["推荐", "SEO"] },
+  { id: "optimize-medium-no_auto_size", label: "禁止缩略图", tabKey: "2", tabLabel: "优化", section: "媒体", keywords: ["thumbnail", "缩略图"], tags: ["谨慎", "需主题兼容"] },
+  { id: "optimize-medium-upload_auto_name", label: "上传文件重命名", tabKey: "2", tabLabel: "优化", section: "媒体", keywords: ["rename", "重命名", "上传"], tags: ["推荐"] },
+  // 优化 - 后台
+  { id: "optimize-admin-add_user", label: "文章作者筛选", tabKey: "2", tabLabel: "优化", section: "后台", keywords: ["author", "作者", "筛选"] },
+  { id: "optimize-admin-add_time", label: "文章日期筛选", tabKey: "2", tabLabel: "优化", section: "后台", keywords: ["date", "日期", "筛选"] },
+  { id: "optimize-admin-show_id", label: "列表显示 ID 列", tabKey: "2", tabLabel: "优化", section: "后台", keywords: ["id", "列表"] },
+  { id: "optimize-admin-thumbnail_switcher", label: "缩略图切换", tabKey: "2", tabLabel: "优化", section: "后台", keywords: ["thumbnail", "缩略图"] },
+  // 页面 - 外观
+  { id: "page-feature-title", label: "动态标题", tabKey: "1", tabLabel: "页面", section: "外观", keywords: ["title", "标题", "标签页"] },
+  { id: "page-feature-top_loading", label: "顶部加载进度条", tabKey: "1", tabLabel: "页面", section: "外观", keywords: ["loading", "进度条", "加载"] },
+  { id: "page-feature-particle", label: "点击特效", tabKey: "1", tabLabel: "页面", section: "外观", keywords: ["click", "点击", "烟花", "粒子"], tags: ["性能"] },
+  { id: "page-feature-background_effect", label: "背景特效", tabKey: "1", tabLabel: "页面", section: "外观", keywords: ["background", "背景", "星空", "樱花", "线条"], tags: ["性能"] },
+  { id: "page-feature-bottom_effect", label: "页底特效", tabKey: "1", tabLabel: "页面", section: "外观", keywords: ["footer", "页底", "鱼群", "樱花"], tags: ["性能"] },
+  { id: "page-feature-lantern", label: "灯笼效果", tabKey: "1", tabLabel: "页面", section: "外观", keywords: ["lantern", "灯笼", "春节"], tags: ["性能"] },
+  { id: "page-jurisdiction-ban_copy", label: "禁止复制", tabKey: "1", tabLabel: "页面", section: "权限", keywords: ["copy", "复制"], tags: ["谨慎"] },
+  { id: "page-jurisdiction-ban_open_weixing", label: "禁止微信打开", tabKey: "1", tabLabel: "页面", section: "权限", keywords: ["wechat", "微信"], tags: ["谨慎"] },
+  { id: "page-function-top_ad", label: "顶部广告位", tabKey: "1", tabLabel: "页面", section: "功能", keywords: ["ad", "广告"], tags: ["安全"] },
+  { id: "page-function-maintenance_tips", label: "维护提示页", tabKey: "1", tabLabel: "页面", section: "功能", keywords: ["maintenance", "维护", "闭站"], tags: ["谨慎"] },
+  { id: "function-seo-seo_home", label: "首页 TDK", tabKey: "5", tabLabel: "功能", section: "SEO", keywords: ["tdk", "首页", "seo", "标题", "描述"], tags: ["推荐", "SEO"] },
+  { id: "function-seo-seo_single", label: "文章 SEO", tabKey: "5", tabLabel: "功能", section: "SEO", keywords: ["seo", "文章", "关键词"], tags: ["推荐", "SEO"] },
+  { id: "login-security-login_code", label: "登录验证码", tabKey: "3", tabLabel: "登录页", section: "安全", keywords: ["captcha", "验证码"], tags: ["推荐", "安全"] },
+  { id: "login-security-tecent", label: "腾讯防水墙", tabKey: "3", tabLabel: "登录页", section: "安全", keywords: ["tencent", "腾讯", "防水墙"] },
+  // 短代码
+  { id: "shortcode-compose-single_list", label: "文章列表短代码", tabKey: "7", tabLabel: "短代码", section: "板式", keywords: ["shortcode", "短代码", "文章列表"] },
+  { id: "shortcode-compose-single_copy", label: "复制短代码", tabKey: "7", tabLabel: "短代码", section: "板式", keywords: ["shortcode", "短代码", "复制"] },
+  { id: "shortcode-compose-runcode", label: "运行代码短代码", tabKey: "7", tabLabel: "短代码", section: "板式", keywords: ["shortcode", "短代码", "运行"] },
+  { id: "shortcode-compose-bilibili", label: "Bilibili 视频嵌入", tabKey: "7", tabLabel: "短代码", section: "板式", keywords: ["bilibili", "视频", "b站"] },
+  { id: "shortcode-compose-wx_unlock", label: "公众号解锁内容", tabKey: "7", tabLabel: "短代码", section: "板式", keywords: ["wechat", "微信", "公众号", "解锁"] },
+  { id: "shortcode-compose-reward", label: "打赏模块", tabKey: "7", tabLabel: "短代码", section: "板式", keywords: ["reward", "打赏", "收款"] },
+  { id: "shortcode-pendant-merc_map", label: "足迹地图", tabKey: "7", tabLabel: "短代码", section: "挂件", keywords: ["map", "地图", "足迹"] },
+  // 页面模版
+  { id: "template-static-triangle", label: "立体三角模版", tabKey: "8", tabLabel: "页面模版", section: "静态", keywords: ["triangle", "立体三角"] },
+  { id: "template-trends-special", label: "专题列表模版", tabKey: "8", tabLabel: "页面模版", section: "动态", keywords: ["special", "专题"] },
+  // 国内生态
+  { id: "domestic-compliance-icp", label: "ICP 备案号", tabKey: "10", tabLabel: "国内生态", section: "合规", keywords: ["icp", "备案", "合规"], tags: ["推荐"] },
+  { id: "domestic-compliance-police", label: "公安网备号", tabKey: "10", tabLabel: "国内生态", section: "合规", keywords: ["公安", "网备", "备案"], tags: ["推荐"] },
+  { id: "domestic-compliance-cookie", label: "Cookie 同意弹窗", tabKey: "10", tabLabel: "国内生态", section: "合规", keywords: ["cookie", "隐私", "弹窗"] },
+  { id: "domestic-compliance-copyright", label: "版权信息", tabKey: "10", tabLabel: "国内生态", section: "合规", keywords: ["copyright", "版权"] },
+  { id: "domestic-baidu-push", label: "百度收录推送", tabKey: "10", tabLabel: "国内生态", section: "百度推送", keywords: ["baidu", "百度", "推送", "收录"], tags: ["推荐", "SEO"] },
+  { id: "domestic-wechat-jssdk", label: "微信 JSSDK 分享", tabKey: "10", tabLabel: "国内生态", section: "微信生态", keywords: ["wechat", "微信", "分享", "jssdk"] },
+  { id: "domestic-wechat-guide", label: "微信打开引导", tabKey: "10", tabLabel: "国内生态", section: "微信生态", keywords: ["wechat", "微信", "引导", "遮层"] },
+  { id: "domestic-comment-blacklist", label: "评论敏感词过滤", tabKey: "10", tabLabel: "国内生态", section: "评论安全", keywords: ["comment", "评论", "敏感词", "黑名单"], tags: ["推荐", "安全"] },
+  { id: "domestic-comment-link-limit", label: "评论链接限制", tabKey: "10", tabLabel: "国内生态", section: "评论安全", keywords: ["comment", "评论", "链接", "垃圾"] },
+  { id: "domestic-comment-ip-rate", label: "评论 IP 频率限制", tabKey: "10", tabLabel: "国内生态", section: "评论安全", keywords: ["comment", "评论", "ip", "频率"] },
+  { id: "domestic-login-fail-limit", label: "登录失败限制", tabKey: "10", tabLabel: "国内生态", section: "登录安全", keywords: ["login", "登录", "限制", "暴力破解"], tags: ["推荐", "安全"] },
+  { id: "domestic-login-custom-url", label: "自定义登录地址", tabKey: "10", tabLabel: "国内生态", section: "登录安全", keywords: ["login", "登录", "地址", "隐藏"] },
+  { id: "domestic-login-ip-whitelist", label: "后台 IP 白名单", tabKey: "10", tabLabel: "国内生态", section: "登录安全", keywords: ["login", "登录", "ip", "白名单"], tags: ["安全"] },
+  // 性能优化
+  { id: "performance-oss", label: "对象存储 / OSS", tabKey: "11", tabLabel: "性能优化", section: "云存储", keywords: ["oss", "cos", "云存储", "阿里云", "腾讯云"], tags: ["性能"] },
+  { id: "performance-seo-checker", label: "SEO 检查助手", tabKey: "11", tabLabel: "性能优化", section: "SEO", keywords: ["seo", "检查", "alt", "健康度"], tags: ["SEO"] },
+  { id: "performance-media-health", label: "媒体库体检", tabKey: "11", tabLabel: "性能优化", section: "媒体", keywords: ["media", "媒体", "图片", "alt", "体检"] },
+  { id: "performance-search-highlight", label: "搜索关键词高亮", tabKey: "11", tabLabel: "性能优化", section: "搜索", keywords: ["search", "搜索", "高亮", "关键词"] },
+  { id: "performance-db-clean", label: "数据库清理优化", tabKey: "11", tabLabel: "性能优化", section: "数据库", keywords: ["db", "数据库", "清理", "优化", "修订版本"], tags: ["推荐", "性能"] },
+];
+
+interface FeatureSearchProps {
+  onNavigate: (tabKey: string, itemId: string) => void;
+}
+
+const FeatureSearch: React.FC<FeatureSearchProps> = ({ onNavigate }) => {
+  const [keyword, setKeyword] = useState("");
+  const [open, setOpen] = useState(false);
+  const [favRefresh, setFavRefresh] = useState(0);
+
+  const handleToggleFavorite = (e: React.MouseEvent, itemId: string) => {
+    e.stopPropagation();
+    toggleFavorite(itemId);
+    setFavRefresh((k) => k + 1);
+  };
+
+  useMemo(() => {
+    return favRefresh;
+  }, [favRefresh]);
+
+  const results = useMemo(() => {
+    if (!keyword.trim()) return [];
+    const kw = keyword.toLowerCase().trim();
+    return searchIndex.filter(
+      (item) =>
+        item.label.toLowerCase().includes(kw) ||
+        (item.keywords && item.keywords.some((k) => k.toLowerCase().includes(kw))) ||
+        (item.section && item.section.toLowerCase().includes(kw))
+    );
+  }, [keyword]);
+
+  const handleSelect = useCallback(
+    (item: SearchItem) => {
+      onNavigate(item.tabKey, item.id);
+      setKeyword("");
+      setOpen(false);
+    },
+    [onNavigate]
+  );
+
+  const tagColorMap: Record<string, string> = {
+    "推荐": "green",
+    "SEO": "blue",
+    "安全": "red",
+    "性能": "orange",
+    "谨慎": "volcano",
+    "仅前台": "purple",
+    "仅后台": "cyan",
+    "需主题兼容": "gold",
+  };
+
+  const highlightText = (text: string) => {
+    if (!keyword.trim()) return text;
+    const idx = text.toLowerCase().indexOf(keyword.toLowerCase());
+    if (idx === -1) return text;
+    return (
+      <>
+        {text.slice(0, idx)}
+        <Text strong style={{ color: "#1677ff" }}>
+          {text.slice(idx, idx + keyword.length)}
+        </Text>
+        {text.slice(idx + keyword.length)}
+      </>
+    );
+  };
+
+  return (
+    <div style={{ position: "relative", width: 280 }}>
+      <Input
+        prefix={<SearchOutlined style={{ color: "#bfbfbf" }} />}
+        placeholder="搜索 90+ 功能..."
+        value={keyword}
+        onChange={(e) => {
+          setKeyword(e.target.value);
+          setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+        allowClear
+        style={{ borderRadius: 6 }}
+      />
+      {open && results.length > 0 && (
+        <div
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            right: 0,
+            zIndex: 1050,
+            marginTop: 4,
+            background: "#fff",
+            borderRadius: 8,
+            boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
+            maxHeight: 400,
+            overflow: "auto",
+          }}
+        >
+          <List
+            size="small"
+            dataSource={results.slice(0, 20)}
+            renderItem={(item) => (
+              <List.Item
+                style={{
+                  cursor: "pointer",
+                  padding: "8px 16px",
+                }}
+                onClick={() => handleSelect(item)}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = "#f5f5f5";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = "transparent";
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 8, width: "100%" }}>
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={isFavorite(item.id) ? <StarFilled style={{ color: "#faad14" }} /> : <StarOutlined />}
+                    onClick={(e) => handleToggleFavorite(e, item.id)}
+                    style={{ padding: 0, minWidth: 24 }}
+                  />
+                  <span style={{ flex: 1 }}>{highlightText(item.label)}</span>
+                  {item.tags && item.tags.map((tag) => (
+                    <Tag color={tagColorMap[tag] || "default"} key={tag} style={{ margin: 0, fontSize: 11 }}>
+                      {tag}
+                    </Tag>
+                  ))}
+                </div>
+              </List.Item>
+            )}
+          />
+        </div>
+      )}
+      {open && keyword.trim() && results.length === 0 && (
+        <div
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            right: 0,
+            zIndex: 1050,
+            marginTop: 4,
+            background: "#fff",
+            borderRadius: 8,
+            boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
+            padding: "16px",
+            textAlign: "center",
+            color: "#999",
+          }}
+        >
+          未找到匹配的功能
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default FeatureSearch;

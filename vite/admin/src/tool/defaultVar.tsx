@@ -56,6 +56,13 @@ const OptimizeSite = {
   search_link_simplify: boo, //搜索链接简化
   remove_sitemap_users: boo, //安全 - 移除 wp-sitemap-users
   user_list_show_nickname: boo, //用户列表展示昵称
+  cdn_replace: boo, //国内CDN替换
+  cdn_gravatar: boo, //Gravatar头像替换
+  cdn_gravatar_mirror: 'gravatar.loli.net/avatar/', //Gravatar镜像地址
+  cdn_google_fonts: boo, //Google Fonts替换
+  cdn_google_fonts_mirror: 'fonts.loli.net', //Google Fonts镜像地址
+  cdn_google_ajax: boo, //Google Ajax替换
+  cdn_custom: '', //自定义CDN替换规则
 };
 
 //优化  媒体
@@ -85,6 +92,14 @@ const PageComment = {
   english: boo, //禁止纯英文评论
   only: boo, //单篇文章仅限评论一次
   modify_comment_user: boo, //修改评论区管理员样式ID
+  sensitive_words: boo, //敏感词过滤
+  sensitive_words_list: '', //敏感词列表
+  sensitive_words_action: 'replace', //处理方式
+  sensitive_words_replace_char: '***', //替换字符
+  baidu_moderation: boo, //百度文本审核
+  baidu_moderation_api_key: '', //百度API Key
+  baidu_moderation_secret_key: '', //百度Secret Key
+  baidu_moderation_action: 'mark', //审核不通过处理
 };
 
 //页面 - 外观特效
@@ -109,6 +124,9 @@ const PageFeature = {
   page_scrolling: boo, //平滑滚动
 
   background_effect: "false", //背景特效
+  reading_progress: boo, //页顶阅读进度条
+  reading_progress_color: "#1677ff", //进度条颜色
+  reading_progress_height: 3, //进度条高度
 };
 
 //页面 功能
@@ -154,11 +172,21 @@ const PageFunction = {
   header_notice_color: "#1677ff", //通知颜色
   header_notice_link: "", //通知链接
   header_notice_dismissible: true, //可关闭
+  anti_crawler: boo, //进阶防刷
+  anti_crawler_max_requests: 60, //最大请求数
+  anti_crawler_time_window: 60, //时间窗口(秒)
+  anti_crawler_tecent_id: '', //腾讯防水墙AppID
+  anti_crawler_tecent_key: '', //腾讯防水墙AppKey
 };
 
 // 页面 - 权限
 const PageJurisdiction = {
   ban_open_weixing: boo, //禁止在微信中打开
+  ban_open_weixing_mode: 'alert', //微信处理方式
+  wechat_guide_text: '点击右上角 ··· 在浏览器中打开', //微信引导语
+  wechat_xcx_guide: boo, //显示小程序引导
+  wechat_xcx_guide_text: '在小程序中打开', //小程序引导文字
+  wechat_xcx_link: '', //小程序链接
   ban_open_qq: boo, //禁止在QQ中打开
   front_debug: boo, //前端调试
   ban_copy: boo, //禁止复制
@@ -258,6 +286,20 @@ const CodeCompose = {
   single_list: boo, //文章列表
   single_copy: boo, //复制
   runcode: boo, //运行代码
+  bilibili: boo, //Bilibili视频嵌入
+  wx_unlock: boo, //公众号解锁内容
+  wx_unlock_name: '', //公众号名称
+  wx_unlock_qrcode: '', //公众号二维码
+  wx_unlock_codes: '', //验证码列表
+  wx_unlock_tip: '关注公众号获取验证码', //解锁提示
+  wx_unlock_keyword_tip: '关注公众号，发送关键词获取验证码', //关键词提示
+  reward: boo, //打赏模块
+  reward_wx_qr: '', //微信收款码
+  reward_ali_qr: '', //支付宝收款码
+  reward_title: '感谢您的支持', //打赏标题
+  reward_wx_text: '微信', //微信标签
+  reward_ali_text: '支付宝', //支付宝标签
+  reward_btn_text: '打赏', //按钮文字
 };
 
 //挂件
@@ -283,6 +325,118 @@ const TemplateStatic = {
 //动态
 const TemplateTrends = {
   special: boo, //专题列表
+};
+
+//国内生态 - 备案与合规
+const DomesticCompliance = {
+  icp_enabled: boo,
+  icp_number: '',
+  icp_link: 'https://beian.miit.gov.cn/',
+  police_enabled: boo,
+  police_number: '',
+  police_link: 'https://www.beian.gov.cn/portal/registerSystemInfo',
+  cookie_enabled: boo,
+  cookie_style: 'bottom',
+  cookie_title: 'Cookie 同意',
+  cookie_content: '本网站使用 Cookie 来改善您的体验。继续浏览即表示您同意我们的 Cookie 政策。',
+  cookie_button: '我知道了',
+  copyright_enabled: boo,
+  copyright_html: '',
+};
+
+//国内生态 - 百度推送
+const DomesticBaiduPush = {
+  active_push_enabled: boo,
+  site: '',
+  token: '',
+  auto_push_enabled: boo,
+  batch_push_enabled: boo,
+};
+
+//国内生态 - 微信生态
+const DomesticWechat = {
+  jssdk_enabled: boo,
+  appid: '',
+  appsecret: '',
+  guide_overlay_enabled: boo,
+  guide_mode: 'guide',
+  guide_text: '点击右上角 ··· 在浏览器中打开',
+  guide_qrcode: '',
+};
+
+//国内生态 - 评论安全
+const DomesticCommentSecurity = {
+  blacklist_enabled: boo,
+  blacklist_words: '',
+  blacklist_action: 'block',
+  link_limit_enabled: boo,
+  link_limit_count: 2,
+  nickname_filter_enabled: boo,
+  nickname_filter_words: '',
+  email_domain_enabled: boo,
+  email_domain_blacklist: '10minutemail.com,guerrillamail.com,temp-mail.org',
+  duplicate_enabled: boo,
+  ip_rate_enabled: boo,
+  ip_rate_limit: 5,
+  ip_rate_window: 60,
+  log_enabled: boo,
+};
+
+//国内生态 - 登录安全
+const DomesticLoginSecurity = {
+  fail_limit_enabled: boo,
+  fail_limit_count: 5,
+  fail_lock_duration: 30,
+  ip_lock_enabled: boo,
+  ip_lock_count: 10,
+  ip_lock_duration: 60,
+  custom_login_enabled: boo,
+  custom_login_slug: 'my-login',
+  ban_enumeration_enabled: boo,
+  login_notify_enabled: boo,
+  login_log_enabled: boo,
+  ip_whitelist_enabled: boo,
+  ip_whitelist: '',
+};
+
+//性能优化 - 对象存储
+const PerformanceOss = {
+  enabled: boo,
+  provider: 'aliyun',
+  access_key: '',
+  secret_key: '',
+  bucket: '',
+  region: '',
+  domain: '',
+  delete_local: boo,
+};
+
+//性能优化 - SEO检查
+const PerformanceSeoChecker = {
+  enabled: boo,
+};
+
+//性能优化 - 媒体库体检
+const PerformanceMediaHealth = {
+  enabled: boo,
+};
+
+//性能优化 - 搜索增强
+const PerformanceSearchEnhance = {
+  highlight_enabled: boo,
+  recommend_enabled: boo,
+  hotwords_enabled: boo,
+};
+
+//性能优化 - 数据库清理
+const PerformanceDbClean = {
+  enabled: boo,
+  clean_revisions: boo,
+  clean_drafts: boo,
+  clean_spam_comments: boo,
+  clean_transients: boo,
+  auto_clean: boo,
+  auto_clean_schedule: 'weekly',
 };
 
 export const defaultVarOption = {
@@ -326,6 +480,22 @@ export const defaultVarOption = {
   template: {
     static: TemplateStatic, //静态
     trends: TemplateTrends, //动态
+  },
+  //国内生态
+  domestic: {
+    compliance: DomesticCompliance,
+    baidu_push: DomesticBaiduPush,
+    wechat: DomesticWechat,
+    comment_security: DomesticCommentSecurity,
+    login_security: DomesticLoginSecurity,
+  },
+  //性能优化
+  performance: {
+    oss: PerformanceOss,
+    seo_checker: PerformanceSeoChecker,
+    media_health: PerformanceMediaHealth,
+    search_enhance: PerformanceSearchEnhance,
+    db_clean: PerformanceDbClean,
   },
 };
 export const defaultVarData = {

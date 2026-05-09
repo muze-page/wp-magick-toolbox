@@ -14,42 +14,58 @@ if (!class_exists('Npcink_Page_Hide_Category')) {
             self::$id_array = $array;
             self::$tip_content = $id_tip_content;
             add_action('the_content', array(__CLASS__, 'restrict_content_for_specific_categories'));
+            add_action('wp_footer', array(__CLASS__, 'hide_download_for_restricted_categories'));
         }
 
         public static function restrict_content_for_specific_categories($content)
         {
-            // 定义受限的分类ID数组
-            $restricted_category_ids = self::$id_array; // 将这里替换为你想要限制的分类ID数组
+            $restricted_category_ids = self::$id_array;
 
-            // 检查文章是否属于受限的分类
             if (in_category($restricted_category_ids)) {
-                if (!is_user_logged_in()) {
-                    // 如果用户未登录，则将文章内容替换为登录提示
-                    // 转义
-
+                if (!MaBox_Helpers::is_logged_in()) {
+                    // 首先移除内容中的下载框 HTML（服务端过滤，非仅 CSS 隐藏）
+                    $content = self::strip_download_boxes($content);
+                    // 然后替换为登录提示
                     $content = self::$tip_content;
-                    add_action('wp_footer', array(__CLASS__, 'covert_content')); //使用jS隐藏文章内容
+                    self::enqueue_assets();
                 }
             }
             return $content;
         }
-        //覆盖文章内容
-        public static function covert_content()
+
+        /**
+         * 从内容中移除下载框 HTML（服务端过滤）
+         */
+        private static function strip_download_boxes($content)
         {
-            // 将 PHP 变量转义为 JavaScript 友好的格式
-            // $tip_content = esc_js(self::$tip_content);
-            // 只保留 HTML 标记
+            // 移除常见的下载框 HTML 模式
+            $patterns = array(
+                // B2 主题下载框
+                '/<div[^>]*class="[^"]*b2-down-box[^"]*"[^>]*>.*?<\/div>/is',
+                // 通用下载框
+                '/<div[^>]*class="[^"]*(?:down-box|post-download|download-box)[^"]*"[^>]*>.*?<\/div>/is',
+                // 短代码形式的下载框
+                '/\[download[^\]]*\].*?\[\/download\]/is',
+            );
+            return preg_replace($patterns, '', $content);
+        }
+
+        public static function hide_download_for_restricted_categories()
+        {
+            if (MaBox_Helpers::is_logged_in()) {
+                return;
+            }
+
+            if (in_category(self::$id_array)) {
+                echo '<style>.b2-down-box, .down-box, .post-download, .download-box, .m-box.down { display: none !important; }</style>';
+            }
+        }
+        public static function enqueue_assets()
+        {
+            wp_enqueue_script(MAGICK_MIXTURE_NAME . '_hide_category', '', array(), MAGICK_MIXTURE_VERSION, true);
             $tip_content = wp_kses_post(self::$tip_content);
-?>
-            <script>
-                // 获取 .entry-content 元素，文章内容
-                const entryContent = document.querySelector(".entry-content");
-                // 设置新的内容
-                if (entryContent) {
-                    entryContent.innerHTML = '<?php echo $tip_content ?>';
-                }
-            </script>
-<?php
+            $js = "const entryContent = document.querySelector('.entry-content'); if (entryContent) { entryContent.innerHTML = '" . $tip_content . "'; }";
+            wp_add_inline_script(MAGICK_MIXTURE_NAME . '_hide_category', $js);
         }
     }
 }

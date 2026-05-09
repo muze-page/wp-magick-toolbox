@@ -1,87 +1,124 @@
 import React from "react";
-import { useState } from "react";
-import { Tabs, Layout, Affix } from "antd";
+import { useState, lazy, Suspense, useEffect, useRef, useCallback } from "react";
+import { Tabs, Layout, Affix, Spin } from "antd";
 import type { TabsProps } from "antd";
 
 import { defaultOption, DataContext } from "@/tool/dataContext";
 import Save from "@/tool/save";
+import FeatureSearch from "@/components/feature-search";
 
-import Optimize from "@/components/optimize/index";
-import Page from "@/components/page/index";
-import Function from "@/components/function/index";
-import Login from "@/components/login/index";
-import H5 from "@/components/h5/index";
-import About from "@/components/about/index";
-import Shortcode from "@/components/shortcode/index";
-import Template from "@/components/template/index";
+// 懒加载各 Tab 组件
+const Dashboard = lazy(() => import("@/components/dashboard/index"));
+const Page = lazy(() => import("@/components/page/index"));
+const Optimize = lazy(() => import("@/components/optimize/index"));
+const Login = lazy(() => import("@/components/login/index"));
+const H5 = lazy(() => import("@/components/h5/index"));
+const Function = lazy(() => import("@/components/function/index"));
+const Shortcode = lazy(() => import("@/components/shortcode/index"));
+const Template = lazy(() => import("@/components/template/index"));
+const Domestic = lazy(() => import("@/components/domestic/index"));
+const Performance = lazy(() => import("@/components/performance/index"));
+const About = lazy(() => import("@/components/about/index"));
 
-const items: TabsProps["items"] = [
-  {
-    key: "1",
-    label: `页面`,
-    children: <Page />,
-  },
-  {
-    key: "2",
-    label: `优化`,
-    children: <Optimize />,
-  },
-  {
-    key: "3",
-    label: `登录页`,
-    children: <Login />,
-  },
-  {
-    key: "4",
-    label: `H5`,
-    children: <H5 />,
-  },
-  {
-    key: "5",
-    label: `功能`,
-    children: <Function />,
-  },
-  {
-    key: "7",
-    label: `短代码`,
-    children: <Shortcode />,
-  },
-  {
-    key: "8",
-    label: `页面模版`,
-    children: <Template />,
-  },
-  {
-    key: "9",
-    label: `关于`,
-    children: <About />,
-  },
-];
+const TabFallback = (
+  <div style={{ display: "flex", justifyContent: "center", padding: "48px" }}>
+    <Spin size="large" />
+  </div>
+);
 
 const App: React.FC = () => {
-  //准备传来的选项值
   const [optionData, setOptionData] = useState(defaultOption);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [activeTab, setActiveTab] = useState("0");
+  const tabsRef = useRef<any>(null);
 
-  //修改选项值方法
-  /**
-   *
-   * @param father 父级对象键
-   * @param son 子级对象键
-   * @param newValue 更改的对象值
-   */
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const updateOption = (father: string, son: string, newValue: any) => {
     setOptionData((prevOptionData) => {
       const updatedOptionData = { ...prevOptionData };
-
       if (!updatedOptionData[father]) {
         updatedOptionData[father] = {};
       }
-
       updatedOptionData[father][son] = newValue;
-
       return updatedOptionData;
     });
   };
+
+  const handleSearchNavigate = useCallback((tabKey: string, itemId: string) => {
+    setActiveTab(tabKey);
+    setTimeout(() => {
+      const el = document.getElementById(itemId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.style.transition = "background 0.3s";
+        el.style.background = "#e6f4ff";
+        setTimeout(() => { el.style.background = ""; }, 2000);
+      }
+    }, 100);
+  }, []);
+
+  const items: TabsProps["items"] = [
+    {
+      key: "0",
+      label: `仪表盘`,
+      children: <Suspense fallback={TabFallback}><Dashboard onNavigate={handleSearchNavigate} /></Suspense>,
+    },
+    {
+      key: "1",
+      label: `页面`,
+      children: <Suspense fallback={TabFallback}><Page /></Suspense>,
+    },
+    {
+      key: "2",
+      label: `优化`,
+      children: <Suspense fallback={TabFallback}><Optimize /></Suspense>,
+    },
+    {
+      key: "3",
+      label: `登录页`,
+      children: <Suspense fallback={TabFallback}><Login /></Suspense>,
+    },
+    {
+      key: "4",
+      label: `H5`,
+      children: <Suspense fallback={TabFallback}><H5 /></Suspense>,
+    },
+    {
+      key: "5",
+      label: `功能`,
+      children: <Suspense fallback={TabFallback}><Function /></Suspense>,
+    },
+    {
+      key: "7",
+      label: `短代码`,
+      children: <Suspense fallback={TabFallback}><Shortcode /></Suspense>,
+    },
+    {
+      key: "8",
+      label: `页面模版`,
+      children: <Suspense fallback={TabFallback}><Template /></Suspense>,
+    },
+    {
+      key: "10",
+      label: `国内生态`,
+      children: <Suspense fallback={TabFallback}><Domestic /></Suspense>,
+    },
+    {
+      key: "11",
+      label: `性能优化`,
+      children: <Suspense fallback={TabFallback}><Performance /></Suspense>,
+    },
+    {
+      key: "9",
+      label: `关于`,
+      children: <Suspense fallback={TabFallback}><About /></Suspense>,
+    },
+  ];
 
   const { Header, Footer, Content } = Layout;
 
@@ -108,11 +145,18 @@ const App: React.FC = () => {
           <Layout>
             <Affix offsetTop={30}>
               <Header style={headerStyle}>
-                <HeaderBlock />
+                <HeaderBlock onNavigate={handleSearchNavigate} />
               </Header>
             </Affix>
             <Content className="mabox_content">
-              <Tabs defaultActiveKey="1" tabPosition="left" items={items} />
+              <Tabs
+                activeKey={activeTab}
+                onChange={setActiveTab}
+                defaultActiveKey="0"
+                tabPosition={isMobile ? "top" : "left"}
+                items={items}
+                ref={tabsRef}
+              />
             </Content>
             <Footer style={footerStyle}>
               <div className="float-right">
@@ -126,7 +170,7 @@ const App: React.FC = () => {
   );
 };
 
-const HeaderBlock: React.FC = () => {
+const HeaderBlock: React.FC<{ onNavigate: (tabKey: string, itemId: string) => void }> = ({ onNavigate }) => {
   return (
     <>
       <h1 className="text-2xl leading-7 font-medium">
@@ -137,6 +181,7 @@ const HeaderBlock: React.FC = () => {
           </a>
         </small>
       </h1>
+      <FeatureSearch onNavigate={onNavigate} />
       <Save />
     </>
   );

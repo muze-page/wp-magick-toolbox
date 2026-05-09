@@ -2,7 +2,7 @@
  * 短代码 挂件
  */
 import { useState, useContext, useEffect } from "react";
-import { Form, Switch } from "antd";
+import { Form } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { CodePendant } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
@@ -10,6 +10,7 @@ import { AntConfig } from "@/tool/tool";
 import Map from "@/basic/mapTable";
 import Zuji from "@/assets/shortcode/pendant/足迹.png";
 import Preview from "@/basic/preview";
+import FeatureSwitch from "@/basic/feature-switch";
 
 type FieldType = CodePendant;
 //Ant 组件配置
@@ -44,8 +45,8 @@ const App: React.FC = () => {
     <>
       <Form
         name="pendant"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         initialValues={publicData}
         autoComplete="off"
@@ -57,6 +58,7 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="shortcode-pendant-merc_map"
           label="足迹地图"
           name="merc_map"
           valuePropName="checked"
@@ -67,7 +69,7 @@ const App: React.FC = () => {
             </>
           }
         >
-          <Switch />
+          <FeatureSwitch featureId="shortcode-pendant-merc_map" />
         </Form.Item>
         {formData.merc_map && (
           <>

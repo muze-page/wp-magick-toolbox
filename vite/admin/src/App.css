@@ -39,15 +39,35 @@
   padding-top: 2em;
 }
 
+.mabox_content {
+  margin-top: 1em;
+}
+
 @media (max-width: 768px) {
   .MaBox_option {
     width: 100%;
-    padding: 1em;
+    padding: 0.5em;
   }
-}
 
-.mabox_content{
-  margin-top: 1em;
+  .mabox_content {
+    margin-top: 0.5em;
+  }
+
+  .ant-tabs-left > .ant-tabs-nav {
+    width: 100% !important;
+  }
+
+  .ant-tabs-left > .ant-tabs-nav .ant-tabs-tab {
+    padding: 8px 16px;
+  }
+
+  .ant-form-item .ant-form-item-label {
+    padding-bottom: 4px;
+  }
+
+  .ant-form-item .ant-form-item-control {
+    margin-top: 4px;
+  }
 }
 
 /* 分类菜单 */

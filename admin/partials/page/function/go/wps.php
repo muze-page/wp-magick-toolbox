@@ -16,6 +16,15 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
     <title><?php echo $site_name ?> - 安全中心</title>
     <link rel="shortcut icon" href="<?php echo $favicon_url ?>" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href=<?php echo $url . "wps.css" ?>>
+    <style>
+    @media (max-width: 768px) {
+        .component-modal-wrap { padding: 20px; }
+        .modal-body { left: 50% !important; top: 50% !important; transform: translate(-50%, -50%); width: 90% !important; max-width: 400px; }
+        .dialog-content { padding: 0 16px; }
+        .dialog-foot { flex-wrap: wrap; gap: 8px; }
+        .component-text-btn { flex: 1; min-width: 120px; text-align: center; }
+    }
+    </style>
 </head>
 
 <body>

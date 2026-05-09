@@ -60,8 +60,8 @@ const App: React.FC = () => {
     <>
       <Form
         name="down_database"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         //自动填充功能禁用
         autoComplete="off"

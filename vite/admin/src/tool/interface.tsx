@@ -50,6 +50,22 @@ export type Option = {
     static: TemplateStatic; //静态
     trends: TemplateTrends; //动态
   };
+  //国内生态
+  domestic: {
+    compliance: DomesticCompliance; //备案与合规
+    baidu_push: DomesticBaiduPush; //百度推送
+    wechat: DomesticWechat; //微信生态
+    comment_security: DomesticCommentSecurity; //评论安全
+    login_security: DomesticLoginSecurity; //登录安全
+  };
+  //性能优化
+  performance: {
+    oss: PerformanceOss; //对象存储
+    seo_checker: PerformanceSeoChecker; //SEO检查
+    media_health: PerformanceMediaHealth; //媒体库体检
+    search_enhance: PerformanceSearchEnhance; //搜索增强
+    db_clean: PerformanceDbClean; //数据库清理
+  };
 };
 
 /**
@@ -74,6 +90,13 @@ export type OptimizeSite = {
   search_link_simplify: boolean; //搜索链接简化
   remove_sitemap_users: boolean; //安全 - 移除 wp-sitemap-users
   user_list_show_nickname: boolean; //用户列表展示昵称
+  cdn_replace: boolean; //国内CDN替换
+  cdn_gravatar: boolean; //Gravatar头像替换
+  cdn_gravatar_mirror: string; //Gravatar镜像地址
+  cdn_google_fonts: boolean; //Google Fonts替换
+  cdn_google_fonts_mirror: string; //Google Fonts镜像地址
+  cdn_google_ajax: boolean; //Google Ajax替换
+  cdn_custom: string; //自定义CDN替换规则
 };
 
 //优化 媒体
@@ -104,6 +127,14 @@ export type PageComment = {
   english: boolean; //禁止纯英文评论
   only: boolean; //单篇文章仅限评论一次
   modify_comment_user: boolean; //修改评论区管理员样式ID
+  sensitive_words: boolean; //敏感词过滤
+  sensitive_words_list: string; //敏感词列表
+  sensitive_words_action: string; //处理方式: replace/block
+  sensitive_words_replace_char: string; //替换字符
+  baidu_moderation: boolean; //百度文本审核
+  baidu_moderation_api_key: string; //百度API Key
+  baidu_moderation_secret_key: string; //百度Secret Key
+  baidu_moderation_action: string; //审核不通过处理: block/mark
 };
 
 //页面 - 外观特效
@@ -128,6 +159,9 @@ export type PageFeature = {
   page_scrolling: boolean; //平滑滚动
 
   background_effect: string; //背景特效
+  reading_progress: boolean; //页顶阅读进度条
+  reading_progress_color: string; //进度条颜色
+  reading_progress_height: number; //进度条高度
 };
 
 //页面 - 功能
@@ -172,11 +206,21 @@ export type PageFunction = {
   header_notice_color: string; //通知颜色
   header_notice_link: string; //通知链接
   header_notice_dismissible: boolean; //可关闭
+  anti_crawler: boolean; //进阶防刷
+  anti_crawler_max_requests: number; //最大请求数
+  anti_crawler_time_window: number; //时间窗口(秒)
+  anti_crawler_tecent_id: string; //腾讯防水墙AppID
+  anti_crawler_tecent_key: string; //腾讯防水墙AppKey
 };
 
 // 页面 - 权限
 export type PageJurisdiction = {
   ban_open_weixing: boolean; //禁止在微信中打开
+  ban_open_weixing_mode: string; //微信处理方式: alert/optimize
+  wechat_guide_text: string; //微信引导语
+  wechat_xcx_guide: boolean; //显示小程序引导
+  wechat_xcx_guide_text: string; //小程序引导文字
+  wechat_xcx_link: string; //小程序链接
   ban_open_qq: boolean; //禁止在QQ中打开
   front_debug: boolean; //前端调试
   ban_copy: boolean; //禁止复制
@@ -276,6 +320,20 @@ export type CodeCompose = {
   single_list: boolean; //文章列表
   single_copy: boolean; //复制
   runcode: boolean; //运行代码
+  bilibili: boolean; //Bilibili视频嵌入
+  wx_unlock: boolean; //公众号解锁内容
+  wx_unlock_name: string; //公众号名称
+  wx_unlock_qrcode: string; //公众号二维码
+  wx_unlock_codes: string; //验证码列表
+  wx_unlock_tip: string; //解锁提示
+  wx_unlock_keyword_tip: string; //关键词提示
+  reward: boolean; //打赏模块
+  reward_wx_qr: string; //微信收款码
+  reward_ali_qr: string; //支付宝收款码
+  reward_title: string; //打赏标题
+  reward_wx_text: string; //微信标签
+  reward_ali_text: string; //支付宝标签
+  reward_btn_text: string; //按钮文字
 };
 
 //挂件
@@ -303,4 +361,108 @@ export type TemplateStatic = {
 //动态
 export type TemplateTrends = {
   special: boolean; //专题列表
+};
+
+// ===== 国内生态 =====
+export type DomesticCompliance = {
+  icp_enabled: boolean;
+  icp_number: string;
+  icp_link: string;
+  police_enabled: boolean;
+  police_number: string;
+  police_link: string;
+  cookie_enabled: boolean;
+  cookie_style: string;
+  cookie_title: string;
+  cookie_content: string;
+  cookie_button: string;
+  copyright_enabled: boolean;
+  copyright_html: string;
+};
+
+export type DomesticBaiduPush = {
+  active_push_enabled: boolean;
+  site: string;
+  token: string;
+  auto_push_enabled: boolean;
+  batch_push_enabled: boolean;
+};
+
+export type DomesticWechat = {
+  jssdk_enabled: boolean;
+  appid: string;
+  appsecret: string;
+  guide_overlay_enabled: boolean;
+  guide_mode: string;
+  guide_text: string;
+  guide_qrcode: string;
+};
+
+export type DomesticCommentSecurity = {
+  blacklist_enabled: boolean;
+  blacklist_words: string;
+  blacklist_action: string;
+  link_limit_enabled: boolean;
+  link_limit_count: number;
+  nickname_filter_enabled: boolean;
+  nickname_filter_words: string;
+  email_domain_enabled: boolean;
+  email_domain_blacklist: string;
+  duplicate_enabled: boolean;
+  ip_rate_enabled: boolean;
+  ip_rate_limit: number;
+  ip_rate_window: number;
+  log_enabled: boolean;
+};
+
+export type DomesticLoginSecurity = {
+  fail_limit_enabled: boolean;
+  fail_limit_count: number;
+  fail_lock_duration: number;
+  ip_lock_enabled: boolean;
+  ip_lock_count: number;
+  ip_lock_duration: number;
+  custom_login_enabled: boolean;
+  custom_login_slug: string;
+  ban_enumeration_enabled: boolean;
+  login_notify_enabled: boolean;
+  login_log_enabled: boolean;
+  ip_whitelist_enabled: boolean;
+  ip_whitelist: string;
+};
+
+// ===== 性能优化 =====
+export type PerformanceOss = {
+  enabled: boolean;
+  provider: string;
+  access_key: string;
+  secret_key: string;
+  bucket: string;
+  region: string;
+  domain: string;
+  delete_local: boolean;
+};
+
+export type PerformanceSeoChecker = {
+  enabled: boolean;
+};
+
+export type PerformanceMediaHealth = {
+  enabled: boolean;
+};
+
+export type PerformanceSearchEnhance = {
+  highlight_enabled: boolean;
+  recommend_enabled: boolean;
+  hotwords_enabled: boolean;
+};
+
+export type PerformanceDbClean = {
+  enabled: boolean;
+  clean_revisions: boolean;
+  clean_drafts: boolean;
+  clean_spam_comments: boolean;
+  clean_transients: boolean;
+  auto_clean: boolean;
+  auto_clean_schedule: string;
 };

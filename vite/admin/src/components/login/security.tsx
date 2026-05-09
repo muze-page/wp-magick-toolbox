@@ -10,6 +10,7 @@ import { DataContext } from "@/tool/dataContext";
 import { LoginSecurity } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
+import FeatureSwitch from "@/basic/feature-switch";
 
 //选项类型
 type FieldType = LoginSecurity;
@@ -49,8 +50,8 @@ const App: React.FC = () => {
     <>
       <Form
         name="login_security"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
@@ -65,6 +66,7 @@ const App: React.FC = () => {
           <h2>登录安全</h2>
         </Form.Item>
         <Form.Item<FieldType>
+          id="login-security-replace_login_error"
           label="替换登录报错信息"
           name="replace_login_error"
           valuePropName="checked"

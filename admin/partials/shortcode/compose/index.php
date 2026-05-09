@@ -41,6 +41,33 @@ if (!class_exists('MaBox_ShortCode_Compose')) {
                  <option value="</runcode>">在线运行代码-结束</option>
                ';
              }
+             //Bilibili视频嵌入
+             $bilibili = MaBox_Admin::get_config($option, 'bilibili');
+             if ($bilibili === true) {
+                 require_once plugin_dir_path(__FILE__) . 'bilibili/index.php';
+                 MaBox_ShortCode_Bilibili::run();
+                 self::$option_list .= '
+                 <option value="[mabox_bilibili bvid=&quot;BV号&quot;]">Bilibili视频</option>
+               ';
+             }
+             //公众号解锁
+             $wx_unlock = MaBox_Admin::get_config($option, 'wx_unlock');
+             if ($wx_unlock === true) {
+                 require_once plugin_dir_path(__FILE__) . 'wx_unlock/index.php';
+                 MaBox_ShortCode_Wx_Unlock::run();
+                 self::$option_list .= '
+                 <option value="[mabox_wx_unlock]隐藏内容[/mabox_wx_unlock]">公众号解锁</option>
+               ';
+             }
+             //打赏模块
+             $reward = MaBox_Admin::get_config($option, 'reward');
+             if ($reward === true) {
+                 require_once plugin_dir_path(__FILE__) . 'reward/index.php';
+                 MaBox_ShortCode_Reward::run();
+                 self::$option_list .= '
+                 <option value="[mabox_reward]">打赏按钮</option>
+               ';
+             }
         }
     } //end
 }

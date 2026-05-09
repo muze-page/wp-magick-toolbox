@@ -14,8 +14,20 @@ global $wpdb;
 // 删除自定义字段
 delete_post_meta_by_key('mabox_trends_special');
 
-// 删除插件选项
+// 删除插件选项（旧版单键 + 2.1.0 拆分后的模块键）
 delete_option('Magick_ToolBox_Option');
+delete_option('Magick_ToolBox_Option_Optimize');
+delete_option('Magick_ToolBox_Option_Page');
+delete_option('Magick_ToolBox_Option_Function');
+delete_option('Magick_ToolBox_Option_H5');
+delete_option('Magick_ToolBox_Option_Login');
+delete_option('Magick_ToolBox_Option_Shortcode');
+delete_option('Magick_ToolBox_Option_Template');
+delete_option('Magick_ToolBox_Option_Backup_v210');
+delete_option('Magick_ToolBox_Config_Version');
+
+// 删除模块路由表选项
+delete_option('Magick_ToolBox_Active_Modules');
 
 // 删除 SEO 相关选项（可能由 seo_category_add_meat.php 创建）
 $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'cat-title-%'");

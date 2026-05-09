@@ -1,11 +1,12 @@
 //权限 - 辅助功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Form, Input, Switch } from "antd";
+import { Form, Input } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { FunctionSeo } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
+import FeatureSwitch from "@/basic/feature-switch";
 
 //选项类型
 type FieldType = FunctionSeo;
@@ -46,8 +47,8 @@ const App: React.FC = () => {
     <>
       <Form
         name="seo"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
@@ -79,6 +80,7 @@ const App: React.FC = () => {
           <TextArea rows={4} />
         </Form.Item>
         <Form.Item<FieldType>
+          id="function-seo-seo_single"
           label="文章SEO"
           name="seo_single"
           valuePropName="checked"
@@ -88,9 +90,10 @@ const App: React.FC = () => {
             </p>
           }
         >
-          <Switch />
+          <FeatureSwitch featureId="function-seo-seo_single" />
         </Form.Item>
         <Form.Item<FieldType>
+          id="function-seo-seo_category"
           label="分类和标签SEO"
           name="seo_category"
           valuePropName="checked"
@@ -101,7 +104,7 @@ const App: React.FC = () => {
             </p>
           }
         >
-          <Switch />
+          <FeatureSwitch featureId="function-seo-seo_category" />
         </Form.Item>
       </Form>
     </>

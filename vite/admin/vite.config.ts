@@ -26,6 +26,20 @@ export default defineConfig({
         entryFileNames: "index.js",
         assetFileNames: "[name][extname]",
         chunkFileNames: "[name].js",
+        manualChunks: {
+          // 按 Tab 拆分，实现按需加载
+          'tab-dashboard': ['./src/components/dashboard/index'],
+          'tab-page': ['./src/components/page/index'],
+          'tab-optimize': ['./src/components/optimize/index'],
+          'tab-login': ['./src/components/login/index'],
+          'tab-h5': ['./src/components/h5/index'],
+          'tab-function': ['./src/components/function/index'],
+          'tab-shortcode': ['./src/components/shortcode/index'],
+          'tab-template': ['./src/components/template/index'],
+          'tab-about': ['./src/components/about/index'],
+          // 公共依赖
+          'vendor': ['react', 'react-dom'],
+        },
       },
     },
     //sourcemap: true,//保留映射关系，方便调试

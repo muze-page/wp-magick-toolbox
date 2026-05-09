@@ -15,7 +15,7 @@ function getDataLocal(): Receive {
     //console.log("收到的值")
     //console.log((window as any).dataLocal?.countData);
     //打包
-    return (window as any).dataLocal !== "" ? (window as any).dataLocal : {};
+    return (window as any).dataLocal !== "" ? (window as any).dataLocal : { countData: { shop: { today: [], month: [], form: [] }, single: { count: [], today: { width: 0, height: 0, title: "", dataset: [] }, month: { width: 0, height: 0, title: "", dataset: [] } } }, day_data: [] };
   }
 }
 

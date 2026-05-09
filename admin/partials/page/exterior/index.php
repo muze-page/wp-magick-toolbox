@@ -28,7 +28,7 @@ if (!class_exists('Npcink_Page_Exterior')) {
             //点击特效
             $particle = MaBox_Admin::get_config($option, 'particle', "false");
             //有值且不是手机端
-            if ($particle !== 'false' && !wp_is_mobile()) {
+            if ($particle !== 'false' && !MaBox_Helpers::is_mobile()) {
                 require_once plugin_dir_path(__FILE__) . 'click_effect/index.php';
                 Npcink_Page_Add_Click_Effect::run($particle);
             }
@@ -93,7 +93,7 @@ if (!class_exists('Npcink_Page_Exterior')) {
 
             //页底特效TODO:移动端不展示
             $bottom_effect = MaBox_Admin::get_config($option, 'bottom_effect');
-            if (!wp_is_mobile()) {
+            if (!MaBox_Helpers::is_mobile()) {
                 if ($bottom_effect !== 'false') {
                     require_once plugin_dir_path(__FILE__) . 'bottom_effect/index.php';
                     Npcink_Page_Bottom_Effect::run($bottom_effect);
@@ -120,6 +120,13 @@ if (!class_exists('Npcink_Page_Exterior')) {
             if ($go_top !== 'false') {
                 require_once plugin_dir_path(__FILE__) . 'go_top/index.php';
                 Npcink_Page_Go_Top::run($go_top, $option);//选中的参数，选项参数（进一步设置）
+            }
+
+            //阅读进度条
+            $reading_progress = MaBox_Admin::get_config($option, 'reading_progress');
+            if ($reading_progress === true) {
+                require_once plugin_dir_path(__FILE__) . 'reading_progress/index.php';
+                Npcink_Page_Reading_Progress::run($option);
             }
         }
     }

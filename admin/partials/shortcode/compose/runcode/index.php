@@ -50,57 +50,8 @@ if (!class_exists('Npcink_Page_Runcode')) {
 
         public static function add_runcode()
         {
-?>
-            <style>
-                /*文章内代码运行功能*/
-                .runcode {
-                    width: 100%;
-                    margin-top: .8em;
-                    border-radius: 8px;
-                    border: 1px solid;
-                    padding: .6em;
-                    font-size: 12px;
-                }
-            </style>
-            <!--代码运行模块-->
-            <script type="text/javascript">
-                function runCode(objid) {
-                    var winname = window.open('', "_blank", '');
-                    var obj = document.getElementById(objid);
-                    winname.document.open('text/HTML', 'replace');
-                    winname.opener = null;
-                    winname.document.write(obj.value);
-                    winname.document.close();
-                }
-
-                function selectCode(objid) {
-                    var obj = document.getElementById(objid);
-                    obj.select();
-                }
-            </script>
-
-            <!--复制按钮功能-->
-            <script>
-                function copyCode(elementId) {
-                    /* 获取文本区域的内容 */
-                    var textarea = document.getElementById(elementId);
-                    textarea.select();
-                    textarea.setSelectionRange(0, 99999); /* 兼容性处理，确保能选中文本 */
-
-                    /* 复制选中的内容到剪贴板 */
-                    document.execCommand("copy");
-
-                    /* 取消选中状态 */
-                    window.getSelection().removeAllRanges();
-
-                    /* 弹出提示信息 */
-                    alert("代码已复制到剪贴板！");
-                }
-            </script>
-
-
-            <!--代码运行模块-->
-<?php
+            echo '<style>.runcode{width:100%;margin-top:.8em;border-radius:8px;border:1px solid;padding:.6em;font-size:12px}</style>' . "\n";
+            echo '<script>function runCode(o){var w=window.open("","_blank",""),d=document.getElementById(o);w.document.open("text/HTML","replace"),w.opener=null,w.document.write(d.value),w.document.close()}function copyCode(o){var t=document.getElementById(o);t.select(),t.setSelectionRange(0,99999),document.execCommand("copy"),window.getSelection().removeAllRanges(),alert("代码已复制到剪贴板！")}</script>' . "\n";
         }
     }
 }

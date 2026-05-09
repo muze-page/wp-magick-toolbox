@@ -63,16 +63,14 @@ if (!class_exists('MaBox_ShortCode')) {
         //添加按钮
         public static function wzt_button()
         {
-?>
-            <script type="text/javascript">
-                jQuery(document).ready(function($) {
-                    $("#short_code_select").change(function() {
-                        send_to_editor($("#short_code_select :selected").val());
-                        return false;
-                    });
-                });
-            </script>
-<?php
+            wp_enqueue_script(MAGICK_MIXTURE_NAME . '_shortcode_select', '', array('jquery'), MAGICK_MIXTURE_VERSION, true);
+            $js = "jQuery(document).ready(function($) {
+    $('#short_code_select').change(function() {
+        send_to_editor($('#short_code_select :selected').val());
+        return false;
+    });
+});";
+            wp_add_inline_script(MAGICK_MIXTURE_NAME . '_shortcode_select', $js);
         }
 
         //载入古登堡模块

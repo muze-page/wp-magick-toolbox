@@ -31,14 +31,32 @@ if (!class_exists('MaBox_Function_Wx_Xcx_Link')) {
         {
             $appid = MaBox_Admin::get_config(self::$option, 'appid');
             $secret = MaBox_Admin::get_config(self::$option, 'secret');
-            $path = MaBox_Admin::get_config(self::$option, 'path'); //页面参数
-            $query = MaBox_Admin::get_config(self::$option, 'query'); //查询参数
+            $path = MaBox_Admin::get_config(self::$option, 'path');
+            $query = MaBox_Admin::get_config(self::$option, 'query');
+
+            $token = self::wx_json_token_cached($appid, $secret);
+
+            // 检查 token 是否获取成功
+            if (is_wp_error($token)) {
+                return $token;
+            }
+
+            $link = self::get_link($token, $path, $query);
+            return $link;
+        }
+
+        public static function wx_json_token_cached($appid, $secret)
+        {
+            $cached = get_transient('mabox_wx_token');
+            if ($cached) {
+                return $cached;
+            }
 
             $token = self::wx_json_token($appid, $secret);
-            $link = self::get_link($token, $path, $query);
-            //TODO:使用缓存技术，缓存token
-            return $link;
-            //echo $link;
+            if (!is_wp_error($token) && !empty($token)) {
+                set_transient('mabox_wx_token', $token, 7000);
+            }
+            return $token;
         }
         /**
          * 构造获取token的链接
@@ -64,17 +82,41 @@ if (!class_exists('MaBox_Function_Wx_Xcx_Link')) {
 
             // 抓取URL并把它传递给浏览器
             $response = curl_exec($curl);
-            //$err = curl_error($curl);
+            $err = curl_error($curl);
 
             // 关闭cURL资源，并且释放系统资源
             curl_close($curl);
+
+            // 检查 cURL 错误
+            if ($err) {
+                return new \WP_Error('curl_error', '获取 Token 时发生网络错误: ' . $err);
+            }
+
+            // 检查响应是否为空
+            if (empty($response)) {
+                return new \WP_Error('empty_response', '微信 API 返回空响应');
+            }
 
             //返回函数生成的内容
             //获取token文件
             //将数组变为变量
             $json_token = json_decode($response, true);
 
+            // 检查 JSON 解析是否成功
+            if (!is_array($json_token)) {
+                return new \WP_Error('invalid_json', '微信 API 返回无效 JSON: ' . substr($response, 0, 200));
+            }
+
+            // 检查微信 API 是否返回错误
+            if (isset($json_token['errcode']) && $json_token['errcode'] != 0) {
+                $errmsg = isset($json_token['errmsg']) ? $json_token['errmsg'] : '未知错误';
+                return new \WP_Error('wx_api_error', '微信 API 错误 [' . $json_token['errcode'] . ']: ' . $errmsg);
+            }
+
             //拿到需要的值  expires_in为有效期2小时
+            if (!isset($json_token['access_token'])) {
+                return new \WP_Error('missing_token', '微信 API 响应中缺少 access_token');
+            }
             $wx_token =  $json_token['access_token'];
 
 
@@ -123,15 +165,34 @@ if (!class_exists('MaBox_Function_Wx_Xcx_Link')) {
 
             curl_close($curl);
 
+            // 检查 cURL 错误
             if ($err) {
-                echo "cURL Error #:" . $err;
+                return new \WP_Error('curl_error', '生成小程序链接时发生网络错误: ' . $err);
+            }
+
+            // 检查响应是否为空
+            if (empty($response)) {
+                return new \WP_Error('empty_response', '微信 API 返回空响应');
             }
 
             //拿到小程序链接相关信息
             $json_url = json_decode($response, true);
 
+            // 检查 JSON 解析是否成功
+            if (!is_array($json_url)) {
+                return new \WP_Error('invalid_json', '微信 API 返回无效 JSON: ' . substr($response, 0, 200));
+            }
+
+            // 检查微信 API 是否返回错误
+            if (isset($json_url['errcode']) && $json_url['errcode'] != 0) {
+                $errmsg = isset($json_url['errmsg']) ? $json_url['errmsg'] : '未知错误';
+                return new \WP_Error('wx_api_error', '微信 API 错误 [' . $json_url['errcode'] . ']: ' . $errmsg);
+            }
 
             //拿到需要的值
+            if (!isset($json_url['openlink'])) {
+                return new \WP_Error('missing_link', '微信 API 响应中缺少 openlink');
+            }
             $wx_url =  $json_url['openlink'];
             return $wx_url;
         }
@@ -163,25 +224,33 @@ if (!class_exists('MaBox_Function_Wx_Xcx_Link')) {
         /**
          * 接口
          */
-        //TODO:添加权限控制
         public static function mytheme_register_rest_endpoints()
         {
-            //http://localhost:10020/wp-json/wx_xcx/v1/qy
-            // Get theme options
             register_rest_route('wx_xcx/v1', 'qy', array(
                 'methods' => 'GET',
-                //'callback' => array(__CLASS__, 'mytheme_get_theme_options'),
                 'callback' => array(__CLASS__, 'get_h5_options'),
-                // 权限控制
-                // 'permission_callback' => function () {
-                //     return current_user_can('manage_options');
-                // },
+                'permission_callback' => function () {
+                    return current_user_can('manage_options');
+                },
             ));
         }
         public static function get_h5_options()
         {
+            $link = self::add_hello_header();
+
+            // 检查是否返回错误
+            if (is_wp_error($link)) {
+                return new \WP_REST_Response(
+                    array(
+                        'success' => false,
+                        'message' => $link->get_error_message(),
+                    ),
+                    500
+                );
+            }
+
             $data = array(
-                "data" => self::add_hello_header(),
+                "data" => $link,
             );
 
             return $data;

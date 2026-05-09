@@ -10,7 +10,7 @@ if (!class_exists('Npcink_Page_Pixel_Chicken')) {
         public static function run()
         {
             //移动端不展示
-            if (!wp_is_mobile()) {
+            if (!MaBox_Helpers::is_mobile()) {
                 add_action('wp_enqueue_scripts', array(__CLASS__, 'load_css'));
                 add_action('wp_footer', array(__CLASS__, 'load'));
             }

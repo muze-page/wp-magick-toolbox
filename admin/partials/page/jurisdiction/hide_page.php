@@ -24,31 +24,20 @@ if (!class_exists('Npcink_Page_Hide_Page')) {
             //当前是页面类型，且当前页面ID在指定数组中
             if (is_page() && in_array(get_the_ID(), $page_ids)) {
                 // 如果用户未登录，则将文章内容替换为登录提示
-                if (!is_user_logged_in()) {
+                if (!MaBox_Helpers::is_logged_in()) {
                     $content = self::$tip_content;
-                    add_action('wp_footer', array(__CLASS__, 'covert_content')); //使用jS隐藏文章内容
+                    self::enqueue_assets();
 
                 }
             }
             return $content;
         }
-        //覆盖文章内容
-        public static function covert_content()
+        public static function enqueue_assets()
         {
-            // 将 PHP 变量转义为 JavaScript 友好的格式
-            // $tip_content = esc_js(self::$tip_content);
-            // 只保留 HTML 标记
+            wp_enqueue_script(MAGICK_MIXTURE_NAME . '_hide_page', '', array(), MAGICK_MIXTURE_VERSION, true);
             $tip_content = wp_kses_post(self::$tip_content);
-?>
-            <script>
-                // 获取 .entry-content 元素，文章内容
-                const entryContent = document.querySelector(".entry-content");
-                // 设置新的内容
-                if (entryContent) {
-                    entryContent.innerHTML = '<?php echo $tip_content ?>';
-                }
-            </script>
-<?php
+            $js = "const entryContent = document.querySelector('.entry-content'); if (entryContent) { entryContent.innerHTML = '" . $tip_content . "'; }";
+            wp_add_inline_script(MAGICK_MIXTURE_NAME . '_hide_page', $js);
         }
     }
 }

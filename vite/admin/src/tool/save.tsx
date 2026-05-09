@@ -1,21 +1,18 @@
-//保存按钮
-//将拿到的值推送到服务器端
 import { useContext, useState, useEffect } from "react";
 import { Button, Space, message } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { saceOption } from "@/axios/save";
+import { createSnapshot } from "@/tool/snapshot";
 import { UpOutlined } from "@ant-design/icons";
-const App: React.FC = () => {
-  //拿到值
-  const { optionData } = useContext(DataContext);
 
-  //保存 loading 状态
+const App: React.FC = () => {
+  const { optionData } = useContext(DataContext);
   const [saving, setSaving] = useState(false);
 
-  //提交动作
   const postData = async () => {
     setSaving(true);
     try {
+      createSnapshot(optionData);
       await saceOption(optionData);
     } catch (error) {
       message.error("保存失败，请重试");

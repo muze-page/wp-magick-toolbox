@@ -23,6 +23,10 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
             margin-bottom: 30px;
             font-weight: 400;
         }
+        @media (max-width: 768px) {
+            .box { margin-top: 20px; padding: 0 16px; }
+            .box a { display: inline-block; margin: 8px 0; }
+        }
     </style>
 </head>
 

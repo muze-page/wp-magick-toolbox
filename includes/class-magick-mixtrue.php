@@ -60,22 +60,17 @@ class Magick_Mixtrue
     //私有的，只有本类内部可以使用
     private function load_dependencies()
     {
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-magick-helpers.php';
 
-        /**
-         * 负责定义后台中发生的所有操作的类。
-         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-magick-mixtrue-tool.php';
+
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-magick-config-manager.php';
+
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/modules/loader.php';
+
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-magick-mixtrue-admin.php';
 
-        /**
-         * 负责定义面向公众的所有行为的类
-         *现场一侧。
-         */
         require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-magick-mixtrue-public.php';
-
-        /**
-         * 公共工具类
-         */
-        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-magick-mixtrue-tool.php';
     }
 
     /**

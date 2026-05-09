@@ -1,7 +1,7 @@
 //h5 - 首页
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Switch, Form, Input, Select } from "antd";
+import { Form, Input, Select } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { H5Home } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
@@ -9,6 +9,7 @@ import type { SelectProps } from "antd";
 import Contact from "@/components/h5/contact";
 import { validateLink } from "@/tool/tool";
 import { AntConfig } from "@/tool/tool";
+import FeatureSwitch from "@/basic/feature-switch";
 
 //选项类型
 type FieldType = H5Home;
@@ -83,8 +84,8 @@ const App: React.FC = () => {
     <>
       <Form
         name="home"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
@@ -100,6 +101,7 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="h5-home-switch"
           label="开启功能"
           name="switch"
           valuePropName="checked"
@@ -114,7 +116,7 @@ const App: React.FC = () => {
             </>
           }
         >
-          <Switch />
+          <FeatureSwitch featureId="h5-home-switch" />
         </Form.Item>
         {formData.switch && (
           <>

@@ -27,7 +27,7 @@ if (!class_exists('Npcink_Page_Scrolling')) {
                 $build_js,
                 array(),
                 MAGICK_MIXTURE_VERSION,
-                false
+                true
             );
         }
     }

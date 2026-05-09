@@ -148,111 +148,37 @@ if (!class_exists('Npcink_Page_Add_Click_Effect')) {
          */
         public static function add_page_circle_loveWhirl()
         {
-?>
-            <style>
-                /* 彩色心 */
-                .heartWrap {
-                    position: absolute;
-                    z-index: 999;
-                }
+            wp_enqueue_style(MAGICK_MIXTURE_NAME . '_click_loveWhirl', '', array(), MAGICK_MIXTURE_VERSION);
+            $css = ".heartWrap { position: absolute; z-index: 999; }
+.heart { position: absolute; background-color: #faa; animation: heartMove 1s linear infinite; animation-iteration-count: 1; animation-delay: var(--delay, 0); animation-fill-mode: forwards; transform-origin: center; opacity: 0; }
+.heart:before, .heart:after { position: absolute; content: ''; left: 6px; top: 0; width: 6px; height: 10px; background: inherit; border-radius: 15px 15px 0 0; transform-origin: 0 100%; transform: rotate(-45deg); }
+.heart:after { left: 0; transform-origin: 100% 100%; transform: rotate(45deg); }
+.late0 { --lateX: -0px; --delay: 0.2s; }
+.late1 { --lateX: -10px; --delay: 0.1s; }
+.late2 { --lateX: -20px; }
+.late3 { --lateX: 10px; --delay: 0.3s; }
+.late4 { --lateX: 20px; --delay: 0.4s; }
+@keyframes heartMove { 0% { transform: scale(0.5); opacity: 0.1; } 150% { transform: translate(var(--lateX, 0px), -30px); } 50% { transform: scale(1) translate(var(--lateX, 0px), -100px); opacity: 1; } 100% { opacity: 0; } }";
+            wp_add_inline_style(MAGICK_MIXTURE_NAME . '_click_loveWhirl', $css);
 
-                .heart {
-                    position: absolute;
-                    background-color: #faa;
-                    animation: heartMove 1s linear infinite;
-                    animation-iteration-count: 1;
-                    animation-delay: var(--delay, 0);
-                    animation-fill-mode: forwards;
-                    transform-origin: center;
-                    opacity: 0;
-                    /* transition: all 1s linear; */
-                }
-
-                .heart:before,
-                .heart:after {
-                    position: absolute;
-                    content: "";
-                    left: 6px;
-                    top: 0;
-                    width: 6px;
-                    height: 10px;
-                    background: inherit;
-                    border-radius: 15px 15px 0 0;
-                    transform-origin: 0 100%;
-                    transform: rotate(-45deg);
-                }
-
-                .heart:after {
-                    left: 0;
-                    transform-origin: 100% 100%;
-                    transform: rotate(45deg);
-                }
-
-                .late0 {
-                    --lateX: -0px;
-                    --delay: 0.2s;
-                }
-
-                .late1 {
-                    --lateX: -10px;
-                    --delay: 0.1s;
-                }
-
-                .late2 {
-                    --lateX: -20px;
-                }
-
-                .late3 {
-                    --lateX: 10px;
-                    --delay: 0.3s;
-                }
-
-                .late4 {
-                    --lateX: 20px;
-                    --delay: 0.4s;
-                }
-
-                @keyframes heartMove {
-                    0% {
-                        transform: scale(0.5);
-                        opacity: 0.1;
-                    }
-
-                    150% {
-                        transform: translate(var(--lateX, 0px), -30px);
-                    }
-
-                    50% {
-                        transform: scale(1) translate(var(--lateX, 0px), -100px);
-                        opacity: 1;
-                    }
-
-                    100% {
-                        opacity: 0;
-                    }
-                }
-            </style>
-
-            <script>
-                document.addEventListener('click', (e) => {
-                    const vNode = document.createElement('div');
-                    vNode.className = "heartWrap";
-                    Array.from(new Array(5), (_, index) => {
-                        const heart = document.createElement('div');
-                        heart.className = `heart late${index}`;
-                        heart.style.background = "#" + Math.random().toString(16).slice(-6);
-                        // heart.style.top = -index * 2 + 'px';
-                        vNode.appendChild(heart);
-                    });
-                    document.body.appendChild(vNode);
-                    vNode.style.top = e.pageY - 20 + "px";
-                    vNode.style.left = e.pageX - 10 + "px";
-                    setTimeout(() => {
-                        document.body.removeChild(vNode);
-                    }, 2000)
-                });
-            </script>
-<?php
+            wp_register_script(MAGICK_MIXTURE_NAME . '_click_loveWhirl_js', '', array(), MAGICK_MIXTURE_VERSION, true);
+            $js = "document.addEventListener('click', function(e) {
+    var vNode = document.createElement('div');
+    vNode.className = 'heartWrap';
+    Array.from(new Array(5), function(_, index) {
+        var heart = document.createElement('div');
+        heart.className = 'heart late' + index;
+        heart.style.background = '#' + Math.random().toString(16).slice(-6);
+        vNode.appendChild(heart);
+    });
+    document.body.appendChild(vNode);
+    vNode.style.top = e.pageY - 20 + 'px';
+    vNode.style.left = e.pageX - 10 + 'px';
+    setTimeout(function() {
+        document.body.removeChild(vNode);
+    }, 2000);
+});";
+            wp_add_inline_script(MAGICK_MIXTURE_NAME . '_click_loveWhirl_js', $js);
         }
 
         /**
@@ -273,7 +199,7 @@ if (!class_exists('Npcink_Page_Add_Click_Effect')) {
                 MAGICK_MIXTURE_NAME . '_click_style_circle_fireworks.js',
                 plugin_dir_url(__FILE__) . 'js/click_style_circle_fireworks.js',
                 array('jquery'),
-                'MAGICK_MIXTURE_VERSION',
+                MAGICK_MIXTURE_VERSION,
                 true
             );
         }

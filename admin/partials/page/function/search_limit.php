@@ -17,7 +17,7 @@ if (!class_exists('Npcink_Page_Search_Limit')) {
         public static function check_search_limit($query)
         {
             if (!is_admin() && $query->is_search && $query->is_main_query()) {
-                if (is_user_logged_in()) {
+                if (MaBox_Helpers::is_logged_in()) {
                     return;
                 }
 
@@ -26,7 +26,7 @@ if (!class_exists('Npcink_Page_Search_Limit')) {
                     return;
                 }
 
-                $ip = $_SERVER['REMOTE_ADDR'];
+                $ip = MaBox_Helpers::get_real_ip();
                 $transient_key = 'mabox_search_limit_' . md5($ip);
                 $search_count = get_transient($transient_key);
 

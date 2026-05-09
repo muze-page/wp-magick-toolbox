@@ -1,7 +1,7 @@
 //页面 - 功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Form, Switch, Input, Radio, InputNumber } from "antd";
+import { Form, Input, Radio, InputNumber } from "antd";
 import TimePeriod from "@/basic/timeInput";
 import TextAreaHtml from "@/basic/htmlInput";
 import { DataContext } from "@/tool/dataContext";
@@ -13,12 +13,18 @@ import FixedImage from "@/basic/fixedImage";
 import Email from "@/assets/page/function/share/email.png";
 import WeiBo from "@/assets/page/function/share/weibo.png";
 import Preview from "@/basic/preview";
+import FeatureSwitch from "@/basic/feature-switch";
+import { checkRiskyFeature } from "@/tool/riskyFeature.tsx";
 
 //选项类型
 type FieldType = PageFunction;
 
 //Ant 组件配置
 const fromConfig = AntConfig.from;
+
+const RISKY_FIELDS: Record<string, string> = {
+  top_ad: "page-function-top_ad",
+};
 
 const App: React.FC = () => {
   //拿到默认选项值和修改方法
@@ -35,6 +41,20 @@ const App: React.FC = () => {
     changedValues: Partial<FieldType>,
     _allValues: FieldType
   ) => {
+    const fieldKey = Object.keys(changedValues)[0];
+    const featureId = RISKY_FIELDS[fieldKey];
+    if (featureId) {
+      const newValue = changedValues[fieldKey as keyof FieldType];
+      const shouldProceed = checkRiskyFeature(featureId, newValue as any, () => {
+        setFormData((prevState) => ({
+          ...prevState,
+          ...changedValues,
+        }));
+      });
+      if (!shouldProceed) {
+        return;
+      }
+    }
     setFormData((prevState) => ({
       ...prevState,
       ...changedValues,
@@ -53,8 +73,8 @@ const App: React.FC = () => {
       <Form
         //form={form}
         name="function"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
@@ -70,22 +90,25 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="page-function-color_tag"
           label="彩色背景标签云"
           name="color_tag"
           valuePropName="checked"
           extra={"可在小工具中添加圆角彩色背景标签云，前台即可看到效果"}
         >
-          <Switch />
+          <FeatureSwitch featureId="page-function-color_tag" />
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-function-first_picture"
           label="首图作特色图"
           name="first_picture"
           valuePropName="checked"
           extra={<>初次发布文章，未设置特色图时，自动将第一张图设为特色图</>}
         >
-          <Switch />
+          <FeatureSwitch featureId="page-function-first_picture" />
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-function-add_inks"
           label="文章内关键词添加内链"
           name="add_inks"
           valuePropName="checked"
@@ -101,30 +124,33 @@ const App: React.FC = () => {
             </>
           }
         >
-          <Switch />
+          <FeatureSwitch featureId="page-function-add_inks" />
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-function-remove_single_link"
           label="移除文章内超链接"
           name="remove_single_link"
           valuePropName="checked"
           extra={"关闭此选项可恢复"}
         >
-          <Switch />
+          <FeatureSwitch featureId="page-function-remove_single_link" />
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-function-no_login_img"
           label="未登录模糊文章内图片"
           name="no_login_img"
           valuePropName="checked"
         >
-          <Switch />
+          <FeatureSwitch featureId="page-function-no_login_img" />
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-function-add_last_update"
           label="添加最后更新时间"
           name="add_last_update"
           valuePropName="checked"
           extra={"文章末尾添加最后更新时间，文章发布24小时后再次修改，即可展示"}
         >
-          <Switch />
+          <FeatureSwitch featureId="page-function-add_last_update" />
         </Form.Item>
         <Form.Item<FieldType>
           label="外链跳转中间页"
@@ -205,11 +231,13 @@ const App: React.FC = () => {
           </>
         )}
         <Form.Item<FieldType>
+          id="page-function-share"
           label="分享"
           name="share"
+          valuePropName="checked"
           extra={<>开启侧边悬浮按钮，提供画报分享，复制链接，发送邮件等功能</>}
         >
-          <Switch />
+          <FeatureSwitch featureId="page-function-share" />
         </Form.Item>
         {formData.share && (
           <>
@@ -289,12 +317,47 @@ const App: React.FC = () => {
         )}
 
         <Form.Item<FieldType>
+          id="page-function-switch_lang_jf"
           label="简繁切换"
           name="switch_lang_jf"
+          valuePropName="checked"
           extra={<>屏幕右下角添加简体繁体切换按钮</>}
         >
-          <Switch />
+          <FeatureSwitch featureId="page-function-switch_lang_jf" />
         </Form.Item>
+        <Form.Item<FieldType>
+          id="page-function-anti_crawler"
+          label="进阶防刷"
+          name="anti_crawler"
+          valuePropName="checked"
+          extra={"对频繁访问的异常 IP 触发腾讯防水墙验证"}
+        >
+          <FeatureSwitch featureId="page-function-anti_crawler" />
+        </Form.Item>
+        {formData.anti_crawler && (
+          <>
+            <Form.Item<FieldType>
+              label="最大请求数"
+              name="anti_crawler_max_requests"
+              extra={"时间窗口内超过此次数将触发验证"}
+            >
+              <InputNumber addonAfter={"次"} style={{ width: "120px" }} min={10} />
+            </Form.Item>
+            <Form.Item<FieldType>
+              label="时间窗口"
+              name="anti_crawler_time_window"
+              extra={"统计请求的时间范围"}
+            >
+              <InputNumber addonAfter={"秒"} style={{ width: "120px" }} min={10} />
+            </Form.Item>
+            <Form.Item<FieldType> label="腾讯防水墙 AppID" name="anti_crawler_tecent_id">
+              <Input style={{ width: "50%" }} placeholder="腾讯防水墙 AppID" />
+            </Form.Item>
+            <Form.Item<FieldType> label="腾讯防水墙 AppKey" name="anti_crawler_tecent_key">
+              <Input style={{ width: "50%" }} placeholder="腾讯防水墙 AppKey" />
+            </Form.Item>
+          </>
+        )}
       </Form>
     </>
   );

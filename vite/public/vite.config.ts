@@ -26,6 +26,17 @@ export default defineConfig({
         assetFileNames: "[name][extname]",
 
         chunkFileNames: "[name].js",
+
+        manualChunks: {
+          // 公共依赖
+          vendor: ["react", "react-dom", "antd"],
+          // 分享功能主模块
+          share: ["./src/components/share/index"],
+          // html2canvas 独立分包（仅海报生成需要，~205KB）
+          poster: ["html2canvas"],
+          // 二维码组件独立分包
+          qrcode: ["./src/components/share/QRcode"],
+        },
       },
     },
    // sourcemap: true, //保留映射关系，方便调试

@@ -1,43 +1,58 @@
 //页面 - 外观优化
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Form, Switch, Input, InputNumber } from "antd";
+import { Form, Input, InputNumber } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
 import { PageFeature } from "@/tool/interface";
 import FixedImage from "@/basic/fixedImage";
+import FeatureSwitch from "@/basic/feature-switch";
 import PixelChicken from "@/assets/page/feature/像素小鸡.png";
 import Preview from "@/basic/preview";
+import { checkRiskyFeature } from "@/tool/riskyFeature.tsx";
 
-//选项类型
 type FieldType = PageFeature;
 
-//Ant 组件配置
 const fromConfig = AntConfig.from;
 
+const RISKY_FIELDS: Record<string, string> = {
+  particle: "page-feature-particle",
+  background_effect: "page-feature-background_effect",
+  site_grey: "page-feature-site_grey",
+  lantern: "page-feature-lantern",
+};
+
 const App: React.FC = () => {
-  //拿到默认选项值和修改方法
   const { optionData, updateOption } = useContext(DataContext);
-
-  //简化并提供默认值
   let publicData = optionData.page?.feature || defaultVarOption.page.feature;
-
-  //创建变量并设默认值
   const [formData, setFormData] = useState(publicData || {});
 
-  //表单同步修改值
-  const onValuesChange = (
-    changedValues: Partial<FieldType>,
-    _allValues: FieldType
-  ) => {
+  const applyChange = (changedValues: Partial<FieldType>) => {
     setFormData((prevState) => ({
       ...prevState,
       ...changedValues,
     }));
   };
 
-  //表单值发生变化时更新选项值
+  const onValuesChange = (
+    changedValues: Partial<FieldType>,
+    _allValues: FieldType
+  ) => {
+    const fieldKey = Object.keys(changedValues)[0];
+    const featureId = RISKY_FIELDS[fieldKey];
+    if (featureId) {
+      const newValue = changedValues[fieldKey as keyof FieldType];
+      const shouldProceed = checkRiskyFeature(featureId, newValue as any, () => {
+        applyChange(changedValues);
+      });
+      if (!shouldProceed) {
+        return;
+      }
+    }
+    applyChange(changedValues);
+  };
+
   useEffect(() => {
     updateOption("page", "feature", formData);
   }, [formData]);
@@ -46,8 +61,8 @@ const App: React.FC = () => {
     <>
       <Form
         name="aspect"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
@@ -65,6 +80,7 @@ const App: React.FC = () => {
           <h3 className="menu-header">特效</h3>
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-feature-title"
           label="动态标题"
           name="title"
           valuePropName="checked"
@@ -80,7 +96,7 @@ const App: React.FC = () => {
             </>
           }
         >
-          <Switch />
+          <FeatureSwitch featureId="page-feature-title" />
         </Form.Item>
         {formData.title && (
           <>
@@ -93,14 +109,42 @@ const App: React.FC = () => {
           </>
         )}
         <Form.Item<FieldType>
+          id="page-feature-top_loading"
           label="顶部加载进度条"
           name="top_loading"
           valuePropName="checked"
           extra={<>火狐浏览器不显示</>}
         >
-          <Switch />
+          <FeatureSwitch featureId="page-feature-top_loading" />
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-feature-reading_progress"
+          label="阅读进度条"
+          name="reading_progress"
+          valuePropName="checked"
+          extra={"文章页面顶部显示阅读进度指示器，仅文章页展示"}
+        >
+          <FeatureSwitch featureId="page-feature-reading_progress" />
+        </Form.Item>
+        {formData.reading_progress && (
+          <>
+            <Form.Item<FieldType>
+              label="进度条颜色"
+              name="reading_progress_color"
+            >
+              <Input style={{ width: "30%" }} placeholder="#1677ff" />
+            </Form.Item>
+            <Form.Item<FieldType>
+              label="进度条高度"
+              name="reading_progress_height"
+              extra={"单位: 像素"}
+            >
+              <InputNumber addonAfter={"px"} style={{ width: "120px" }} min={1} max={10} />
+            </Form.Item>
+          </>
+        )}
+        <Form.Item<FieldType>
+          id="page-feature-site_grey"
           label="全站变灰"
           name="site_grey"
           valuePropName="checked"
@@ -113,19 +157,21 @@ const App: React.FC = () => {
             </>
           }
         >
-          <Switch />
+          <FeatureSwitch featureId="page-feature-site_grey" />
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="page-feature-page_scrolling"
           label="平滑滚动"
           name="page_scrolling"
           valuePropName="checked"
           extra={"让页面滚动起来更丝滑，部分浏览器不支持"}
         >
-          <Switch />
+          <FeatureSwitch featureId="page-feature-page_scrolling" />
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="page-feature-particle"
           label="点击特效"
           name="particle"
           extra={"考虑到性能以及操作问题，移动端不加载此特效"}
@@ -134,6 +180,7 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="page-feature-background_effect"
           label="背景特效"
           name="background_effect"
           extra={"考虑到性能以及操作问题，移动端不加载此特效"}
@@ -141,6 +188,7 @@ const App: React.FC = () => {
           <FixedImage alists={backgroundList} />
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-feature-copy_pop_up"
           label="复制弹窗"
           name="copy_pop_up"
           extra={<>复制文本时进行弹窗提示</>}
@@ -148,6 +196,7 @@ const App: React.FC = () => {
           <FixedImage alists={popUpList} />
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-feature-bottom_effect"
           label="页底效果"
           name="bottom_effect"
           extra={"页面底部添加装饰效果，移动端不显示（待实现）"}
@@ -160,6 +209,7 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="page-feature-scrol"
           label="美化 - 美化滚动条"
           name="scrol"
           extra={
@@ -179,6 +229,7 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="page-feature-screen_hair"
           label="屏幕上的毛"
           name="screen_hair"
           valuePropName="checked"
@@ -191,16 +242,17 @@ const App: React.FC = () => {
             </>
           }
         >
-          <Switch />
+          <FeatureSwitch featureId="page-feature-screen_hair" />
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="page-feature-lantern"
           label="添加喜庆灯笼"
           name="lantern"
           valuePropName="checked"
           extra={<>特殊时间下会有特别的意义，移动端不展示，</>}
         >
-          <Switch />
+          <FeatureSwitch featureId="page-feature-lantern" />
         </Form.Item>
         {formData.lantern && (
           <>
@@ -222,6 +274,7 @@ const App: React.FC = () => {
         )}
 
         <Form.Item<FieldType>
+          id="page-feature-pixel_chicken"
           label="像素小鸡"
           name="pixel_chicken"
           valuePropName="checked"
@@ -232,9 +285,10 @@ const App: React.FC = () => {
             </>
           }
         >
-          <Switch />
+          <FeatureSwitch featureId="page-feature-pixel_chicken" />
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-feature-past_books"
           label="已读完的书"
           name="past_books"
           valuePropName="checked"
@@ -247,9 +301,10 @@ const App: React.FC = () => {
             </>
           }
         >
-          <Switch />
+          <FeatureSwitch featureId="page-feature-past_books" />
         </Form.Item>
         <Form.Item<FieldType>
+          id="page-feature-go_top"
           label="返回顶部"
           name="go_top"
           extra={<>屏幕底部右侧，添加返回顶部挂件</>}

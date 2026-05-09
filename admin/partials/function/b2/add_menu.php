@@ -72,7 +72,7 @@ if (!class_exists('Npcink_B2_Shop_Add_Menu')) {
                 $build_js,
                 array(),
                 MAGICK_MIXTURE_VERSION,
-                false
+                true
             );
 
             //传输数据给JS
@@ -81,9 +81,6 @@ if (!class_exists('Npcink_B2_Shop_Add_Menu')) {
                 'day_data' => Npcink_B2_Shop_Day::run(),
             );
             wp_localize_script(MAGICK_MIXTURE_NAME . '_index_js', 'dataLocal', $MaBox_array); //传给vite项目
-            $default_value = $MaBox_array;
-
-            printf('<script>console.log(%s)</script>', json_encode($default_value));
         }
     }
 }

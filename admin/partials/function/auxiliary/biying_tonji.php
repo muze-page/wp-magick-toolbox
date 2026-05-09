@@ -11,12 +11,14 @@ if (!class_exists('Npcink_Biying_Tonji')) {
         public static function run($config)
         {
             self::$option = $config;
-            add_action('wp_head', array(__CLASS__, 'biying'));
+            add_action('wp_head', array(__CLASS__, 'meta_tag'));
         }
-        public static function biying()
+        public static function meta_tag()
         {
-            echo '<meta name="msvalidate.01" content="' . self::$option . '" />';
-            echo "\n";
+            if (!empty(self::$option)) {
+                $option = esc_attr(self::$option);
+                echo '<meta name="msvalidate.01" content="' . $option . '" />' . "\n";
+            }
         }
     }
 }

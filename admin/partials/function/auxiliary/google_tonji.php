@@ -12,12 +12,14 @@ if (!class_exists('Npcink_Google_Tonji')) {
         public static function run($config)
         {
             self::$option = $config;
-            add_action('wp_head', array(__CLASS__, 'google'));
+            add_action('wp_head', array(__CLASS__, 'meta_tag'));
         }
-        public static function google()
+        public static function meta_tag()
         {
-            echo '<meta name="google-site-verification" content="' . self::$option . '" />';
-            echo "\n";
+            if (!empty(self::$option)) {
+                $option = esc_attr(self::$option);
+                echo '<meta name="google-site-verification" content="' . $option . '" />' . "\n";
+            }
         }
     }
 }

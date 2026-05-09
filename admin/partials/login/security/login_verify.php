@@ -140,15 +140,20 @@ if (!class_exists('Npcink_Login_Verify')) {
         public static function login_verify_tx_run()
         {
 
-            add_action('login_head', array(__CLASS__, 'add_login_head'));
+            add_action('login_enqueue_scripts', array(__CLASS__, 'enqueue_tx_assets'));
             add_action('login_form', array(__CLASS__, 'add_captcha_body'));
             add_filter('wp_authenticate_user', array(__CLASS__, 'validate_tcaptcha_login'), 100, 1);
         }
 
-        public static function add_login_head()
+        public static function enqueue_tx_assets()
         {
-            echo '<script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>';
-            echo '<style type="text/css">.login_button {line-height:38px;border-radius:3px;cursor:pointer;color:#555;background:#eee;border:2px solid #a5a5a5;font-size:14px;margin-bottom:10px;text-align:center;transition:.5s;}.login_button:hover{color:#fff;background:#444;border-color:#444;}</style>';
+            wp_enqueue_script('tencent-captcha', 'https://ssl.captcha.qq.com/TCaptcha.js', array(), null, true);
+            wp_enqueue_style(MAGICK_MIXTURE_NAME . '_login_verify', '', array(), MAGICK_MIXTURE_VERSION);
+            $css = ".login_button { line-height: 38px; border-radius: 3px; cursor: pointer; color: #555; background: #eee; border: 2px solid #a5a5a5; font-size: 14px; margin-bottom: 10px; text-align: center; transition: .5s; }
+.login_button:hover { color: #fff; background: #444; border-color: #444; }";
+            wp_add_inline_style(MAGICK_MIXTURE_NAME . '_login_verify', $css);
+
+            wp_register_script(MAGICK_MIXTURE_NAME . '_tx_callback', '', array('tencent-captcha'), MAGICK_MIXTURE_VERSION, true);
         }
         public static function add_captcha_body()
         {
@@ -160,19 +165,18 @@ if (!class_exists('Npcink_Login_Verify')) {
             <input type="hidden" id="wp007_randstr" name="syz_randstr" value="" />
             <!-- 修改下面的 data-appid 值 -->
             <div id="TencentCaptcha" data-appid="<?php echo $appid; ?>" data-cbfn="callback" class="login_button">验证</div>
-            <script>
-                window.callback = function(res) {
-                    if (res.ret === 0) {
-                        var but = document.getElementById("TencentCaptcha");
-                        document.getElementById("wp007_ticket").value = res.ticket;
-                        document.getElementById("wp007_randstr").value = res.randstr;
-                        document.getElementById("wp007_tcaptcha").value = 1;
-                        but.style.cssText = "color:#fff;background:#4fb845;border-color:#4fb845;pointer-events:none";
-                        but.innerHTML = "验证成功";
-                    }
-                }
-            </script>
 <?php
+            $js = "window.callback = function(res) {
+    if (res.ret === 0) {
+        var but = document.getElementById('TencentCaptcha');
+        document.getElementById('wp007_ticket').value = res.ticket;
+        document.getElementById('wp007_randstr').value = res.randstr;
+        document.getElementById('wp007_tcaptcha').value = 1;
+        but.style.cssText = 'color:#fff;background:#4fb845;border-color:#4fb845;pointer-events:none';
+        but.innerHTML = '验证成功';
+    }
+}";
+            wp_add_inline_script(MAGICK_MIXTURE_NAME . '_tx_callback', $js);
         }
 
         /**

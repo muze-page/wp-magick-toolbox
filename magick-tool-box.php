@@ -26,6 +26,33 @@ define('MAGICK_MIXTURE_NAME', 'magick-optimize');
 define('MAGICK_MIXTURE_VERSION', '2.0.83');
 //定义保存选项字段
 define('MAGICK_MIXTURE_OPTION', "Magick_ToolBox_Option");
+define('MAGICK_TOOLBOX_ACTIVE_MODULES', 'Magick_ToolBox_Active_Modules');
+
+/**
+ * 配置拆分后的模块级 Option 键名
+ * @since 2.1.0
+ */
+define('MAGICK_MIXTURE_OPTION_OPTIMIZE', 'Magick_ToolBox_Option_Optimize');
+define('MAGICK_MIXTURE_OPTION_PAGE', 'Magick_ToolBox_Option_Page');
+define('MAGICK_MIXTURE_OPTION_FUNCTION', 'Magick_ToolBox_Option_Function');
+define('MAGICK_MIXTURE_OPTION_H5', 'Magick_ToolBox_Option_H5');
+define('MAGICK_MIXTURE_OPTION_LOGIN', 'Magick_ToolBox_Option_Login');
+define('MAGICK_MIXTURE_OPTION_SHORTCODE', 'Magick_ToolBox_Option_Shortcode');
+define('MAGICK_MIXTURE_OPTION_TEMPLATE', 'Magick_ToolBox_Option_Template');
+
+/**
+ * 配置迁移版本标记
+ * @since 2.1.0
+ */
+define('MAGICK_MIXTURE_CONFIG_VERSION', 'Magick_ToolBox_Config_Version');
+define('MAGICK_MIXTURE_CONFIG_BACKUP', 'Magick_ToolBox_Option_Backup_v210');
+
+/**
+ * 第三阶段：国内生态 & 性能优化模块 Option 键名
+ * @since 2.2.0
+ */
+define('MAGICK_MIXTURE_OPTION_DOMESTIC', 'Magick_ToolBox_Option_Domestic');
+define('MAGICK_MIXTURE_OPTION_PERFORMANCE', 'Magick_ToolBox_Option_Performance');
 
 /**
  * 用于定义需要用到的插件类，
@@ -49,6 +76,11 @@ function run_magick_mixture()
     $plugin->run();
 }
 run_magick_mixture();
+
+// 插件激活时初始化路由表
+register_activation_hook(__FILE__, function() {
+    update_option(MAGICK_TOOLBOX_ACTIVE_MODULES, array());
+});
 
 
 

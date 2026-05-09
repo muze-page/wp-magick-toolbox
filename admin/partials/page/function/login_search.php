@@ -14,7 +14,7 @@ if (!class_exists('Npcink_Page_Login_Search')) {
         public static function check_login_search($query)
         {
             if (!is_admin() && $query->is_search && $query->is_main_query()) {
-                if (!is_user_logged_in()) {
+                if (!MaBox_Helpers::is_logged_in()) {
                     wp_die('请先登录后再使用搜索功能。');
                 }
             }

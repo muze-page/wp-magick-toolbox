@@ -2,11 +2,12 @@
  * 页面模版 动态
  */
 import { useState, useContext, useEffect } from "react";
-import { Form, Switch } from "antd";
+import { Form } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { TemplateTrends } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
+import FeatureSwitch from "@/basic/feature-switch";
 
 type FieldType = TemplateTrends;
 
@@ -42,8 +43,8 @@ const App: React.FC = () => {
     <>
       <Form
         name="trends"
-        labelCol={{ span: fromConfig.labelCol }}
-        wrapperCol={{ span: fromConfig.wrapperCol }}
+        labelCol={fromConfig.labelCol as any}
+        wrapperCol={fromConfig.wrapperCol as any}
         style={{ maxWidth: fromConfig.maxWidth }}
         initialValues={publicData}
         autoComplete="off"
@@ -55,12 +56,13 @@ const App: React.FC = () => {
         </Form.Item>
 
         <Form.Item<FieldType>
+          id="template-trends-special"
           label="专题"
           name="special"
           valuePropName="checked"
           extra={"搜索包含指定关键词的标题组成列表"}
         >
-          <Switch />
+          <FeatureSwitch featureId="template-trends-special" />
         </Form.Item>
       </Form>
     </>

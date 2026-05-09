@@ -1,5 +1,3 @@
-//准备内容
-
 import Pictorial from "@/assets/share/画报.svg";
 import CopyLink from "@/assets/share/链接.svg";
 import WeXin from "@/assets/share/微信.svg";
@@ -9,11 +7,12 @@ import Qzone from "@/assets/share/QQ空间.svg";
 import Facebook from "@/assets/share/Facebook.svg";
 import X from "@/assets/share/X.svg";
 
-import { useState } from "react";
-import { message, Drawer } from "antd";
-import Poster from "@/components/share/poster";
-import QRCode from "@/components/share/QRcode";
+import { useState, lazy, Suspense } from "react";
+import { message, Drawer, Spin } from "antd";
 import { publicShareData } from "@/store/index";
+
+const Poster = lazy(() => import("@/components/share/poster"));
+const QRCode = lazy(() => import("@/components/share/QRcode"));
 interface AppProps {
   toggleDrawer: () => void;
 }
@@ -215,8 +214,16 @@ const App: React.FC<AppProps> = ({ toggleDrawer }) => {
         rootClassName="poster_drawer"
         classNames={classNameNames}
       >
-        {drawerContent === "poster" && <Poster closePoster={onClose} />}
-        {drawerContent === "QRCode" && <QRCode />}
+        {drawerContent === "poster" && (
+          <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}><Spin size="large" /></div>}>
+            <Poster closePoster={onClose} />
+          </Suspense>
+        )}
+        {drawerContent === "QRCode" && (
+          <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}><Spin size="large" /></div>}>
+            <QRCode />
+          </Suspense>
+        )}
       </Drawer>
     </>
   );

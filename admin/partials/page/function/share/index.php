@@ -50,7 +50,7 @@ if (!class_exists('Npcink_Public_Add_Share')) {
                 $build_js,
                 array(),
                 MAGICK_MIXTURE_VERSION,
-                false
+                true
             );
 
             //传输数据给JS 

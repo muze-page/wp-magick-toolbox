@@ -1,15 +1,21 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Switch, Select, Form } from "antd";
+import { Select, Form } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { OptimizeMedium } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
+import FeatureSwitch from "@/basic/feature-switch";
+import { checkRiskyFeature } from "@/tool/riskyFeature.tsx";
 
 //选项类型
 type FieldType = OptimizeMedium;
 
 //Ant 组件配置
 const fromConfig = AntConfig.from;
+
+const RISKY_FIELDS: Record<string, string> = {
+  no_auto_size: "optimize-medium-no_auto_size",
+};
 
 const App: React.FC = () => {
   //拿到默认选项值和修改方法
@@ -24,6 +30,17 @@ const App: React.FC = () => {
 
   //表单同步值
   const onValuesChange = (changedValues: Partial<FieldType>) => {
+    const fieldKey = Object.keys(changedValues)[0];
+    const featureId = RISKY_FIELDS[fieldKey];
+    if (featureId) {
+      const newValue = changedValues[fieldKey as keyof FieldType];
+      const shouldProceed = checkRiskyFeature(featureId, newValue as any, () => {
+        setFormData((prevState) => ({ ...prevState, ...changedValues }));
+      });
+      if (!shouldProceed) {
+        return;
+      }
+    }
     setFormData((prevState) => ({ ...prevState, ...changedValues }));
   };
 
@@ -35,8 +52,8 @@ const App: React.FC = () => {
   return (
     <Form
       name="medium"
-      labelCol={{ span: fromConfig.labelCol }}
-      wrapperCol={{ span: fromConfig.wrapperCol }}
+      labelCol={fromConfig.labelCol as any}
+      wrapperCol={fromConfig.wrapperCol as any}
       style={{ maxWidth: fromConfig.maxWidth }}
       initialValues={publicData}
       autoComplete="off"
@@ -48,28 +65,31 @@ const App: React.FC = () => {
       </Form.Item>
 
       <Form.Item<FieldType>
+        id="optimize-medium-img_add_tag"
         label="图片自动添加 Alt 标签"
         name="img_add_tag"
         valuePropName="checked"
         extra={"标签值为：当前文章名 - 网站名"}
       >
-        <Switch />
+        <FeatureSwitch featureId="optimize-medium-img_add_tag" />
       </Form.Item>
       <Form.Item<FieldType>
+        id="optimize-medium-no_auto_size"
         label="禁用自动图片尺寸"
         name="no_auto_size"
         valuePropName="checked"
         extra={"禁用自动生成的图片尺寸、禁用缩放尺寸、禁用其他图片尺寸"}
       >
-        <Switch />
+        <FeatureSwitch featureId="optimize-medium-no_auto_size" />
       </Form.Item>
       <Form.Item<FieldType>
+        id="optimize-medium-medium_add_svg"
         label="添加SVG图标支持"
         name="medium_add_svg"
         valuePropName="checked"
         extra={"选中后可在媒体库上传SVG图标"}
       >
-        <Switch />
+        <FeatureSwitch featureId="optimize-medium-medium_add_svg" />
       </Form.Item>
       <Form.Item<FieldType>
         label="上传图片自动重命名"
