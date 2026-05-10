@@ -1,7 +1,7 @@
 <?php
 //添加菜单
 if (!class_exists('Npcink_B2_Shop_Add_Menu')) {
-    class Npcink_B2_Shop_Add_Menu extends Npcink_B2_Shop
+    class MaBox_B2_Shop_Add_Menu extends MaBox_B2_Shop
     {
 
         //接收表格数据

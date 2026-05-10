@@ -5,7 +5,7 @@
  * 来源：https://www.npc.ink/276901.html
  */
 if (!class_exists('Npcink_Page_Completed_Book')) {
-    class Npcink_Page_Completed_Book
+    class MaBox_Page_Completed_Book
     {
         public static function run()
         {

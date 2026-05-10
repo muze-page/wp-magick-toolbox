@@ -4,7 +4,7 @@
  * 静态页面模版
  */
 if (!class_exists('Npcink_Template_Static')) {
-    class Npcink_Template_Static extends Npcink_Template
+    class MaBox_Template_Static extends MaBox_Template
     {
         public static function runs($option)
         {

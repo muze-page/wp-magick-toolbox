@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Page_Floating_Sphere')) {
-    class Npcink_Page_Floating_Sphere
+    class MaBox_Page_Floating_Sphere
     {
         public static function run()
         {

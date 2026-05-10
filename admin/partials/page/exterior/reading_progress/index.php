@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('Npcink_Page_Reading_Progress')) {
-    class Npcink_Page_Reading_Progress
+    class MaBox_Page_Reading_Progress
     {
         private static $option;
 

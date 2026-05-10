@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('Npcink_Baidu_Tonji')) {
-    class Npcink_Baidu_Tonji
+    class MaBox_Baidu_Tonji
     {
         private static $option;
 

@@ -5,7 +5,7 @@
  */
 
 if (!class_exists('Npcink_Page_Hide_Category')) {
-    class Npcink_Page_Hide_Category
+    class MaBox_Page_Hide_Category
     {
         private static $id_array; //分类数组
         private static $tip_content; //提示信息
@@ -38,16 +38,57 @@ if (!class_exists('Npcink_Page_Hide_Category')) {
          */
         private static function strip_download_boxes($content)
         {
-            // 移除常见的下载框 HTML 模式
             $patterns = array(
-                // B2 主题下载框
-                '/<div[^>]*class="[^"]*b2-down-box[^"]*"[^>]*>.*?<\/div>/is',
-                // 通用下载框
-                '/<div[^>]*class="[^"]*(?:down-box|post-download|download-box)[^"]*"[^>]*>.*?<\/div>/is',
                 // 短代码形式的下载框
                 '/\[download[^\]]*\].*?\[\/download\]/is',
             );
-            return preg_replace($patterns, '', $content);
+            $content = preg_replace($patterns, '', $content);
+
+            $content = self::strip_div_by_class($content, 'b2-down-box');
+            $content = self::strip_div_by_class($content, 'down-box');
+            $content = self::strip_div_by_class($content, 'post-download');
+            $content = self::strip_div_by_class($content, 'download-box');
+
+            return $content;
+        }
+
+        private static function strip_div_by_class($html, $class_name)
+        {
+            $pattern = '/<div([^>]*)class="([^"]*' . preg_quote($class_name, '/') . '[^"]*)"([^>]*)>/i';
+            while (preg_match($pattern, $html, $matches, PREG_OFFSET_CAPTURE)) {
+                $start_pos = $matches[0][1];
+                $depth = 1;
+                $pos = $start_pos + strlen($matches[0][0]);
+                $len = strlen($html);
+
+                while ($pos < $len && $depth > 0) {
+                    $next_open = strpos($html, '<div', $pos);
+                    $next_close = strpos($html, '</div>', $pos);
+
+                    if ($next_close === false) {
+                        break;
+                    }
+
+                    if ($next_open !== false && $next_open < $next_close) {
+                        $depth++;
+                        $pos = $next_open + 4;
+                    } else {
+                        $depth--;
+                        if ($depth === 0) {
+                            $end_pos = $next_close + 6;
+                            $html = substr($html, 0, $start_pos) . substr($html, $end_pos);
+                            break;
+                        }
+                        $pos = $next_close + 6;
+                    }
+                }
+
+                if ($depth > 0) {
+                    break;
+                }
+            }
+
+            return $html;
         }
 
         public static function hide_download_for_restricted_categories()

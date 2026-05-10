@@ -18,6 +18,9 @@ const Shortcode = lazy(() => import("@/components/shortcode/index"));
 const Template = lazy(() => import("@/components/template/index"));
 const Domestic = lazy(() => import("@/components/domestic/index"));
 const Performance = lazy(() => import("@/components/performance/index"));
+const AiReview = lazy(() => import("@/components/ai_review/index"));
+const Services = lazy(() => import("@/components/services/index"));
+const Feedback = lazy(() => import("@/components/feedback/index"));
 const About = lazy(() => import("@/components/about/index"));
 
 const TabFallback = (
@@ -112,6 +115,21 @@ const App: React.FC = () => {
       key: "11",
       label: `性能优化`,
       children: <Suspense fallback={TabFallback}><Performance /></Suspense>,
+    },
+    {
+      key: "12",
+      label: `AI 审核`,
+      children: <Suspense fallback={TabFallback}><AiReview /></Suspense>,
+    },
+    {
+      key: "13",
+      label: `技术支持`,
+      children: <Suspense fallback={TabFallback}><Services /></Suspense>,
+    },
+    {
+      key: "14",
+      label: `用户反馈`,
+      children: <Suspense fallback={TabFallback}><Feedback /></Suspense>,
     },
     {
       key: "9",

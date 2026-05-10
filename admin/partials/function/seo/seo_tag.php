@@ -7,7 +7,7 @@
  * 只做了描述，标签标题和标签关键词没做
  */
 if (!class_exists('Npcink_Seo_Tag')) {
-    class Npcink_Seo_Tag
+    class MaBox_Seo_Tag
     {
 
         public static function run()

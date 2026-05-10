@@ -40,7 +40,7 @@ if (!class_exists('MaBox_Census_Single')) {
         //页面加载图标用css和js
         public static function load_enqueue_admin_script($hook)
         {
-            if ('dashboard_page_magick-census-single' != $hook) {
+            if ('index_page_magick-census-single' != $hook) {
                 return;
             }
 
@@ -257,8 +257,8 @@ if (!class_exists('MaBox_Census_Single')) {
                 $name = $value->display_name;
             ?>
 
-                <input type='checkbox' name='magick_plugin_config[option_id][]' <?php checked(in_array($id, $uwcc_checkbox_field_1), 1); ?> value=<?php echo $id; ?>>
-                <label class="magick-user-label"><?php echo $name; ?></label>
+                <input type='checkbox' name='magick_plugin_config[option_id][]' <?php checked(in_array($id, $uwcc_checkbox_field_1), 1); ?> value='<?php echo esc_attr($id); ?>'>
+                <label class="magick-user-label"><?php echo esc_html($name); ?></label>
                 &nbsp;&nbsp;|&nbsp;&nbsp;
 
 

@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('Npcink_Page_Copy_Pop_Up')) {
-    class Npcink_Page_Copy_Pop_Up
+    class MaBox_Page_Copy_Pop_Up
     {
         public static function run($config)
         {

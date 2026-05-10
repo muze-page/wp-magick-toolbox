@@ -1,6 +1,6 @@
 <?php
 if (!class_exists('Npcink_Domestic_Login_Security')) {
-    class Npcink_Domestic_Login_Security {
+    class MaBox_Domestic_Login_Security {
         private static $config;
         public static function run($config) {
             self::$config = $config;

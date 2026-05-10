@@ -22,7 +22,7 @@ const App: React.FC = () => {
   const { optionData, updateOption } = useContext(DataContext);
 
   //简化并提供默认值
-  let publicData =
+  const publicData =
     optionData.function?.auxiliary || defaultVarOption.function.auxiliary;
 
   //创建变量并设默认值
@@ -50,9 +50,9 @@ const App: React.FC = () => {
     if (!e) {
       return;
     }
-    let value = e.target.value;
-    let regex = /hm\.js\?([A-Za-z0-9]+)/;
-    let match = value.match(regex);
+    const value = e.target.value;
+    const regex = /hm\.js\?([A-Za-z0-9]+)/;
+    const match = value.match(regex);
 
     if (match) {
       return match[1];
@@ -69,11 +69,11 @@ const App: React.FC = () => {
     if (!e) {
       return;
     }
-    let value = e.target.value;
-    let regex =
-      /<meta\s+.*?name="google-site-verification".*?content="([A-Za-z0-9_\-]+)".*?>/i;
+    const value = e.target.value;
+    const regex =
+      /<meta\s+.*?name="google-site-verification".*?content="([A-Za-z0-9_-]+)".*?>/i;
 
-    let match = value.match(regex);
+    const match = value.match(regex);
     if (match) {
       return match[1];
     } else {
@@ -88,11 +88,11 @@ const App: React.FC = () => {
     if (!e) {
       return;
     }
-    let value = e.target.value;
+    const value = e.target.value;
 
-    let regex =
+    const regex =
       /<meta\s+.*?name="msvalidate\.01".*?content="([A-Za-z0-9]+)".*?>/i;
-    let match = value.match(regex);
+    const match = value.match(regex);
     if (match) {
       return match[1];
     } else {

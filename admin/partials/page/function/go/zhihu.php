@@ -13,10 +13,10 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="renderer" content="webkit">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title><?php echo $site_name ?> - 安全中心</title>
+    <title><?php echo esc_html($site_name) ?> - 安全中心</title>
 
-    <link rel="shortcut icon" href="<?php echo $favicon_url ?>" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href=<?php echo $url . "zhihu.css" ?>>
+    <link rel="shortcut icon" href="<?php echo esc_url($favicon_url) ?>" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="<?php echo esc_url($url) ?>zhihu.css">
 </head>
 
 <body>
@@ -30,8 +30,8 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
 
     <div class="wrapper">
         <div class="content">
-            <h1>即将离开<?php echo $site_name ?></h1>
-            <p class="info">您即将离开<?php echo $site_name ?>，请注意您的帐号和财产安全。</p>
+            <h1>即将离开<?php echo esc_html($site_name) ?></h1>
+            <p class="info">您即将离开<?php echo esc_html($site_name) ?>，请注意您的帐号和财产安全。</p>
             <p class="link"><?php echo esc_url($external_url); ?></p>
         </div>
         <div class="actions">

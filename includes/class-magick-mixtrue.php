@@ -60,17 +60,17 @@ class Magick_Mixtrue
     //私有的，只有本类内部可以使用
     private function load_dependencies()
     {
-        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-magick-helpers.php';
+        require_once plugin_dir_path(__FILE__) . 'class-magick-helpers.php';
 
-        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-magick-mixtrue-tool.php';
+        require_once plugin_dir_path(__FILE__) . 'class-magick-mixtrue-tool.php';
 
-        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-magick-config-manager.php';
+        require_once plugin_dir_path(__FILE__) . 'class-magick-config-manager.php';
 
-        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/modules/loader.php';
+        require_once plugin_dir_path(__FILE__) . '../admin/modules/loader.php';
 
-        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-magick-mixtrue-admin.php';
+        require_once plugin_dir_path(__FILE__) . '../admin/class-magick-mixtrue-admin.php';
 
-        require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-magick-mixtrue-public.php';
+        require_once plugin_dir_path(__FILE__) . '../public/class-magick-mixtrue-public.php';
     }
 
     /**
@@ -146,8 +146,8 @@ class Magick_Mixtrue
      */
     public static function refund_type_script($tag, $handle)
     {
-        // 在这里判断需要添加 type 属性的 JS 文件，比如文件名包含 xxx.js
-        if (strpos($tag, 'index.js') !== false) {
+        // 仅匹配本插件的 index.js（通过 handle 名称精确匹配）
+        if (strpos($handle, 'magick-tool-box') !== false && strpos($tag, 'index.js') !== false) {
             // 在 script 标签中添加 type 属性
             $tag = str_replace('<script', '<script type="module"', $tag);
         }

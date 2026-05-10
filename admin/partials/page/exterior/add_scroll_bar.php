@@ -7,7 +7,7 @@
  */
 
 if (!class_exists('Npcink_Page_Add_Scroll_Bar')) {
-    class Npcink_Page_Add_Scroll_Bar
+    class MaBox_Page_Add_Scroll_Bar
     {
         public static $config; //配置
         public static function run($config)

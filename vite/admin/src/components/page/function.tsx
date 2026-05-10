@@ -31,7 +31,7 @@ const App: React.FC = () => {
   const { optionData, updateOption } = useContext(DataContext);
 
   //简化并提供默认值
-  let publicData = optionData.page?.function || defaultVarOption.page.function;
+  const publicData = optionData.page?.function || defaultVarOption.page.function;
 
   //创建变量并设默认值
   const [formData, setFormData] = useState(publicData || {});
@@ -358,6 +358,31 @@ const App: React.FC = () => {
             </Form.Item>
           </>
         )}
+
+        <Form.Item<FieldType>
+          id="page-function-link_source"
+          label="文章链接添加来源标识"
+          name="link_source"
+          valuePropName="checked"
+          extra={"在文章内部链接后添加 from 参数，用于流量追踪"}
+        >
+          <FeatureSwitch featureId="page-function-link_source" />
+        </Form.Item>
+        {formData.link_source && (
+          <Form.Item<FieldType> label="来源标识" name="source_key" extra={"默认为 npc"}>
+            <Input placeholder="npc" style={{ width: "200px" }} />
+          </Form.Item>
+        )}
+
+        <Form.Item<FieldType>
+          id="page-function-ticket"
+          label="工单系统"
+          name="ticket"
+          valuePropName="checked"
+          extra={"启用轻量级工单系统，支持前端提交和后台管理。使用短代码 [mabox_ticket_form] 在任意页面嵌入工单表单"}
+        >
+          <FeatureSwitch featureId="page-function-ticket" />
+        </Form.Item>
       </Form>
     </>
   );

@@ -23,12 +23,14 @@ const App: React.FC = () => {
   const handleBatchPush = () => {
     setPushing(true);
     const doPush = (offset: number) => {
-      const formData2 = new FormData();
-      formData2.append("action", "mabox_baidu_batch_push");
-      formData2.append("offset", String(offset));
-      fetch(window.dataLocal?.ajaxurl || "/wp-admin/admin-ajax.php", {
+      fetch("/wp-json/mabox/v1/domestic/baidu/push", {
         method: "POST",
-        body: formData2,
+        headers: {
+          "Content-Type": "application/json",
+          "X-WP-Nonce": window.dataLocal?.nonce || "",
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ offset }),
       })
         .then((r) => r.json())
         .then((res) => {
@@ -85,7 +87,7 @@ const App: React.FC = () => {
         <FeatureSwitch featureId="domestic-baidu_push-batch_push_enabled" />
       </Form.Item>
       {formData.batch_push_enabled && (
-        <Form.Item wrapperCol={{ offset: fromConfig.labelCol, span: fromConfig.wrapperCol }}>
+        <Form.Item wrapperCol={fromConfig.wrapperCol}>
           <Button type="primary" onClick={handleBatchPush} loading={pushing}>
             开始批量推送
           </Button>

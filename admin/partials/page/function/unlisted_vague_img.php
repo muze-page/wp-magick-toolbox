@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('Npcink_Unlisted_Vague_Img')) {
-    class Npcink_Unlisted_Vague_Img
+    class MaBox_Unlisted_Vague_Img
     {
         public static function run()
         {

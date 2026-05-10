@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Page_Flowing_Lines')) {
-    class Npcink_Page_Flowing_Lines
+    class MaBox_Page_Flowing_Lines
     {
         public static function run()
         {

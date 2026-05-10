@@ -5,7 +5,7 @@
  * 来源：https://www.huitheme.com/wordpress-search.html
  */
 if (!class_exists('Npcink_Search_Link_Simplify')) {
-    class Npcink_Search_Link_Simplify
+    class MaBox_Search_Link_Simplify
     {
         public static  function run()
         {

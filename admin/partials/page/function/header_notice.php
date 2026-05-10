@@ -4,7 +4,7 @@
  * 在页面顶部显示通知信息
  */
 if (!class_exists('Npcink_Page_Header_Notice')) {
-    class Npcink_Page_Header_Notice
+    class MaBox_Page_Header_Notice
     {
         private static $option;
 

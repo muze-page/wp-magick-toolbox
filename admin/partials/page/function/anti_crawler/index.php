@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('Npcink_Page_Anti_Crawler')) {
-    class Npcink_Page_Anti_Crawler
+    class MaBox_Page_Anti_Crawler
     {
         private static $option;
 
@@ -9,8 +9,8 @@ if (!class_exists('Npcink_Page_Anti_Crawler')) {
         {
             self::$option = $config;
             add_action('template_redirect', array(__CLASS__, 'check_access'));
-            add_action('wp_ajax_mabox_anti_crawler_verify', array(__CLASS__, 'ajax_verify'));
-            add_action('wp_ajax_nopriv_mabox_anti_crawler_verify', array(__CLASS__, 'ajax_verify'));
+            add_action('wp_ajax_mabox_anti_crawler_verify', array(__CLASS__, 'ajax_verify_deprecated'));
+            add_action('wp_ajax_nopriv_mabox_anti_crawler_verify', array(__CLASS__, 'ajax_verify_deprecated'));
             add_action('wp_footer', array(__CLASS__, 'render_challenge'));
         }
 
@@ -48,6 +48,11 @@ if (!class_exists('Npcink_Page_Anti_Crawler')) {
                     wp_die(self::challenge_page(), esc_html__('访问过于频繁'), array('response_code' => 429));
                 });
             }
+        }
+
+        public static function ajax_verify_deprecated() {
+            _deprecated_function('wp_ajax_mabox_anti_crawler_verify', '2.1.0', 'REST API POST /mabox/v1/public/anti-crawler/verify');
+            self::ajax_verify();
         }
 
         public static function ajax_verify()

@@ -5,7 +5,7 @@
  * 来源： No Category Base (WPML) v1.3
  */
 if (!class_exists('Npcink_Category_Link_Simplify')) {
-    class Npcink_Category_Link_Simplify
+    class MaBox_Category_Link_Simplify
     {
         /**
          * 执行代码

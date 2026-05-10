@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Page_Screen_Hair')) {
-    class Npcink_Page_Screen_Hair
+    class MaBox_Page_Screen_Hair
     {
         public static function run()
         {

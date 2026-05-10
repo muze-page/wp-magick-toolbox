@@ -22,7 +22,7 @@ const App: React.FC = () => {
   const { optionData, updateOption } = useContext(DataContext);
 
   //简化并提供默认值
-  let publicData = optionData.function?.seo || defaultVarOption.function.seo;
+  const publicData = optionData.function?.seo || defaultVarOption.function.seo;
 
   //创建变量并设默认值
   const [formData, setFormData] = useState(publicData || {});

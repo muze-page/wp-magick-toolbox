@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Comment_Only_Once')) {
-    class Npcink_Comment_Only_Once
+    class MaBox_Comment_Only_Once
     {
         public static function run()
         {

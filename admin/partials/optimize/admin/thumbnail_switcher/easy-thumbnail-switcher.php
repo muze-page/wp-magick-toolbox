@@ -17,12 +17,12 @@ class TS_Easy_Thumbnail_Switcher {
      */
     public function __construct() {
     
-        $this->add_new_str = __( '添加', 'ts_ets' );
-        $this->change_str = __( '修改', 'ts_ets' );
-        $this->remove_str = __( '移除', 'ts_ets' );
-        $this->upload_title = __( '上传缩略图', 'ts_ets' );
-        $this->upload_add = __( '使用选定的', 'ts_ets' );
-        $this->confirm_str = __( '确定吗？', 'ts_ets' );
+$this->add_new_str = __( '添加', 'magick-toolbox' );
+            $this->change_str = __( '修改', 'magick-toolbox' );
+            $this->remove_str = __( '移除', 'magick-toolbox' );
+            $this->upload_title = __( '上传缩略图', 'magick-toolbox' );
+            $this->upload_add = __( '使用选定的', 'magick-toolbox' );
+            $this->confirm_str = __( '确定吗？', 'magick-toolbox' );
         
         add_filter( 'manage_posts_columns', array( $this, 'add_column' ) );
         add_action( 'manage_posts_custom_column', array( $this, 'thumb_column' ), 10, 2 );
@@ -107,7 +107,7 @@ class TS_Easy_Thumbnail_Switcher {
      */
     public function add_column( $columns ) {
         
-        $columns['ts-ets-option'] = __( '缩略图', 'ts_ets' );
+        $columns['ts-ets-option'] = __( '缩略图', 'magick-toolbox' );
         return $columns;
         
     }

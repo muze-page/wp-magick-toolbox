@@ -4,7 +4,7 @@
  * 未登录用户无法使用搜索功能
  */
 if (!class_exists('Npcink_Page_Login_Search')) {
-    class Npcink_Page_Login_Search
+    class MaBox_Page_Login_Search
     {
         public static function run()
         {

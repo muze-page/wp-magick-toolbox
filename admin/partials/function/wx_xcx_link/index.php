@@ -61,141 +61,89 @@ if (!class_exists('MaBox_Function_Wx_Xcx_Link')) {
         /**
          * 构造获取token的链接
          */
-        public static  function wx_json_token($appid, $secret)
-        {
-            //构造链接
-            $link = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" . $appid . "&secret=" . $secret;
+    public static  function wx_json_token($appid, $secret)
+    {
+        $link = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" . urlencode($appid) . "&secret=" . urlencode($secret);
 
-            if (!function_exists('curl_init') || !function_exists('curl_exec')) {
-                return new \WP_Error('curl_missing', '服务器未安装 cURL 扩展，无法获取 Token');
-            }
+        $response = wp_remote_get($link, array(
+            'timeout' => 30,
+            'sslverify' => true,
+        ));
 
-            $curl = curl_init();
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => "",
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-            ]);
-
-
-            // 抓取URL并把它传递给浏览器
-            $response = curl_exec($curl);
-            $err = curl_error($curl);
-
-            // 关闭cURL资源，并且释放系统资源
-            curl_close($curl);
-
-            // 检查 cURL 错误
-            if ($err) {
-                return new \WP_Error('curl_error', '获取 Token 时发生网络错误: ' . $err);
-            }
-
-            // 检查响应是否为空
-            if (empty($response)) {
-                return new \WP_Error('empty_response', '微信 API 返回空响应');
-            }
-
-            //返回函数生成的内容
-            //获取token文件
-            //将数组变为变量
-            $json_token = json_decode($response, true);
-
-            // 检查 JSON 解析是否成功
-            if (!is_array($json_token)) {
-                return new \WP_Error('invalid_json', '微信 API 返回无效 JSON: ' . substr($response, 0, 200));
-            }
-
-            // 检查微信 API 是否返回错误
-            if (isset($json_token['errcode']) && $json_token['errcode'] != 0) {
-                $errmsg = isset($json_token['errmsg']) ? $json_token['errmsg'] : '未知错误';
-                return new \WP_Error('wx_api_error', '微信 API 错误 [' . $json_token['errcode'] . ']: ' . $errmsg);
-            }
-
-            //拿到需要的值  expires_in为有效期2小时
-            if (!isset($json_token['access_token'])) {
-                return new \WP_Error('missing_token', '微信 API 响应中缺少 access_token');
-            }
-            $wx_token =  $json_token['access_token'];
-
-
-            return $wx_token;
+        if (is_wp_error($response)) {
+            return new \WP_Error('request_error', '获取 Token 时发生网络错误: ' . $response->get_error_message());
         }
+
+        $body = wp_remote_retrieve_body($response);
+        if (empty($body)) {
+            return new \WP_Error('empty_response', '微信 API 返回空响应');
+        }
+
+        $json_token = json_decode($body, true);
+
+        if (!is_array($json_token)) {
+            return new \WP_Error('invalid_json', '微信 API 返回无效 JSON: ' . substr($body, 0, 200));
+        }
+
+        if (isset($json_token['errcode']) && $json_token['errcode'] != 0) {
+            $errmsg = isset($json_token['errmsg']) ? $json_token['errmsg'] : '未知错误';
+            return new \WP_Error('wx_api_error', '微信 API 错误 [' . $json_token['errcode'] . ']: ' . $errmsg);
+        }
+
+        if (!isset($json_token['access_token'])) {
+            return new \WP_Error('missing_token', '微信 API 响应中缺少 access_token');
+        }
+
+        return $json_token['access_token'];
+    }
 
         /**
          * 获取跳转小程序的链接
          */
-        public static function get_link($token, $path, $query)
-        {
-            //获取小程序链接
-            $xcx_url = 'https://api.weixin.qq.com/wxa/generatescheme?access_token=' . $token;
+    public static function get_link($token, $path, $query)
+    {
+        $xcx_url = 'https://api.weixin.qq.com/wxa/generatescheme?access_token=' . $token;
 
+        $params = array(
+            "jump_wxa" => array(
+                "path" => $path,
+                "query" => $query,
+            ),
+        );
 
-            $params = array(
-                "jump_wxa" => array(
-                    "path" => $path,
-                    "query" => $query,
-                    //"env_version"=>''
-                ),
+        $response = wp_remote_post($xcx_url, array(
+            'timeout' => 30,
+            'sslverify' => true,
+            'body' => json_encode($params),
+            'headers' => array('Content-Type' => 'application/json'),
+        ));
 
-            );
-
-            $data = json_encode($params);
-
-            if (!function_exists('curl_init') || !function_exists('curl_exec')) {
-                return new \WP_Error('curl_missing', '服务器未安装 cURL 扩展，无法生成跳转链接');
-            }
-
-            $curl = curl_init();
-
-            curl_setopt_array($curl, [
-                CURLOPT_URL => $xcx_url,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => "",
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $data,
-            ]);
-
-            $response = curl_exec($curl);
-            $err = curl_error($curl);
-
-            curl_close($curl);
-
-            // 检查 cURL 错误
-            if ($err) {
-                return new \WP_Error('curl_error', '生成小程序链接时发生网络错误: ' . $err);
-            }
-
-            // 检查响应是否为空
-            if (empty($response)) {
-                return new \WP_Error('empty_response', '微信 API 返回空响应');
-            }
-
-            //拿到小程序链接相关信息
-            $json_url = json_decode($response, true);
-
-            // 检查 JSON 解析是否成功
-            if (!is_array($json_url)) {
-                return new \WP_Error('invalid_json', '微信 API 返回无效 JSON: ' . substr($response, 0, 200));
-            }
-
-            // 检查微信 API 是否返回错误
-            if (isset($json_url['errcode']) && $json_url['errcode'] != 0) {
-                $errmsg = isset($json_url['errmsg']) ? $json_url['errmsg'] : '未知错误';
-                return new \WP_Error('wx_api_error', '微信 API 错误 [' . $json_url['errcode'] . ']: ' . $errmsg);
-            }
-
-            //拿到需要的值
-            if (!isset($json_url['openlink'])) {
-                return new \WP_Error('missing_link', '微信 API 响应中缺少 openlink');
-            }
-            $wx_url =  $json_url['openlink'];
-            return $wx_url;
+        if (is_wp_error($response)) {
+            return new \WP_Error('request_error', '生成小程序链接时发生网络错误: ' . $response->get_error_message());
         }
+
+        $body = wp_remote_retrieve_body($response);
+        if (empty($body)) {
+            return new \WP_Error('empty_response', '微信 API 返回空响应');
+        }
+
+        $json_url = json_decode($body, true);
+
+        if (!is_array($json_url)) {
+            return new \WP_Error('invalid_json', '微信 API 返回无效 JSON: ' . substr($body, 0, 200));
+        }
+
+        if (isset($json_url['errcode']) && $json_url['errcode'] != 0) {
+            $errmsg = isset($json_url['errmsg']) ? $json_url['errmsg'] : '未知错误';
+            return new \WP_Error('wx_api_error', '微信 API 错误 [' . $json_url['errcode'] . ']: ' . $errmsg);
+        }
+
+        if (!isset($json_url['openlink'])) {
+            return new \WP_Error('missing_link', '微信 API 响应中缺少 openlink');
+        }
+
+        return $json_url['openlink'];
+    }
         /**
          * 添加单页
          */

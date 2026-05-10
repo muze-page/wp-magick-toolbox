@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_B2_Shop')) {
-    class Npcink_B2_Shop
+    class MaBox_B2_Shop
     {
 
 

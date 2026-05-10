@@ -19,7 +19,7 @@ const App: React.FC = () => {
   const { optionData, updateOption } = useContext(DataContext);
 
   //简化并提供默认值
-  let publicData = optionData.optimize?.site || defaultVarOption.optimize.site;
+  const publicData = optionData.optimize?.site || defaultVarOption.optimize.site;
 
   //创建变量并设默认值
   const [formData, setFormData] = useState(publicData || {});
@@ -202,6 +202,16 @@ const App: React.FC = () => {
           extra={"每行一条规则，格式: 原地址 => 新地址，支持 style_loader_src 和 script_loader_src"}
         >
           <Input.TextArea rows={4} placeholder={"example.com/cdn/ => cdn.example.com/"} />
+        </Form.Item>
+
+        <Form.Item<FieldType>
+          id="optimize-site-hide_email_ip"
+          label="隐藏邮件中的 IP"
+          name="hide_email_ip"
+          valuePropName="checked"
+          extra={"在 WordPress 发送的邮件中隐藏 IP 地址，保护用户隐私"}
+        >
+          <FeatureSwitch featureId="optimize-site-hide_email_ip" />
         </Form.Item>
       </Form>
     </>

@@ -1,0 +1,50 @@
+/* 闭站页响应式适配 */
+@media (max-width: 768px) {
+    .mabox-maintenance-container {
+        padding: 20px !important;
+        max-width: 100% !important;
+    }
+
+    .mabox-maintenance-container h1,
+    .mabox-maintenance-container .title {
+        font-size: 24px !important;
+        padding: 0 15px !important;
+    }
+
+    .mabox-maintenance-container p,
+    .mabox-maintenance-container .content {
+        font-size: 14px !important;
+        padding: 0 15px !important;
+    }
+
+    .mabox-maintenance-container img {
+        max-width: 80% !important;
+        height: auto !important;
+    }
+
+    .mabox-maintenance-container .countdown {
+        font-size: 18px !important;
+    }
+
+    .mabox-maintenance-container .btn {
+        width: 80% !important;
+        padding: 12px 20px !important;
+        font-size: 14px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .mabox-maintenance-container h1,
+    .mabox-maintenance-container .title {
+        font-size: 20px !important;
+    }
+
+    .mabox-maintenance-container p,
+    .mabox-maintenance-container .content {
+        font-size: 13px !important;
+    }
+
+    .mabox-maintenance-container .countdown {
+        font-size: 16px !important;
+    }
+}

@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Comment_Ban_Pure_English')) {
-    class Npcink_Comment_Ban_Pure_English
+    class MaBox_Comment_Ban_Pure_English
     {
         public static function run()
         {

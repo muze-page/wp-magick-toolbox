@@ -5,7 +5,7 @@
  * 来源：
  */
 if (!class_exists('Npcink_Biying_Tonji')) {
-    class Npcink_Biying_Tonji
+    class MaBox_Biying_Tonji
     {
         private static $option;
         public static function run($config)

@@ -91,7 +91,9 @@ const App: React.FC<AppProps> = ({ closePoster }) => {
     : DefaultImg;
   //下载海报按钮TODO:完善下载海报功能
   
-  const downloadButton = () => {};
+  const downloadButton = () => {
+    // TODO: 完善下载海报功能
+  };
   return (
     <>
       <div className="scroll-content">

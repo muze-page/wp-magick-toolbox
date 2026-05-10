@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Maintenance_Tips')) {
-    class Npcink_Maintenance_Tips
+    class MaBox_Maintenance_Tips
     {
 
         private static $configs; //配置
@@ -32,9 +32,12 @@ if (!class_exists('Npcink_Maintenance_Tips')) {
             //不是管理员
             // if (!current_user_can('edit_themes') || !is_user_logged_in()) {
             if (!current_user_can('manage_options')) {
+                // 添加响应式 CSS
+                add_action('wp_head', array(__CLASS__, 'add_responsive_css'));
+
                 switch (self::$configs) {
                     case "default": //默认
-                        wp_die(self::$blogname . ' 升级维护中，过一会再来吧！');
+                        wp_die(esc_html(self::$blogname) . ' 升级维护中，过一会再来吧！');
                         break;
                     case "default_img": //默认带图
                         include(self::$path . 'default/index.php');
@@ -66,6 +69,10 @@ if (!class_exists('Npcink_Maintenance_Tips')) {
                         break;
                 }
             }
+        }
+
+        public static function add_responsive_css() {
+            echo '<link rel="stylesheet" href="' . esc_url(self::$path . '../maintenance/responsive.css') . '">';
         }
 
     }

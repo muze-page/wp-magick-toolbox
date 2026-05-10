@@ -5,7 +5,7 @@
  * 来源：
  */
 if (!class_exists('Npcink_Page_Background_Effect')) {
-    class Npcink_Page_Background_Effect
+    class MaBox_Page_Background_Effect
     {
         public static function run($config)
         {

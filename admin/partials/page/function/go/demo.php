@@ -14,8 +14,8 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
     <meta name="renderer" content="webkit">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <title><?php echo $site_name ?> - 安全中心</title>
-    <link rel="shortcut icon" href="<?php echo $favicon_url ?>" type="image/x-icon">
+    <title><?php echo esc_html($site_name) ?> - 安全中心</title>
+    <link rel="shortcut icon" href="<?php echo esc_url($favicon_url) ?>" type="image/x-icon">
     <style>
         .box {
             text-align: center;
@@ -32,7 +32,7 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
 
 <body>
     <div class="box">
-        您即将离开<?php echo $site_name ?>，
+        您即将离开<?php echo esc_html($site_name) ?>，
         <a href="<?php echo esc_url($external_url); ?>" target="_self">继续前往</a>
     </div>
 </body>

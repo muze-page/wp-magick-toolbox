@@ -5,7 +5,7 @@
  * 来源：
  */
 if (!class_exists('Npcink_Google_Tonji')) {
-    class Npcink_Google_Tonji
+    class MaBox_Google_Tonji
     {
 
         private static $option;

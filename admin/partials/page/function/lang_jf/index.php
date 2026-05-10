@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Single_Lang_Jf')) {
-    class Npcink_Single_Lang_Jf
+    class MaBox_Single_Lang_Jf
     {
         public static function run()
         {

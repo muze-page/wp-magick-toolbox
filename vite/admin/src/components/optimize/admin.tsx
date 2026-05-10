@@ -19,7 +19,7 @@ const App: React.FC = () => {
   const { optionData, updateOption } = useContext(DataContext);
 
   //简化并提供默认值
-  let publicData = optionData.optimize?.admin || defaultVarOption.optimize.admin;
+  const publicData = optionData.optimize?.admin || defaultVarOption.optimize.admin;
 
   //创建变量并设默认值
   const [formData, setFormData] = useState(publicData || {});

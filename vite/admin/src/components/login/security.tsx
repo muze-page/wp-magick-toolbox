@@ -5,12 +5,11 @@
 //权限 - 辅助功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Form, Input, Select, Switch } from "antd";
+import { Form, Input, Select } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { LoginSecurity } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
-import FeatureSwitch from "@/basic/feature-switch";
 
 //选项类型
 type FieldType = LoginSecurity;
@@ -23,7 +22,7 @@ const App: React.FC = () => {
   const { optionData, updateOption } = useContext(DataContext);
 
   //简化并提供默认值
-  let publicData =
+  const publicData =
     optionData.login?.security || defaultVarOption.login.security;
 
   //创建变量并设默认值
@@ -65,22 +64,6 @@ const App: React.FC = () => {
         <Form.Item>
           <h2>登录安全</h2>
         </Form.Item>
-        <Form.Item<FieldType>
-          id="login-security-replace_login_error"
-          label="替换登录报错信息"
-          name="replace_login_error"
-          valuePropName="checked"
-          extra={
-            <span>
-              <strong>修复中，禁用;</strong>
-              默认登录报错信息会透露用户是用户名错误还是密码错误，统一信息后，可改善此情况，
-              <b style={{ color: "red" }}>会覆盖下方登录验证码错误提示！</b>
-            </span>
-          }
-        >
-          <Switch disabled={true} />
-        </Form.Item>
-
         <Form.Item<FieldType>
           label="登录验证码"
           name="login_code"

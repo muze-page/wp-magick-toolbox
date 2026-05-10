@@ -5,7 +5,7 @@
  * 来源：https://www.iowen.cn/yichuwordpress59dengluyemianzhongdeyuyanqiehuankuang/
  * */
 if (!class_exists('Npcink_Login_Remove_Lang_Select')) {
-    class Npcink_Login_Remove_Lang_Select
+    class MaBox_Login_Remove_Lang_Select
     {
         public static function run()
         {

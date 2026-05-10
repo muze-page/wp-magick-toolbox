@@ -11,11 +11,11 @@ const num: number = 0;
 
 //准备昨天的时间
 // 获取昨天的日期
-var yesterday = new Date();
+const yesterday = new Date();
 yesterday.setDate(yesterday.getDate() - 1);
 
 // 设置开始时间和结束时间
-var startTime = new Date(
+const startTime = new Date(
   yesterday.getFullYear(),
   yesterday.getMonth(),
   yesterday.getDate(),
@@ -23,7 +23,7 @@ var startTime = new Date(
   0,
   0
 );
-var endTime = new Date(
+const endTime = new Date(
   yesterday.getFullYear(),
   yesterday.getMonth(),
   yesterday.getDate(),
@@ -63,6 +63,7 @@ const OptimizeSite = {
   cdn_google_fonts_mirror: 'fonts.loli.net', //Google Fonts镜像地址
   cdn_google_ajax: boo, //Google Ajax替换
   cdn_custom: '', //自定义CDN替换规则
+  hide_email_ip: boo, //隐藏邮件中的IP
 };
 
 //优化  媒体
@@ -127,6 +128,9 @@ const PageFeature = {
   reading_progress: boo, //页顶阅读进度条
   reading_progress_color: "#1677ff", //进度条颜色
   reading_progress_height: 3, //进度条高度
+  font_switch: boo, //字体切换
+  fonts: "Microsoft YaHei,Simsun,PingFang SC,Noto Sans SC", //字体列表
+  font_position: "bottom-right", //按钮位置
 };
 
 //页面 功能
@@ -177,6 +181,10 @@ const PageFunction = {
   anti_crawler_time_window: 60, //时间窗口(秒)
   anti_crawler_tecent_id: '', //腾讯防水墙AppID
   anti_crawler_tecent_key: '', //腾讯防水墙AppKey
+  link_source: boo, //文章链接添加来源
+  source_key: 'npc', //来源标识
+  ticket: boo, //工单系统
+  diary: boo, //日记类型
 };
 
 // 页面 - 权限
@@ -275,7 +283,6 @@ const LoginBeautify = {
 
 //登录安全
 const LoginSecurity = {
-  replace_login_error: boo, //替换登录报错信息
   login_code: "false", //登录验证码
   tecent_id: str, //腾讯ID
   tecent_key: str, //腾讯秘钥
@@ -439,6 +446,52 @@ const PerformanceDbClean = {
   auto_clean_schedule: 'weekly',
 };
 
+// AI 审核 - Provider
+const AiReview = {
+  enabled: boo,
+  provider: 'local',
+  mode: 'mark',
+  deepseek_api_key: '',
+  deepseek_api_url: 'https://api.deepseek.com/v1/chat/completions',
+  deepseek_model: 'deepseek-chat',
+  aliyun_access_key: '',
+  aliyun_secret_key: '',
+  aliyun_region: 'cn-shanghai',
+  custom_api_url: '',
+  custom_api_method: 'POST',
+  custom_api_headers: '',
+  custom_api_body_template: '',
+  local_rules_enabled: boo,
+  local_keywords: '',
+  local_regex: '',
+  strict_mode: boo,
+  log_enabled: boo,
+  log_max_entries: 500,
+};
+
+const Services = {
+  enabled: boo,
+  wechat_qr: '',
+  wechat_id: '',
+  email: '',
+  website: '',
+  service_custom_dev: boo,
+  service_deployment: boo,
+  service_theme_adapt: boo,
+  service_support: boo,
+  cases: [],
+};
+
+const Feedback = {
+  enabled: boo,
+  feedback_enabled: boo,
+  feedback_email: '',
+  feedback_auto_reply: '感谢您的反馈，我们会尽快处理。',
+  telemetry_enabled: boo,
+  telemetry_anonymous: boo,
+  show_insights: boo,
+};
+
 export const defaultVarOption = {
   //优化
   optimize: {
@@ -497,6 +550,12 @@ export const defaultVarOption = {
     search_enhance: PerformanceSearchEnhance,
     db_clean: PerformanceDbClean,
   },
+  // AI 审核
+  ai_review: AiReview,
+  // 增值服务
+  services: Services,
+  // 用户反馈
+  feedback: Feedback,
 };
 export const defaultVarData = {
   option: defaultVarOption,

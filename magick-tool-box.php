@@ -3,11 +3,11 @@
  * Plugin Name: WP Magick Toolbox
  * Description: 魔法工具箱，诸多实用且有趣的功能合集，简单易用；详情请见插件中的「关于」页内容
  * Plugin URI: https://www.npc.ink/277510.html
- * Version: 2.0.83
+ * Version: 2.3.0
  * Author: Npcink
  * Author URI: https://www.npc.ink/
  * Requires at least: 4.6
- * Requires PHP:      7.0
+ * Requires PHP:      7.4
  */
 //调试内容，在后台顶部显示一个通知
 // 如果直接调用此文件，请中止。
@@ -23,7 +23,7 @@ if (!defined('WPINC')) {
 //定义插件名
 define('MAGICK_MIXTURE_NAME', 'magick-optimize');
 //定义插件版本
-define('MAGICK_MIXTURE_VERSION', '2.0.83');
+define('MAGICK_MIXTURE_VERSION', '2.3.0');
 //定义保存选项字段
 define('MAGICK_MIXTURE_OPTION', "Magick_ToolBox_Option");
 define('MAGICK_TOOLBOX_ACTIVE_MODULES', 'Magick_ToolBox_Active_Modules');
@@ -46,6 +46,24 @@ define('MAGICK_MIXTURE_OPTION_TEMPLATE', 'Magick_ToolBox_Option_Template');
  */
 define('MAGICK_MIXTURE_CONFIG_VERSION', 'Magick_ToolBox_Config_Version');
 define('MAGICK_MIXTURE_CONFIG_BACKUP', 'Magick_ToolBox_Option_Backup_v210');
+
+/**
+ * 第四阶段：AI 审核引擎模块 Option 键名
+ * @since 2.3.0
+ */
+define('MAGICK_MIXTURE_OPTION_AI_REVIEW', 'Magick_ToolBox_Option_AiReview');
+
+/**
+ * 第四阶段：增值服务基础设施 Option 键名
+ * @since 2.3.0
+ */
+define('MAGICK_MIXTURE_OPTION_SERVICES', 'Magick_ToolBox_Option_Services');
+
+/**
+ * 第四阶段：用户反馈与数据洞察 Option 键名
+ * @since 2.3.0
+ */
+define('MAGICK_MIXTURE_OPTION_FEEDBACK', 'Magick_ToolBox_Option_Feedback');
 
 /**
  * 第三阶段：国内生态 & 性能优化模块 Option 键名
@@ -86,6 +104,6 @@ register_activation_hook(__FILE__, function() {
 
 //设置按钮
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
-    $links[] = '<a href="' . get_admin_url(null, 'plugins.php?page=MaBox_config') . '">' . __('设置', 'n') . '</a>';
+    $links[] = '<a href="' . get_admin_url(null, 'plugins.php?page=MaBox_config') . '">' . __('设置', 'magick-toolbox') . '</a>';
     return $links;
 });

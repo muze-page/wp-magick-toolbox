@@ -6,10 +6,19 @@ if (!class_exists('MaBox_Download_SQL_Table')) {
         public static function run()
         {
             // 提供数据库表格数据
-            add_action('wp_ajax_get_all_table_names', array(__CLASS__, 'get_all_table_names'));
+            add_action('wp_ajax_get_all_table_names', array(__CLASS__, 'get_all_table_names_deprecated'));
 
             // 提供数据库表格数据下载
-            add_action('wp_ajax_get_table_data', array(__CLASS__, 'get_table_data'));
+            add_action('wp_ajax_get_table_data', array(__CLASS__, 'get_table_data_deprecated'));
+        }
+
+        public static function get_all_table_names_deprecated() {
+            _deprecated_function('wp_ajax_get_all_table_names', '2.1.0', 'REST API GET /mabox/v1/tools/tables');
+            self::get_all_table_names();
+        }
+        public static function get_table_data_deprecated() {
+            _deprecated_function('wp_ajax_get_table_data', '2.1.0', 'REST API POST /mabox/v1/tools/table-data');
+            self::get_table_data();
         }
 
         //获取所有的数据库表名
@@ -80,6 +89,9 @@ if (!class_exists('MaBox_Download_SQL_Table')) {
                 ], 404);
             }
 
+            // NOTE: $wpdb->prepare() cannot parameterize table names (identifiers, not values).
+            // Safety is ensured by: (1) sanitize_text_field, (2) regex whitelist /^[a-zA-Z0-9_]+$/,
+            // (3) SHOW TABLES LIKE %s existence check above.
             $query = "SELECT * FROM `{$searchTableName}`";
             $results = $wpdb->get_results($query, ARRAY_A);
 

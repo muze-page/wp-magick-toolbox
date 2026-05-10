@@ -7,7 +7,7 @@ $page_title = get_the_title();
 <div class="card-container">
     <header class="entry-header">
         <h1 class="entry-title">
-            <?php echo $page_title; ?>
+            <?php echo esc_html($page_title); ?>
         </h1>
     </header>
     <div class=" entry-content">

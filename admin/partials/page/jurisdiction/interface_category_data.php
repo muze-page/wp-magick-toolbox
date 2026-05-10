@@ -5,12 +5,17 @@
  */
 
 if (!class_exists('Npcink_Interface_Category_Data')) {
-    class Npcink_Interface_Category_Data
+    class MaBox_Interface_Category_Data
     {
         public static function run()
         {
             // 提供数据库表格数据
-            add_action('wp_ajax_get_all_category_names', array(__CLASS__, 'get_all_category_names'));
+            add_action('wp_ajax_get_all_category_names', array(__CLASS__, 'get_all_category_names_deprecated'));
+        }
+
+        public static function get_all_category_names_deprecated() {
+            _deprecated_function('wp_ajax_get_all_category_names', '2.1.0', 'REST API GET /mabox/v1/tools/categories');
+            self::get_all_category_names();
         }
 
         //获取所有的数据库表名

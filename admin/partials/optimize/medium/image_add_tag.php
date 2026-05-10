@@ -4,7 +4,7 @@
  * 来源：
  */
 if (!class_exists('Npcink_Image_Add_Tag')) {
-    class Npcink_Image_Add_Tag
+    class MaBox_Image_Add_Tag
     {
         //加载
         public static function run()

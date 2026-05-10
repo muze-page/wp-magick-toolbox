@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Single_First_Picture')) {
-    class Npcink_Single_First_Picture
+    class MaBox_Single_First_Picture
     {
         public static function run()
         {

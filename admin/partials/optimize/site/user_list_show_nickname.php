@@ -5,7 +5,7 @@
  * 来源：https://www.huitheme.com/add_user_nickname_column.html
  */
 if (!class_exists('Npcink_User_List_Show_Nickname')) {
-    class Npcink_User_List_Show_Nickname
+    class MaBox_User_List_Show_Nickname
     {
         public static function run()
         {

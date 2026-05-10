@@ -5,7 +5,7 @@
  */
 
 if (!class_exists('Npcink_Page_Hide_Tag')) {
-    class Npcink_Page_Hide_Tag
+    class MaBox_Page_Hide_Tag
     {
         private static $id_array; //标签数组
         private static $tip_content; //提示信息

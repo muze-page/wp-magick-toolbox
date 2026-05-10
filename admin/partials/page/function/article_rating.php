@@ -4,13 +4,13 @@
  * 用户可以对文章进行评分，支持匿名用户（IP + Cookie 追踪）
  */
 if (!class_exists('Npcink_Page_Article_Rating')) {
-    class Npcink_Page_Article_Rating
+    class MaBox_Page_Article_Rating
     {
         public static function run()
         {
             add_action('wp_enqueue_scripts', array(__CLASS__, 'load_assets'));
-            add_action('wp_ajax_submit_rating', array(__CLASS__, 'handle_rating'));
-            add_action('wp_ajax_nopriv_submit_rating', array(__CLASS__, 'handle_rating'));
+add_action('wp_ajax_submit_rating', array(__CLASS__, 'handle_rating_deprecated'));
+add_action('wp_ajax_nopriv_submit_rating', array(__CLASS__, 'handle_rating_deprecated'));
             add_filter('the_content', array(__CLASS__, 'append_rating_widget'));
         }
 
@@ -46,6 +46,11 @@ if (!class_exists('Npcink_Page_Article_Rating')) {
             $widget .= '</div>';
 
             return $content . $widget;
+        }
+
+        public static function handle_rating_deprecated() {
+            _deprecated_function('wp_ajax_submit_rating', '2.1.0', 'REST API POST /mabox/v1/public/rating');
+            self::handle_rating();
         }
 
         public static function handle_rating()

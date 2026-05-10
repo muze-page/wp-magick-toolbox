@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Page_Sliding_Ribbon')) {
-    class Npcink_Page_Sliding_Ribbon
+    class MaBox_Page_Sliding_Ribbon
     {
         public static function run()
         {

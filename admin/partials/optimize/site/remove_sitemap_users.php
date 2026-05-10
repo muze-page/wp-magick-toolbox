@@ -5,7 +5,7 @@
  * 来源：https://www.huitheme.com/wp-sitemap-users.html
  */
 if (!class_exists('Npcink_Remove_Sitemap_Users')) {
-    class Npcink_Remove_Sitemap_Users
+    class MaBox_Remove_Sitemap_Users
     {
 
         public static  function run()

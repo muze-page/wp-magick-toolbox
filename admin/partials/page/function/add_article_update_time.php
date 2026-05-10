@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Single_Add_Last_Updated_Date')) {
-    class Npcink_Single_Add_Last_Updated_Date
+    class MaBox_Single_Add_Last_Updated_Date
     {
         public static function run()
         {

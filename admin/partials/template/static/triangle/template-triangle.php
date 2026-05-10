@@ -14,7 +14,7 @@ $page_content = apply_filters('the_content', get_post_field('post_content', get_
     <!--标题-->
     <header class="entry-header">
         <h2 class="triangle-center entry-title">
-            <?php echo $page_title; ?>
+            <?php echo esc_html($page_title); ?>
         </h2>
     </header>
 
@@ -39,7 +39,7 @@ $page_content = apply_filters('the_content', get_post_field('post_content', get_
 
     <!--内容-->
     <div class="entry-content">
-        <?php echo $page_content; ?>
+        <?php echo wp_kses_post($page_content); ?>
     </div>
 </div>
 

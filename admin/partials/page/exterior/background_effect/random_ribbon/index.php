@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Page_Random_Ribbon')) {
-    class Npcink_Page_Random_Ribbon
+    class MaBox_Page_Random_Ribbon
     {
         public static function run()
         {

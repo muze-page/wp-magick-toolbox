@@ -4,7 +4,7 @@
  * 限制未登录用户的搜索频率，防止恶意搜索
  */
 if (!class_exists('Npcink_Page_Search_Limit')) {
-    class Npcink_Page_Search_Limit
+    class MaBox_Page_Search_Limit
     {
         private static $option;
 
@@ -35,7 +35,7 @@ if (!class_exists('Npcink_Page_Search_Limit')) {
                 }
 
                 if ($search_count >= $max_count) {
-                    wp_die('搜索过于频繁，请稍后再试。');
+                    wp_die(esc_html__('搜索过于频繁，请稍后再试。'));
                 }
 
                 set_transient($transient_key, $search_count + 1, MINUTE_IN_SECONDS);

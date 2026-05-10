@@ -22,11 +22,10 @@ const App: React.FC = () => {
   }, [formData]);
 
   const fetchStats = () => {
-    const formData2 = new FormData();
-    formData2.append("action", "mabox_db_stats");
-    fetch(window.dataLocal?.ajaxurl || "/wp-admin/admin-ajax.php", {
-      method: "POST",
-      body: formData2,
+    fetch("/wp-json/mabox/v1/performance/db/stats", {
+      method: "GET",
+      headers: { "X-WP-Nonce": window.dataLocal?.nonce || "" },
+      credentials: "same-origin",
     })
       .then((r) => r.json())
       .then((res) => {
@@ -36,12 +35,14 @@ const App: React.FC = () => {
 
   const handleClean = (type: string) => {
     setLoading(true);
-    const formData2 = new FormData();
-    formData2.append("action", "mabox_db_clean");
-    formData2.append("type", type);
-    fetch(window.dataLocal?.ajaxurl || "/wp-admin/admin-ajax.php", {
+    fetch("/wp-json/mabox/v1/performance/db/clean", {
       method: "POST",
-      body: formData2,
+      headers: {
+        "Content-Type": "application/json",
+        "X-WP-Nonce": window.dataLocal?.nonce || "",
+      },
+      credentials: "same-origin",
+      body: JSON.stringify({ type }),
     })
       .then((r) => r.json())
       .then((res) => {
@@ -101,7 +102,7 @@ const App: React.FC = () => {
         </Form.Item>
       )}
 
-      <Form.Item wrapperCol={{ offset: fromConfig.labelCol, span: fromConfig.wrapperCol }}>
+      <Form.Item wrapperCol={fromConfig.wrapperCol}>
         <Button onClick={fetchStats}>查看统计</Button>
         <Button type="primary" danger style={{ marginLeft: 8 }} onClick={() => handleClean("all")} loading={loading}>
           一键清理全部
@@ -109,7 +110,7 @@ const App: React.FC = () => {
       </Form.Item>
 
       {stats.db_size && (
-        <Form.Item wrapperCol={{ offset: fromConfig.labelCol, span: fromConfig.wrapperCol }}>
+        <Form.Item wrapperCol={fromConfig.wrapperCol}>
           <List size="small" bordered>
             <List.Item>数据库大小：{stats.db_size}</List.Item>
             <List.Item>修订版本：{stats.revisions} <Button size="small" onClick={() => handleClean("revisions")}>清理</Button></List.Item>

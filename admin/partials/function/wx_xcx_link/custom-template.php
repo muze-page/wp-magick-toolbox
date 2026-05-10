@@ -13,6 +13,7 @@ $css = plugin_dir_url(__FILE__) . 'template_page.css';
 
 //小程序链接
 $link = MaBox_Function_Wx_Xcx_Link::add_hello_header();
+$link_error = is_wp_error($link) ? $link->get_error_message() : '';
 
 //当前页面链接
 $page_url = get_permalink();
@@ -28,13 +29,13 @@ $site = MaBox_Function_Wx_Xcx_Link::get_h5_options_site();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo  get_the_title(); ?></title>
+    <title><?php echo esc_html(get_the_title()); ?></title>
 
 </head>
 
 <body>
 
-    <link rel="stylesheet" type="text/css" href="<?php echo  $css ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo esc_url($css) ?>">
     <div id="pc" class="content">
         <?php
 
@@ -43,13 +44,20 @@ $site = MaBox_Function_Wx_Xcx_Link::get_h5_options_site();
 
     </div>
     <div id="mobile" class="mobile">
+        <?php if ($link_error): ?>
+        <div style="padding: 20px; text-align: center; color: #ff4d4f; background: #fff2f0; border-radius: 8px; margin: 20px;">
+            <p style="font-size: 16px; margin-bottom: 8px;">⚠️ 小程序跳转失败</p>
+            <p style="font-size: 13px; color: #666;"><?php echo esc_html($link_error); ?></p>
+            <p style="font-size: 12px; color: #999; margin-top: 12px;">请联系网站管理员检查配置</p>
+        </div>
+        <?php endif; ?>
         <div class="layout">
             <div class="img-box">
-                <img class="heand_img" src="<?php echo $logo ?>">
+                <img class="heand_img" src="<?php echo esc_url($logo) ?>">
             </div>
             <a class="title"></a>
             <div style="margin-top: 4px;flex-direction: row; margin-top: 8px; overflow:hidden; display: flex;justify-content: center; align-items: center;">
-                <img class="icom_img" src="<?php echo $c5 ?>">
+                <img class="icom_img" src="<?php echo esc_url($c5) ?>">
                 <a class="icon_text">微信</a>
             </div>
         </div>
@@ -57,7 +65,7 @@ $site = MaBox_Function_Wx_Xcx_Link::get_h5_options_site();
             <button class="jumpBtn" type="button" onclick="onJumpWxBtn()">前往微信打开</button>
             <div style="margin-top: 24px; margin-bottom: 100px;overflow:hidden">
                 <a class="text_g">无法打开时，可使用默认浏览器打开。</a>
-                <a id="copyButton" data-text=<?php echo $page_url ?> class="text_link">复制链接</a>
+                <a id="copyButton" data-text="<?php echo esc_url($page_url) ?>" class="text_link">复制链接</a>
             </div>
         </div>
     </div>
@@ -110,7 +118,12 @@ $site = MaBox_Function_Wx_Xcx_Link::get_h5_options_site();
                 //onJumpWxBtn(); //跳转微信小程序
                 //选项中的网址
                 let link = <?php echo json_encode($link); ?>;
-                window.location.href = link; //跳转外部文章页面
+                let linkErr = <?php echo json_encode($link_error); ?>;
+                if (linkErr) {
+                    document.querySelector('.jumpBtn').style.display = 'none';
+                } else {
+                    window.location.href = link;
+                }
             }
         }
 

@@ -6,7 +6,7 @@
  * 来源2：https://www.shephe.com/website/
  */
 if (!class_exists('Npcink_Page_Go_Top_Peep_Cat')) {
-    class Npcink_Page_Go_Top_Peep_Cat
+    class MaBox_Page_Go_Top_Peep_Cat
     {
         public static function run()
         {

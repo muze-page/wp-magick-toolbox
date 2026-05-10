@@ -5,7 +5,7 @@
  * 来源：https://rudrastyh.com/wordpress/date-range-filter.html
  */
 if (!class_exists('Npcink_Admin_Add_Time_Screen')) {
-    class Npcink_Admin_Add_Time_Screen
+    class MaBox_Admin_Add_Time_Screen
     {
         //加载
         public static function run()

@@ -5,7 +5,7 @@
  * 来源：https://www.npc.ink/15286.html
  */
 if (!class_exists('Npcink_Single_Keyword_Add_Link')) {
-    class Npcink_Single_Keyword_Add_Link
+    class MaBox_Single_Keyword_Add_Link
     {
         //加载
         public static function run()

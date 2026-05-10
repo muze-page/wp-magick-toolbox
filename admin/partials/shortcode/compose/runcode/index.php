@@ -6,7 +6,7 @@
  * TODO:代码前后有换行符
  */
 if (!class_exists('Npcink_Page_Runcode')) {
-    class Npcink_Page_Runcode
+    class MaBox_Page_Runcode
     {
         public static function run()
         {

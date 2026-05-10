@@ -7,7 +7,7 @@
  * TODO:怎么移除加载的样式中的版本号信息
  */
 if (!class_exists('Npcink_Remove_WP_Version')) {
-    class Npcink_Remove_WP_Version
+    class MaBox_Remove_WP_Version
     {
         /**
          * 执行代码

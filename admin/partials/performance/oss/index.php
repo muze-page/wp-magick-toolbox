@@ -1,6 +1,6 @@
 <?php
 if (!class_exists('Npcink_Performance_Oss')) {
-    class Npcink_Performance_Oss {
+    class MaBox_Performance_Oss {
         private static $config;
         public static function run($config) {
             self::$config = $config;

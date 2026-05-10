@@ -4,7 +4,7 @@
  * 在页面顶部显示广告内容
  */
 if (!class_exists('Npcink_Page_Top_Ad')) {
-    class Npcink_Page_Top_Ad
+    class MaBox_Page_Top_Ad
     {
         private static $option;
 

@@ -1,11 +1,11 @@
 import type { FormProps } from "antd";
 
-type ColProps = FormProps["labelCol"];
+type LabelCol = NonNullable<FormProps["labelCol"]>;
 
 interface AntFrom {
   from: {
-    labelCol: ColProps;
-    wrapperCol: ColProps;
+    labelCol: LabelCol;
+    wrapperCol: LabelCol;
     maxWidth: number;
   };
 }

@@ -66,6 +66,12 @@ export type Option = {
     search_enhance: PerformanceSearchEnhance; //搜索增强
     db_clean: PerformanceDbClean; //数据库清理
   };
+  // AI 审核
+  ai_review: AiReview; //AI 审核助手
+  // 增值服务
+  services: Services; //技术支持与服务
+  // 用户反馈
+  feedback: Feedback; //反馈与数据洞察
 };
 
 /**
@@ -97,6 +103,7 @@ export type OptimizeSite = {
   cdn_google_fonts_mirror: string; //Google Fonts镜像地址
   cdn_google_ajax: boolean; //Google Ajax替换
   cdn_custom: string; //自定义CDN替换规则
+  hide_email_ip: boolean; //隐藏邮件中的IP
 };
 
 //优化 媒体
@@ -162,6 +169,9 @@ export type PageFeature = {
   reading_progress: boolean; //页顶阅读进度条
   reading_progress_color: string; //进度条颜色
   reading_progress_height: number; //进度条高度
+  font_switch: boolean; //字体切换
+  fonts: string; //字体列表
+  font_position: string; //按钮位置
 };
 
 //页面 - 功能
@@ -211,6 +221,10 @@ export type PageFunction = {
   anti_crawler_time_window: number; //时间窗口(秒)
   anti_crawler_tecent_id: string; //腾讯防水墙AppID
   anti_crawler_tecent_key: string; //腾讯防水墙AppKey
+  link_source: boolean; //文章链接添加来源
+  source_key: string; //来源标识
+  ticket: boolean; //工单系统
+  diary: boolean; //日记类型
 };
 
 // 页面 - 权限
@@ -309,7 +323,6 @@ export type LoginBeautify = {
 
 //登录安全
 export type LoginSecurity = {
-  replace_login_error: boolean; //替换登录报错信息
   login_code: string; //登录验证码
   tecent_id: string; //腾讯ID
   tecent_key: string; //腾讯秘钥
@@ -465,4 +478,50 @@ export type PerformanceDbClean = {
   clean_transients: boolean;
   auto_clean: boolean;
   auto_clean_schedule: string;
+};
+
+// ===== AI 审核 =====
+export type AiReview = {
+  enabled: boolean;
+  provider: string;
+  mode: string;
+  deepseek_api_key: string;
+  deepseek_api_url: string;
+  deepseek_model: string;
+  aliyun_access_key: string;
+  aliyun_secret_key: string;
+  aliyun_region: string;
+  custom_api_url: string;
+  custom_api_method: string;
+  custom_api_headers: string;
+  custom_api_body_template: string;
+  local_rules_enabled: boolean;
+  local_keywords: string;
+  local_regex: string;
+  strict_mode: boolean;
+  log_enabled: boolean;
+  log_max_entries: number;
+};
+
+export type Services = {
+  enabled: boolean;
+  wechat_qr: string;
+  wechat_id: string;
+  email: string;
+  website: string;
+  service_custom_dev: boolean;
+  service_deployment: boolean;
+  service_theme_adapt: boolean;
+  service_support: boolean;
+  cases: Array<{title: string; description: string; logo: string}>;
+};
+
+export type Feedback = {
+  enabled: boolean;
+  feedback_enabled: boolean;
+  feedback_email: string;
+  feedback_auto_reply: string;
+  telemetry_enabled: boolean;
+  telemetry_anonymous: boolean;
+  show_insights: boolean;
 };

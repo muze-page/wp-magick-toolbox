@@ -13,9 +13,9 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
     <meta name="renderer" content="webkit">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <title><?php echo $site_name ?> - 安全中心</title>
-    <link rel="shortcut icon" href="<?php echo $favicon_url ?>" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href=<?php echo $url . "wps.css" ?>>
+    <title><?php echo esc_html($site_name) ?> - 安全中心</title>
+    <link rel="shortcut icon" href="<?php echo esc_url($favicon_url) ?>" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="<?php echo esc_url($url) ?>wps.css">
     <style>
     @media (max-width: 768px) {
         .component-modal-wrap { padding: 20px; }
@@ -36,14 +36,14 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
         <div class="component-modal component-confirm link-page-modal" tabindex="1">
             <div class="modal-body" style="left: calc(50% - 225px); top: calc(50% - 78px);">
                 <div class="dialog-header">
-                    <div class="header-title">即将离开<?php echo $site_name ?></div>
+                    <div class="header-title">即将离开<?php echo esc_html($site_name) ?></div>
                     <div class="component-icon-btn close-btn" role="button">
                         <i class="icons icons-16 icons-16-close"></i>
                     </div>
                 </div>
                 <div class="dialog-content">
                     <div class="wrap">
-                        <p class="content">你即将通过访问链接离开<?php echo $site_name ?>，请注意你的账号和信息安全，建议谨慎访问。
+                        <p class="content">你即将通过访问链接离开<?php echo esc_html($site_name) ?>，请注意你的账号和信息安全，建议谨慎访问。
                         </p>
                         <div class="link">
                             <div class="url">你访问的是：<?php echo esc_url($external_url); ?></div>

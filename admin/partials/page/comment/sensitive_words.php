@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('Npcink_Comment_Sensitive_Words')) {
-    class Npcink_Comment_Sensitive_Words
+    class MaBox_Comment_Sensitive_Words
     {
         private static $option;
 

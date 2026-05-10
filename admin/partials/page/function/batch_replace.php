@@ -4,7 +4,7 @@
  * 保存文章时自动替换指定内容，也支持手动触发
  */
 if (!class_exists('Npcink_Page_Batch_Replace')) {
-    class Npcink_Page_Batch_Replace
+    class MaBox_Page_Batch_Replace
     {
         private static $option;
 
@@ -12,7 +12,7 @@ if (!class_exists('Npcink_Page_Batch_Replace')) {
         {
             self::$option = $config;
             add_filter('content_save_pre', array(__CLASS__, 'replace_on_save'), 10, 1);
-            add_action('wp_ajax_mabox_batch_replace', array(__CLASS__, 'manual_replace'));
+            add_action('wp_ajax_mabox_batch_replace', array(__CLASS__, 'manual_replace_deprecated'));
         }
 
         public static function replace_on_save($content)
@@ -29,6 +29,11 @@ if (!class_exists('Npcink_Page_Batch_Replace')) {
             }
 
             return $content;
+        }
+
+        public static function manual_replace_deprecated() {
+            _deprecated_function('wp_ajax_mabox_batch_replace', '2.1.0', 'REST API POST /mabox/v1/page/batch-replace');
+            self::manual_replace();
         }
 
         public static function manual_replace()

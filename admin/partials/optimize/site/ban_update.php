@@ -6,7 +6,7 @@
  * 参考：https://m.wpjam.com/m/disable-wordpress-auto-update/
  */
 if (!class_exists('Npcink_Ban_Update')) {
-    class Npcink_Ban_Update
+    class MaBox_Ban_Update
     {
         /**
          * 执行代码

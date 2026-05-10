@@ -5,7 +5,7 @@
  * 来源：
  */
 if (!class_exists('Npcink_Medium_Svg_Support')) {
-    class Npcink_Medium_Svg_Support
+    class MaBox_Medium_Svg_Support
     {
         //加载
         public static function run()

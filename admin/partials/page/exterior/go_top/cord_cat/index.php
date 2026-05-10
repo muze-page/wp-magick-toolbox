@@ -5,7 +5,7 @@
  * 来源：https://www.bber.cn/97.html#respond
  */
 if (!class_exists('Npcink_Page_Back_Top_Cat')) {
-    class Npcink_Page_Back_Top_Cat
+    class MaBox_Page_Back_Top_Cat
     {
         public static $option; //配置
         public static function run($config)

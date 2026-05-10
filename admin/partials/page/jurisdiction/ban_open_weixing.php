@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('Npcink_Page_Ban_Open_WeiXing')) {
-    class Npcink_Page_Ban_Open_WeiXing
+    class MaBox_Page_Ban_Open_WeiXing
     {
         private static $option;
 

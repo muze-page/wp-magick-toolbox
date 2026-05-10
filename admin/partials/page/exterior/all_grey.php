@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('Npcink_Page_All_Grey')) {
-    class Npcink_Page_All_Grey
+    class MaBox_Page_All_Grey
     {
         public static function run()
         {

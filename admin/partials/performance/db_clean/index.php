@@ -1,11 +1,11 @@
 <?php
 if (!class_exists('Npcink_Performance_Db_Clean')) {
-    class Npcink_Performance_Db_Clean {
+    class MaBox_Performance_Db_Clean {
         private static $config;
         public static function run($config) {
             self::$config = $config;
-            add_action('wp_ajax_mabox_db_clean', array(__CLASS__, 'ajax_clean'));
-            add_action('wp_ajax_mabox_db_stats', array(__CLASS__, 'ajax_stats'));
+            add_action('wp_ajax_mabox_db_clean', array(__CLASS__, 'ajax_clean_deprecated'));
+            add_action('wp_ajax_mabox_db_stats', array(__CLASS__, 'ajax_stats_deprecated'));
             if (!empty($config['auto_clean'])) {
                 $schedule = !empty($config['auto_clean_schedule']) ? $config['auto_clean_schedule'] : 'weekly';
                 if (!wp_next_scheduled('mabox_auto_db_clean')) {
@@ -22,6 +22,14 @@ if (!class_exists('Npcink_Performance_Db_Clean')) {
             $schedules['weekly'] = array('interval' => 604800, 'display' => '每周');
             $schedules['monthly'] = array('interval' => 2592000, 'display' => '每月');
             return $schedules;
+        }
+        public static function ajax_stats_deprecated() {
+            _deprecated_function('wp_ajax_mabox_db_stats', '2.1.0', 'REST API GET /mabox/v1/performance/db/stats');
+            self::ajax_stats();
+        }
+        public static function ajax_clean_deprecated() {
+            _deprecated_function('wp_ajax_mabox_db_clean', '2.1.0', 'REST API POST /mabox/v1/performance/db/clean');
+            self::ajax_clean();
         }
         public static function ajax_stats() {
             if (!current_user_can('manage_options')) wp_send_json_error('权限不足', 403);

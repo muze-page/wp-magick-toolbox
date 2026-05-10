@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Jump_Middle_Page')) {
-    class Npcink_Jump_Middle_Page
+    class MaBox_Jump_Middle_Page
     {
 
         /**
@@ -20,9 +20,9 @@ if (!class_exists('Npcink_Jump_Middle_Page')) {
             //改造评论中的链接
             add_filter('get_comment_text', array(__CLASS__, 'the_content_nofollowss'), 999);
 
-            //添加重定向
+            //添加重定向（仅在插件激活时注册 rewrite rule）
             register_activation_hook(__FILE__, array(__CLASS__, 'go_new_link'));
-            add_action('init', array(__CLASS__, 'go_new_link'));
+            add_action('init', array(__CLASS__, 'go_new_link_check'));
 
             //行动
             add_action('template_redirect', function () use ($page_type) {
@@ -66,16 +66,26 @@ if (!class_exists('Npcink_Jump_Middle_Page')) {
             return $content;
         }
         //注册
-
         public static function go_new_link()
         {
             add_rewrite_rule(
-                'go_to', // 设置你的链接格式，例如 /too/
-                '', // 空字符串表示不指定自定义模板文件的路径
+                'go_to/?$', // 设置你的链接格式，例如 /too/
+                'index.php', // 重写规则
                 'top'
             );
-            //刷新规则
+            // 仅在激活时刷新规则
             flush_rewrite_rules();
+        }
+
+        /**
+         * 检查 rewrite rule 是否存在，不存在则刷新（避免每次加载都执行 flush）
+         */
+        public static function go_new_link_check()
+        {
+            $rules = get_option('rewrite_rules');
+            if (empty($rules) || !isset($rules['go_to/?$'])) {
+                self::go_new_link();
+            }
         }
         /**
          * 传入中间页类型

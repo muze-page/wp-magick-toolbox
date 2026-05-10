@@ -27,7 +27,7 @@ if ( $wp_tests_dir && file_exists( $wp_tests_dir . '/includes/functions.php' ) )
     require_once $wp_tests_dir . '/includes/functions.php';
 
     function _manually_load_plugin() {
-        require dirname( __FILE__ ) . '/magick-tool-box.php';
+        require dirname( __FILE__ ) . '/../magick-tool-box.php';
     }
     tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
@@ -42,9 +42,9 @@ if ( $wp_tests_dir && file_exists( $wp_tests_dir . '/includes/functions.php' ) )
 }
 
 // 加载插件核心类
-if ( file_exists( dirname( __FILE__ ) . '/includes/class-magick-helpers.php' ) ) {
-    require_once dirname( __FILE__ ) . '/includes/class-magick-helpers.php';
+if ( file_exists( dirname( __FILE__ ) . '/../includes/class-magick-helpers.php' ) ) {
+    require_once dirname( __FILE__ ) . '/../includes/class-magick-helpers.php';
 }
-if ( file_exists( dirname( __FILE__ ) . '/includes/class-magick-config-manager.php' ) ) {
-    require_once dirname( __FILE__ ) . '/includes/class-magick-config-manager.php';
+if ( file_exists( dirname( __FILE__ ) . '/../includes/class-magick-config-manager.php' ) ) {
+    require_once dirname( __FILE__ ) . '/../includes/class-magick-config-manager.php';
 }

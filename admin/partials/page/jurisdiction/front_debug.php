@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('Npcink_Page_Front_Debug')) {
-    class Npcink_Page_Front_Debug
+    class MaBox_Page_Front_Debug
     {
         public static function run()
         {

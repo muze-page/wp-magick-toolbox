@@ -1,7 +1,7 @@
 <?php
 //简单SEO - 首页TDK 
 if (!class_exists('Npcink_Seo_Home')) {
-    class Npcink_Seo_Home
+    class MaBox_Seo_Home
     {
         private static $config;
         public static function run($option)

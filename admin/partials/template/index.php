@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Template')) {
-    class Npcink_Template
+    class MaBox_Template
     {
         //添加模版
         public static $add_template = array();

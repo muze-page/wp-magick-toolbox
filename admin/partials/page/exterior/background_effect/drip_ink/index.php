@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Page_Drip_Ink')) {
-    class Npcink_Page_Drip_Ink
+    class MaBox_Page_Drip_Ink
     {
         public static function run()
         {

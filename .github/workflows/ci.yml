@@ -10,19 +10,42 @@ jobs:
   php-lint:
     name: PHP Lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0', '8.1', '8.2', '8.3']
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: ${{ matrix.php-version }}
           extensions: curl, json, mbstring
           tools: composer
 
       - name: PHP Syntax Check
         run: |
           find . -name "*.php" -not -path "./vendor/*" -print0 | xargs -0 -n 1 -P 4 php -l
+
+  php-test:
+    name: PHPUnit Tests
+    runs-on: ubuntu-latest
+    needs: php-lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: curl, json, mbstring
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit --configuration phpunit.xml.dist --no-coverage
 
   ts-lint:
     name: TypeScript Lint & Build
@@ -76,4 +99,23 @@ jobs:
 
       - name: Run Vitest
         working-directory: vite/admin
-        run: npm run test -- --run --coverage || true
+        run: npm run test -- --run --coverage
+
+  build:
+    name: Build Plugin ZIP
+    runs-on: ubuntu-latest
+    needs: [php-test, test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create ZIP archive
+        run: |
+          EXCLUDE=".git .github .opencode .sisyphus .vscode ai docs docs-site vite tests node_modules vendor .gitignore .editorconfig .nvmrc composer.json composer.lock phpstan.neon phpunit.xml.dist CHANGELOG.md SECURITY.md 功能清单.md 项目现状与开发指南.md demo.html docker-compose.yml"
+          zip -r wp-magick-toolbox.zip . -x $EXCLUDE "*/node_modules/*" "*/.git/*" "vite/*/src/*" "vite/*/*.json" "vite/*/*.config.*"
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wp-magick-toolbox
+          path: wp-magick-toolbox.zip
+          retention-days: 30

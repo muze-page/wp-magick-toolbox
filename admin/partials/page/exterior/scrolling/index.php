@@ -5,7 +5,7 @@
  * 来源：https://7b2.com/circle/64661.html
  */
 if (!class_exists('Npcink_Page_Scrolling')) {
-    class Npcink_Page_Scrolling
+    class MaBox_Page_Scrolling
     {
         public static function run()
         {

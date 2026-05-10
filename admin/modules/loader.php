@@ -7,6 +7,9 @@
  * @since 2.1.0
  */
 
+// 加载模块接口契约
+require_once plugin_dir_path(dirname(__FILE__)) . 'includes/interface-mabox-module.php';
+
 if (!class_exists('MaBox_Module_Loader')) {
     class MaBox_Module_Loader {
 
@@ -64,6 +67,19 @@ if (!class_exists('MaBox_Module_Loader')) {
             }
 
             $meta = $registry[$module_id];
+
+            // Scope 过滤：根据当前请求上下文跳过不相关的模块
+            if (!empty($meta['scope'])) {
+                $is_admin = is_admin();
+                if ($meta['scope'] === 'admin' && !$is_admin) {
+                    return; // 仅后台模块，当前是前台
+                }
+                if ($meta['scope'] === 'frontend' && $is_admin) {
+                    return; // 仅前台模块，当前是后台
+                }
+                // 'both' 或不设置：前后都加载
+            }
+
             $file = plugin_dir_path(__FILE__) . 'partials/' . $meta['file'];
 
             if (!file_exists($file)) {
@@ -74,6 +90,12 @@ if (!class_exists('MaBox_Module_Loader')) {
 
             if (!class_exists($meta['class'])) {
                 return;
+            }
+
+            // 验证模块是否实现接口契约
+            $class = $meta['class'];
+            if (!is_subclass_of($class, 'MaBox_Module_Interface')) {
+                error_log("[MaBox] Module {$class} does not implement MaBox_Module_Interface");
             }
 
             if (!empty($meta['config_path'])) {

@@ -5,7 +5,7 @@
  * 来源：https://www.bber.cn
  */
 if (!class_exists('Npcink_Page_Pixel_Chicken')) {
-    class Npcink_Page_Pixel_Chicken
+    class MaBox_Page_Pixel_Chicken
     {
         public static function run()
         {

@@ -38,12 +38,9 @@ if (!class_exists('MaBox_H5')) {
             // Get theme options
             register_rest_route('carbon-fields/v1', 'h5-options', array(
                 'methods' => 'GET',
-                //'callback' => array(__CLASS__, 'mytheme_get_theme_options'),
                 'callback' => array(__CLASS__, 'get_h5_options'),
-                // 权限控制
-                // 'permission_callback' => function () {
-                //     return current_user_can('manage_options');
-                // },
+                // H5 config is public-facing data for mobile pages; explicit permission callback required since WP 5.5
+                'permission_callback' => '__return_true',
             ));
         }
 

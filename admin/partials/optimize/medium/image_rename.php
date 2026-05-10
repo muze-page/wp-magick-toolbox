@@ -5,7 +5,7 @@
  * 来源：
  */
 if (!class_exists('Npcink_Medium_Image_Rename')) {
-    class Npcink_Medium_Image_Rename
+    class MaBox_Medium_Image_Rename
     {
         //加载
         public static function run($upload_auto_name)

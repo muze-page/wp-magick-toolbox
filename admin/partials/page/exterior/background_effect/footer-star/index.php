@@ -5,7 +5,7 @@
  * 来源：https://www.bber.cn/84.html
  */
 if (!class_exists('Npcink_Page_Footer_Star')) {
-    class Npcink_Page_Footer_Star
+    class MaBox_Page_Footer_Star
     {
         public static function run()
         {

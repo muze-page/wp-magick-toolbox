@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Public_Add_Share')) {
-    class Npcink_Public_Add_Share
+    class MaBox_Public_Add_Share
     {
         private static $config; //选项
         public static function run($option)

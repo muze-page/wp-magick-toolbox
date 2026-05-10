@@ -5,7 +5,7 @@
  * 来源：https://www.npc.ink/11073.html
  */
 if (!class_exists('Npcink_Page_Lantern')) {
-    class Npcink_Page_Lantern
+    class MaBox_Page_Lantern
     {
         public static $option; //配置
         public static function run($config)

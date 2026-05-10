@@ -14,11 +14,10 @@ function getDataLocal(): DataLocal {
   if (state) {
     axios.defaults.baseURL = "/api"; //开发模式下使用代理
     //开发
-    return defaultVarData;
+    return defaultVarData as DataLocal;
   } else {
     //打包
-    //return (window as any).dataLocal.option;
-    return window.dataLocal !== "" ? window.dataLocal : defaultVarData;
+    return window.dataLocal ? (window.dataLocal as unknown as DataLocal) : (defaultVarData as DataLocal);
   }
 }
 

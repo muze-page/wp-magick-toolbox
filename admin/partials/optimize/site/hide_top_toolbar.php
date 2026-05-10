@@ -5,7 +5,7 @@
  * 来源：https://www.huitheme.com/show_admin_bar.html
  */
 if (!class_exists('Npcink_Hide_Top_Toolbar')) {
-    class Npcink_Hide_Top_Toolbar
+    class MaBox_Hide_Top_Toolbar
     {
         /**
          * 执行代码

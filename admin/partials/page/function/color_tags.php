@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Page_Color_Tags')) {
-    class Npcink_Page_Color_Tags
+    class MaBox_Page_Color_Tags
     {
         public static function run()
         {

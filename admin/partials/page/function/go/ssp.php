@@ -15,9 +15,9 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
     <meta name="renderer" content="webkit">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <title><?php echo $site_name ?> - 安全中心</title>
-    <link rel="shortcut icon" href="<?php echo $favicon_url ?>" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href=<?php echo $url . "ssp.css" ?>>
+    <title><?php echo esc_html($site_name) ?> - 安全中心</title>
+    <link rel="shortcut icon" href="<?php echo esc_url($favicon_url) ?>" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="<?php echo esc_url($url) ?>ssp.css">
 </head>
 
 <body>
@@ -31,13 +31,13 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
             if (!empty($favicon_url)) {
             ?>
                 <div class="page__header">
-                    <img src="<?php echo $favicon_url ?>" alt="即将离开<?php echo $site_name ?>" width="128">
+                    <img src="<?php echo esc_url($favicon_url) ?>" alt="即将离开<?php echo esc_html($site_name) ?>" width="128">
                 </div>
             <?php
             }
             ?>
 
-            <div class="page__title">即将离开<?php echo $site_name ?></div>
+            <div class="page__title">即将离开<?php echo esc_html($site_name) ?></div>
             <p class="page__desc">你访问的网站可能包含未知的安全风险，如需继续访问，请手动复制链接访问，并注意保护帐号和隐私信息</p>
             <div id="target" class="page__target">
                 <span>

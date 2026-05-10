@@ -22,7 +22,7 @@ const App: React.FC = () => {
   const { optionData, updateOption } = useContext(DataContext);
 
   //简化并提供默认值
-  let publicData =
+  const publicData =
   optionData.optimize?.medium || defaultVarOption.optimize.medium;
 
   //拿到需要的媒体值

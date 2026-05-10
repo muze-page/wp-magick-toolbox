@@ -5,7 +5,7 @@
  * 原文地址：https://www.iowen.cn/chundaimameihuawordpressmorendengluye/
  */
 if (!class_exists('Npcink_Login_Custom_Page')) {
-    class Npcink_Login_Custom_Page
+    class MaBox_Login_Custom_Page
     {
         public static $option;
         public static function run($beautify)

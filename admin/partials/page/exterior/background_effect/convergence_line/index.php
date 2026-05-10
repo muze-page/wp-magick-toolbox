@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Page_Add_Convergence_Line')) {
-    class Npcink_Page_Add_Convergence_Line
+    class MaBox_Page_Add_Convergence_Line
     {
         public static function run()
         {

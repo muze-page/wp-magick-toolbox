@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('Npcink_Page_Ban_Open_QQ')) {
-    class Npcink_Page_Ban_Open_QQ
+    class MaBox_Page_Ban_Open_QQ
     {
         public static function run()
         {

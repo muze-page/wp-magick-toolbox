@@ -5,7 +5,7 @@
  */
 
 if (!class_exists('Npcink_Page_Hide_Page')) {
-    class Npcink_Page_Hide_Page
+    class MaBox_Page_Hide_Page
     {
         private static $id_array; //分类数组
         private static $tip_content; //提示信息

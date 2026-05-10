@@ -51,8 +51,8 @@ if (!class_exists('MaBox_ShortCode_Bilibili')) {
 
             ob_start();
             ?>
-            <div class="mabox-bilibili-wrapper" style="position:relative;width:<?php echo $width; ?>;max-width:100%;padding-bottom:<?php echo ($height / 16 * 9) / $height * 100; ?>%;height:0;overflow:hidden;border-radius:8px;margin:16px 0;">
-                <iframe id="<?php echo $player_id; ?>" src="<?php echo $src; ?>" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position:absolute;width:100%;height:100%;left:0;top:0;" sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts" loading="lazy"></iframe>
+            <div class="mabox-bilibili-wrapper" style="position:relative;width:<?php echo esc_attr($width); ?>;max-width:100%;padding-bottom:<?php echo ($height / 16 * 9) / $height * 100; ?>%;height:0;overflow:hidden;border-radius:8px;margin:16px 0;">
+                <iframe id="<?php echo esc_attr($player_id); ?>" src="<?php echo esc_url($src); ?>" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position:absolute;width:100%;height:100%;left:0;top:0;" sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts" loading="lazy"></iframe>
             </div>
             <?php
             return ob_get_clean();

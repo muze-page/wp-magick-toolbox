@@ -1,0 +1,15 @@
+parameters:
+    level: 1
+    paths:
+        - admin
+        - includes
+        - public
+        - magick-tool-box.php
+        - uninstall.php
+    excludePaths:
+        - admin/partials/function/b2/*
+    bootstrapFiles:
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    inferPrivatePropertyTypeFromConstructor: false

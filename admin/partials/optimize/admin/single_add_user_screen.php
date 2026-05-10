@@ -5,7 +5,7 @@
  * 来源：https://rudrastyh.com/wordpress/filter-posts-by-author.html
  */
 if (!class_exists('Npcink_Admin_Single_Add_User_Screen')) {
-    class Npcink_Admin_Single_Add_User_Screen
+    class MaBox_Admin_Single_Add_User_Screen
     {
         //加载
         public static function run()

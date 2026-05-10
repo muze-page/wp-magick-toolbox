@@ -5,7 +5,7 @@
  * 来源：https://www.cnblogs.com/quaint/p/12291936.html
  */
 if (!class_exists('Npcink_Page_Sakura_Drops')) {
-    class Npcink_Page_Sakura_Drops
+    class MaBox_Page_Sakura_Drops
     {
         public static function run()
         {

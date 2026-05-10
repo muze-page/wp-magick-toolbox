@@ -1,304 +1,195 @@
-# 使用
+# WP Magick Toolbox
 
-## WordPress 中使用
+> 面向中国 WordPress 站长的一站式实用工具箱插件  
+> 版本：**2.3.0** | 功能数：**90+** | 授权：**GPL-2.0**
 
-- 下载本插件
-- WordPress 插件后台，上传并安装此插件
-- 启用插件
-- 在插件菜单 魔法工具箱菜单中，点击一次保存按钮即可
+[![CI](https://github.com/npcink/wp-magick-toolbox/actions/workflows/ci.yml/badge.svg)](https://github.com/npcink/wp-magick-toolbox/actions/workflows/ci.yml)
+[![WordPress Plugin](https://img.shields.io/badge/WordPress-4.6%2B-blue)](https://wordpress.org)
+[![PHP](https://img.shields.io/badge/PHP-7.4%2B-green)](https://php.net)
+[![License](https://img.shields.io/badge/License-GPL%202.0-orange)](LICENSE)
 
-## 打包
+---
 
-vite 文件夹下，
-admin 是设置框架内容
-count 是图表展示内容
-public 是前端展示内容
-均使用 React 构建。
+## 简介
 
-您可以自行修改后分别打包，仅保留 dist 内文件即可。
+WP Magick Toolbox 是一款面向中国 WordPress 站长的免费工具箱插件，集成了 **90+ 实用功能**，涵盖站点优化、SEO、安全防护、国内生态对接（百度推送、微信生态、备案合规）、性能优化等多个维度。
 
-### 代理
+**核心理念**：一个插件，解决站长 80% 的日常需求。
 
-vite.config.ts 文件底部有代理，替换为您的本地开发地址即可
+- 📖 **在线文档**：[docs.npc.ink](https://docs.npc.ink)（搭建中）
+- 🌐 **作者博客**：[npc.ink](https://www.npc.ink)
+- 📦 **Gitee 仓库**：[gitee.com/gitgreat/wp-magick-toolbox](https://gitee.com/gitgreat/wp-magick-toolbox)
 
-### 使用组件
+---
 
-- 前端元素：https://uiverse.io
+## 安装与使用
 
-# 计划
+### WordPress 中安装
 
-## 安全
+1. 下载本插件 ZIP 包
+2. WordPress 后台 → 插件 → 安装插件 → 上传并安装
+3. 启用插件
+4. 在左侧菜单找到「魔法工具箱」，进入后点击一次「保存」按钮即可生效
 
-- 敏感数据均需鉴权
+### 本地开发
 
-## 待修复
+```bash
+# 克隆仓库
+git clone https://gitee.com/gitgreat/wp-magick-toolbox.git
+cd wp-magick-toolbox
 
-- 统一接口
-- 小程序接口添加错误提示
-- 未登录隐藏指定分类下的文章时，文章中的下载部分可正常显示
-- 启用,统一登录时的报错信息，会导致文章编辑时无法展开评论
+# 安装前端依赖（3 个独立 Vite 项目）
+cd vite/admin && npm install && cd ../..
+cd vite/count && npm install && cd ../..
+cd vite/public && npm install && cd ../..
 
-## 放弃实现
+# 启动开发服务器（已配置代理到本地 WordPress）
+cd vite/admin && npm run dev
+```
 
-- 禁止自动换行，自动添加 p 标签
+> 代理地址在 `vite.config.ts` 底部，替换为您的本地开发地址即可。
+
+### 打包部署
+
+`vite/` 文件夹下包含 3 个独立项目：
+- `admin/` — 后台设置界面（React + Ant Design）
+- `count/` — 图表展示组件
+- `public/` — 前端展示组件
+
+修改后分别执行 `npm run build`，仅保留各项目中 `dist/` 目录下的文件即可。
+
+---
+
+## 功能概览
+
+| 模块 | 功能数 | 核心能力 |
+|------|--------|----------|
+| 站点优化 | 8 | 禁止 Title 转义、分类去 category、搜索链接优化等 |
+| 媒体优化 | 4 | 自动 Alt、禁止缩略图、SVG 支持、上传重命名 |
+| 后台优化 | 4 | 作者/日期筛选、列表显示 ID、缩略图切换 |
+| 页面外观 | 14 | 点击特效、背景特效、灯笼、返回顶部、复制弹窗等 |
+| 页面评论 | 6 | OwO 表情、间隔限制、字数限制、禁止纯英文等 |
+| 页面功能 | 22 | 外链跳转、维护页、简繁切换、禁止复制、文章评分等 |
+| SEO 功能 | 5 | 首页 TDK、文章 SEO、分类/标签 SEO |
+| 辅助功能 | 5 | 文章统计、屏蔽恶意搜索、百度/谷歌/必应统计 |
+| 登录安全 | 9 | 验证码、防水墙、失败锁定、自定义入口、登录日志 |
+| 短代码 | 5 | 文章列表、复制按钮、在线运行代码、足迹地图 |
+| 页面模板 | 3 | 文章列表、立体三角、专题列表 |
+| 国内生态 | 10 | 备案合规、百度推送、微信 JSSDK、Cookie 弹窗、OSS 对接 |
+| B2 主题专属 | 3 | 商城统计、订单处理、每日销售 |
+| H5 移动端 | 2 | H5 首页、H5 联系页 |
+| 其他 | 8 | AI 审核、用户反馈、增值服务、工单系统、日记文章类型等 |
+
+> 完整功能清单见 [功能清单.md](功能清单.md)
+
+---
+
+## 技术架构
+
+- **后端**：PHP 7.4+，WordPress Plugin Boilerplate 变体，模块注册表机制
+- **前端设置页**：React + TypeScript + Vite + Ant Design + TailwindCSS
+- **前端展示**：React + TypeScript + Vite（按需加载）
+- **图表**：ECharts + 自研统计组件
+- **数据存储**：WordPress `wp_options` 表（按模块拆分，支持快照备份）
+- **通信方式**：WordPress REST API（主）+ AJAX（兼容层）
+
+### 安全加固
+
+- SQL 注入防护（全部使用 `$wpdb->prepare()`）
+- CSRF 防护（nonce 验证）
+- XSS 防护（输出转义 `esc_html()` / `esc_url()` / `esc_attr()`）
+- 权限检查（`current_user_can('manage_options')`）
+
+---
+
+## 更新记录
+
+### 2.3.0 — 2026-05-09
+
+- 新增 AI 审核引擎（DeepSeek / 阿里云 / 自定义 API / 本地规则引擎，自动降级）
+- 新增用户反馈与数据洞察（反馈表单 + 匿名统计 + 数据洞察面板）
+- 新增增值服务基础设施（技术支持入口 + 联系方式 + 案例管理）
+- 新增隐藏邮件中的 IP
+- 新增文章链接添加来源标识 `from=npc`
+- 新增字体切换功能
+- 新增小工具选项（站点统计 + 最新文章带图）
+- 新增工单系统（短代码 `[mabox_ticket_form]`）
+- 新增日记文章类型（自定义文章类型 + 心情分类）
+- 完善闭站页响应式适配
+- 修复文章统计功能（hook 名称不匹配）
+- 修复限制搜索频次（wp_die 转义）
+- 修复未登录隐藏分类时下载框仍显示（嵌套 div 深度匹配）
+- 修复统一登录报错信息（清理前端残留配置）
+
+### 2.2.0 — 2026-05-09
+
+- 新增仪表盘（站点健康评分 + 建议列表 + 安全状态）
+- 新增一键配置方案（7 套内置方案 + 自定义保存）
+- 新增常用功能收藏（星标 + 拖拽排序）
+- 新增配置备份中心（自动快照 5 个 + 恢复/删除 + 恢复默认）
+- 新增移动端适配（Tab 响应式 + 表单响应式）
+- 新增高风险功能开启提示（9 项风险检测 + 确认弹窗）
+
+### 2.1.0 — 2026-05-08
+
+- 配置存储拆分（7 模块独立 Option，迁移/回滚机制）
+- 模块注册表机制（替代 800+ 行硬编码加载）
+- 前端资源按需加载（后台隔离 + 前台条件加载）
+- 新增功能搜索（90+ 功能索引 + 实时过滤 + 高亮跳转）
+- 新增功能风险标签
+- 修复 5 个已知 Bug
+
+### 2.0.83 — 2024-09-02
+
+- 添加返回顶部功能（偷瞄猫猫、圆角箭头、抓绳猫猫）
+- 未登录隐藏内容支持自定义提示信息
+- 未登录隐藏内容时隐藏 B2 主题下载框
+- 添加 WPS 跳转引导页
+- 页面选项添加快捷二级菜单
+
+### 2.0.82 — 2024-08-13
+
+- 修复地图序号混乱、多选项不准、初次使用触发部分功能等问题
+
+### 2.0.81 — 2024-08-09
+
+- 用户列表展示昵称、搜索链接优化、新增背景特效和页面模板
+
+### 2.0.8 — 2024-07-19
+
+- 短代码（文章列表、复制、运行代码）、足迹地图、禁止微信/QQ 打开、多种背景特效
+
+### 2.0.0 — 2024-06-01
+
+- 全新改版，重构设置界面，拆分功能模块
+
+---
 
 ## 待实现
 
-- 开启严格模式下开发
-- 给每篇文章自动都生成一个小程序文章链接
+- 集成文档在线预览功能（WPS / 永中等）
 
-- 集成百度文本审核 https://ai.baidu.com/ai-doc/REFERENCE/Ck3dwjgn3
-- 撰写文章类型，模仿日记格式https://www.dratk.com/
-- 文章显示最后更新时间 https://www.landafu.com/29563.html
+## 放弃实现
 
-- 添加设置选项导入导出功能
-- 设置选项内容添加移动端适配
+- 禁止自动换行、自动添加 p 标签（与 WordPress 编辑器核心逻辑冲突）
 
-- 隐藏邮件中的 IP： https://7b2.com/circle/63482.html
-- 集成文档在线预览功能 wps 永中等
-- 集成文本审核，
-- 集成工单系统
-- 优化外观
-- 将各种通用功能做成库，方便调用
-- 检查，每个功能是否有文章描述
-- 分离 B2 选项，检测，有 B2 才会展示
-- 添加删除插件移除选项和数据库功能
-- 全站变灰和表情冲突
-- 滚动条美化
-- 文章中添加复制按钮
-- 设置默认文章缩略图
-- 闭站页进行响应式适配
-- 撰写文章时，可对文章内容进行批量替换
-- 文章评分功能
-- 检查所有 jS 文件，放底部加载
-- 文章中链接强制新页面打开功能
-- 文章链接添加来源 from="npc"
-- 添加小工具选项
-- 页顶显示阅读进度
-- 禁止 F12 可能导致白屏
-- 字体切换功能
-- 简单的页眉通知功能 奈斯主题
-- 优化性能，选择的，若选择值为空，则不执行，输入的，输入内容为空，则不执行，都检查一遍
-- wps 跳转中间页，移动端没有适配（检查其他中间页有没有适配）
-- 文章统计功能不可用
-- 限制搜索频次 - https://www.banzhuti.com/limit-wordpress-searches-without-a-plugin.html
-- 仅登录可搜索
-- 添加顶部广告位：https://www.wpcom.cn/question/1042.html
+---
 
+## 开发与贡献
 
-## 已实现
+### 添加新功能
 
-### 已实现功能
+1. **PHP 后端**：在 `admin/partials/[category]/` 下创建功能文件，使用静态类 + `run($config)` 方法
+2. **注册模块**：在 `admin/modules/registry.php` 中添加模块注册记录
+3. **React 前端**：在 `vite/admin/src/tool/interface.tsx` 添加类型定义，在 `defaultVar.tsx` 添加默认值，在对应 Tab 组件中添加 UI 控件
+4. **详细规范**：见 [项目现状与开发指南.md](项目现状与开发指南.md)
 
-#### 历史
+### CI/CD
 
-- 添加闭站倒计时功能
-- 去除分类 category https://www.npc.ink/5783.html
-- 复制文字跳出弹窗提示 https://www.npc.ink/5032.html https://www.npc.ink/12196.html
-- 重复标题文章 https://www.npc.ink/5867.html
-- 禁用自动保存等 https://www.npc.ink/5002.html
-- 转义邮箱 https://www.npc.ink/11809.html
-- 防止打开 F12 https://www.npc.ink/6764.html https://juejin.cn/post/7262175454714626108
-- 指定邮箱可注册 https://www.npc.ink/19117.html
-- 支持 webp https://www.npc.ink/18850.html
-- 支持 exe\app\
-- 裁剪图片下侧去水印 https://www.npc.ink/276026.html
-- 首行缩进两字符 https://www.npc.ink/4639.html
-- 添加顶部统计代码和底部统计代码 https://www.npc.ink/13225.html
+项目使用 GitHub Actions 进行持续集成，覆盖 PHP 7.4 ~ 8.3 多版本测试。详见 `.github/workflows/ci.yml`。
 
-- 公告单页模版 https://www.npc.ink/14482.html
-- 所有文中链接从新窗口打开 https://www.npc.ink/17846.html
-- 用户根据文章数量排序 https://www.npc.ink/17135.html
-- 文章添加缩略图展示 https://www.npc.ink/17087.html
-- 添加客服按钮 https://www.npc.ink/14571.html
+---
 
-### 外观特效
+## 许可证
 
-- 评论框打字特效
-
-- 点击出现数字 https://www.npc.ink/5955.html
-- 点击出现文字 https://www.npc.ink/11756.html
-- 添加魔方 https://www.npc.ink/12188.html
-
-### 功能特效
-
-- 写了多少字+阅读时间 https://www.npc.ink/6896.html
-- 文章底部添加赞赏引导按钮 https://www.npc.ink/6613.html
-- 生成海报功能：https://blog.wpjam.com/project/wpjam-modal/
-- 隐藏指定分类、标签，登录可见
-
-## 更新记录
-#### 2.0.84 2024.
-- 
-
-#### 2.0.83 2024.09.02
-
-- 添加返回顶部功能 - 偷瞄猫猫
-- 添加返回顶部功能 - 圆角箭头
-- 调整，上吊猫猫迁移到返回顶部功能中
-- 添加 未登录隐藏内容时，支持自定义提示信息了
-- 优化 未登录隐藏内容时，会隐藏 B2 主题的下载框了（JS 方法）
-- 完善 维护提示页面标题为输入框标题
-- 添加跳转引导页：wps
-- 页面选项中添加快捷二级菜单
-- 停用 覆盖登录时的报错信息（启用此功能会导致编辑文章时，无法展开评论，暂未找到比较好的处理方法）
-
-#### 2.0.82 2024.08.13
-
-- 完善预览图和部分短代码细节
-- 优化添加地图时的序号混乱问题，
-- 修复多个选项时，选项不准的问题
-- 修复初次使用时，会触发部分功能的问题
-- 修复删除插件时的报错问题
-
-#### 2.0.81 2024.08.09
-
-- 用户列表展示昵称
-- 优化搜索页链接【?s=关键词】改为【域名/search/关键词】
-- 添加背景：质感圆球
-- 添加底部背景：鱼群跳动
-- 添加功能，页面模版：文章列表、立体三角
-
-#### 2.0.8 2024.07.19
-
-- 添加在线运行代码的短代码
-- 添加复制短代码
-- 添加文章列表短代码
-- 短代码添加古藤堡支持
-- 添加足迹地图功能
-- 自动设文章首图为特色图功能
-- 添加禁止在微信或 QQ 中打开的提示
-- 添加背景：流动线条、滴墨水、流动彩带、随机彩带
-- 添加功能：移除原生站点地图中，关于用户信息部分的内容
-- 优化设置外观
-
-#### 2.0.0 2024.06.01
-
-- 全新改版
-- 重构设置界面，现在使用更方便
-- 拆分功能，现在开发时相互调用更方便
-- 添加许多新功能，使用更方便
-
-#### 0.1.8 2023.11.22
-
-- 添加下载指定数据库表功能
-
-#### 0.1.7
-
-- 修复 解决启用文章统计导致的语法错误
-- 修复 商城统计中的错误文本信息
-
-#### 0.1.6
-
-- 添加 生成微信小程序跳转链接功能
-- 添加 微信小程序跳转页面模版功能（启用生成跳转链接功能才有此模版）
-- 添加 网页变灰功能
-
-- 添加 灯笼效果、全屏飘樱花效果
-- 添加 动态标题
-- 添加 美化滚动条
-- 添加 细线联结特效
-- 添加 站内跳转站外添加中转页提示
-
-- 修复 B2 商城统计时间倒叙问题
-- 修复 月度统计数据不准的问题
-
-#### 0.1.5
-
-- 修复未登录模糊图片报错问题
-- 添加 移除文章内链接功能
-- 添加 文章末尾添加最后更新时间
-
-#### 0.1.3
-
-- 更换自研设置框架
-- 重写文章统计图表
-- 重写 B2 销售统计图表
-- 添加屏幕上的毛
-
-#### 0.0.2
-
-- 临时禁用了部分文章统计数据，这些数据会在量大时造成页面卡顿
-- 优化了部分代码，解决了报错问题
-
-#### 0.0.3
-
-#### 发文统计
-
-- 新增了一些统计信息，优化了性能
-
-#### 销售统计
-
-- 图示中添加数据展示，优化了详情信息
-  - 添加月度统计
-
-#### 新增设置选项
-
-### 新增
-
-- 添加表情包功能
-- 各种资源按需加载
-- 引用的资源统一名称和版本号
-
-# 功能表
-
-| 功能名                                 | 参考地址（项目）                                                                                                                             | 加入时间 |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| 页面添加烟花粒子                       | https://www.iowen.cn/canvas-click-effect-second-edition/                                                                                     | 22.03.01 |
-| 自定义登录页面                         | https://www.iowen.cn/chundaimameihuawordpressmorendengluye/<br>https://www.iotheme.cn/login/                                                 | 22.03.01 |
-| 评论区添加 OwO 表情                    | [DIYgod/OwO: Lovely Emoticon and Emoji Keyboard for input (github.com)](https://github.com/DIYgod/OwO)                                       | 22.03.02 |
-| 接入腾讯防水墙，给网站登录加上验证功能 | https://www.iowen.cn/wordpress-tencent-waterproof-wall/                                                                                      | 22.03.02 |
-| 登录页添加数学验证码                   | [(20 条消息) wordpress 安全防护设置\_wordpress 安全设置\_zzsi 的博客-CSDN 博客](https://blog.csdn.net/qq_39339179/article/details/119183143) | 22.03.03 |
-| 登录页添加*随机混合数验证码*           | [(20 条消息) wordpress 安全防护设置\_wordpress 安全设置\_zzsi 的博客-CSDN 博客](https://blog.csdn.net/qq_39339179/article/details/119183143) | 22.03.03 |
-| 图片使用数字或 MD5 重命名              | [Wordpress 上传图片自动重命名代码 - Npcink](https://www.npc.ink/25.html)                                                                     | 22.03.03 |
-| 禁止网站 title 中的 “-” 被转义         | ……                                                                                                                                           | 22.03.04 |
-| 圆角彩色背景标签云                     | ……                                                                                                                                           | 22.03.04 |
-| 禁用更新检查                           | https://www.npc.ink/15932.html                                                                                                               | 22.03.04 |
-| 给文章关键词自动添加内链               | https://www.npc.ink/15286.html                                                                                                               | 22.03.04 |
-| 屏蔽恶意关键词搜索                     |                                                                                                                                              | 22.03.04 |
-|                                        |                                                                                                                                              |          |
-|                                        |                                                                                                                                              |          |
-|                                        |                                                                                                                                              |          |
-|                                        |                                                                                                                                              |          |
-|                                        |                                                                                                                                              |          |
-|                                        |                                                                                                                                              |          |
-|                                        |                                                                                                                                              |          |
-
-# 参考
-
-- 表情：https://7b2.com/circle/56687.html
-
-- 表情用项目：https://github.com/DIYgod/OwO
-- 下载插件：https://www.xiaomaw.cn/2658.html
-
-## 优化插件
-
-- 外链跳转：https://www.lovestu.com/cp-link-open.html
-- 新窗口打开链接：https://www.xiaomaw.cn/3208.html
-- 优化：https://www.lovestu.com/wpopt.html
-- 文章图片遮罩层水印插件：https://ds17.cn/2711.html
-
-## 其他
-
-- https://7b2.com/circle-people?id=6118
-
-## 统计插件
-
-- https://www.termilk.com/shop/742.html
-- https://www.termilk.com/Rose-archive
-
-# 待解决问题
-
-隐藏 wp-admin 防垃圾注册
-依据二开文档在适当的位置添加如下代码
-
-add_action(‘login_enqueue_scripts’,’login_protection’);
-function login_protection(){
-if($\_GET[‘root‘] != ‘admin‘)header(‘Location: https://www.phpfensi.com’);
-}
-
-添加上面的脚本就可以做到隐藏https://www.aovon.com/wp-login.php了，将红色的部分修改成自己需要的就可以了，以后就可以使用下面的链接进行登陆了。
-
-https://www.phpfensi.com/wp-login.php?root=admin
-
-这样的话，别人再使用 wp-login.php 访问时就会自动跳转到指定的页面了，确保了登陆入口的隐蔽性。
+[GPL-2.0](LICENSE) — 全部功能免费开放，无付费墙或功能限制。

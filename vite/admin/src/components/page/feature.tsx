@@ -25,7 +25,7 @@ const RISKY_FIELDS: Record<string, string> = {
 
 const App: React.FC = () => {
   const { optionData, updateOption } = useContext(DataContext);
-  let publicData = optionData.page?.feature || defaultVarOption.page.feature;
+  const publicData = optionData.page?.feature || defaultVarOption.page.feature;
   const [formData, setFormData] = useState(publicData || {});
 
   const applyChange = (changedValues: Partial<FieldType>) => {
@@ -140,6 +140,32 @@ const App: React.FC = () => {
               extra={"单位: 像素"}
             >
               <InputNumber addonAfter={"px"} style={{ width: "120px" }} min={1} max={10} />
+            </Form.Item>
+          </>
+        )}
+        <Form.Item<FieldType>
+          id="page-feature-font_switch"
+          label="字体切换"
+          name="font_switch"
+          valuePropName="checked"
+          extra={"页面右下角添加字体切换按钮，支持多种字体切换"}
+        >
+          <FeatureSwitch featureId="page-feature-font_switch" />
+        </Form.Item>
+        {formData.font_switch && (
+          <>
+            <Form.Item<FieldType>
+              label="字体列表"
+              name="fonts"
+              extra={"每行一个字体名称，用逗号分隔"}
+            >
+              <Input.TextArea rows={3} placeholder="Microsoft YaHei,Simsun,PingFang SC" />
+            </Form.Item>
+            <Form.Item<FieldType>
+              label="按钮位置"
+              name="font_position"
+            >
+              <Input style={{ width: "200px" }} placeholder="bottom-right" />
             </Form.Item>
           </>
         )}

@@ -6,7 +6,7 @@
  * 来源2：https://www.huitheme.com/wordpress_posts_custom_thumbnail.html
  */
 if (!class_exists('Npcink_Admin_Single_Thumbnail_Switcher')) {
-    class Npcink_Admin_Single_Thumbnail_Switcher
+    class MaBox_Admin_Single_Thumbnail_Switcher
     {
         //加载
         public static function run()

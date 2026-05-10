@@ -26,6 +26,15 @@ delete_option('Magick_ToolBox_Option_Template');
 delete_option('Magick_ToolBox_Option_Backup_v210');
 delete_option('Magick_ToolBox_Config_Version');
 
+// 删除 2.2.0+ 新增模块选项键
+delete_option('Magick_ToolBox_Option_Domestic');
+delete_option('Magick_ToolBox_Option_Performance');
+
+// 删除 2.3.0+ 新增模块选项键
+delete_option('Magick_ToolBox_Option_AiReview');
+delete_option('Magick_ToolBox_Option_Services');
+delete_option('Magick_ToolBox_Option_Feedback');
+
 // 删除模块路由表选项
 delete_option('Magick_ToolBox_Active_Modules');
 
@@ -39,6 +48,18 @@ $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE
 
 // 删除字数统计缓存
 delete_transient('mabox_total_chars');
+
+// 删除反馈与遥测数据
+delete_option('mabox_telemetry_data');
+delete_option('mabox_feedback_stats');
+delete_option('mabox_feature_popularity');
+delete_option('mabox_telemetry_user_count');
+
+// 删除搜索日志
+delete_option('mabox_search_log');
+
+// 删除 AI 审核日志
+delete_option('mabox_ai_review_log');
 
 // 删除链接统计自定义表（如果存在）
 $table_name = $wpdb->prefix . 'link_counter';

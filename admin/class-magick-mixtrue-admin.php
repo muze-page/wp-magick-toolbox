@@ -92,7 +92,7 @@ class MaBox_Admin
         add_plugins_page(
             '魔法工具箱设置',             // 要在此页面的浏览器窗口中显示的标题。
             '魔法工具箱',            // 要为此菜单项显示的文本
-            'administrator',            // 哪种类型的用户可以看到此菜单项
+            'manage_options',            // 哪种类型的用户可以看到此菜单项
             'MaBox_config',    // The unique ID - that is, the slug - for this menu item 
             array(__CLASS__, 'MaBox_display'),   // 呈现此菜单的页面时要调用的函数的名称
             '200.2'
@@ -307,7 +307,7 @@ class MaBox_Admin
         header('Content-Disposition: attachment; filename="mabox-settings-' . date('Y-m-d') . '.json"');
         header('Content-Length: ' . strlen($json));
         echo $json;
-        exit;
+        wp_die();
     }
 
     /**
@@ -409,6 +409,7 @@ class MaBox_Admin
      */
     public static function register_rest_routes()
     {
+        // 原有设置路由
         register_rest_route('mabox/v1', '/settings', array(
             array(
                 'methods'             => \WP_REST_Server::READABLE,
@@ -425,34 +426,160 @@ class MaBox_Admin
                 },
             ),
         ));
+
+        // ===== Performance: Media Health =====
+        register_rest_route('mabox/v1', '/performance/media/check', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('Npcink_Performance_Media_Health', 'ajax_check'),
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            },
+        ));
+        register_rest_route('mabox/v1', '/performance/media/fix-alt', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('Npcink_Performance_Media_Health', 'ajax_fix_alt'),
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            },
+        ));
+
+        // ===== Performance: DB Clean =====
+        register_rest_route('mabox/v1', '/performance/db/stats', array(
+            'methods'             => \WP_REST_Server::READABLE,
+            'callback'            => array('Npcink_Performance_Db_Clean', 'ajax_stats'),
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            },
+        ));
+        register_rest_route('mabox/v1', '/performance/db/clean', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('Npcink_Performance_Db_Clean', 'ajax_clean'),
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            },
+        ));
+
+        // ===== Performance: SEO Checker =====
+        register_rest_route('mabox/v1', '/performance/seo/check', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('Npcink_Performance_Seo_Checker', 'ajax_check'),
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            },
+        ));
+        register_rest_route('mabox/v1', '/performance/seo/fix-alt', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('Npcink_Performance_Seo_Checker', 'ajax_fix_alt'),
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            },
+        ));
+
+        // ===== Domestic: Baidu Push =====
+        register_rest_route('mabox/v1', '/domestic/baidu/push', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('Npcink_Domestic_Baidu_Push', 'ajax_batch_push'),
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            },
+        ));
+
+        // ===== Page: Batch Replace =====
+        register_rest_route('mabox/v1', '/page/batch-replace', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('Npcink_Page_Batch_Replace', 'manual_replace'),
+            'permission_callback' => function () {
+                return current_user_can('edit_posts');
+            },
+        ));
+
+        // ===== Tools: Database Tables =====
+        register_rest_route('mabox/v1', '/tools/tables', array(
+            'methods'             => \WP_REST_Server::READABLE,
+            'callback'            => array('MaBox_Download_SQL_Table', 'get_all_table_names'),
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            },
+        ));
+        register_rest_route('mabox/v1', '/tools/table-data', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('MaBox_Download_SQL_Table', 'get_table_data'),
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            },
+        ));
+
+        // ===== Tools: Categories =====
+        register_rest_route('mabox/v1', '/tools/categories', array(
+            'methods'             => \WP_REST_Server::READABLE,
+            'callback'            => array('Npcink_Interface_Category_Data', 'get_all_category_names'),
+            'permission_callback' => '__return_true', // 公开分类数据，用于前端展示
+        ));
+
+        // ===== Public: Search Log =====
+        register_rest_route('mabox/v1', '/public/search-log', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('Npcink_Performance_Search_Enhance', 'ajax_log_search'),
+            'permission_callback' => array(__CLASS__, 'verify_public_nonce'),
+        ));
+
+        // ===== Public: Anti-Crawler Verify =====
+        register_rest_route('mabox/v1', '/public/anti-crawler/verify', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('Npcink_Page_Anti_Crawler', 'ajax_verify'),
+            'permission_callback' => array(__CLASS__, 'verify_public_nonce'),
+        ));
+
+        // ===== Public: Article Rating =====
+        register_rest_route('mabox/v1', '/public/rating', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('Npcink_Page_Article_Rating', 'handle_rating'),
+            'permission_callback' => array(__CLASS__, 'verify_public_nonce'),
+        ));
+
+        // ===== Public: WX Unlock Verify =====
+        register_rest_route('mabox/v1', '/public/wx-unlock/verify', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('MaBox_ShortCode_Wx_Unlock', 'ajax_verify'),
+            'permission_callback' => array(__CLASS__, 'verify_public_nonce'),
+        ));
+
+        // 触发模块路由注册钩子（统一路由注册模式）
+        do_action('mabox_register_rest_routes');
     }
 
     /**
-     * 提供选项
+     * 提供选项（直接使用 Config_Manager 的缓存）
      */
-    private static $config_cache = null;
-
     public static function get_seting($option)
     {
-        if (self::$config_cache === null) {
-            self::$config_cache = MaBox_Config_Manager::get_merged_config();
-        }
-        $value = self::get_config(self::$config_cache, $option);
+        $config = MaBox_Config_Manager::get_merged_config();
+        $value = self::get_config($config, $option);
         return $value;
     }
 
     public static function clear_config_cache()
     {
-        self::$config_cache = null;
         MaBox_Config_Manager::clear_cache();
+    }
+
+    /**
+     * 验证公开 REST API 端点的 nonce（防 CSRF/滥用）
+     */
+    public static function verify_public_nonce($request) {
+        $nonce = $request->get_header('x-mabox-nonce');
+        if (empty($nonce)) {
+            $nonce = $request->get_param('nonce');
+        }
+        return wp_verify_nonce($nonce, 'mabox_public_api') !== false;
     }
 
     public static function get_config($config, $property, $defaultValue = false)
     {
-        if (is_array($config) && isset($config[$property]) && !empty($config[$property])) {
+        if (is_array($config) && array_key_exists($property, $config)) {
             return $config[$property];
         }
-        if (is_object($config) && property_exists($config, $property) && !empty($config->$property)) {
+        if (is_object($config) && property_exists($config, $property)) {
             return $config->$property;
         }
         return $defaultValue;

@@ -5,7 +5,7 @@
  * 来源：https://www.npc.ink/4596.html
  */
 if (!class_exists('Npcink_Seo_Category')) {
-    class Npcink_Seo_Category
+    class MaBox_Seo_Category
     {
         public static function run()
         {

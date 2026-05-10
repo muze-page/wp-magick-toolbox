@@ -4,7 +4,7 @@
  * 动态页面模版
  */
 if (!class_exists('Npcink_Template_Trends')) {
-    class Npcink_Template_Trends extends Npcink_Template
+    class MaBox_Template_Trends extends MaBox_Template
     {
         public static function runs($option)
         {

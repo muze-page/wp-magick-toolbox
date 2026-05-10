@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Page_Comment_Interval')) {
-    class Npcink_Page_Comment_Interval
+    class MaBox_Page_Comment_Interval
     {
         public static $option; //配置
         public static function run($config)

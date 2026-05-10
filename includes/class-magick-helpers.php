@@ -51,11 +51,23 @@ if (!class_exists('MaBox_Helpers')) {
         }
 
         /**
-         * 安全获取配置值（MaBox_Admin::get_config 的快捷方式）
+         * 安全获取配置值（直接读取 Config_Manager，不依赖 MaBox_Admin）
          */
-        public static function get_config($config, $key, $default = false)
+        public static function get_config($module, $key, $default = false)
         {
-            return MaBox_Admin::get_config($config, $key, $default);
+            $module_config = MaBox_Config_Manager::get_module_config($module);
+            if (is_array($module_config) && array_key_exists($key, $module_config)) {
+                return $module_config[$key];
+            }
+            return $default;
+        }
+
+        /**
+         * 获取完整合并配置
+         */
+        public static function get_merged_config()
+        {
+            return MaBox_Config_Manager::get_merged_config();
         }
     }
 }

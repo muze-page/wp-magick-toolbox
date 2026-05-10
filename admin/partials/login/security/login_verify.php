@@ -3,7 +3,7 @@
  * 添加登录验证码
  */
 if (!class_exists('Npcink_Login_Verify')) {
-    class Npcink_Login_Verify
+    class MaBox_Login_Verify
     {
         public static function run($login_code)
         {
@@ -68,7 +68,7 @@ if (!class_exists('Npcink_Login_Verify')) {
                 case null:
                     function empty_captcha()
                     {
-                        return new WP_Error("empty_captcha", __('<strong>错误</strong>: 请输入数学验证码.', 'zaxu'));
+                        return new WP_Error("empty_captcha", __('<strong>错误</strong>: 请输入数学验证码.', 'magick-toolbox'));
                     }
                     add_filter("wp_authenticate_user", "empty_captcha", 10, 2);
 
@@ -77,7 +77,7 @@ if (!class_exists('Npcink_Login_Verify')) {
                 default:
                     function incorrect_captcha()
                     {
-                        return new WP_Error("empty_captcha", __('<strong>错误</strong>: 验证码错误，请重新输入.', 'zaxu'));
+                        return new WP_Error("empty_captcha", __('<strong>错误</strong>: 验证码错误，请重新输入.', 'magick-toolbox'));
                     }
                     add_filter("wp_authenticate_user", "incorrect_captcha", 10, 2);
             }
@@ -117,7 +117,7 @@ if (!class_exists('Npcink_Login_Verify')) {
 
                     function empty_captcha()
                     {
-                        return new WP_Error("empty_captcha", __('<strong>错误</strong>: 请输入验证码.', 'zaxu'));
+                        return new WP_Error("empty_captcha", __('<strong>错误</strong>: 请输入验证码.', 'magick-toolbox'));
                     }
                     add_filter("wp_authenticate_user", "empty_captcha", 10, 2);
                     break;
@@ -125,7 +125,7 @@ if (!class_exists('Npcink_Login_Verify')) {
                 default:
                     function incorrect_captcha()
                     {
-                        return new WP_Error("empty_captcha", __('<strong>错误</strong>: 验证码错误，请重新输入.', 'zaxu'));
+                        return new WP_Error("empty_captcha", __('<strong>错误</strong>: 验证码错误，请重新输入.', 'magick-toolbox'));
                     }
                     add_filter("wp_authenticate_user", "incorrect_captcha", 10, 2);
             }
@@ -184,11 +184,13 @@ if (!class_exists('Npcink_Login_Verify')) {
          */
         public static function validate_tcaptcha_login($user)
         {
-            $slide = $_POST['tcaptcha_007'];
+            $slide = isset($_POST['tcaptcha_007']) ? sanitize_text_field($_POST['tcaptcha_007']) : '';
             if ($slide == '') {
                 return new WP_Error('broke', __("请先进行真人验证！！！"));
             } else {
-                $result = self::validate_login($_POST['syz_ticket'], $_POST['syz_randstr']);
+                $ticket = isset($_POST['syz_ticket']) ? sanitize_text_field($_POST['syz_ticket']) : '';
+                $randstr = isset($_POST['syz_randstr']) ? sanitize_text_field($_POST['syz_randstr']) : '';
+                $result = self::validate_login($ticket, $randstr);
                 if ($result['result']) {
                     return $user;
                 } else {

@@ -14,9 +14,9 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
     <meta name="renderer" content="webkit">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <title><?php echo $site_name ?> - 安全中心</title>
-    <link rel="shortcut icon" href="<?php echo $favicon_url ?>" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href=<?php echo $url . "shimo.css" ?>>
+    <title><?php echo esc_html($site_name) ?> - 安全中心</title>
+    <link rel="shortcut icon" href="<?php echo esc_url($favicon_url) ?>" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="<?php echo esc_url($url) ?>shimo.css">
 </head>
 
 <body>
@@ -25,7 +25,7 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
         <div class=" gtGAjh">
             <p class="logo"></p>
             <div class="modal">
-                <h2 class="title">你即将离开<?php echo $site_name ?>，跳转到外部链接</h2>
+                <h2 class="title">你即将离开<?php echo esc_html($site_name) ?>，跳转到外部链接</h2>
                 <p class="subtitle">请谨慎评估风险并注意保护你的隐私及财产安全</p>
                 <p class="link"><?php echo esc_url($external_url); ?></p><br>
                 <a href="<?php echo esc_url($external_url); ?>" target="_self">

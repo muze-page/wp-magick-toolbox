@@ -5,7 +5,7 @@
  * 平滑箭头：https://www.shephe.com/website/
  */
 if (!class_exists('Npcink_Page_Go_Top')) {
-    class Npcink_Page_Go_Top
+    class MaBox_Page_Go_Top
     {
         //选项值，进一步调用的值
         public static function run($config, $option)

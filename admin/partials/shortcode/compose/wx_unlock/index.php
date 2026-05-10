@@ -6,8 +6,8 @@ if (!class_exists('MaBox_ShortCode_Wx_Unlock')) {
         public static function run()
         {
             add_shortcode('mabox_wx_unlock', array(__CLASS__, 'render'));
-            add_action('wp_ajax_mabox_wx_unlock_verify', array(__CLASS__, 'ajax_verify'));
-            add_action('wp_ajax_nopriv_mabox_wx_unlock_verify', array(__CLASS__, 'ajax_verify'));
+add_action('wp_ajax_mabox_wx_unlock_verify', array(__CLASS__, 'ajax_verify_deprecated'));
+add_action('wp_ajax_nopriv_mabox_wx_unlock_verify', array(__CLASS__, 'ajax_verify_deprecated'));
             add_action('wp_enqueue_scripts', function () {
                 global $post;
                 if (isset($post) && has_shortcode($post->post_content, 'mabox_wx_unlock')) {
@@ -68,8 +68,14 @@ if (!class_exists('MaBox_ShortCode_Wx_Unlock')) {
             return ob_get_clean();
         }
 
+        public static function ajax_verify_deprecated() {
+            _deprecated_function('wp_ajax_mabox_wx_unlock_verify', '2.1.0', 'REST API POST /mabox/v1/public/wx-unlock/verify');
+            self::ajax_verify();
+        }
+
         public static function ajax_verify()
         {
+            check_ajax_referer('mabox_wx_unlock', 'nonce');
             $config = self::get_config();
             $code = sanitize_text_field($_POST['code']);
             $valid_codes = self::get_valid_codes($config);

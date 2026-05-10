@@ -6,7 +6,7 @@
  * keywords：文章标签
  */
 if (!class_exists('Npcink_Seo_Single')) {
-    class Npcink_Seo_Single
+    class MaBox_Seo_Single
     {
 
         public static function run()

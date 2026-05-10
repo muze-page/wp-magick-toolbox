@@ -5,7 +5,7 @@
  * 来源：https://www.iowen.cn/chundaimameihuawordpressmorendengluye/
  * */
 if (!class_exists('Npcink_Login_Change_Logo_Link')) {
-    class Npcink_Login_Change_Logo_Link
+    class MaBox_Login_Change_Logo_Link
     {
         public static function run()
         {

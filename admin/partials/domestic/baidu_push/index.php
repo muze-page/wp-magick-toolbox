@@ -1,6 +1,6 @@
 <?php
 if (!class_exists('Npcink_Domestic_Baidu_Push')) {
-    class Npcink_Domestic_Baidu_Push {
+    class MaBox_Domestic_Baidu_Push {
         private static $config;
         public static function run($config) {
             self::$config = $config;
@@ -11,8 +11,13 @@ if (!class_exists('Npcink_Domestic_Baidu_Push')) {
                 add_action('wp_footer', array(__CLASS__, 'auto_push_js'), 999);
             }
             if (!empty($config['batch_push_enabled']) && !empty($config['site']) && !empty($config['token'])) {
-                add_action('wp_ajax_mabox_baidu_batch_push', array(__CLASS__, 'ajax_batch_push'));
+                add_action('wp_ajax_mabox_baidu_batch_push', array(__CLASS__, 'ajax_batch_push_deprecated'));
             }
+        }
+        public static function ajax_batch_push_deprecated() {
+            _deprecated_function('wp_ajax_mabox_baidu_batch_push', '2.1.0', 'REST API POST /mabox/v1/domestic/baidu/push');
+            self::ajax_batch_push();
+        }
         }
         public static function active_push($post_id, $post) {
             if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
@@ -39,6 +44,7 @@ if (!class_exists('Npcink_Domestic_Baidu_Push')) {
             if (!current_user_can('manage_options')) {
                 wp_send_json_error('权限不足', 403);
             }
+            check_ajax_referer('mabox_save_nonce', 'nonce');
             $batch_size = 100;
             $offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
             $posts = get_posts(array(

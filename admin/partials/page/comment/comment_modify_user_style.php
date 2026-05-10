@@ -7,7 +7,7 @@
  */
 
 if (!class_exists('Npcink_Comment_Modify_User_Style')) {
-    class Npcink_Comment_Modify_User_Style
+    class MaBox_Comment_Modify_User_Style
     {
         //加载
         public static function run()

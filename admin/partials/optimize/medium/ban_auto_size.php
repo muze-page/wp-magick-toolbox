@@ -5,7 +5,7 @@
  * 来源：
  */
 if (!class_exists('Npcink_Medium_Ban_Auto_Size')) {
-    class Npcink_Medium_Ban_Auto_Size
+    class MaBox_Medium_Ban_Auto_Size
     {
         //加载
         public static function run()

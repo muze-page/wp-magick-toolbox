@@ -6,6 +6,7 @@ import { DataContext } from "@/tool/dataContext";
 import { H5Home } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import type { SelectProps } from "antd";
+import type { DefaultOptionType } from "rc-select/lib/Select";
 import Contact from "@/components/h5/contact";
 import { validateLink } from "@/tool/tool";
 import { AntConfig } from "@/tool/tool";
@@ -55,7 +56,7 @@ const App: React.FC = () => {
         { label: "文章3", value: 3 },
       ];
     } else {
-      return window.dataLocal.single_arr !== ""
+      return window.dataLocal?.single_arr && window.dataLocal.single_arr.length > 0
         ? window.dataLocal.single_arr
         : [];
     }
@@ -69,16 +70,16 @@ const App: React.FC = () => {
         { label: "大大怪", value: 3 },
       ];
     } else {
-      return window.dataLocal.cat_arr !== ""
+      return window.dataLocal?.cat_arr && window.dataLocal.cat_arr.length > 0
         ? window.dataLocal.cat_arr
         : [];
     }
   };
 
   //获取文章
-  const SingleOption: SelectProps["options"] = getSingleData();
+  const SingleOption: SelectProps["options"] = getSingleData() as DefaultOptionType[];
 
-  const options: SelectProps["options"] = getCatData();
+  const options: SelectProps["options"] = getCatData() as DefaultOptionType[];
 
   return (
     <>

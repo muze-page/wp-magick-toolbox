@@ -5,7 +5,7 @@
  * 来源：https://www.bber.cn/92.html
  */
 if (!class_exists('Npcink_Page_Top_Loading')) {
-    class Npcink_Page_Top_Loading
+    class MaBox_Page_Top_Loading
     {
         public static function run()
         {

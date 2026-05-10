@@ -5,7 +5,7 @@
  * 平滑箭头：https://www.shephe.com/website/
  */
 if (!class_exists('Npcink_Page_Go_Top_Smooth_Arrow')) {
-    class Npcink_Page_Go_Top_Smooth_Arrow
+    class MaBox_Page_Go_Top_Smooth_Arrow
     {
         public static function run()
         {

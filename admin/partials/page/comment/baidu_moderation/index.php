@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('Npcink_Comment_Baidu_Moderation')) {
-    class Npcink_Comment_Baidu_Moderation
+    class MaBox_Comment_Baidu_Moderation
     {
         private static $option;
         private static $access_token;

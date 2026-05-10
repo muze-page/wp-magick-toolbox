@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Comment_Limit_Word_Count')) {
-    class Npcink_Comment_Limit_Word_Count
+    class MaBox_Comment_Limit_Word_Count
     {
         public static $option; //配置
         public static function run($config)

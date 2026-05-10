@@ -13,9 +13,9 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
   <meta name="renderer" content="webkit">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <title><?php echo $site_name ?> - 安全中心</title>
-  <link rel="shortcut icon" href="<?php echo $favicon_url ?>" type="image/x-icon">
-  <link rel="stylesheet" type="text/css" href=<?php echo $url . "tencent.css" ?>>
+  <title><?php echo esc_html($site_name) ?> - 安全中心</title>
+  <link rel="shortcut icon" href="<?php echo esc_url($favicon_url) ?>" type="image/x-icon">
+  <link rel="stylesheet" type="text/css" href="<?php echo esc_url($url) ?>tencent.css">
 </head>
 
 <body>
@@ -24,7 +24,7 @@ include plugin_dir_path((__FILE__)) . 'index.php'; // 获取数据
       <div class="mod-external-link-logo"></div>
       <div class="mod-external-link-content">
         <div class="mod-external-link-main">
-          <div class="mod-external-link-title">您即将离开<?php echo $site_name ?>，请注意您的账号财产安全</div>
+          <div class="mod-external-link-title">您即将离开<?php echo esc_html($site_name) ?>，请注意您的账号财产安全</div>
           <div class="mod-external-link-address"><?php echo esc_url($external_url); ?></div>
         </div>
         <div class="mod-external-link-btn"><a href="<?php echo esc_url($external_url); ?>" target="_self">继续访问</a></div>

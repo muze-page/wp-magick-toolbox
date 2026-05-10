@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Single_Remove_Link')) {
-    class Npcink_Single_Remove_Link
+    class MaBox_Single_Remove_Link
     {
         public static function run()
         {

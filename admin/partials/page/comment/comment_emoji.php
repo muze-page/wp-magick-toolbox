@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('Npcink_Page_Comment_Emoji')) {
-    class Npcink_Page_Comment_Emoji
+    class MaBox_Page_Comment_Emoji
     {
         public static function run()
         {

@@ -14,5 +14,15 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    // Existing codebase uses `any` extensively; warn but don't block
+    '@typescript-eslint/no-explicit-any': 'warn',
+    // Common pattern in onValuesChange callbacks
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
   },
+  overrides: [
+    {
+      files: ['src/tool/defaultVar.tsx'],
+      rules: { 'no-var': 'off' },
+    },
+  ],
 }

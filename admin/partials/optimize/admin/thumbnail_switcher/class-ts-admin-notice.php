@@ -91,6 +91,11 @@ if( !class_exists( 'TS_Admin_Notice' ) ) :
 
 			check_ajax_referer( 'ts_notice_dismiss', 'security' );
 
+			// 权限检查：任何登录用户都可以关闭通知
+			if ( ! is_user_logged_in() ) {
+				wp_die( 'Unauthorized', 'Unauthorized', array( 'response' => 403 ) );
+			}
+
 			if( isset( $_POST['notice_id'] ) ) {
 
 				$uid = get_current_user_id();
