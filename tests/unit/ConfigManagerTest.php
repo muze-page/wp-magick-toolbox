@@ -12,11 +12,9 @@ use PHPUnit\Framework\TestCase;
 class MaBox_Config_Manager_Test extends TestCase {
 
     /**
-     * 测试 get_merged_config 返回空数组（无 WordPress 环境）
+     * 测试 Config_Manager 类存在
      */
-    public function test_get_merged_config_returns_empty_without_wp(): void {
-        // 在没有 WordPress 环境时，get_option 不存在
-        // 这个测试验证类在孤立加载时的行为
+    public function test_config_manager_class_exists(): void {
         $this->assertTrue(class_exists('MaBox_Config_Manager'));
     }
 
@@ -51,46 +49,76 @@ class MaBox_Config_Manager_Test extends TestCase {
     }
 
     /**
-     * 测试 clear_cache 方法存在且可调用
+     * 测试 module_map 键数量为 12
      */
-    public function test_clear_cache_method_exists(): void {
-        $this->assertTrue(method_exists('MaBox_Config_Manager', 'clear_cache'));
+    public function test_module_map_has_correct_count(): void {
+        $map = MaBox_Config_Manager::get_module_map();
+        $this->assertCount(12, $map);
     }
 
     /**
-     * 测试 get_module_config 方法存在
+     * 测试所有必需方法存在
      */
-    public function test_get_module_config_method_exists(): void {
-        $this->assertTrue(method_exists('MaBox_Config_Manager', 'get_module_config'));
-    }
+    public function test_all_required_methods_exist(): void {
+        $methods = array(
+            'needs_migration',
+            'migrate',
+            'rollback',
+            'get_merged_config',
+            'get_module_config',
+            'save_full_config',
+            'save_module_config',
+            'export_config',
+            'import_config',
+            'clear_cache',
+            'get_module_map',
+        );
 
-    /**
-     * 测试 save_module_config 方法存在
-     */
-    public function test_save_module_config_method_exists(): void {
-        $this->assertTrue(method_exists('MaBox_Config_Manager', 'save_module_config'));
-    }
-
-    /**
-     * 测试 export_config 方法存在
-     */
-    public function test_export_config_method_exists(): void {
-        $this->assertTrue(method_exists('MaBox_Config_Manager', 'export_config'));
-    }
-
-    /**
-     * 测试 import_config 方法存在
-     */
-    public function test_import_config_method_exists(): void {
-        $this->assertTrue(method_exists('MaBox_Config_Manager', 'import_config'));
+        foreach ($methods as $method) {
+            $this->assertTrue(method_exists('MaBox_Config_Manager', $method),
+                "Method '$method' should exist");
+        }
     }
 
     /**
      * 测试 import_config 拒绝无效输入
      */
     public function test_import_config_rejects_invalid_input(): void {
-        // 在没有 WordPress 环境时，import_config 应该返回错误
-        // 这个测试验证输入验证逻辑
         $this->assertTrue(method_exists('MaBox_Config_Manager', 'import_config'));
+
+        // 验证方法签名
+        $method = new ReflectionMethod('MaBox_Config_Manager', 'import_config');
+        $params = $method->getParameters();
+        $this->assertCount(1, $params);
+        $this->assertEquals('config', $params[0]->getName());
+    }
+
+    /**
+     * 测试 clear_cache 方法为静态
+     */
+    public function test_clear_cache_is_static(): void {
+        $method = new ReflectionMethod('MaBox_Config_Manager', 'clear_cache');
+        $this->assertTrue($method->isStatic());
+    }
+
+    /**
+     * 测试 get_module_map 方法为静态
+     */
+    public function test_get_module_map_is_static(): void {
+        $method = new ReflectionMethod('MaBox_Config_Manager', 'get_module_map');
+        $this->assertTrue($method->isStatic());
+    }
+
+    /**
+     * 测试类为纯静态设计（无实例属性）
+     */
+    public function test_class_is_static_design(): void {
+        $class = new ReflectionClass('MaBox_Config_Manager');
+        $properties = $class->getProperties();
+
+        foreach ($properties as $property) {
+            $this->assertTrue($property->isStatic(),
+                "Property '{$property->getName()}' should be static");
+        }
     }
 }
