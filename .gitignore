@@ -34,3 +34,4 @@ phpstan-baseline.neon
 *.tmp
 *.temp
 phpunit.phar
+wp-magick-toolbox-*.zip

@@ -8,7 +8,7 @@
  */
 
 // 加载模块接口契约
-require_once plugin_dir_path(dirname(__FILE__)) . 'includes/interface-mabox-module.php';
+require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/interface-mabox-module.php';
 
 if (!class_exists('MaBox_Module_Loader')) {
     class MaBox_Module_Loader {
@@ -17,7 +17,7 @@ if (!class_exists('MaBox_Module_Loader')) {
 
         public static function get_registry() {
             if (self::$registry === null) {
-                self::$registry = require plugin_dir_path(__FILE__) . 'modules/registry.php';
+                self::$registry = require plugin_dir_path(__FILE__) . 'registry.php';
             }
             return self::$registry;
         }
