@@ -4,7 +4,7 @@ import { DataContext } from "@/tool/dataContext";
 import { TemplateTrends } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
-import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
 type FieldType = TemplateTrends;
 
@@ -41,7 +41,7 @@ const App: React.FC = () => {
   }, [formData]);
 
   return (
-    <>
+    <SettingsSection title="动态模板" description="启用对应模板后，在页面中可选择对应模板">
       <Form
         name="trends"
         labelCol={fromConfig.labelCol}
@@ -52,33 +52,20 @@ const App: React.FC = () => {
         onFinish={() => {}}
         onValuesChange={onValuesChange}
       >
-        <Form.Item>
-          <h2>动态模板</h2>
-        </Form.Item>
-
         {templateItems.map((item) => (
-          <div
+          <ModuleRow
             key={item.fieldName}
-            id={item.featureId}
-            className="mabox-template-row"
-          >
-            <div className="mabox-template-row-info">
-              <div className="mabox-template-row-name">{item.name}</div>
-              <div className="mabox-template-row-desc">{item.description}</div>
-            </div>
-            <div className="mabox-template-row-actions">
-              <Form.Item<FieldType>
-                name={item.fieldName}
-                valuePropName="checked"
-                noStyle
-              >
-                <FeatureSwitch featureId={item.featureId} />
-              </Form.Item>
-            </div>
-          </div>
+            title={item.name}
+            description={item.description}
+            featureId={item.featureId}
+            enabled={formData[item.fieldName] as boolean}
+            onChange={(checked: boolean) => {
+              onValuesChange({ [item.fieldName]: checked } as Partial<FieldType>, formData);
+            }}
+          />
         ))}
       </Form>
-    </>
+    </SettingsSection>
   );
 };
 

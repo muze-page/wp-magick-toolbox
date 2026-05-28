@@ -6,7 +6,6 @@ const MODULE_TAB_MAP: Record<string, { tabKey: string; tabLabel: string }> = {
   page: { tabKey: "1", tabLabel: "页面" },
   optimize: { tabKey: "2", tabLabel: "优化" },
   login: { tabKey: "3", tabLabel: "登录页" },
-  h5: { tabKey: "4", tabLabel: "H5" },
   function: { tabKey: "5", tabLabel: "功能" },
   shortcode: { tabKey: "7", tabLabel: "短代码" },
   template: { tabKey: "8", tabLabel: "页面模板" },

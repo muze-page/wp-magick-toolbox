@@ -24,7 +24,6 @@ if (!class_exists('MaBox_Config_Manager')) {
             'optimize'    => MAGICK_MIXTURE_OPTION_OPTIMIZE,
             'page'        => MAGICK_MIXTURE_OPTION_PAGE,
             'function'    => MAGICK_MIXTURE_OPTION_FUNCTION,
-            'h5'          => MAGICK_MIXTURE_OPTION_H5,
             'login'       => MAGICK_MIXTURE_OPTION_LOGIN,
             'shortcode'   => MAGICK_MIXTURE_OPTION_SHORTCODE,
             'template'    => MAGICK_MIXTURE_OPTION_TEMPLATE,

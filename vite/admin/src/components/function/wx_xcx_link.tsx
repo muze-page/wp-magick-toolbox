@@ -1,21 +1,16 @@
-//微信小程序生成跳转链接
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Form, Switch, Input, Collapse } from "antd";
+import { Form, Input, Collapse } from "antd";
 import type { CollapseProps } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { FunctionWxXcx } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
-//选项类型
 type FieldType = FunctionWxXcx;
 
-//Ant 组件配置
 const fromConfig = AntConfig.from;
-/**
- * 折叠面板
- */
 
 const link = (
   <ul className="list-disc ml-4">
@@ -36,7 +31,6 @@ const text = (
     <li>检测到移动端会自动申请打开微信客户端</li>
   </ul>
 );
-//实现细节
 const achieve = (
   <ul className="list-disc ml-4">
     <li>本作者阅读官方文档后实现</li>
@@ -67,17 +61,13 @@ const items: CollapseProps["items"] = [
 ];
 
 const App: React.FC = () => {
-  //拿到默认选项值和修改方法
   const { optionData, updateOption } = useContext(DataContext);
 
-  //简化并提供默认值
   const publicData =
     optionData.function?.wx_xcx || defaultVarOption.function.wx_xcx;
 
-  //创建变量并设默认值
   const [formData, setFormData] = useState(publicData);
 
-  //表单同步修改值
   const onValuesChange = (changedValues: Partial<FieldType>) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -85,146 +75,135 @@ const App: React.FC = () => {
     }));
   };
 
-  // 表单值发生变化时更新dataContext的值
   useEffect(() => {
     updateOption("function", "wx_xcx", formData);
   }, [formData]);
 
   return (
-    <>
+    <SettingsSection title="微信小程序链接生成">
       <Form
         name="wx_xcx"
         labelCol={fromConfig.labelCol}
         wrapperCol={fromConfig.wrapperCol}
         style={{ maxWidth: fromConfig.maxWidth }}
-        //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
-        //自动填充功能禁用
         autoComplete="off"
-        //指定当表单提交时要执行的回调函数
         onFinish={() => {}}
-        //指定当表单字段值发生变化时要执行的回调函数
         onValuesChange={onValuesChange}
       >
-        <Form.Item>
-          <h2>微信小程序链接生成</h2>
-        </Form.Item>
-
-        <Form.Item<FieldType>
-          label="是否启用"
-          name="active"
-          valuePropName="checked"
-          extra={"生成小程序跳转指定页面链接功能"}
+        <ModuleRow
+          title="是否启用"
+          description="生成小程序跳转指定页面链接功能"
+          featureId="function-wx_xcx-active"
+          enabled={formData.active as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ active: checked });
+          }}
         >
-          <Switch />
-        </Form.Item>
-        {formData.active && (
-          <>
-            <Form.Item<FieldType>
-              label="AppId"
-              name="appid"
-              extra={
-                <p>
-                  微信小程序 - 开发管理 - 开发设置，
-                  <a
-                    href="https://mp.weixin.qq.com/wxamp/devprofile/get_profile?token=858704879&lang=zh_CN"
-                    target="_blank"
-                  >
-                    前往微信小程序
-                  </a>
-                </p>
-              }
-            >
-              <Input.Password />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="AppSecret"
-              name="secret"
-              extra={
-                <p>
-                  微信小程序 - 开发管理 - 开发设置，
-                  <a
-                    href="https://mp.weixin.qq.com/wxamp/devprofile/get_profile?token=858704879&lang=zh_CN"
-                    target="_blank"
-                  >
-                    前往微信小程序
-                  </a>
-                </p>
-              }
-            >
-              <Input.Password />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="网址"
-              name="site"
-              extra={
-                <p>
-                  小程序中跳转的外部网址，例如
-                  <pre className="pre-meat">
-                    https://www.npc.ink/300485.html
-                  </pre>
-                </p>
-              }
-            >
-              <Input />
-            </Form.Item>
+          <Form.Item<FieldType>
+            label="AppId"
+            name="appid"
+            extra={
+              <p>
+                微信小程序 - 开发管理 - 开发设置，
+                <a
+                  href="https://mp.weixin.qq.com/wxamp/devprofile/get_profile?token=858704879&lang=zh_CN"
+                  target="_blank"
+                >
+                  前往微信小程序
+                </a>
+              </p>
+            }
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item<FieldType>
+            label="AppSecret"
+            name="secret"
+            extra={
+              <p>
+                微信小程序 - 开发管理 - 开发设置，
+                <a
+                  href="https://mp.weixin.qq.com/wxamp/devprofile/get_profile?token=858704879&lang=zh_CN"
+                  target="_blank"
+                >
+                  前往微信小程序
+                </a>
+              </p>
+            }
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item<FieldType>
+            label="网址"
+            name="site"
+            extra={
+              <p>
+                小程序中跳转的外部网址，例如
+                <pre className="pre-meat">
+                  https://www.npc.ink/300485.html
+                </pre>
+              </p>
+            }
+          >
+            <Input />
+          </Form.Item>
 
-            <Form.Item<FieldType>
-              label="路径参数"
-              name="path"
-              extra={
-                <>
-                  需跳转的页面，
-                  <p>
-                    例如
-                    <pre className="pre-meat">pages/circle/index.html</pre>
-                    则填写
-                    <pre className="pre-meat">pages/circle</pre>
-                  </p>
-                  <p>
-                    例如
-                    <pre className="pre-meat">
-                      pages/single/post.html?id=300485
-                    </pre>
-                    则填写
-                    <pre className="pre-meat">pages/single/post</pre>
-                  </p>
-                </>
-              }
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="查询参数"
-              name="query"
-              extra={
+          <Form.Item<FieldType>
+            label="路径参数"
+            name="path"
+            extra={
+              <>
+                需跳转的页面，
                 <p>
-                  需跳转的指定页面，例如
+                  例如
+                  <pre className="pre-meat">pages/circle/index.html</pre>
+                  则填写
+                  <pre className="pre-meat">pages/circle</pre>
+                </p>
+                <p>
+                  例如
                   <pre className="pre-meat">
                     pages/single/post.html?id=300485
                   </pre>
                   则填写
-                  <pre className="pre-meat">id=300485</pre>
+                  <pre className="pre-meat">pages/single/post</pre>
                 </p>
-              }
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="介绍"
-              extra={
-                <p>
-                  此选项会添加接口，供自定义页面或其他页面调用，地址如下
-                  <pre className="pre-meat">您的网址/wp-json/wx_xcx/v1/qy</pre>
-                </p>
-              }
-            >
-              <Collapse accordion items={items} bordered={false} />
-            </Form.Item>
-          </>
-        )}
+              </>
+            }
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item<FieldType>
+            label="查询参数"
+            name="query"
+            extra={
+              <p>
+                需跳转的指定页面，例如
+                <pre className="pre-meat">
+                  pages/single/post.html?id=300485
+                </pre>
+                则填写
+                <pre className="pre-meat">id=300485</pre>
+              </p>
+            }
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item<FieldType>
+            label="介绍"
+            extra={
+              <p>
+                此选项会添加接口，供自定义页面或其他页面调用，地址如下
+                <pre className="pre-meat">您的网址/wp-json/wx_xcx/v1/qy</pre>
+              </p>
+            }
+          >
+            <Collapse accordion items={items} bordered={false} />
+          </Form.Item>
+        </ModuleRow>
       </Form>
-    </>
+    </SettingsSection>
   );
 };
 

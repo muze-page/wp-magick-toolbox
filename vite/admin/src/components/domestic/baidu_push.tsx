@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Form, Input, Button, message } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { AntConfig } from "@/tool/tool";
-import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
 const fromConfig = AntConfig.from;
 
@@ -12,7 +12,7 @@ const App: React.FC = () => {
   const [formData, setFormData] = useState(publicData || {});
   const [pushing, setPushing] = useState(false);
 
-  const onValuesChange = (changedValues: any, _allValues: any) => {
+  const onValuesChange = (changedValues: any, _allValues?: any) => {
     setFormData((prev: any) => ({ ...prev, ...changedValues }));
   };
 
@@ -50,50 +50,59 @@ const App: React.FC = () => {
   };
 
   return (
-    <Form
-      name="baidu_push"
-      labelCol={fromConfig.labelCol}
-      wrapperCol={fromConfig.wrapperCol}
-      style={{ maxWidth: fromConfig.maxWidth }}
-      initialValues={publicData}
-      autoComplete="off"
-      onValuesChange={onValuesChange}
-    >
-      <Form.Item extra={"文章发布自动推送到百度搜索资源平台"}>
-        <h2>百度收录推送</h2>
-      </Form.Item>
-
-      <Form.Item label="主动推送" name="active_push_enabled" valuePropName="checked">
-        <FeatureSwitch featureId="domestic-baidu_push-active_push_enabled" />
-      </Form.Item>
-      {formData.active_push_enabled && (
-        <>
+    <SettingsSection title="百度推送" description="文章发布自动推送到百度搜索资源平台">
+      <Form
+        name="baidu_push"
+        labelCol={fromConfig.labelCol}
+        wrapperCol={fromConfig.wrapperCol}
+        style={{ maxWidth: fromConfig.maxWidth }}
+        initialValues={publicData}
+        autoComplete="off"
+        onValuesChange={onValuesChange}
+      >
+        <ModuleRow
+          title="主动推送"
+          featureId="domestic-baidu_push-active_push_enabled"
+          enabled={formData.active_push_enabled as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ active_push_enabled: checked });
+          }}
+        >
           <Form.Item label="Site" name="site">
             <Input placeholder="如：https://www.example.com" />
           </Form.Item>
           <Form.Item label="Token" name="token">
             <Input placeholder="百度搜索资源平台提供的 Token" />
           </Form.Item>
-        </>
-      )}
+        </ModuleRow>
 
-      <Form.Item label="自动推送 JS" name="auto_push_enabled" valuePropName="checked"
-        extra="在页面底部插入百度自动推送代码">
-        <FeatureSwitch featureId="domestic-baidu_push-auto_push_enabled" />
-      </Form.Item>
+        <ModuleRow
+          title="自动推送 JS"
+          description="在页面底部插入百度自动推送代码"
+          featureId="domestic-baidu_push-auto_push_enabled"
+          enabled={formData.auto_push_enabled as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ auto_push_enabled: checked });
+          }}
+        />
 
-      <Form.Item label="批量推送" name="batch_push_enabled" valuePropName="checked"
-        extra="推送所有历史文章到百度">
-        <FeatureSwitch featureId="domestic-baidu_push-batch_push_enabled" />
-      </Form.Item>
-      {formData.batch_push_enabled && (
-        <Form.Item wrapperCol={fromConfig.wrapperCol}>
-          <Button type="primary" onClick={handleBatchPush} loading={pushing}>
-            开始批量推送
-          </Button>
-        </Form.Item>
-      )}
-    </Form>
+        <ModuleRow
+          title="批量推送"
+          description="推送所有历史文章到百度"
+          featureId="domestic-baidu_push-batch_push_enabled"
+          enabled={formData.batch_push_enabled as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ batch_push_enabled: checked });
+          }}
+        >
+          <Form.Item wrapperCol={fromConfig.wrapperCol}>
+            <Button type="primary" onClick={handleBatchPush} loading={pushing}>
+              开始批量推送
+            </Button>
+          </Form.Item>
+        </ModuleRow>
+      </Form>
+    </SettingsSection>
   );
 };
 

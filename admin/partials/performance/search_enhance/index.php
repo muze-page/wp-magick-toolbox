@@ -14,13 +14,8 @@ if (!class_exists('MaBox_Performance_Search_Enhance')) {
             if (!empty($config['hotwords_enabled'])) {
                 add_action('pre_get_posts', array(__CLASS__, 'frontend_log_search'));
                 add_action('loop_no_results', array(__CLASS__, 'mark_no_result'));
-                add_action('wp_ajax_mabox_search_log', array(__CLASS__, 'ajax_log_search_deprecated'));
-                add_action('wp_ajax_nopriv_mabox_search_log', array(__CLASS__, 'ajax_log_search_deprecated'));
+                add_action('loop_no_results', array(__CLASS__, 'mark_no_result'));
             }
-        }
-        public static function ajax_log_search_deprecated() {
-            _deprecated_function('wp_ajax_mabox_search_log', '2.1.0', 'REST API POST /mabox/v1/public/search-log');
-            self::ajax_log_search();
         }
         public static function highlight_search($text) {
             if (!is_search()) return $text;

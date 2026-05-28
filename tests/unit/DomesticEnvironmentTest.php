@@ -229,7 +229,6 @@ class DomesticEnvironmentTest extends TestCase
             MAGICK_MIXTURE_OPTION_OPTIMIZE => array(),
             MAGICK_MIXTURE_OPTION_PAGE => array(),
             MAGICK_MIXTURE_OPTION_FUNCTION => array(),
-            MAGICK_MIXTURE_OPTION_H5 => array(),
             MAGICK_MIXTURE_OPTION_LOGIN => array(),
             MAGICK_MIXTURE_OPTION_SHORTCODE => array(),
             MAGICK_MIXTURE_OPTION_TEMPLATE => array(),

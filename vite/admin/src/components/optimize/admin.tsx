@@ -1,4 +1,3 @@
-//其他
 import React from "react";
 import { useState, useContext, useEffect } from "react";
 import { Form } from "antd";
@@ -6,25 +5,19 @@ import { DataContext } from "@/tool/dataContext";
 import { OptimizeAdmin } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
-import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
-//选项类型
 type FieldType = OptimizeAdmin;
 
-//Ant 组件配置
 const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
-  //拿到默认选项值和修改方法
   const { optionData, updateOption } = useContext(DataContext);
 
-  //简化并提供默认值
   const publicData = optionData.optimize?.admin || defaultVarOption.optimize.admin;
 
-  //创建变量并设默认值
   const [formData, setFormData] = useState(publicData || {});
 
-  //表单同步修改值
   const onValuesChange = (
     changedValues: Partial<FieldType>,
     _allValues: FieldType
@@ -35,70 +28,52 @@ const App: React.FC = () => {
     }));
   };
 
- 
-  //表单值发生变化时更新选项值
   useEffect(() => {
     updateOption("optimize", "admin", formData);
   }, [formData]);
 
   return (
-    <>
+    <SettingsSection title="后台" description="后台文章管理增强">
       <Form
         name="admin"
         labelCol={fromConfig.labelCol}
         wrapperCol={fromConfig.wrapperCol}
         style={{ maxWidth: fromConfig.maxWidth }}
-        //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
-        //自动填充功能禁用
         autoComplete="off"
-        //指定当表单提交时要执行的回调函数
         onFinish={() => {}}
-        //指定当表单字段值发生变化时要执行的回调函数
         onValuesChange={onValuesChange}
       >
-        <Form.Item>
-          <h2>后台-文章</h2>
-        </Form.Item>
-
-        <Form.Item<FieldType>
-          id="optimize-admin-add_user"
-          label="添加作者筛选项"
-          name="add_user"
-          valuePropName="checked"
-          extra={"文章菜单添加作者筛选项"}
-        >
-          <FeatureSwitch featureId="optimize-admin-add_user" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="optimize-admin-add_time"
-          label="添加时间筛选项"
-          name="add_time"
-          valuePropName="checked"
-          extra={"文章和媒体菜单添加时间筛选项，媒体菜单需为列表布局"}
-        >
-          <FeatureSwitch featureId="optimize-admin-add_time" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="optimize-admin-show_id"
-          label="各个列表显示链接ID"
-          name="show_id"
-          valuePropName="checked"
-          extra={"支持 文章、页面、链接、多媒体、评论、分类、标签、用户 等"}
-        >
-          <FeatureSwitch featureId="optimize-admin-show_id" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="optimize-admin-thumbnail_switcher"
-          label="缩略图切换"
-          name="thumbnail_switcher"
-          valuePropName="checked"
-          extra={"展示、添加、删除缩略图"}
-        >
-          <FeatureSwitch featureId="optimize-admin-thumbnail_switcher" />
-        </Form.Item>
+        <ModuleRow
+          title="添加作者筛选项"
+          description="文章菜单添加作者筛选项"
+          featureId="optimize-admin-add_user"
+          enabled={formData.add_user as boolean}
+          onChange={(checked: boolean) => onValuesChange({ add_user: checked } as Partial<FieldType>, formData)}
+        />
+        <ModuleRow
+          title="添加时间筛选项"
+          description="文章和媒体菜单添加时间筛选项，媒体菜单需为列表布局"
+          featureId="optimize-admin-add_time"
+          enabled={formData.add_time as boolean}
+          onChange={(checked: boolean) => onValuesChange({ add_time: checked } as Partial<FieldType>, formData)}
+        />
+        <ModuleRow
+          title="各个列表显示链接ID"
+          description="支持 文章、页面、链接、多媒体、评论、分类、标签、用户 等"
+          featureId="optimize-admin-show_id"
+          enabled={formData.show_id as boolean}
+          onChange={(checked: boolean) => onValuesChange({ show_id: checked } as Partial<FieldType>, formData)}
+        />
+        <ModuleRow
+          title="缩略图切换"
+          description="展示、添加、删除缩略图"
+          featureId="optimize-admin-thumbnail_switcher"
+          enabled={formData.thumbnail_switcher as boolean}
+          onChange={(checked: boolean) => onValuesChange({ thumbnail_switcher: checked } as Partial<FieldType>, formData)}
+        />
       </Form>
-    </>
+    </SettingsSection>
   );
 };
 

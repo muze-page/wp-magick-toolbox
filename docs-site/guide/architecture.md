@@ -76,7 +76,7 @@ loader.php（统一加载器）
 
 ## REST API
 
-所有异步操作统一使用 REST API，admin-ajax 保留为兼容层（已标记弃用）：
+配置读写、性能检查和公开端点统一使用 REST API；少量独立后台交互可直接使用 WordPress AJAX：
 
 | 端点前缀 | 用途 |
 |----------|------|

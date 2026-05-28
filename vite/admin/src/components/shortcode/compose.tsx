@@ -1,32 +1,22 @@
-/**
- * 短代码 功能
- */
 import { useState, useContext, useEffect } from "react";
-import { Form, Input } from "antd";
+import { Input } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { CodeCompose } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
-import { AntConfig } from "@/tool/tool";
-import Preview from "@/basic/preview";
-import FeatureSwitch from "@/basic/feature-switch";
+import { ModuleCard } from "@/components/settings-ui";
 import Runcode from "@/assets/shortcode/compose/运行代码.png";
 import SingleList from "@/assets/shortcode/compose/文章列表.png";
 import CopyBtn from "@/assets/shortcode/compose/复制按钮.png";
+
 type FieldType = CodeCompose;
 
-//Ant 组件配置
-const fromConfig = AntConfig.from;
-
 const App: React.FC = () => {
-  //拿到默认选项值和修改方法
   const { optionData, updateOption } = useContext(DataContext);
   const publicData =
     optionData.shortcode?.compose || defaultVarOption.shortcode.compose;
 
-  //存储表单值
   const [formData, setFormData] = useState(publicData || {});
 
-  //修改表单值
   const onValuesChange = (
     changedValues: Partial<FieldType>,
     _allValues: FieldType
@@ -37,142 +27,182 @@ const App: React.FC = () => {
     }));
   };
 
-  //表单值发生变化时更新选项值
   useEffect(() => {
     updateOption("shortcode", "compose", formData);
   }, [formData]);
 
   return (
-    <>
-      <Form
-        name="compose"
-        labelCol={fromConfig.labelCol}
-        wrapperCol={fromConfig.wrapperCol}
-        style={{ maxWidth: fromConfig.maxWidth }}
-        initialValues={publicData}
-        autoComplete="off"
-        onFinish={() => {}}
-        onValuesChange={onValuesChange}
-      >
-        <Form.Item>
-          <h2>板式</h2>
-        </Form.Item>
+    <div className="mabox-module-grid">
+      <ModuleCard
+        title="文章列表"
+        description="填写若干文章 ID 就能生成漂亮的文章列表"
+        featureId="shortcode-compose-single_list"
+        enabled={formData.single_list as boolean}
+        onChange={(checked: boolean) => {
+          onValuesChange({ single_list: checked } as Partial<FieldType>, formData);
+        }}
+        preview={{ title: "文章列表", img: SingleList }}
+      />
 
-        <Form.Item<FieldType>
-          id="shortcode-compose-single_list"
-          label="文章列表"
-          name="single_list"
-          valuePropName="checked"
-          extra={
-            <>
-              "填写若干文章 ID 就能生成漂亮的文章列表"，
-              <Preview title="文章列表" img={SingleList} />
-            </>
-          }
-        >
-          <FeatureSwitch featureId="shortcode-compose-single_list" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="shortcode-compose-single_copy"
-          label="复制"
-          name="single_copy"
-          valuePropName="checked"
-          extra={
-            <>
-              "第一个属性是按钮名称，第二个属性是弹窗内容，第三个属性是跳转网址"，
-              <Preview title="复制按钮" img={CopyBtn} />
-            </>
-          }
-        >
-          <FeatureSwitch featureId="shortcode-compose-single_copy" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="shortcode-compose-runcode"
-          label="前端运行代码"
-          name="runcode"
-          valuePropName="checked"
-          extra={
-            <>
-              1、仅支持经典编辑器，2、[runcode]和[/runcode]不能换行，会有换行符,
-              <pre className="pre-meat">&lt;runcode&gt;&lt;/runcode&gt;</pre>，
-              <Preview title="在线运行前端代码" img={Runcode} />
-            </>
-          }
-        >
-          <FeatureSwitch featureId="shortcode-compose-runcode" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="shortcode-compose-bilibili"
-          label="Bilibili 视频"
-          name="bilibili"
-          valuePropName="checked"
-          extra={
-            <>
-              使用 <code>[mabox_bilibili bvid="BV号"]</code> 嵌入 B 站视频，无广告播放
-            </>
-          }
-        >
-          <FeatureSwitch featureId="shortcode-compose-bilibili" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="shortcode-compose-wx_unlock"
-          label="公众号解锁"
-          name="wx_unlock"
-          valuePropName="checked"
-          extra={"用户输入验证码后解锁隐藏内容，用于公众号引流"}
-        >
-          <FeatureSwitch featureId="shortcode-compose-wx_unlock" />
-        </Form.Item>
-        {formData.wx_unlock && (
-          <>
-            <Form.Item<FieldType> label="公众号名称" name="wx_unlock_name">
-              <Input style={{ width: "50%" }} placeholder="例如：NPCink" />
-            </Form.Item>
-            <Form.Item<FieldType> label="公众号二维码" name="wx_unlock_qrcode">
-              <Input style={{ width: "70%" }} placeholder="上传二维码后的图片地址" />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="验证码列表"
-              name="wx_unlock_codes"
-              extra={"每行一个验证码，用户关注后发送关键词获取"}
-            >
-              <Input.TextArea rows={4} placeholder={"ABC123&#10;DEF456"} />
-            </Form.Item>
-            <Form.Item<FieldType> label="解锁提示" name="wx_unlock_tip">
-              <Input style={{ width: "70%" }} placeholder="关注公众号获取验证码" />
-            </Form.Item>
-            <Form.Item<FieldType> label="关键词提示" name="wx_unlock_keyword_tip">
-              <Input style={{ width: "70%" }} placeholder="关注公众号，发送关键词获取验证码" />
-            </Form.Item>
-          </>
-        )}
-        <Form.Item<FieldType>
-          id="shortcode-compose-reward"
-          label="打赏模块"
-          name="reward"
-          valuePropName="checked"
-          extra={"文章末尾添加打赏按钮，支持微信/支付宝收款码弹窗展示"}
-        >
-          <FeatureSwitch featureId="shortcode-compose-reward" />
-        </Form.Item>
-        {formData.reward && (
-          <>
-            <Form.Item<FieldType> label="微信收款码" name="reward_wx_qr">
-              <Input style={{ width: "70%" }} placeholder="上传微信收款码图片地址" />
-            </Form.Item>
-            <Form.Item<FieldType> label="支付宝收款码" name="reward_ali_qr">
-              <Input style={{ width: "70%" }} placeholder="上传支付宝收款码图片地址" />
-            </Form.Item>
-            <Form.Item<FieldType> label="弹窗标题" name="reward_title">
-              <Input style={{ width: "50%" }} placeholder="感谢您的支持" />
-            </Form.Item>
-            <Form.Item<FieldType> label="按钮文字" name="reward_btn_text">
-              <Input style={{ width: "30%" }} placeholder="打赏" />
-            </Form.Item>
-          </>
-        )}
-      </Form>
-    </>
+      <ModuleCard
+        title="复制按钮"
+        description="第一个属性是按钮名称，第二个属性是弹窗内容，第三个属性是跳转网址"
+        featureId="shortcode-compose-single_copy"
+        enabled={formData.single_copy as boolean}
+        onChange={(checked: boolean) => {
+          onValuesChange({ single_copy: checked } as Partial<FieldType>, formData);
+        }}
+        preview={{ title: "复制按钮", img: CopyBtn }}
+      />
+
+      <ModuleCard
+        title="前端运行代码"
+        description="仅支持经典编辑器，[runcode]和[/runcode]不能换行，会有换行符"
+        featureId="shortcode-compose-runcode"
+        enabled={formData.runcode as boolean}
+        onChange={(checked: boolean) => {
+          onValuesChange({ runcode: checked } as Partial<FieldType>, formData);
+        }}
+        preview={{ title: "在线运行前端代码", img: Runcode }}
+        tags={["经典编辑器"]}
+      />
+
+      <ModuleCard
+        title="Bilibili 视频"
+        description='使用 [mabox_bilibili bvid="BV号"] 嵌入 B 站视频，无广告播放'
+        featureId="shortcode-compose-bilibili"
+        enabled={formData.bilibili as boolean}
+        onChange={(checked: boolean) => {
+          onValuesChange({ bilibili: checked } as Partial<FieldType>, formData);
+        }}
+      />
+
+      <ModuleCard
+        title="公众号解锁"
+        description="用户输入验证码后解锁隐藏内容，用于公众号引流"
+        featureId="shortcode-compose-wx_unlock"
+        enabled={formData.wx_unlock as boolean}
+        onChange={(checked: boolean) => {
+          onValuesChange({ wx_unlock: checked } as Partial<FieldType>, formData);
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div>
+            <div style={{ fontSize: 13, color: "#666", marginBottom: 4 }}>公众号名称</div>
+            <Input
+              style={{ width: "50%" }}
+              placeholder="例如：NPCink"
+              value={formData.wx_unlock_name as string}
+              onChange={(e) =>
+                onValuesChange({ wx_unlock_name: e.target.value } as Partial<FieldType>, formData)
+              }
+            />
+          </div>
+          <div>
+            <div style={{ fontSize: 13, color: "#666", marginBottom: 4 }}>公众号二维码</div>
+            <Input
+              style={{ width: "70%" }}
+              placeholder="上传二维码后的图片地址"
+              value={formData.wx_unlock_qrcode as string}
+              onChange={(e) =>
+                onValuesChange({ wx_unlock_qrcode: e.target.value } as Partial<FieldType>, formData)
+              }
+            />
+          </div>
+          <div>
+            <div style={{ fontSize: 13, color: "#666", marginBottom: 4 }}>验证码列表</div>
+            <Input.TextArea
+              rows={4}
+              placeholder={"ABC123\nDEF456"}
+              value={formData.wx_unlock_codes as string}
+              onChange={(e) =>
+                onValuesChange({ wx_unlock_codes: e.target.value } as Partial<FieldType>, formData)
+              }
+            />
+            <div style={{ fontSize: 12, color: "#999", marginTop: 4 }}>每行一个验证码，用户关注后发送关键词获取</div>
+          </div>
+          <div>
+            <div style={{ fontSize: 13, color: "#666", marginBottom: 4 }}>解锁提示</div>
+            <Input
+              style={{ width: "70%" }}
+              placeholder="关注公众号获取验证码"
+              value={formData.wx_unlock_tip as string}
+              onChange={(e) =>
+                onValuesChange({ wx_unlock_tip: e.target.value } as Partial<FieldType>, formData)
+              }
+            />
+          </div>
+          <div>
+            <div style={{ fontSize: 13, color: "#666", marginBottom: 4 }}>关键词提示</div>
+            <Input
+              style={{ width: "70%" }}
+              placeholder="关注公众号，发送关键词获取验证码"
+              value={formData.wx_unlock_keyword_tip as string}
+              onChange={(e) =>
+                onValuesChange({ wx_unlock_keyword_tip: e.target.value } as Partial<FieldType>, formData)
+              }
+            />
+          </div>
+        </div>
+      </ModuleCard>
+
+      <ModuleCard
+        title="打赏模块"
+        description="文章末尾添加打赏按钮，支持微信/支付宝收款码弹窗展示"
+        featureId="shortcode-compose-reward"
+        enabled={formData.reward as boolean}
+        onChange={(checked: boolean) => {
+          onValuesChange({ reward: checked } as Partial<FieldType>, formData);
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div>
+            <div style={{ fontSize: 13, color: "#666", marginBottom: 4 }}>微信收款码</div>
+            <Input
+              style={{ width: "70%" }}
+              placeholder="上传微信收款码图片地址"
+              value={formData.reward_wx_qr as string}
+              onChange={(e) =>
+                onValuesChange({ reward_wx_qr: e.target.value } as Partial<FieldType>, formData)
+              }
+            />
+          </div>
+          <div>
+            <div style={{ fontSize: 13, color: "#666", marginBottom: 4 }}>支付宝收款码</div>
+            <Input
+              style={{ width: "70%" }}
+              placeholder="上传支付宝收款码图片地址"
+              value={formData.reward_ali_qr as string}
+              onChange={(e) =>
+                onValuesChange({ reward_ali_qr: e.target.value } as Partial<FieldType>, formData)
+              }
+            />
+          </div>
+          <div>
+            <div style={{ fontSize: 13, color: "#666", marginBottom: 4 }}>弹窗标题</div>
+            <Input
+              style={{ width: "50%" }}
+              placeholder="感谢您的支持"
+              value={formData.reward_title as string}
+              onChange={(e) =>
+                onValuesChange({ reward_title: e.target.value } as Partial<FieldType>, formData)
+              }
+            />
+          </div>
+          <div>
+            <div style={{ fontSize: 13, color: "#666", marginBottom: 4 }}>按钮文字</div>
+            <Input
+              style={{ width: "30%" }}
+              placeholder="打赏"
+              value={formData.reward_btn_text as string}
+              onChange={(e) =>
+                onValuesChange({ reward_btn_text: e.target.value } as Partial<FieldType>, formData)
+              }
+            />
+          </div>
+        </div>
+      </ModuleCard>
+    </div>
   );
 };
 

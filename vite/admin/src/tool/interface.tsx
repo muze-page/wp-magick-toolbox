@@ -29,14 +29,9 @@ export type Option = {
   //功能
   function: {
     auxiliary: FunctionAuxiliary; //辅助功能
-    b2: FunctionB2; //B2主题
     wx_xcx: FunctionWxXcx; //微信小程序链接生成
     seo: FunctionSeo; //简单 SEO 功能
     config: FunctionTips; //简单提示
-  };
-  h5: {
-    home: H5Home;
-    contact: H5Contact;
   };
   //登录
   login: {
@@ -337,12 +332,6 @@ export type FunctionAuxiliary = {
   uniqueKey: number;
 };
 
-//功能 B2
-export type FunctionB2 = {
-  add_order_menu: boolean; //添加订单菜单
-  b2_count: boolean; //B2商城统计
-};
-
 //功能 弹窗提示
 export type FunctionTips = {
   pop_tips: boolean; //弹窗提示
@@ -368,26 +357,6 @@ export type FunctionSeo = {
   description: string; //网站描述
   seo_single: boolean; //文章SEO
   seo_category: boolean; //分类和标签SEO
-};
-
-//H5 首页
-export type H5Home = {
-  switch: boolean; //开关
-  slide: Array<number>; //幻灯片
-  slide_all: string; //幻灯片 查看全部
-  more: number;
-};
-
-//H5 联系
-export type H5Contact = {
-  title: string; //联系标题
-  title_one: string; //小标题
-  content_one: string; //内容
-  title_two: string; //小标题
-  content_two: string; //内容
-  brand_link: string; //跳转链接
-  brand_logo: string; //LOGO
-  introduce: string; //介绍
 };
 
 //登录 美化

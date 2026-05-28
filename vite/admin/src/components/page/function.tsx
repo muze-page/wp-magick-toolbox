@@ -13,25 +13,19 @@ import FixedImage from "@/basic/fixedImage";
 import Email from "@/assets/page/function/share/email.png";
 import WeiBo from "@/assets/page/function/share/weibo.png";
 import Preview from "@/basic/preview";
-import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
-//选项类型
 type FieldType = PageFunction;
 
-//Ant 组件配置
 const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
-  //拿到默认选项值和修改方法
   const { optionData, updateOption } = useContext(DataContext);
 
-  //简化并提供默认值
   const publicData = optionData.page?.function || defaultVarOption.page.function;
 
-  //创建变量并设默认值
   const [formData, setFormData] = useState(publicData || {});
 
-  //表单同步修改值
   const onValuesChange = (
     changedValues: Partial<FieldType>,
     _allValues: FieldType
@@ -42,97 +36,76 @@ const App: React.FC = () => {
     }));
   };
 
-  //表单值发生变化时更新选项值
   useEffect(() => {
     updateOption("page", "function", formData);
   }, [formData]);
 
-  //const [form] = Form.useForm();
-
   return (
-    <>
+    <SettingsSection title="功能">
       <Form
-        //form={form}
         name="function"
         labelCol={fromConfig.labelCol}
         wrapperCol={fromConfig.wrapperCol}
         style={{ maxWidth: fromConfig.maxWidth }}
-        //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
-        //自动填充功能禁用
         autoComplete="off"
-        //指定当表单提交时要执行的回调函数
         onFinish={() => {}}
-        //指定当表单字段值发生变化时要执行的回调函数
         onValuesChange={onValuesChange}
       >
-        <Form.Item>
-          <h2>功能</h2>
-        </Form.Item>
-
-        <Form.Item<FieldType>
-          id="page-function-color_tag"
-          label="彩色背景标签云"
-          name="color_tag"
-          valuePropName="checked"
-          extra={"可在小工具中添加圆角彩色背景标签云，前台即可看到效果"}
-        >
-          <FeatureSwitch featureId="page-function-color_tag" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="page-function-first_picture"
-          label="首图作特色图"
-          name="first_picture"
-          valuePropName="checked"
-          extra={<>初次发布文章，未设置特色图时，自动将第一张图设为特色图</>}
-        >
-          <FeatureSwitch featureId="page-function-first_picture" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="page-function-add_inks"
-          label="文章内关键词添加内链"
-          name="add_inks"
-          valuePropName="checked"
-          extra={
-            <>
-              文章内的内容与添加的标签相同，则添加对应标签的链接
-              <a
-                href="https://www.npc.ink/15286.html?=magick-mami"
-                target="_blank"
-              >
-                详细介绍
-              </a>
-            </>
-          }
-        >
-          <FeatureSwitch featureId="page-function-add_inks" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="page-function-remove_single_link"
-          label="移除文章内超链接"
-          name="remove_single_link"
-          valuePropName="checked"
-          extra={"关闭此选项可恢复"}
-        >
-          <FeatureSwitch featureId="page-function-remove_single_link" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="page-function-no_login_img"
-          label="未登录模糊文章内图片"
-          name="no_login_img"
-          valuePropName="checked"
-        >
-          <FeatureSwitch featureId="page-function-no_login_img" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="page-function-add_last_update"
-          label="添加最后更新时间"
-          name="add_last_update"
-          valuePropName="checked"
-          extra={"文章末尾添加最后更新时间，文章发布24小时后再次修改，即可展示"}
-        >
-          <FeatureSwitch featureId="page-function-add_last_update" />
-        </Form.Item>
+        <ModuleRow
+          title="彩色背景标签云"
+          description="可在小工具中添加圆角彩色背景标签云，前台即可看到效果"
+          featureId="page-function-color_tag"
+          enabled={formData.color_tag as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ color_tag: checked } as Partial<FieldType>, formData);
+          }}
+        />
+        <ModuleRow
+          title="首图作特色图"
+          description="初次发布文章，未设置特色图时，自动将第一张图设为特色图"
+          featureId="page-function-first_picture"
+          enabled={formData.first_picture as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ first_picture: checked } as Partial<FieldType>, formData);
+          }}
+        />
+        <ModuleRow
+          title="文章内关键词添加内链"
+          description="文章内的内容与添加的标签相同，则添加对应标签的链接"
+          featureId="page-function-add_inks"
+          enabled={formData.add_inks as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ add_inks: checked } as Partial<FieldType>, formData);
+          }}
+          onDetails={() => window.open("https://www.npc.ink/15286.html?=magick-mami", "_blank")}
+        />
+        <ModuleRow
+          title="移除文章内超链接"
+          description="关闭此选项可恢复"
+          featureId="page-function-remove_single_link"
+          enabled={formData.remove_single_link as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ remove_single_link: checked } as Partial<FieldType>, formData);
+          }}
+        />
+        <ModuleRow
+          title="未登录模糊文章内图片"
+          featureId="page-function-no_login_img"
+          enabled={formData.no_login_img as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ no_login_img: checked } as Partial<FieldType>, formData);
+          }}
+        />
+        <ModuleRow
+          title="添加最后更新时间"
+          description="文章末尾添加最后更新时间，文章发布24小时后再次修改，即可展示"
+          featureId="page-function-add_last_update"
+          enabled={formData.add_last_update as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ add_last_update: checked } as Partial<FieldType>, formData);
+          }}
+        />
         <Form.Item<FieldType>
           label="外链跳转中间页"
           name="go_middle"
@@ -192,7 +165,6 @@ const App: React.FC = () => {
               extra={
                 <>
                   可使用HTML，例如：
-                  {/* 注：维护页内容支持 HTML 标签 */}
                   <br />
                   <pre className="pre-meat">
                     &lt;p&gt; 抱歉，我们的网站正在维护中...
@@ -211,161 +183,154 @@ const App: React.FC = () => {
             </Form.Item>
           </>
         )}
-        <Form.Item<FieldType>
-          id="page-function-share"
-          label="分享"
-          name="share"
-          valuePropName="checked"
-          extra={<>开启侧边悬浮按钮，提供画报分享，复制链接，发送邮件等功能</>}
+        <ModuleRow
+          title="分享"
+          description="开启侧边悬浮按钮，提供画报分享，复制链接，发送邮件等功能"
+          featureId="page-function-share"
+          enabled={formData.share as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ share: checked } as Partial<FieldType>, formData);
+          }}
         >
-          <FeatureSwitch featureId="page-function-share" />
-        </Form.Item>
-        {formData.share && (
-          <>
-            <Form.Item label="分享">
-              <h3>按钮位置</h3>
-            </Form.Item>
-            <Form.Item<FieldType> label="分享按钮位置" name="share_position">
-              <Radio.Group
-                options={[
-                  { label: "左边", value: "left" },
-                  { label: "右边", value: "right" },
-                ]}
-                optionType="button"
-                buttonStyle="solid"
-              />
-            </Form.Item>
-            <Form.Item<FieldType> label="按钮距离顶部" name="share_top">
-              <InputNumber addonAfter="px" style={{ width: "120px" }} />
-            </Form.Item>
-            <Form.Item<FieldType> label="按钮距离侧边" name="share_margins">
-              <InputNumber addonAfter="px" style={{ width: "120px" }} />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="分享文本"
-              name="share_text"
-              extra={
-                <>
-                  前往第三方平台分享时展示的文本：
-                  <Preview title="分享文本" img={WeiBo} />
-                </>
-              }
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item label="分享">
-              <h3>
-                邮箱 -
-                <Preview title="邮箱" img={Email} />
-              </h3>
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="邮箱地址"
-              name="share_email_email"
-              rules={[
-                {
-                  type: "email",
-                  message: "请输入有效的邮箱地址!",
-                },
-                {
-                  required: true,
-                  message: "请输入邮箱地址!",
-                },
+          <Form.Item label="分享">
+            <h3>按钮位置</h3>
+          </Form.Item>
+          <Form.Item<FieldType> label="分享按钮位置" name="share_position">
+            <Radio.Group
+              options={[
+                { label: "左边", value: "left" },
+                { label: "右边", value: "right" },
               ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item<FieldType> label="邮箱标题" name="share_email_title">
-              <Input />
-            </Form.Item>
-            <Form.Item<FieldType> label="邮箱内容" name="share_email_content">
-              <Input />
-            </Form.Item>
-            <Form.Item label="分享">
-              <h3>主图</h3>
-            </Form.Item>
+              optionType="button"
+              buttonStyle="solid"
+            />
+          </Form.Item>
+          <Form.Item<FieldType> label="按钮距离顶部" name="share_top">
+            <InputNumber addonAfter="px" style={{ width: "120px" }} />
+          </Form.Item>
+          <Form.Item<FieldType> label="按钮距离侧边" name="share_margins">
+            <InputNumber addonAfter="px" style={{ width: "120px" }} />
+          </Form.Item>
+          <Form.Item<FieldType>
+            label="分享文本"
+            name="share_text"
+            extra={
+              <>
+                前往第三方平台分享时展示的文本：
+                <Preview title="分享文本" img={WeiBo} />
+              </>
+            }
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item label="分享">
+            <h3>
+              邮箱 -
+              <Preview title="邮箱" img={Email} />
+            </h3>
+          </Form.Item>
+          <Form.Item<FieldType>
+            label="邮箱地址"
+            name="share_email_email"
+            rules={[
+              {
+                type: "email",
+                message: "请输入有效的邮箱地址!",
+              },
+              {
+                required: true,
+                message: "请输入邮箱地址!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item<FieldType> label="邮箱标题" name="share_email_title">
+            <Input />
+          </Form.Item>
+          <Form.Item<FieldType> label="邮箱内容" name="share_email_content">
+            <Input />
+          </Form.Item>
+          <Form.Item label="分享">
+            <h3>主图</h3>
+          </Form.Item>
 
-            <Form.Item<FieldType> label="首页默认图" name="share_img_home">
-              <SelectImage />
-            </Form.Item>
-            <Form.Item<FieldType> label="页面默认图" name="share_img_page">
-              <SelectImage />
-            </Form.Item>
-            <Form.Item<FieldType> label="其他默认图" name="share_img_about">
-              <SelectImage />
-            </Form.Item>
-          </>
-        )}
+          <Form.Item<FieldType> label="首页默认图" name="share_img_home">
+            <SelectImage />
+          </Form.Item>
+          <Form.Item<FieldType> label="页面默认图" name="share_img_page">
+            <SelectImage />
+          </Form.Item>
+          <Form.Item<FieldType> label="其他默认图" name="share_img_about">
+            <SelectImage />
+          </Form.Item>
+        </ModuleRow>
 
-        <Form.Item<FieldType>
-          id="page-function-switch_lang_jf"
-          label="简繁切换"
-          name="switch_lang_jf"
-          valuePropName="checked"
-          extra={<>屏幕右下角添加简体繁体切换按钮</>}
+        <ModuleRow
+          title="简繁切换"
+          description="屏幕右下角添加简体繁体切换按钮"
+          featureId="page-function-switch_lang_jf"
+          enabled={formData.switch_lang_jf as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ switch_lang_jf: checked } as Partial<FieldType>, formData);
+          }}
+        />
+        <ModuleRow
+          title="进阶防刷"
+          description="对频繁访问的异常 IP 触发腾讯防水墙验证"
+          featureId="page-function-anti_crawler"
+          enabled={formData.anti_crawler as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ anti_crawler: checked } as Partial<FieldType>, formData);
+          }}
         >
-          <FeatureSwitch featureId="page-function-switch_lang_jf" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="page-function-anti_crawler"
-          label="进阶防刷"
-          name="anti_crawler"
-          valuePropName="checked"
-          extra={"对频繁访问的异常 IP 触发腾讯防水墙验证"}
-        >
-          <FeatureSwitch featureId="page-function-anti_crawler" />
-        </Form.Item>
-        {formData.anti_crawler && (
-          <>
-            <Form.Item<FieldType>
-              label="最大请求数"
-              name="anti_crawler_max_requests"
-              extra={"时间窗口内超过此次数将触发验证"}
-            >
-              <InputNumber addonAfter={"次"} style={{ width: "120px" }} min={10} />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="时间窗口"
-              name="anti_crawler_time_window"
-              extra={"统计请求的时间范围"}
-            >
-              <InputNumber addonAfter={"秒"} style={{ width: "120px" }} min={10} />
-            </Form.Item>
-            <Form.Item<FieldType> label="腾讯防水墙 AppID" name="anti_crawler_tecent_id">
-              <Input style={{ width: "50%" }} placeholder="腾讯防水墙 AppID" />
-            </Form.Item>
-            <Form.Item<FieldType> label="腾讯防水墙 AppKey" name="anti_crawler_tecent_key">
-              <Input style={{ width: "50%" }} placeholder="腾讯防水墙 AppKey" />
-            </Form.Item>
-          </>
-        )}
+          <Form.Item<FieldType>
+            label="最大请求数"
+            name="anti_crawler_max_requests"
+            extra={"时间窗口内超过此次数将触发验证"}
+          >
+            <InputNumber addonAfter={"次"} style={{ width: "120px" }} min={10} />
+          </Form.Item>
+          <Form.Item<FieldType>
+            label="时间窗口"
+            name="anti_crawler_time_window"
+            extra={"统计请求的时间范围"}
+          >
+            <InputNumber addonAfter={"秒"} style={{ width: "120px" }} min={10} />
+          </Form.Item>
+          <Form.Item<FieldType> label="腾讯防水墙 AppID" name="anti_crawler_tecent_id">
+            <Input style={{ width: "50%" }} placeholder="腾讯防水墙 AppID" />
+          </Form.Item>
+          <Form.Item<FieldType> label="腾讯防水墙 AppKey" name="anti_crawler_tecent_key">
+            <Input style={{ width: "50%" }} placeholder="腾讯防水墙 AppKey" />
+          </Form.Item>
+        </ModuleRow>
 
-        <Form.Item<FieldType>
-          id="page-function-link_source"
-          label="文章链接添加来源标识"
-          name="link_source"
-          valuePropName="checked"
-          extra={"在文章内部链接后添加 from 参数，用于流量追踪"}
+        <ModuleRow
+          title="文章链接添加来源标识"
+          description="在文章内部链接后添加 from 参数，用于流量追踪"
+          featureId="page-function-link_source"
+          enabled={formData.link_source as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ link_source: checked } as Partial<FieldType>, formData);
+          }}
         >
-          <FeatureSwitch featureId="page-function-link_source" />
-        </Form.Item>
-        {formData.link_source && (
           <Form.Item<FieldType> label="来源标识" name="source_key" extra={"默认为 npc"}>
             <Input placeholder="npc" style={{ width: "200px" }} />
           </Form.Item>
-        )}
+        </ModuleRow>
 
-        <Form.Item<FieldType>
-          id="page-function-ticket"
-          label="工单系统"
-          name="ticket"
-          valuePropName="checked"
-          extra={"启用轻量级工单系统，支持前端提交和后台管理。使用短代码 [mabox_ticket_form] 在任意页面嵌入工单表单"}
-        >
-          <FeatureSwitch featureId="page-function-ticket" />
-        </Form.Item>
+        <ModuleRow
+          title="工单系统"
+          description="启用轻量级工单系统，支持前端提交和后台管理。使用短代码 [mabox_ticket_form] 在任意页面嵌入工单表单"
+          featureId="page-function-ticket"
+          enabled={formData.ticket as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ ticket: checked } as Partial<FieldType>, formData);
+          }}
+        />
       </Form>
-    </>
+    </SettingsSection>
   );
 };
 
@@ -394,18 +359,10 @@ const goLink = [
 import Default from "@/assets/page/function/service/默认简洁.png";
 import Default_img from "@/assets/page/function/service/默认带图.png";
 import Red from "@/assets/page/function/service/红色纯粹.png";
-import Purple from "@/assets/page/function/service/紫色期待.png";
-import Lighting from "@/assets/page/function/service/灯光聚焦.png";
-import Masking from "@/assets/page/function/service/高级遮罩.png";
-import Rotate from "@/assets/page/function/service/炫彩时钟.png";
 const serviceList = [
   { value: "default", label: Default, title: "默认简洁" },
   { value: "default_img", label: Default_img, title: "默认带图" },
   { value: "red", label: Red, title: "红色纯粹" },
-  { value: "purple", label: Purple, title: "紫色期待" },
-  { value: "lighting", label: Lighting, title: "灯光聚焦" },
-  { value: "masking", label: Masking, title: "高级遮罩" },
-  { value: "rotate", label: Rotate, title: "炫彩时钟" },
 ];
 
 export default App;

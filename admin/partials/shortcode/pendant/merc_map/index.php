@@ -1,137 +1,112 @@
 <?php
 
-/**
- * 功能：足迹地图
- * 来源：https://github.com/HelloWuJiaYi/jVectorMap-Footprint
- */
+defined('ABSPATH') || exit;
+
 if (!class_exists('MaBox_ShortCode_Merc_Map')) {
-    class MaBox_ShortCode_Merc_Map
+    class MaBox_ShortCode_Merc_Map implements MaBox_Module_Interface
     {
         public static $location;
-        public static function run($merc_location)
+        private static $assets_url;
+
+        public static function run($merc_location = array())
         {
             self::$location = $merc_location;
-            //添加短代码
+            self::$assets_url = plugin_dir_url(__FILE__) . 'assets/';
             add_shortcode('mabox_cn_map', array(__CLASS__, 'mabox_cn_map_shortcode'));
-
-            //判断当前页面是否有 mabox_cn_map 短代码，如果有则加载 加载前端资源
             add_action('wp', array(__CLASS__, 'check_for_mabox_cn_map_shortcode'));
         }
-
 
         public static function check_for_mabox_cn_map_shortcode()
         {
             global $post;
-
-            // 如果不是单篇文章页面或页面内容中不包含 mabox_cn_map 短代码，则不加载资源
             if (!is_singular() || !has_shortcode($post->post_content, 'mabox_cn_map')) {
                 return;
             }
-
-            add_action('wp_footer', array(__CLASS__, 'add_map_node'));
-            add_action('wp_enqueue_scripts', array(__CLASS__, 'load_js'));
+            add_action('wp_footer', array(__CLASS__, 'add_map_script'));
+            add_action('wp_enqueue_scripts', array(__CLASS__, 'load_echarts'));
         }
 
-        //短代码内容
         public static function mabox_cn_map_shortcode($atts, $content = null)
         {
-            $html = '
-              <!--background-color: 地图背景颜色-->
-              
-            <div id="map" style="background-color:#f4f4f4;height:550px"></div>
-';
-            return $html;
+            $atts = shortcode_atts(array(
+                'height' => '550px',
+                'background' => '#f4f4f4',
+            ), $atts);
+            $uid = 'mabox-cn-map-' . uniqid();
+            ob_start();
+            ?>
+            <div id="<?php echo esc_attr($uid); ?>" class="mabox-cn-map" style="width:100%;height:<?php echo esc_attr($atts['height']); ?>;background:<?php echo esc_attr($atts['background']); ?>;" data-locations="<?php echo esc_attr(wp_json_encode(self::$location)); ?>"></div>
+            <?php
+            return ob_get_clean();
         }
-        public static function add_map_node()
-        {
-?>
 
+        public static function add_map_script()
+        {
+            $geo_url = esc_url(self::$assets_url . 'china.json');
+            ?>
             <script>
-                jQuery(document).ready(function($) {
-
-                    $('#map').vectorMap({
-
-                        // 此处更改地图
-                        map: 'cn_merc_en', // 中国地图
-                        //map: 'us_aea',     // 美国地图
-                        //map: 'world_mill', // 世界地图
-
-
-                        backgroundColor: 'transparent',
-                        zoomMin: 0.9, // 鼠标缩放时的最小比例
-                        zoomMax: 5, // 鼠标缩放时的最大比例
-                        focusOn: {
-                            x: 0.55,
-                            y: 2,
-                            scale: 0.9
-                        },
-                        regionStyle: {
-                            initial: {
-                                fill: '#e5e5e5', // 地图颜色
-                                "fill-opacity": 1, // 省份（州）是否隐藏，鼠标滑动时显示; 1：显示，2：隐藏。
-                                stroke: 'none',
-                                "stroke-width": 0,
-                                "stroke-opacity": 1
-                            },
-                            hover: {
-                                fill: '#ccc', // 鼠标滑动至某省份的高亮颜色。
-                                "fill-opacity": 0.8
-                            },
-                            selected: {
-                                fill: 'yellow'
-                            },
-                            selectedHover: {}
-                        },
-                        markerStyle: {
-                            initial: {
-                                fill: '#fd8888', // 足迹位置的填充颜色
-                                stroke: '#fff' // 足迹位置的描边颜色
-                            },
-                            hover: {
-                                fill: '#fd2020', // 鼠标滑动至足迹位置后的填充颜色
-                                stroke: '#fff', // 鼠标滑动至足迹位置后的描边颜色
-                                "fill-opacity": 0.8
-                            },
-                        },
-                        markers: <?php echo json_encode(self::$location); ?>,
+            document.addEventListener('DOMContentLoaded', function() {
+                var geoUrl = <?php echo wp_json_encode($geo_url); ?>;
+                fetch(geoUrl)
+                    .then(function(res) { return res.json(); })
+                    .then(function(geoJson) {
+                        echarts.registerMap('china', geoJson);
+                        document.querySelectorAll('.mabox-cn-map').forEach(function(el) {
+                            var locations = JSON.parse(el.getAttribute('data-locations') || '[]');
+                            var scatterData = locations.map(function(loc) {
+                                if (Array.isArray(loc.latLng) && loc.latLng.length >= 2) {
+                                    var lat = parseFloat(loc.latLng[0]);
+                                    var lng = parseFloat(loc.latLng[1]);
+                                    if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                                        return { name: loc.name || '', value: [lng, lat, 1] };
+                                    }
+                                }
+                                return null;
+                            }).filter(Boolean);
+                            var chart = echarts.init(el);
+                            var option = {
+                                tooltip: { trigger: 'item', formatter: function(p) { return p.name; } },
+                                geo: {
+                                    map: 'china',
+                                    roam: true,
+                                    zoom: 1.2,
+                                    scaleLimit: { min: 0.9, max: 5 },
+                                    center: [104.5, 36],
+                                    itemStyle: {
+                                        areaColor: '#e5e5e5',
+                                        borderColor: '#ccc'
+                                    },
+                                    emphasis: {
+                                        itemStyle: { areaColor: '#ddd' }
+                                    }
+                                },
+                                series: [{
+                                    type: 'scatter',
+                                    coordinateSystem: 'geo',
+                                    data: scatterData,
+                                    symbolSize: 12,
+                                    itemStyle: { color: '#fd8888', borderColor: '#fff', borderWidth: 1 },
+                                    emphasis: { itemStyle: { color: '#fd2020' } }
+                                }]
+                            };
+                            chart.setOption(option);
+                            window.addEventListener('resize', function() { chart.resize(); });
+                        });
                     });
-                });
+            });
             </script>
-<?php
+            <?php
         }
 
-        //加载JS
-        public static function load_js()
+        public static function load_echarts()
         {
-            //判断下，是否在前端页中
             if (is_admin()) {
                 return;
             }
-
-            //准备css
-            $build_css =  plugin_dir_url(__DIR__) . 'merc_map/jquery-jvectormap-1.2.2.css';
-            wp_enqueue_style(
-                MAGICK_MIXTURE_NAME . '_public_merc_map_css',
-                $build_css,
+            wp_enqueue_script(
+                MAGICK_MIXTURE_NAME . '_echarts',
+                self::$assets_url . 'echarts.min.js',
                 array(),
-                MAGICK_MIXTURE_VERSION,
-                false
-            );
-            //准备js 
-            $build_js =  plugin_dir_url(__DIR__) . 'merc_map/jquery-jvectormap-1.2.2.min.js';
-            wp_enqueue_script(
-                MAGICK_MIXTURE_NAME . '_public_jvectormap_js',
-                $build_js,
-                array('jquery'),
-                MAGICK_MIXTURE_VERSION,
-                true
-            );
-            //准备js
-            $merc_js =  plugin_dir_url(__DIR__) . 'merc_map/jquery-jvectormap-cn-merc-en.js';
-            wp_enqueue_script(
-                MAGICK_MIXTURE_NAME . '_public_cn-merc_js',
-                $merc_js,
-                array('jquery'),
                 MAGICK_MIXTURE_VERSION,
                 true
             );

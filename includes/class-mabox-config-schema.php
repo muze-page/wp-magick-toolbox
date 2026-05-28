@@ -179,10 +179,6 @@ if (!class_exists('MaBox_Config_Schema')) {
                         'biying_tonji'       => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_text_field'),
                         'uniqueKey'         => array('type' => 'number',  'default' => 0),
                     ),
-                    'b2' => array(
-                        'add_order_menu' => array('type' => 'boolean', 'default' => false),
-                        'b2_count'       => array('type' => 'boolean', 'default' => false),
-                    ),
                     'wx_xcx' => array(
                         'active' => array('type' => 'boolean', 'default' => false),
                         'appid'  => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_text_field'),
@@ -204,25 +200,6 @@ if (!class_exists('MaBox_Config_Schema')) {
                         'tips_content'  => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_textarea_field'),
                         'tips_button'   => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_text_field'),
                         'tips_link'     => array('type' => 'string',  'default' => '', 'sanitize' => 'esc_url_raw'),
-                    ),
-                ),
-                'h5' => array(
-                    '_option_key' => MAGICK_MIXTURE_OPTION_H5,
-                    'home' => array(
-                        'switch'   => array('type' => 'boolean', 'default' => false),
-                        'slide'    => array('type' => 'array',   'default' => array(1)),
-                        'slide_all' => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_text_field'),
-                        'more'     => array('type' => 'number',  'default' => 1, 'min' => 0),
-                    ),
-                    'contact' => array(
-                        'title'        => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_text_field'),
-                        'title_one'    => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_text_field'),
-                        'content_one'  => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_textarea_field'),
-                        'title_two'    => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_text_field'),
-                        'content_two'  => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_textarea_field'),
-                        'brand_link'   => array('type' => 'string',  'default' => '', 'sanitize' => 'esc_url_raw'),
-                        'brand_logo'   => array('type' => 'string',  'default' => '', 'sanitize' => 'esc_url_raw'),
-                        'introduce'    => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_textarea_field'),
                     ),
                 ),
                 'login' => array(

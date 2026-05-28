@@ -1,4 +1,3 @@
-//权限 - 辅助功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
 import { Form, Input, Button, Space, message } from "antd";
@@ -6,47 +5,34 @@ import { DataContext } from "@/tool/dataContext";
 import { FunctionAuxiliary } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
-import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
-//选项类型
 type FieldType = FunctionAuxiliary;
 
-//Ant 组件配置
 const fromConfig = AntConfig.from;
 
-//多行输入
 const { TextArea } = Input;
 
 const App: React.FC = () => {
-  //拿到默认选项值和修改方法
   const { optionData, updateOption } = useContext(DataContext);
 
-  //简化并提供默认值
   const publicData =
     optionData.function?.auxiliary || defaultVarOption.function.auxiliary;
 
-  //创建变量并设默认值
   const [formData, setFormData] = useState(publicData || {});
 
-  //表单同步修改值
-  const onValuesChange = (
-    changedValues: Partial<FieldType>,
-    _allValues: FieldType
-  ) => {
+  const onValuesChange = (changedValues: Partial<FieldType>, _allValues?: FieldType) => {
     setFormData((prevState) => ({
       ...prevState,
       ...changedValues,
     }));
   };
 
-  // 表单值发生变化时更新dataContext的值
   useEffect(() => {
     updateOption("function", "auxiliary", formData);
   }, [formData]);
 
-  //提取百度统计标识符
   const handleValueChange = (e: { target: { value: any } }) => {
-    //设为空值，避免报错
     if (!e) {
       return;
     }
@@ -57,15 +43,12 @@ const App: React.FC = () => {
     if (match) {
       return match[1];
     } else {
-      // 处理失败，显示弹窗提示
       message.error("处理失败，请输入百度统计平台的完整统计代码");
-      return ""; // 或者返回其他默认值
+      return "";
     }
   };
 
-  //提取谷歌标识符
   const extract_google = (e: { target: { value: any } }) => {
-    //设为空值，避免报错
     if (!e) {
       return;
     }
@@ -82,9 +65,7 @@ const App: React.FC = () => {
     }
   };
 
-  //提取必应标识符
   const extract_biying = (e: { target: { value: any } }) => {
-    //设为空值，避免报错
     if (!e) {
       return;
     }
@@ -102,54 +83,45 @@ const App: React.FC = () => {
   };
 
   return (
-    <>
+    <SettingsSection title="辅助功能">
       <Form
         name="auxiliary"
         labelCol={fromConfig.labelCol}
         wrapperCol={fromConfig.wrapperCol}
         style={{ maxWidth: fromConfig.maxWidth }}
-        //表单默认值，只有初始化以及重置时生效
         initialValues={formData}
-        //自动填充功能禁用
         autoComplete="off"
-        //指定当表单提交时要执行的回调函数
         onFinish={() => {}}
-        //指定当表单字段值发生变化时要执行的回调函数
         onValuesChange={onValuesChange}
       >
-        <Form.Item>
-          <h2>辅助功能</h2>
-        </Form.Item>
+        <ModuleRow
+          title="文章统计"
+          description="开启后显示在仪表盘下"
+          featureId="function-auxiliary-single_count"
+          enabled={formData.single_count as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ single_count: checked });
+          }}
+        />
 
-        <Form.Item<FieldType>
-          id="function-auxiliary-single_count"
-          label="文章统计"
-          name="single_count"
-          valuePropName="checked"
-          extra={"开启后显示在仪表盘下"}
+        <ModuleRow
+          title="屏蔽恶意关键词搜索"
+          description="禁止搜索指定词汇"
+          featureId="function-auxiliary-no_malice_key"
+          enabled={formData.no_malice_key as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ no_malice_key: checked });
+          }}
         >
-          <FeatureSwitch featureId="function-auxiliary-single_count" />
-        </Form.Item>
-
-        <Form.Item<FieldType>
-          id="function-auxiliary-no_malice_key"
-          label="屏蔽恶意关键词搜索"
-          name="no_malice_key"
-          valuePropName="checked"
-          extra={"禁止搜索指定词汇"}
-        >
-          <FeatureSwitch featureId="function-auxiliary-no_malice_key" />
-        </Form.Item>
-        {formData.no_malice_key && (
           <Form.Item<FieldType>
             label="输入关键词"
             name="malice_keu_content"
-            extra={"输入您的关键词，以“回车键”分隔，一行一个"}
+            extra={'输入您的关键词，以"回车键"分隔，一行一个'}
           >
             <TextArea rows={4} placeholder="一行一个" />
           </Form.Item>
-        )}
-        {/** 注：script 标签处理待实现（需支持统计代码直接渲染） */}
+        </ModuleRow>
+
         <Form.Item<FieldType>
           label="百度统计"
           name="baidu_tonji"
@@ -209,17 +181,13 @@ const App: React.FC = () => {
           <SiteInput />
         </Form.Item>
       </Form>
-    </>
+    </SettingsSection>
   );
 };
 
-//网址输入框
 const SiteInput = (props: any) => {
-  // const inputRef = useRef(null);
-
-  //不能直接执行，得用函数装起来
   const handleReset = () => {
-    props.onChange(""); //更新传出的值
+    props.onChange("");
   };
 
   return (

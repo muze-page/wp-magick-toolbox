@@ -11,12 +11,8 @@ if (!class_exists('MaBox_Domestic_Baidu_Push')) {
                 add_action('wp_footer', array(__CLASS__, 'auto_push_js'), 999);
             }
             if (!empty($config['batch_push_enabled']) && !empty($config['site']) && !empty($config['token'])) {
-                add_action('wp_ajax_mabox_baidu_batch_push', array(__CLASS__, 'ajax_batch_push_deprecated'));
+                // Batch push is now available via REST API only
             }
-        }
-        public static function ajax_batch_push_deprecated() {
-            _deprecated_function('wp_ajax_mabox_baidu_batch_push', '2.1.0', 'REST API POST /mabox/v1/domestic/baidu/push');
-            self::ajax_batch_push();
         }
         public static function active_push($post_id, $post) {
             if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;

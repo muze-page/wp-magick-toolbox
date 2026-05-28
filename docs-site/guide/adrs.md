@@ -126,18 +126,19 @@
 
 ---
 
-## ADR-004: REST API 为主，AJAX 为兼容层
+## ADR-004: REST API 为主
 
 ### 背景
 
 WordPress 提供两种前后端通信方式：
-- `admin-ajax.php` — 传统 AJAX 方式
 - REST API — 现代 API 标准
+- `admin-ajax.php` — 适合少量独立后台交互
 
 ### 决策
 
 - 新功能统一使用 REST API（`/wp-json/mabox/v1/*`）
-- 旧 AJAX 端点保留为兼容层，标记 `@deprecated`
+- 不再保留旧 AJAX 兼容层
+- 少量独立后台交互允许直接使用 WordPress AJAX
 - REST 端点统一使用 nonce 验证
 - 公开端点使用 `MaBox_Admin::verify_public_nonce()`
 
@@ -149,12 +150,12 @@ WordPress 提供两种前后端通信方式：
 
 ### 全部使用 REST
 - 优点：标准统一
-- 缺点：老用户升级可能受影响
+- 缺点：部分 WordPress 后台交互实现成本更高
 
 ### 影响
 - API 标准化，便于第三方集成
 - 权限控制更清晰
-- 保留 AJAX 兼容层确保平滑升级
+- 删除旧 AJAX 兼容层，减少重复入口
 
 ---
 

@@ -4,97 +4,83 @@ import { DataContext } from "@/tool/dataContext";
 import { OptimizeMedium } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
-import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
-//选项类型
 type FieldType = OptimizeMedium;
 
-//Ant 组件配置
 const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
-  //拿到默认选项值和修改方法
   const { optionData, updateOption } = useContext(DataContext);
 
-  //简化并提供默认值
   const publicData =
   optionData.optimize?.medium || defaultVarOption.optimize.medium;
 
-  //拿到需要的媒体值
   const [formData, setFormData] = useState(publicData);
 
-  //表单同步值
   const onValuesChange = (changedValues: Partial<FieldType>) => {
     setFormData((prevState) => ({ ...prevState, ...changedValues }));
   };
 
-  //表单值发生变化时更新选项值
   useEffect(() => {
     updateOption("optimize", "medium", formData);
   }, [formData]);
 
   return (
-    <Form
-      name="medium"
-      labelCol={fromConfig.labelCol}
-      wrapperCol={fromConfig.wrapperCol}
-      style={{ maxWidth: fromConfig.maxWidth }}
-      initialValues={publicData}
-      autoComplete="off"
-      onFinish={() => {}}
-      onValuesChange={onValuesChange}
-    >
-      <Form.Item>
-        <h2>媒体</h2>
-      </Form.Item>
-
-      <Form.Item<FieldType>
-        id="optimize-medium-img_add_tag"
-        label="图片自动添加 Alt 标签"
-        name="img_add_tag"
-        valuePropName="checked"
-        extra={"标签值为：当前文章名 - 网站名"}
+    <SettingsSection title="媒体" description="媒体文件相关优化">
+      <Form
+        name="medium"
+        labelCol={fromConfig.labelCol}
+        wrapperCol={fromConfig.wrapperCol}
+        style={{ maxWidth: fromConfig.maxWidth }}
+        initialValues={publicData}
+        autoComplete="off"
+        onFinish={() => {}}
+        onValuesChange={onValuesChange}
       >
-        <FeatureSwitch featureId="optimize-medium-img_add_tag" />
-      </Form.Item>
-      <Form.Item<FieldType>
-        id="optimize-medium-no_auto_size"
-        label="禁用自动图片尺寸"
-        name="no_auto_size"
-        valuePropName="checked"
-        extra={"禁用自动生成的图片尺寸、禁用缩放尺寸、禁用其他图片尺寸"}
-      >
-        <FeatureSwitch featureId="optimize-medium-no_auto_size" />
-      </Form.Item>
-      <Form.Item<FieldType>
-        id="optimize-medium-medium_add_svg"
-        label="添加SVG图标支持"
-        name="medium_add_svg"
-        valuePropName="checked"
-        extra={"选中后可在媒体库上传SVG图标"}
-      >
-        <FeatureSwitch featureId="optimize-medium-medium_add_svg" />
-      </Form.Item>
-      <Form.Item<FieldType>
-        label="上传图片自动重命名"
-        name="upload_auto_name"
-        extra={
-          <p>
-            数字重命名类似：<code>2023030303095446</code>，<br />
-            MD5重命名类似<code>a9193c211c6c991528f29fb7acfee31a</code>
-          </p>
-        }
-      >
-        <Select
-          style={{ width: 120 }}
-          options={[
-            { value: "false", label: "禁用" },
-            { value: "math", label: "数字重命名" },
-            { value: "md5", label: "MD5重命名" },
-          ]}
+        <ModuleRow
+          title="图片自动添加 Alt 标签"
+          description="标签值为：当前文章名 - 网站名"
+          featureId="optimize-medium-img_add_tag"
+          enabled={formData.img_add_tag as boolean}
+          onChange={(checked: boolean) => onValuesChange({ img_add_tag: checked } as Partial<FieldType>)}
         />
-      </Form.Item>
-    </Form>
+        <ModuleRow
+          title="禁用自动图片尺寸"
+          description="禁用自动生成的图片尺寸、禁用缩放尺寸、禁用其他图片尺寸"
+          featureId="optimize-medium-no_auto_size"
+          enabled={formData.no_auto_size as boolean}
+          onChange={(checked: boolean) => onValuesChange({ no_auto_size: checked } as Partial<FieldType>)}
+          tags={["高风险"]}
+        />
+        <ModuleRow
+          title="添加SVG图标支持"
+          description="选中后可在媒体库上传SVG图标"
+          featureId="optimize-medium-medium_add_svg"
+          enabled={formData.medium_add_svg as boolean}
+          onChange={(checked: boolean) => onValuesChange({ medium_add_svg: checked } as Partial<FieldType>)}
+        />
+        <Form.Item<FieldType>
+          label="上传图片自动重命名"
+          name="upload_auto_name"
+          extra={
+            <p>
+              数字重命名类似：<code>2023030303095446</code>，<br />
+              MD5重命名类似<code>a9193c211c6c991528f29fb7acfee31a</code>
+            </p>
+          }
+        >
+          <Select
+            style={{ width: 120 }}
+            options={[
+              { value: "false", label: "禁用" },
+              { value: "math", label: "数字重命名" },
+              { value: "md5", label: "MD5重命名" },
+            ]}
+          />
+        </Form.Item>
+      </Form>
+    </SettingsSection>
   );
 };
 

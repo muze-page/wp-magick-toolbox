@@ -25,7 +25,7 @@ class MaBox_Config_Manager_Test extends TestCase {
         $map = MaBox_Config_Manager::get_module_map();
 
         $expected_keys = array(
-            'optimize', 'page', 'function', 'h5', 'login',
+            'optimize', 'page', 'function', 'login',
             'shortcode', 'template', 'domestic', 'performance',
             'ai_review', 'services', 'feedback',
         );
@@ -53,7 +53,7 @@ class MaBox_Config_Manager_Test extends TestCase {
      */
     public function test_module_map_has_correct_count(): void {
         $map = MaBox_Config_Manager::get_module_map();
-        $this->assertCount(12, $map);
+        $this->assertCount(11, $map);
     }
 
     /**

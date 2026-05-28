@@ -80,8 +80,6 @@ return array(
         'page.completed_book', 'page.copy_pop_up', 'page.dynamic_title',
         'page.add_scroll_bar', 'page.lang_jf',
         'page.hide_category', 'page.hide_tag', 'page.hide_page',
-        'h5.main',
-        'function.b2',
         'login.change_login_logo_link', 'login.remove_login_lang_select',
         'login.custom_login_page',
         'auxiliary.baidu_tonji', 'auxiliary.google_tonji', 'auxiliary.biying_tonji',

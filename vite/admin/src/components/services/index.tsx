@@ -3,6 +3,7 @@ import { Form, Input, Card, Button, List } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { DataContext } from "@/tool/dataContext";
 import { AntConfig } from "@/tool/tool";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 import FeatureSwitch from "@/basic/feature-switch";
 
 const fromConfig = AntConfig.from;
@@ -46,99 +47,101 @@ const App: React.FC = () => {
   };
 
   return (
-    <Form
-      name="services"
-      labelCol={fromConfig.labelCol}
-      wrapperCol={fromConfig.wrapperCol}
-      style={{ maxWidth: fromConfig.maxWidth }}
-      initialValues={data}
-      autoComplete="off"
-      onValuesChange={onValuesChange}
-    >
-      <Form.Item extra="为用户提供技术支持入口，不影响免费功能的完整体验">
-        <h2>技术支持与服务</h2>
-      </Form.Item>
+    <SettingsSection title="技术支持" description="为用户提供技术支持入口，不影响免费功能的完整体验">
+      <Form
+        name="services"
+        labelCol={fromConfig.labelCol}
+        wrapperCol={fromConfig.wrapperCol}
+        style={{ maxWidth: fromConfig.maxWidth }}
+        initialValues={data}
+        autoComplete="off"
+        onValuesChange={onValuesChange}
+      >
+        <ModuleRow
+          title="启用服务展示"
+          description="开启后可在前台展示技术支持与服务信息"
+          featureId="services-enabled"
+          enabled={!!formData?.enabled}
+          onChange={(checked: boolean) => onValuesChange({ enabled: checked })}
+        />
 
-      <Form.Item label="启用服务展示" name="enabled" valuePropName="checked">
-        <FeatureSwitch featureId="services-enabled" />
-      </Form.Item>
-
-      {formData?.enabled && (
-        <>
-          <Card title="联系方式" size="small" style={{ marginBottom: 16 }}>
-            <Form.Item label="微信号" name="wechat_id">
-              <Input placeholder="您的微信号" />
-            </Form.Item>
-            <Form.Item label="微信二维码" name="wechat_qr" extra="上传图片 URL 地址">
-              <Input placeholder="https://..." />
-            </Form.Item>
-            <Form.Item label="邮箱" name="email">
-              <Input placeholder="support@example.com" />
-            </Form.Item>
-            <Form.Item label="网站" name="website">
-              <Input placeholder="https://..." />
-            </Form.Item>
-          </Card>
-
-          <Card title="服务项目" size="small" style={{ marginBottom: 16 }}>
-            {serviceItems.map((item) => (
-              <Form.Item key={item.key} label={item.label} name={item.key} valuePropName="checked" extra={item.desc}>
-                <FeatureSwitch featureId={`services-${item.key}`} />
+        {formData?.enabled && (
+          <>
+            <Card title="联系方式" size="small" style={{ marginBottom: 16 }}>
+              <Form.Item label="微信号" name="wechat_id">
+                <Input placeholder="您的微信号" />
               </Form.Item>
-            ))}
-          </Card>
+              <Form.Item label="微信二维码" name="wechat_qr" extra="上传图片 URL 地址">
+                <Input placeholder="https://..." />
+              </Form.Item>
+              <Form.Item label="邮箱" name="email">
+                <Input placeholder="support@example.com" />
+              </Form.Item>
+              <Form.Item label="网站" name="website">
+                <Input placeholder="https://..." />
+              </Form.Item>
+            </Card>
 
-          <Card
-            title="服务案例"
-            size="small"
-            extra={
-              <Button type="link" size="small" icon={<PlusOutlined />} onClick={addCase}>
-                添加案例
-              </Button>
-            }
-          >
-            <List
-              dataSource={formData.cases || []}
-              renderItem={(item: any, index: number) => (
-                <List.Item
-                  actions={[
-                    <Button type="link" danger size="small" icon={<DeleteOutlined />} onClick={() => removeCase(index)}>
-                      删除
-                    </Button>,
-                  ]}
-                >
-                  <div style={{ width: "100%" }}>
-                    <Input
-                      value={item.title}
-                      onChange={(e) => updateCase(index, "title", e.target.value)}
-                      placeholder="案例标题"
-                      style={{ marginBottom: 8 }}
-                    />
-                    <TextArea
-                      value={item.description}
-                      onChange={(e) => updateCase(index, "description", e.target.value)}
-                      placeholder="案例描述"
-                      rows={2}
-                      style={{ marginBottom: 8 }}
-                    />
-                    <Input
-                      value={item.logo}
-                      onChange={(e) => updateCase(index, "logo", e.target.value)}
-                      placeholder="客户 Logo URL（可选）"
-                    />
-                  </div>
-                </List.Item>
+            <Card title="服务项目" size="small" style={{ marginBottom: 16 }}>
+              {serviceItems.map((item) => (
+                <Form.Item key={item.key} label={item.label} name={item.key} valuePropName="checked" extra={item.desc}>
+                  <FeatureSwitch featureId={`services-${item.key}`} />
+                </Form.Item>
+              ))}
+            </Card>
+
+            <Card
+              title="服务案例"
+              size="small"
+              extra={
+                <Button type="link" size="small" icon={<PlusOutlined />} onClick={addCase}>
+                  添加案例
+                </Button>
+              }
+            >
+              <List
+                dataSource={formData.cases || []}
+                renderItem={(item: any, index: number) => (
+                  <List.Item
+                    actions={[
+                      <Button type="link" danger size="small" icon={<DeleteOutlined />} onClick={() => removeCase(index)}>
+                        删除
+                      </Button>,
+                    ]}
+                  >
+                    <div style={{ width: "100%" }}>
+                      <Input
+                        value={item.title}
+                        onChange={(e) => updateCase(index, "title", e.target.value)}
+                        placeholder="案例标题"
+                        style={{ marginBottom: 8 }}
+                      />
+                      <TextArea
+                        value={item.description}
+                        onChange={(e) => updateCase(index, "description", e.target.value)}
+                        placeholder="案例描述"
+                        rows={2}
+                        style={{ marginBottom: 8 }}
+                      />
+                      <Input
+                        value={item.logo}
+                        onChange={(e) => updateCase(index, "logo", e.target.value)}
+                        placeholder="客户 Logo URL（可选）"
+                      />
+                    </div>
+                  </List.Item>
+                )}
+              />
+              {(!formData.cases || formData.cases.length === 0) && (
+                <div style={{ textAlign: "center", padding: "24px 0", color: "#999" }}>
+                  暂无案例，点击「添加案例」开始
+                </div>
               )}
-            />
-            {(!formData.cases || formData.cases.length === 0) && (
-              <div style={{ textAlign: "center", padding: "24px 0", color: "#999" }}>
-                暂无案例，点击「添加案例」开始
-              </div>
-            )}
-          </Card>
-        </>
-      )}
-    </Form>
+            </Card>
+          </>
+        )}
+      </Form>
+    </SettingsSection>
   );
 };
 

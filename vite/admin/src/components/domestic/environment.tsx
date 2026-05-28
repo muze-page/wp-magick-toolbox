@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useContext } from "react";
 import { Card, Button, Row, Col, Tag, Space, Spin, Typography, message } from "antd";
-import { ApiOutlined, ReloadOutlined, ThunderboltOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { ReloadOutlined, ThunderboltOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { domesticApi } from "@/api";
 import DiffModal from "@/components/diff-modal";
 import { DataContext } from "@/tool/dataContext";
 import { createSnapshot } from "@/tool/snapshot";
 import { saveOption } from "@/axios/save";
+import { SettingsSection } from "@/components/settings-ui";
 
 const { Text } = Typography;
 
@@ -98,83 +99,79 @@ const Environment: React.FC = () => {
   }, [pendingProposed, optionData, refreshOption, handleCheck]);
 
   return (
-    <Card
-      title={
-        <span>
-          <ApiOutlined style={{ marginRight: 8, color: "#1890ff" }} />
-          中国访问适配
-        </span>
-      }
-      extra={
-        <Space>
-          <Button size="small" icon={<ReloadOutlined />} onClick={handleCheck} loading={loading}>
-            检测
-          </Button>
-          {results && (
-            <Button
-              type="primary"
-              size="small"
-              icon={<ThunderboltOutlined />}
-              onClick={handleOneClickFix}
-            >
-              一键修复
+    <SettingsSection title="中国访问适配">
+      <Card
+        extra={
+          <Space>
+            <Button size="small" icon={<ReloadOutlined />} onClick={handleCheck} loading={loading}>
+              检测
             </Button>
-          )}
-        </Space>
-      }
-    >
-      {!results && !loading && (
-        <div style={{ textAlign: "center", padding: 24 }}>
-          <Text type="secondary">
-            点击"检测"按钮，检测 Google Fonts、Gravatar、Google Ajax、WordPress.org 等服务在国内的可达性。
-          </Text>
-        </div>
-      )}
+            {results && (
+              <Button
+                type="primary"
+                size="small"
+                icon={<ThunderboltOutlined />}
+                onClick={handleOneClickFix}
+              >
+                一键修复
+              </Button>
+            )}
+          </Space>
+        }
+      >
+        {!results && !loading && (
+          <div style={{ textAlign: "center", padding: 24 }}>
+            <Text type="secondary">
+              点击"检测"按钮，检测 Google Fonts、Gravatar、Google Ajax、WordPress.org 等服务在国内的可达性。
+            </Text>
+          </div>
+        )}
 
-      {loading && (
-        <div style={{ textAlign: "center", padding: 24 }}>
-          <Spin tip="正在检测服务可达性..." />
-        </div>
-      )}
+        {loading && (
+          <div style={{ textAlign: "center", padding: 24 }}>
+            <Spin tip="正在检测服务可达性..." />
+          </div>
+        )}
 
-      {results && !loading && (
-        <Row gutter={[16, 16]}>
-          {Object.entries(results).map(([key, result]) => (
-            <Col xs={24} sm={12} md={6} key={key}>
-              <Card size="small" className="h-full">
-                <Space direction="vertical" className="w-full" size="small">
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <Text strong>{result.service}</Text>
-                    {result.reachable ? (
-                      <Tag icon={<CheckCircleOutlined />} color="success">可达</Tag>
-                    ) : (
-                      <Tag icon={<CloseCircleOutlined />} color="error">不可达</Tag>
+        {results && !loading && (
+          <Row gutter={[16, 16]}>
+            {Object.entries(results).map(([key, result]) => (
+              <Col xs={24} sm={12} md={6} key={key}>
+                <Card size="small" className="h-full">
+                  <Space direction="vertical" className="w-full" size="small">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <Text strong>{result.service}</Text>
+                      {result.reachable ? (
+                        <Tag icon={<CheckCircleOutlined />} color="success">可达</Tag>
+                      ) : (
+                        <Tag icon={<CloseCircleOutlined />} color="error">不可达</Tag>
+                      )}
+                    </div>
+                    {result.reachable && (
+                      <Text type="secondary" style={{ fontSize: 12 }}>
+                        延迟：{result.latency}ms
+                      </Text>
                     )}
-                  </div>
-                  {result.reachable && (
-                    <Text type="secondary" style={{ fontSize: 12 }}>
-                      延迟：{result.latency}ms
-                    </Text>
-                  )}
-                  {!result.reachable && result.suggestion && (
-                    <Text type="warning" style={{ fontSize: 12 }}>
-                      {result.suggestion}
-                    </Text>
-                  )}
-                </Space>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      )}
+                    {!result.reachable && result.suggestion && (
+                      <Text type="warning" style={{ fontSize: 12 }}>
+                        {result.suggestion}
+                      </Text>
+                    )}
+                  </Space>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        )}
 
-      <DiffModal
-        visible={diffVisible}
-        onCancel={() => { setDiffVisible(false); setPendingDiffs([]); setPendingProposed(null); }}
-        onConfirm={handleApplyFixes}
-        diffs={pendingDiffs}
-      />
-    </Card>
+        <DiffModal
+          visible={diffVisible}
+          onCancel={() => { setDiffVisible(false); setPendingDiffs([]); setPendingProposed(null); }}
+          onConfirm={handleApplyFixes}
+          diffs={pendingDiffs}
+        />
+      </Card>
+    </SettingsSection>
   );
 };
 

@@ -85,7 +85,7 @@ if (!class_exists('MaBox_Module_Loader')) {
                 // 'both' 或不设置：前后都加载
             }
 
-            $file = plugin_dir_path(__FILE__) . 'partials/' . $meta['file'];
+            $file = plugin_dir_path(__FILE__) . '../partials/' . $meta['file'];
 
             if (!file_exists($file)) {
                 return;

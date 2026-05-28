@@ -5,16 +5,6 @@ if (!class_exists('MaBox_Performance_Seo_Checker')) {
         public static function run($config) {
             self::$config = $config;
             if (empty($config['enabled'])) return;
-            add_action('wp_ajax_mabox_seo_check', array(__CLASS__, 'ajax_check_deprecated'));
-            add_action('wp_ajax_mabox_seo_fix_alt', array(__CLASS__, 'ajax_fix_alt_deprecated'));
-        }
-        public static function ajax_check_deprecated() {
-            _deprecated_function('wp_ajax_mabox_seo_check', '2.1.0', 'REST API POST /mabox/v1/performance/seo/check');
-            self::ajax_check();
-        }
-        public static function ajax_fix_alt_deprecated() {
-            _deprecated_function('wp_ajax_mabox_seo_fix_alt', '2.1.0', 'REST API POST /mabox/v1/performance/seo/fix-alt');
-            self::ajax_fix_alt();
         }
         public static function ajax_check() {
             if (!current_user_can('manage_options')) wp_send_json_error('权限不足', 403);

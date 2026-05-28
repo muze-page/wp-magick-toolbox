@@ -1,8 +1,3 @@
-/**
- *
- * 介绍：美化
- */
-//站点 - 模版
 import { useState, useContext, useEffect } from "react";
 import { Form, ColorPicker, InputNumber } from "antd";
 
@@ -13,29 +8,24 @@ import { defaultVarOption } from "@/tool/defaultVar";
 import type { Color } from "antd/es/color-picker";
 import { AntConfig } from "@/tool/tool";
 import SelectImage from "@/basic/selectImage";
-import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
 type FieldType = LoginBeautify;
 
-//Ant 组件配置
 const fromConfig = AntConfig.from;
 
-//处理颜色格式
 const getHexString = (color: Color | string): string => {
   return typeof color === "string" ? color : color.toHexString();
 };
 
 const App: React.FC = () => {
-  //拿到默认选项值和修改方法
   const { optionData, updateOption } = useContext(DataContext);
 
   const publicData =
     optionData.login?.beautify || defaultVarOption.login.beautify;
 
-  //存储表单值
   const [formData, setFormData] = useState(publicData || {});
 
-  //修改表单值
   const onValuesChange = (
     changedValues: Partial<FieldType>,
     allValues: FieldType
@@ -52,13 +42,12 @@ const App: React.FC = () => {
     }));
   };
 
-  //表单值发生变化时更新选项值
   useEffect(() => {
     updateOption("login", "beautify", formData);
   }, [formData]);
 
   return (
-    <>
+    <SettingsSection title="美化">
       <Form
         name="login_beautify"
         labelCol={fromConfig.labelCol}
@@ -69,37 +58,27 @@ const App: React.FC = () => {
         onFinish={() => {}}
         onValuesChange={onValuesChange}
       >
-        <Form.Item>
-          <h2>美化</h2>
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="login-beautify-modify_login_link"
-          label="LOGO链接"
-          name="modify_login_link"
-          valuePropName="checked"
-          extra={"改为首页链接"}
-        >
-          <FeatureSwitch featureId="login-beautify-modify_login_link" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="login-beautify-remove_langue"
-          label="移除语言选择框"
-          name="remove_langue"
-          valuePropName="checked"
-          extra={"移除登录页面语言选择框"}
-        >
-          <FeatureSwitch featureId="login-beautify-remove_langue" />
-        </Form.Item>
-
-        <Form.Item<FieldType>
-          id="login-beautify-custom_login_page"
-          label="自定义登录页"
-          name="custom_login_page"
-          valuePropName="checked"
-          extra={""}
-        >
-          <FeatureSwitch featureId="login-beautify-custom_login_page" />
-        </Form.Item>
+        <ModuleRow
+          title="LOGO链接"
+          description="改为首页链接"
+          featureId="login-beautify-modify_login_link"
+          enabled={formData.modify_login_link as boolean}
+          onChange={(checked: boolean) => onValuesChange({ modify_login_link: checked } as Partial<FieldType>, { ...formData, modify_login_link: checked } as FieldType)}
+        />
+        <ModuleRow
+          title="移除语言选择框"
+          description="移除登录页面语言选择框"
+          featureId="login-beautify-remove_langue"
+          enabled={formData.remove_langue as boolean}
+          onChange={(checked: boolean) => onValuesChange({ remove_langue: checked } as Partial<FieldType>, { ...formData, remove_langue: checked } as FieldType)}
+        />
+        <ModuleRow
+          title="自定义登录页"
+          description=""
+          featureId="login-beautify-custom_login_page"
+          enabled={formData.custom_login_page as boolean}
+          onChange={(checked: boolean) => onValuesChange({ custom_login_page: checked } as Partial<FieldType>, { ...formData, custom_login_page: checked } as FieldType)}
+        />
 
         {formData.custom_login_page && (
           <>
@@ -144,7 +123,7 @@ const App: React.FC = () => {
           </>
         )}
       </Form>
-    </>
+    </SettingsSection>
   );
 };
 

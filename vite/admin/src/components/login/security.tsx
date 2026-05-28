@@ -1,8 +1,3 @@
-/**
- *
- * 登录：安全
- */
-//权限 - 辅助功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
 import { Form, Input, Select } from "antd";
@@ -10,25 +5,20 @@ import { DataContext } from "@/tool/dataContext";
 import { LoginSecurity } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
+import { SettingsSection } from "@/components/settings-ui";
 
-//选项类型
 type FieldType = LoginSecurity;
 
-//Ant 组件配置
 const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
-  //拿到默认选项值和修改方法
   const { optionData, updateOption } = useContext(DataContext);
 
-  //简化并提供默认值
   const publicData =
     optionData.login?.security || defaultVarOption.login.security;
 
-  //创建变量并设默认值
   const [formData, setFormData] = useState(publicData || {});
 
-  //表单同步修改值
   const onValuesChange = (
     changedValues: Partial<FieldType>,
     _allValues: FieldType
@@ -39,31 +29,22 @@ const App: React.FC = () => {
     }));
   };
 
-  // 表单值发生变化时更新dataContext的值
-  //表单值发生变化时更新选项值
   useEffect(() => {
     updateOption("login", "security", formData);
   }, [formData]);
 
   return (
-    <>
+    <SettingsSection title="登录安全">
       <Form
         name="login_security"
         labelCol={fromConfig.labelCol}
         wrapperCol={fromConfig.wrapperCol}
         style={{ maxWidth: fromConfig.maxWidth }}
-        //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
-        //自动填充功能禁用
         autoComplete="off"
-        //指定当表单提交时要执行的回调函数
         onFinish={() => {}}
-        //指定当表单字段值发生变化时要执行的回调函数
         onValuesChange={onValuesChange}
       >
-        <Form.Item>
-          <h2>登录安全</h2>
-        </Form.Item>
         <Form.Item<FieldType>
           label="登录验证码"
           name="login_code"
@@ -99,7 +80,7 @@ const App: React.FC = () => {
           </>
         )}
       </Form>
-    </>
+    </SettingsSection>
   );
 };
 

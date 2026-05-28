@@ -9,8 +9,6 @@ if (!class_exists('MaBox_Page_Article_Rating')) {
         public static function run()
         {
             add_action('wp_enqueue_scripts', array(__CLASS__, 'load_assets'));
-add_action('wp_ajax_submit_rating', array(__CLASS__, 'handle_rating_deprecated'));
-add_action('wp_ajax_nopriv_submit_rating', array(__CLASS__, 'handle_rating_deprecated'));
             add_filter('the_content', array(__CLASS__, 'append_rating_widget'));
         }
 
@@ -46,11 +44,6 @@ add_action('wp_ajax_nopriv_submit_rating', array(__CLASS__, 'handle_rating_depre
             $widget .= '</div>';
 
             return $content . $widget;
-        }
-
-        public static function handle_rating_deprecated() {
-            _deprecated_function('wp_ajax_submit_rating', '2.1.0', 'REST API POST /mabox/v1/public/rating');
-            self::handle_rating();
         }
 
         public static function handle_rating()

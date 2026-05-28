@@ -207,21 +207,6 @@ export default defineConfig({
           ],
         },
         {
-          text: 'B2 主题专属',
-          items: [
-            { text: '商城统计', link: '/features/b2-theme/shop-stats' },
-            { text: '订单处理菜单', link: '/features/b2-theme/order-menu' },
-            { text: '每日销售统计', link: '/features/b2-theme/daily-sales' },
-          ],
-        },
-        {
-          text: 'H5 移动端',
-          items: [
-            { text: 'H5 首页', link: '/features/h5-mobile/h5-home' },
-            { text: 'H5 联系页', link: '/features/h5-mobile/h5-contact' },
-          ],
-        },
-        {
           text: '国内生态',
           collapsed: true,
           items: [

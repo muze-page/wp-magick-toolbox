@@ -767,29 +767,6 @@ return array(
         'config_path' => 'function.wx_xcx',
     ),
 
-    // ========== B2 主题 ==========
-    'function.b2' => array(
-        'class'     => 'MaBox_B2_Shop',
-        'file'      => 'function/b2/index.php',
-        'option_key'=> 'function.b2',
-        'category'  => 'function',
-        'scope'     => 'both',
-        'theme_requirement' => 'B2',
-        'config_path' => 'function.b2',
-        'risk_tags' => array('需主题兼容'),
-    ),
-
-    // ========== H5 移动端 ==========
-    'h5.main' => array(
-        'class'     => 'MaBox_H5',
-        'file'      => 'h5.php',
-        'option_key'=> 'h5',
-        'category'  => 'h5',
-        'scope'     => 'frontend',
-        'mobile_only' => true,
-        'risk_tags' => array('仅前台'),
-    ),
-
     // ========== 导入导出 ==========
     'function.config' => array(
         'class'     => 'MaBox_Config',

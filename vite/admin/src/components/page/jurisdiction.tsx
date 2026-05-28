@@ -10,6 +10,7 @@ import { AntConfig } from "@/tool/tool";
 import { getCategoryData } from "@/axios/axios";
 import TextAreaHtml from "@/basic/htmlInput";
 import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
 type FieldType = PageJurisdiction;
 
@@ -30,37 +31,30 @@ const App: React.FC = () => {
     }));
   };
 
-  //表单值发生变化时更新选项值
   useEffect(() => {
     updateOption("page", "jurisdiction", formData);
   }, [formData]);
 
-  //存储表单值
   interface TagData {
-    categorys: ListData[];//分类数组
-    tags: ListData[];//标签数组
-    pages:ListData[];//页面数组
+    categorys: ListData[];
+    tags: ListData[];
+    pages: ListData[];
   }
   const [tagArray, setTagArray] = useState<TagData>();
-  //获取分类数组
   const getData = async () => {
     try {
-      // 获取原始数据
       const list = await getCategoryData();
-      //console.log(list);
       setTagArray(list);
     } catch (error) {
       console.error("Error fetching table data:", error);
     }
   };
-  //加载页面自动获取数据
   useEffect(() => {
-    // 在页面加载完成后执行 函数，获取数据并更新状态
     getData();
   }, []);
 
   return (
-    <>
+    <SettingsSection title="权限">
       <Form
         name="jurisdiction"
         labelCol={fromConfig.labelCol}
@@ -71,87 +65,77 @@ const App: React.FC = () => {
         onFinish={() => {}}
         onValuesChange={onValuesChange}
       >
-        <Form.Item>
-          <h2>权限</h2>
-        </Form.Item>
-        <Form.Item>
-          <h3 className="menu-header">隐私权限</h3>
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="page-jurisdiction-ban_open_weixing"
-          label="禁止在微信中打开"
-          name="ban_open_weixing"
-          valuePropName="checked"
-          extra={<>（可能有防红功能）</>}
+        <h3 className="menu-header">隐私权限</h3>
+        <ModuleRow
+          title="禁止在微信中打开"
+          description="可能有防红功能"
+          featureId="page-jurisdiction-ban_open_weixing"
+          enabled={formData.ban_open_weixing as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ ban_open_weixing: checked } as Partial<FieldType>, formData);
+          }}
         >
-          <FeatureSwitch featureId="page-jurisdiction-ban_open_weixing" />
-        </Form.Item>
-        {formData.ban_open_weixing && (
-          <>
-            <Form.Item<FieldType>
-              label="处理方式"
-              name="ban_open_weixing_mode"
-            >
-              <Radio.Group>
-                <Radio value="alert">弹窗提示</Radio>
-                <Radio value="optimize">优化体验+引导</Radio>
-              </Radio.Group>
-            </Form.Item>
-            {formData.ban_open_weixing_mode === 'optimize' && (
-              <>
-                <Form.Item<FieldType> label="引导文字" name="wechat_guide_text">
-                  <Input style={{ width: "70%" }} placeholder="点击右上角 ··· 在浏览器中打开" />
-                </Form.Item>
-                <Form.Item<FieldType>
-                  label="小程序引导"
-                  name="wechat_xcx_guide"
-                  valuePropName="checked"
-                >
-                  <FeatureSwitch featureId="page-jurisdiction-wechat_xcx_guide" />
-                </Form.Item>
-                {formData.wechat_xcx_guide && (
-                  <>
-                    <Form.Item<FieldType> label="小程序引导文字" name="wechat_xcx_guide_text">
-                      <Input style={{ width: "50%" }} placeholder="在小程序中打开" />
-                    </Form.Item>
-                    <Form.Item<FieldType> label="小程序链接" name="wechat_xcx_link">
-                      <Input style={{ width: "70%" }} placeholder="weixin://dl/business/..." />
-                    </Form.Item>
-                  </>
-                )}
-              </>
-            )}
-          </>
-        )}
-        <Form.Item<FieldType>
-          id="page-jurisdiction-ban_open_qq"
-          label="禁止在 QQ 中打开"
-          name="ban_open_qq"
-          valuePropName="checked"
-          extra={<>（可能有防红功能）</>}
-        >
-          <FeatureSwitch featureId="page-jurisdiction-ban_open_qq" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="page-jurisdiction-ban_copy"
-          label="禁止复制"
-          name="ban_copy"
-          valuePropName="checked"
-        >
-          <FeatureSwitch featureId="page-jurisdiction-ban_copy" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="page-jurisdiction-front_debug"
-          label="禁用F12前端调试"
-          name="front_debug"
-          valuePropName="checked"
-          extra={<>打开浏览器控制台显示空白内容</>}
-        >
-          <FeatureSwitch featureId="page-jurisdiction-front_debug" />
-        </Form.Item>
-        <Form.Item>
-          <h3 className="menu-header">未登录权限</h3>
-        </Form.Item>
+          <Form.Item<FieldType>
+            label="处理方式"
+            name="ban_open_weixing_mode"
+          >
+            <Radio.Group>
+              <Radio value="alert">弹窗提示</Radio>
+              <Radio value="optimize">优化体验+引导</Radio>
+            </Radio.Group>
+          </Form.Item>
+          {formData.ban_open_weixing_mode === 'optimize' && (
+            <>
+              <Form.Item<FieldType> label="引导文字" name="wechat_guide_text">
+                <Input style={{ width: "70%" }} placeholder="点击右上角 ··· 在浏览器中打开" />
+              </Form.Item>
+              <Form.Item<FieldType>
+                label="小程序引导"
+                name="wechat_xcx_guide"
+                valuePropName="checked"
+              >
+                <FeatureSwitch featureId="page-jurisdiction-wechat_xcx_guide" />
+              </Form.Item>
+              {formData.wechat_xcx_guide && (
+                <>
+                  <Form.Item<FieldType> label="小程序引导文字" name="wechat_xcx_guide_text">
+                    <Input style={{ width: "50%" }} placeholder="在小程序中打开" />
+                  </Form.Item>
+                  <Form.Item<FieldType> label="小程序链接" name="wechat_xcx_link">
+                    <Input style={{ width: "70%" }} placeholder="weixin://dl/business/..." />
+                  </Form.Item>
+                </>
+              )}
+            </>
+          )}
+        </ModuleRow>
+        <ModuleRow
+          title="禁止在 QQ 中打开"
+          description="可能有防红功能"
+          featureId="page-jurisdiction-ban_open_qq"
+          enabled={formData.ban_open_qq as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ ban_open_qq: checked } as Partial<FieldType>, formData);
+          }}
+        />
+        <ModuleRow
+          title="禁止复制"
+          featureId="page-jurisdiction-ban_copy"
+          enabled={formData.ban_copy as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ ban_copy: checked } as Partial<FieldType>, formData);
+          }}
+        />
+        <ModuleRow
+          title="禁用F12前端调试"
+          description="打开浏览器控制台显示空白内容"
+          featureId="page-jurisdiction-front_debug"
+          enabled={formData.front_debug as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ front_debug: checked } as Partial<FieldType>, formData);
+          }}
+        />
+        <h3 className="menu-header">未登录权限</h3>
 
         <Form.Item<FieldType>
           label="隐藏指定分类下的内容"
@@ -192,7 +176,6 @@ const App: React.FC = () => {
             options={tagArray?.pages}
           />
         </Form.Item>
-        {/** 注：可考虑预设常见场景模板（如仅登录用户可见、特定分类可见等） */}
         <Form.Item<FieldType>
           label="隐藏时的提示内容"
           name="tip_content"
@@ -201,7 +184,7 @@ const App: React.FC = () => {
           <TextAreaHtml />
         </Form.Item>
       </Form>
-    </>
+    </SettingsSection>
   );
 };
 

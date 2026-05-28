@@ -6,7 +6,6 @@ describe('defaultVar', () => {
     expect(defaultVarOption).toHaveProperty('optimize');
     expect(defaultVarOption).toHaveProperty('page');
     expect(defaultVarOption).toHaveProperty('function');
-    expect(defaultVarOption).toHaveProperty('h5');
     expect(defaultVarOption).toHaveProperty('login');
     expect(defaultVarOption).toHaveProperty('shortcode');
     expect(defaultVarOption).toHaveProperty('template');

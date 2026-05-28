@@ -32,7 +32,6 @@ export default defineConfig({
           'tab-page': ['./src/components/page/index'],
           'tab-optimize': ['./src/components/optimize/index'],
           'tab-login': ['./src/components/login/index'],
-          'tab-h5': ['./src/components/h5/index'],
           'tab-function': ['./src/components/function/index'],
           'tab-shortcode': ['./src/components/shortcode/index'],
           'tab-template': ['./src/components/template/index'],

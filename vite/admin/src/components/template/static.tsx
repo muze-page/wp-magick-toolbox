@@ -4,9 +4,8 @@ import { DataContext } from "@/tool/dataContext";
 import { TemplateStatic } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
-import Preview from "@/basic/preview";
 import TrianglePng from "@/assets/template/static/立体三角.png";
-import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
 type FieldType = TemplateStatic;
 
@@ -44,7 +43,7 @@ const App: React.FC = () => {
   }, [formData]);
 
   return (
-    <>
+    <SettingsSection title="静态模板" description="启用对应模板后，在页面中可选择对应模板">
       <Form
         name="static"
         labelCol={fromConfig.labelCol}
@@ -55,36 +54,21 @@ const App: React.FC = () => {
         onFinish={() => {}}
         onValuesChange={onValuesChange}
       >
-        <Form.Item>
-          <h2>静态模板</h2>
-        </Form.Item>
-
         {templateItems.map((item) => (
-          <div
+          <ModuleRow
             key={item.fieldName}
-            id={item.featureId}
-            className="mabox-template-row"
-          >
-            <div className="mabox-template-row-info">
-              <div className="mabox-template-row-name">{item.name}</div>
-              <div className="mabox-template-row-desc">{item.description}</div>
-            </div>
-            <div className="mabox-template-row-actions">
-              <Form.Item<FieldType>
-                name={item.fieldName}
-                valuePropName="checked"
-                noStyle
-              >
-                <FeatureSwitch featureId={item.featureId} />
-              </Form.Item>
-              {item.preview && (
-                <Preview title={item.preview.title} img={item.preview.img} />
-              )}
-            </div>
-          </div>
+            title={item.name}
+            description={item.description}
+            featureId={item.featureId}
+            enabled={formData[item.fieldName] as boolean}
+            onChange={(checked: boolean) => {
+              onValuesChange({ [item.fieldName]: checked } as Partial<FieldType>, formData);
+            }}
+            preview={item.preview}
+          />
         ))}
       </Form>
-    </>
+    </SettingsSection>
   );
 };
 

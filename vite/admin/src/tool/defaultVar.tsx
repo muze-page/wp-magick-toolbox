@@ -216,12 +216,6 @@ const FunctionAuxiliary = {
   uniqueKey: 0,
 };
 
-//权限控制 b2
-const FunctionB2 = {
-  add_order_menu: boo, //添加订单菜单
-  b2_count: boo, //B2商城统计
-};
-
 //权限 微信小程序
 const FunctionWxXcx = {
   active: boo, //开关状态
@@ -248,25 +242,6 @@ const FunctionTips = {
   tips_content: str, //提示内容
   tips_button: str, //按钮文字
   tips_link: str, //按钮链接
-};
-
-// H5 首页
-const H5Home = {
-  switch: boo, //开关
-  slide: [1], //幻灯片
-  slide_all: str, //幻灯片 查看全部按钮
-  more: 1, //待展示分类
-};
-//H5 联系
-const H5Contact = {
-  title: str, //联系标题
-  title_one: str, //小标题
-  content_one: str, //内容
-  title_two: str, //小标题
-  content_two: str, //内容
-  brand_link: str, //跳转链接
-  brand_logo: str, //LOGO
-  introduce: str, //介绍
 };
 
 //登录页 美化
@@ -502,7 +477,6 @@ export const defaultVarOption = {
   //权限控制
   function: {
     auxiliary: FunctionAuxiliary, //辅助功能
-    b2: FunctionB2, //B2
     wx_xcx: FunctionWxXcx, //微信小程序链接生成
     seo: FunctionSeo, //简单 SEO 功能
     config: FunctionTips, //设置
@@ -513,11 +487,6 @@ export const defaultVarOption = {
     feature: PageFeature, //外观特效
     function: PageFunction, //页面功能
     jurisdiction: PageJurisdiction, //权限
-  },
-  //H5
-  h5: {
-    home: H5Home, //首页
-    contact: H5Contact, //联系
   },
   //登录
   login: {

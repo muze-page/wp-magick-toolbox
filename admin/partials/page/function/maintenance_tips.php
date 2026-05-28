@@ -36,33 +36,15 @@ if (!class_exists('MaBox_Maintenance_Tips')) {
                 add_action('wp_head', array(__CLASS__, 'add_responsive_css'));
 
                 switch (self::$configs) {
-                    case "default": //默认
+                    case "default":
                         wp_die(esc_html(self::$blogname) . ' 升级维护中，过一会再来吧！');
                         break;
-                    case "default_img": //默认带图
+                    case "default_img":
                         include(self::$path . 'default/index.php');
-                        exit; // 重定向后立即退出
+                        exit;
                         break;
-                    case "red": //红色纯粹
+                    case "red":
                         include(self::$path . 'red.php');
-                        exit; // 重定向后立即退出
-                        break;
-
-                    case "purple": //紫色期待
-                        include(self::$path . 'purple/index.php');
-                        exit;
-                        break;
-
-                    case "lighting": //灯光聚焦
-                        include(self::$path . 'lighting/index.php');
-                        exit;
-                        break;
-                    case "masking": //大气遮罩
-                        include(self::$path . 'masking/index.php');
-                        exit;
-                        break;
-                    case "rotate": //旋转时钟
-                        include(self::$path . 'rotate/index.php');
                         exit;
                         break;
                     default:
@@ -72,7 +54,7 @@ if (!class_exists('MaBox_Maintenance_Tips')) {
         }
 
         public static function add_responsive_css() {
-            echo '<link rel="stylesheet" href="' . esc_url(self::$path . '../maintenance/responsive.css') . '">';
+            echo '<link rel="stylesheet" href="' . esc_url(self::$url . 'responsive.css') . '">';
         }
 
     }

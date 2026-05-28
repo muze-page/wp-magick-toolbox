@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Form, Button, List, Alert, message } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { AntConfig } from "@/tool/tool";
-import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
 const fromConfig = AntConfig.from;
 
@@ -63,47 +63,51 @@ const App: React.FC = () => {
   };
 
   return (
-    <Form
-      name="media_health"
-      labelCol={fromConfig.labelCol}
-      wrapperCol={fromConfig.wrapperCol}
-      style={{ maxWidth: fromConfig.maxWidth }}
-      initialValues={publicData}
-      autoComplete="off"
-      onValuesChange={onValuesChange}
-    >
-      <Form.Item extra={"媒体库健康体检"}>
-        <h2>媒体库体检</h2>
-      </Form.Item>
+    <SettingsSection title="媒体库体检" description="媒体库健康体检">
+      <Form
+        name="media_health"
+        labelCol={fromConfig.labelCol}
+        wrapperCol={fromConfig.wrapperCol}
+        style={{ maxWidth: fromConfig.maxWidth }}
+        initialValues={publicData}
+        autoComplete="off"
+        onValuesChange={onValuesChange}
+      >
+        <ModuleRow
+          title="启用媒体库体检"
+          description="检查媒体库中的异常文件"
+          featureId="performance-media_health-enabled"
+          enabled={!!formData.enabled}
+          onChange={(checked) => {
+            setFormData((prev: any) => ({ ...prev, enabled: checked }));
+          }}
+        />
 
-      <Form.Item label="启用" name="enabled" valuePropName="checked">
-        <FeatureSwitch featureId="performance-media_health-enabled" />
-      </Form.Item>
-
-      <Form.Item wrapperCol={fromConfig.wrapperCol}>
-        <Button type="primary" onClick={handleCheck} loading={checking}>
-          开始体检
-        </Button>
-        <Button style={{ marginLeft: 8 }} onClick={handleFixAlt}>
-          批量补全 Alt
-        </Button>
-      </Form.Item>
-
-      {issues.length > 0 && (
         <Form.Item wrapperCol={fromConfig.wrapperCol}>
-          <Alert message={"发现 " + issues.length + " 类问题"} type="warning" />
-          <List
-            size="small"
-            dataSource={issues}
-            renderItem={(item: any) => (
-              <List.Item>
-                <strong>{item.type}：</strong>{item.count} 个
-              </List.Item>
-            )}
-          />
+          <Button type="primary" onClick={handleCheck} loading={checking}>
+            开始体检
+          </Button>
+          <Button style={{ marginLeft: 8 }} onClick={handleFixAlt}>
+            批量补全 Alt
+          </Button>
         </Form.Item>
-      )}
-    </Form>
+
+        {issues.length > 0 && (
+          <Form.Item wrapperCol={fromConfig.wrapperCol}>
+            <Alert message={"发现 " + issues.length + " 类问题"} type="warning" />
+            <List
+              size="small"
+              dataSource={issues}
+              renderItem={(item: any) => (
+                <List.Item>
+                  <strong>{item.type}：</strong>{item.count} 个
+                </List.Item>
+              )}
+            />
+          </Form.Item>
+        )}
+      </Form>
+    </SettingsSection>
   );
 };
 

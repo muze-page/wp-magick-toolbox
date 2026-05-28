@@ -7,14 +7,14 @@ import Environment from "@/components/domestic/environment";
 
 const App: React.FC = () => {
   return (
-    <>
+    <div className="mabox-app-center">
       <Environment />
       <Compliance />
       <BaiduPush />
       <Wechat />
       <CommentSecurity />
       <LoginSecurity />
-    </>
+    </div>
   );
 };
 

@@ -7,9 +7,8 @@ import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
 import { PageFeature } from "@/tool/interface";
 import FixedImage from "@/basic/fixedImage";
-import FeatureSwitch from "@/basic/feature-switch";
 import PixelChicken from "@/assets/page/feature/像素小鸡.png";
-import Preview from "@/basic/preview";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
 type FieldType = PageFeature;
 
@@ -35,143 +34,108 @@ const App: React.FC = () => {
   }, [formData]);
 
   return (
-    <>
+    <SettingsSection title="外观">
       <Form
         name="aspect"
         labelCol={fromConfig.labelCol}
         wrapperCol={fromConfig.wrapperCol}
         style={{ maxWidth: fromConfig.maxWidth }}
-        //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
-        //自动填充功能禁用
         autoComplete="off"
-        //指定当表单提交时要执行的回调函数
         onFinish={() => {}}
-        //指定当表单字段值发生变化时要执行的回调函数
         onValuesChange={onValuesChange}
       >
-        <Form.Item>
-          <h2>外观</h2>
-        </Form.Item>
-        <Form.Item>
-          <h3 className="menu-header">特效</h3>
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="page-feature-title"
-          label="动态标题"
-          name="title"
-          valuePropName="checked"
-          extra={
-            <>
-              离开当前页面后，在标签页上显示有趣的文本，
-              <a
-                href="https://www.cnblogs.com/HaoranZing/p/16917421.html"
-                target="_blank"
-              >
-                详情
-              </a>
-            </>
-          }
-        >
-          <FeatureSwitch featureId="page-feature-title" />
-        </Form.Item>
-        {formData.title && (
-          <>
-            <Form.Item<FieldType> label="回到当前页" name="title_front">
-              <Input style={{ width: "50%" }} />
-            </Form.Item>
-            <Form.Item<FieldType> label="离开当前页" name="title_after">
-              <Input style={{ width: "50%" }} />
-            </Form.Item>
-          </>
-        )}
-        <Form.Item<FieldType>
-          id="page-feature-top_loading"
-          label="顶部加载进度条"
-          name="top_loading"
-          valuePropName="checked"
-          extra={<>火狐浏览器不显示</>}
-        >
-          <FeatureSwitch featureId="page-feature-top_loading" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="page-feature-reading_progress"
-          label="阅读进度条"
-          name="reading_progress"
-          valuePropName="checked"
-          extra={"文章页面顶部显示阅读进度指示器，仅文章页展示"}
-        >
-          <FeatureSwitch featureId="page-feature-reading_progress" />
-        </Form.Item>
-        {formData.reading_progress && (
-          <>
-            <Form.Item<FieldType>
-              label="进度条颜色"
-              name="reading_progress_color"
-            >
-              <Input style={{ width: "30%" }} placeholder="#1677ff" />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="进度条高度"
-              name="reading_progress_height"
-              extra={"单位: 像素"}
-            >
-              <InputNumber addonAfter={"px"} style={{ width: "120px" }} min={1} max={10} />
-            </Form.Item>
-          </>
-        )}
-        <Form.Item<FieldType>
-          id="page-feature-font_switch"
-          label="字体切换"
-          name="font_switch"
-          valuePropName="checked"
-          extra={"页面右下角添加字体切换按钮，支持多种字体切换"}
-        >
-          <FeatureSwitch featureId="page-feature-font_switch" />
-        </Form.Item>
-        {formData.font_switch && (
-          <>
-            <Form.Item<FieldType>
-              label="字体列表"
-              name="fonts"
-              extra={"每行一个字体名称，用逗号分隔"}
-            >
-              <Input.TextArea rows={3} placeholder="Microsoft YaHei,Simsun,PingFang SC" />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="按钮位置"
-              name="font_position"
-            >
-              <Input style={{ width: "200px" }} placeholder="bottom-right" />
-            </Form.Item>
-          </>
-        )}
-        <Form.Item<FieldType>
-          id="page-feature-site_grey"
-          label="全站变灰"
-          name="site_grey"
-          valuePropName="checked"
-          extra={
-            <>
-              特殊时间下让网站变灰，有特别的意义，
-              <a href="https://www.npc.ink/14874.html" target="_blank">
-                实现详情
-              </a>
-            </>
-          }
-        >
-          <FeatureSwitch featureId="page-feature-site_grey" />
-        </Form.Item>
+        <h3 className="menu-header">特效</h3>
 
-        <Form.Item<FieldType>
-          id="page-feature-page_scrolling"
-          label="平滑滚动"
-          name="page_scrolling"
-          valuePropName="checked"
-          extra={"让页面滚动起来更丝滑，部分浏览器不支持"}
+        <ModuleRow
+          title="动态标题"
+          description="离开当前页面后，在标签页上显示有趣的文本"
+          featureId="page-feature-title"
+          enabled={formData.title as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ title: checked } as Partial<FieldType>, formData);
+          }}
         >
-          <FeatureSwitch featureId="page-feature-page_scrolling" />
-        </Form.Item>
+          <Form.Item<FieldType> label="回到当前页" name="title_front">
+            <Input style={{ width: "50%" }} />
+          </Form.Item>
+          <Form.Item<FieldType> label="离开当前页" name="title_after">
+            <Input style={{ width: "50%" }} />
+          </Form.Item>
+        </ModuleRow>
+
+        <ModuleRow
+          title="顶部加载进度条"
+          description="火狐浏览器不显示"
+          featureId="page-feature-top_loading"
+          enabled={formData.top_loading as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ top_loading: checked } as Partial<FieldType>, formData);
+          }}
+        />
+
+        <ModuleRow
+          title="阅读进度条"
+          description="文章页面顶部显示阅读进度指示器，仅文章页展示"
+          featureId="page-feature-reading_progress"
+          enabled={formData.reading_progress as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ reading_progress: checked } as Partial<FieldType>, formData);
+          }}
+        >
+          <Form.Item<FieldType> label="进度条颜色" name="reading_progress_color">
+            <Input style={{ width: "30%" }} placeholder="#1677ff" />
+          </Form.Item>
+          <Form.Item<FieldType>
+            label="进度条高度"
+            name="reading_progress_height"
+            extra={"单位: 像素"}
+          >
+            <InputNumber addonAfter={"px"} style={{ width: "120px" }} min={1} max={10} />
+          </Form.Item>
+        </ModuleRow>
+
+        <ModuleRow
+          title="字体切换"
+          description="页面右下角添加字体切换按钮，支持多种字体切换"
+          featureId="page-feature-font_switch"
+          enabled={formData.font_switch as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ font_switch: checked } as Partial<FieldType>, formData);
+          }}
+        >
+          <Form.Item<FieldType>
+            label="字体列表"
+            name="fonts"
+            extra={"每行一个字体名称，用逗号分隔"}
+          >
+            <Input.TextArea rows={3} placeholder="Microsoft YaHei,Simsun,PingFang SC" />
+          </Form.Item>
+          <Form.Item<FieldType> label="按钮位置" name="font_position">
+            <Input style={{ width: "200px" }} placeholder="bottom-right" />
+          </Form.Item>
+        </ModuleRow>
+
+        <ModuleRow
+          title="全站变灰"
+          description="特殊时间下让网站变灰，有特别的意义"
+          featureId="page-feature-site_grey"
+          enabled={formData.site_grey as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ site_grey: checked } as Partial<FieldType>, formData);
+          }}
+          onDetails={() => window.open("https://www.npc.ink/14874.html", "_blank")}
+        />
+
+        <ModuleRow
+          title="平滑滚动"
+          description="让页面滚动起来更丝滑，部分浏览器不支持"
+          featureId="page-feature-page_scrolling"
+          enabled={formData.page_scrolling as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ page_scrolling: checked } as Partial<FieldType>, formData);
+          }}
+        />
 
         <Form.Item<FieldType>
           id="page-feature-particle"
@@ -207,9 +171,7 @@ const App: React.FC = () => {
           <FixedImage alists={bottomEffectList} />
         </Form.Item>
 
-        <Form.Item>
-          <h3 className="menu-header">美化</h3>
-        </Form.Item>
+        <h3 className="menu-header">美化</h3>
 
         <Form.Item<FieldType>
           id="page-feature-scrol"
@@ -227,85 +189,66 @@ const App: React.FC = () => {
           <FixedImage alists={scrollBarList} />
         </Form.Item>
 
-        <Form.Item>
-          <h3 className="menu-header">挂件</h3>
-        </Form.Item>
+        <h3 className="menu-header">挂件</h3>
 
-        <Form.Item<FieldType>
-          id="page-feature-screen_hair"
-          label="屏幕上的毛"
-          name="screen_hair"
-          valuePropName="checked"
-          extra={
-            <>
-              在网页上添加一根毛发，蛮有趣的，
-              <a href="https://mkblog.cn/2382/" target="_blank">
-                详情
-              </a>
-            </>
-          }
-        >
-          <FeatureSwitch featureId="page-feature-screen_hair" />
-        </Form.Item>
+        <ModuleRow
+          title="屏幕上的毛"
+          description="在网页上添加一根毛发，蛮有趣的"
+          featureId="page-feature-screen_hair"
+          enabled={formData.screen_hair as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ screen_hair: checked } as Partial<FieldType>, formData);
+          }}
+          onDetails={() => window.open("https://mkblog.cn/2382/", "_blank")}
+        />
 
-        <Form.Item<FieldType>
-          id="page-feature-lantern"
-          label="添加喜庆灯笼"
-          name="lantern"
-          valuePropName="checked"
-          extra={<>特殊时间下会有特别的意义，移动端不展示，</>}
+        <ModuleRow
+          title="添加喜庆灯笼"
+          description="特殊时间下会有特别的意义，移动端不展示"
+          featureId="page-feature-lantern"
+          enabled={formData.lantern as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ lantern: checked } as Partial<FieldType>, formData);
+          }}
         >
-          <FeatureSwitch featureId="page-feature-lantern" />
-        </Form.Item>
-        {formData.lantern && (
-          <>
-            <Form.Item<FieldType>
-              label="左"
-              name="lantern_left"
-              extra={<>展示在左边</>}
-            >
-              <Input style={{ width: "20%" }} />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="右"
-              name="lantern_right"
-              extra={<>展示在右边</>}
-            >
-              <Input style={{ width: "20%" }} />
-            </Form.Item>
-          </>
-        )}
+          <Form.Item<FieldType>
+            label="左"
+            name="lantern_left"
+            extra={<>展示在左边</>}
+          >
+            <Input style={{ width: "20%" }} />
+          </Form.Item>
+          <Form.Item<FieldType>
+            label="右"
+            name="lantern_right"
+            extra={<>展示在右边</>}
+          >
+            <Input style={{ width: "20%" }} />
+          </Form.Item>
+        </ModuleRow>
 
-        <Form.Item<FieldType>
-          id="page-feature-pixel_chicken"
-          label="像素小鸡"
-          name="pixel_chicken"
-          valuePropName="checked"
-          extra={
-            <>
-              页脚添加会动的像素小鸡和蘑菇，挺可爱的，移动端不显示。
-              <Preview title="像素小鸡" img={PixelChicken} />
-            </>
-          }
-        >
-          <FeatureSwitch featureId="page-feature-pixel_chicken" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="page-feature-past_books"
-          label="已读完的书"
-          name="past_books"
-          valuePropName="checked"
-          extra={
-            <>
-              页脚添加，统计您撰写的文章总字数，相当于那本书。
-              <a href="https://www.npc.ink/276901.html" target="_blank">
-                详细信息
-              </a>
-            </>
-          }
-        >
-          <FeatureSwitch featureId="page-feature-past_books" />
-        </Form.Item>
+        <ModuleRow
+          title="像素小鸡"
+          description="页脚添加会动的像素小鸡和蘑菇，挺可爱的，移动端不显示"
+          featureId="page-feature-pixel_chicken"
+          enabled={formData.pixel_chicken as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ pixel_chicken: checked } as Partial<FieldType>, formData);
+          }}
+          preview={{ title: "像素小鸡", img: PixelChicken }}
+        />
+
+        <ModuleRow
+          title="已读完的书"
+          description="页脚添加，统计您撰写的文章总字数，相当于那本书"
+          featureId="page-feature-past_books"
+          enabled={formData.past_books as boolean}
+          onChange={(checked: boolean) => {
+            onValuesChange({ past_books: checked } as Partial<FieldType>, formData);
+          }}
+          onDetails={() => window.open("https://www.npc.ink/276901.html", "_blank")}
+        />
+
         <Form.Item<FieldType>
           id="page-feature-go_top"
           label="返回顶部"
@@ -324,7 +267,7 @@ const App: React.FC = () => {
           </Form.Item>
         )}
       </Form>
-    </>
+    </SettingsSection>
   );
 };
 

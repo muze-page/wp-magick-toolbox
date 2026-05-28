@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Segmented } from "antd";
 import ProviderConfig from "@/components/ai_review/provider_config";
 import AuditLog from "@/components/ai_review/audit_log";
 
@@ -7,34 +8,15 @@ const App: React.FC = () => {
 
   return (
     <>
-      <div style={{ marginBottom: 16, display: "flex", gap: 8 }}>
-        <button
-          onClick={() => setActiveSection("config")}
-          style={{
-            padding: "6px 16px",
-            border: "none",
-            borderRadius: 4,
-            cursor: "pointer",
-            background: activeSection === "config" ? "#1677ff" : "#f0f0f0",
-            color: activeSection === "config" ? "#fff" : "#333",
-          }}
-        >
-          审核配置
-        </button>
-        <button
-          onClick={() => setActiveSection("logs")}
-          style={{
-            padding: "6px 16px",
-            border: "none",
-            borderRadius: 4,
-            cursor: "pointer",
-            background: activeSection === "logs" ? "#1677ff" : "#f0f0f0",
-            color: activeSection === "logs" ? "#fff" : "#333",
-          }}
-        >
-          审核日志
-        </button>
-      </div>
+      <Segmented
+        options={[
+          { label: "审核配置", value: "config" },
+          { label: "审核日志", value: "logs" },
+        ]}
+        value={activeSection}
+        onChange={(val) => setActiveSection(val as "config" | "logs")}
+        style={{ marginBottom: 16 }}
+      />
 
       {activeSection === "config" && <ProviderConfig />}
       {activeSection === "logs" && <AuditLog />}

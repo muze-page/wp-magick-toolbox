@@ -68,24 +68,13 @@ class BaiduPushTest extends TestCase
         $this->assertLessThan($classEnd, $ajaxBatch, 'ajax_batch_push should be before class closing brace');
     }
 
-    public function test_no_duplicate_closing_brace_after_deprecated(): void
+    public function test_no_deprecated_ajax_hooks_in_run(): void
     {
         $file = dirname(__FILE__) . '/../../admin/partials/domestic/baidu_push/index.php';
         $content = file_get_contents($file);
 
-        $deprecatedEnd = strpos($content, "self::ajax_batch_push();");
-        $this->assertNotFalse($deprecatedEnd, 'ajax_batch_push_deprecated should call ajax_batch_push');
-
-        $afterDeprecated = substr($content, $deprecatedEnd + strlen("self::ajax_batch_push();"), 200);
-
-        $this->assertStringContainsString('public static function active_push(', $afterDeprecated,
-            'active_push should follow the deprecated method without extra closing braces');
-
-        $this->assertDoesNotMatchRegularExpression(
-            '/}\s*}\s*public static function active_push/',
-            $afterDeprecated,
-            'There should not be a double closing brace (class prematurely closed) before active_push'
-        );
+        $this->assertStringNotContainsString("wp_ajax_mabox_baidu_batch_push", $content);
+        $this->assertStringNotContainsString("ajax_batch_push_deprecated", $content);
     }
 
     public function test_run_hooks_active_push(): void
@@ -123,18 +112,17 @@ class BaiduPushTest extends TestCase
         $this->assertStringContainsString("current_user_can('manage_options')", $content);
     }
 
-    public function test_deprecated_function_exists(): void
+    public function test_deprecated_function_removed(): void
     {
-        $this->assertTrue(method_exists('MaBox_Domestic_Baidu_Push', 'ajax_batch_push_deprecated'));
+        $this->assertFalse(method_exists('MaBox_Domestic_Baidu_Push', 'ajax_batch_push_deprecated'));
     }
 
-    public function test_deprecated_calls_new_method(): void
+    public function test_no_deprecated_calls_in_file(): void
     {
         $file = dirname(__FILE__) . '/../../admin/partials/domestic/baidu_push/index.php';
         $content = file_get_contents($file);
 
-        $this->assertStringContainsString("_deprecated_function", $content);
-        $this->assertStringContainsString("self::ajax_batch_push()", $content);
+        $this->assertStringNotContainsString("_deprecated_function", $content);
     }
 
     public function test_rest_batch_push_method_exists(): void

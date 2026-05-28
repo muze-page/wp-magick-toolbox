@@ -3,6 +3,7 @@ import { aiReviewApi } from "@/api";
 import { Form, Input, Select, Button, message, Tag, Space, Card } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { AntConfig } from "@/tool/tool";
+import { SettingsSection } from "@/components/settings-ui";
 import FeatureSwitch from "@/basic/feature-switch";
 
 const fromConfig = AntConfig.from;
@@ -131,75 +132,73 @@ const App: React.FC = () => {
   };
 
   return (
-    <Form
-      name="ai_review_config"
-      labelCol={fromConfig.labelCol}
-      wrapperCol={fromConfig.wrapperCol}
-      style={{ maxWidth: fromConfig.maxWidth }}
-      initialValues={data}
-      autoComplete="off"
-      onValuesChange={onValuesChange}
-    >
-      <Form.Item extra="使用 AI 或规则自动审核评论，识别广告、灌水、敏感内容">
-        <h2>AI 审核助手</h2>
-      </Form.Item>
+    <SettingsSection title="AI 审核配置" description="使用 AI 或规则自动审核评论，识别广告、灌水、敏感内容">
+      <Form
+        name="ai_review_config"
+        labelCol={fromConfig.labelCol}
+        wrapperCol={fromConfig.wrapperCol}
+        style={{ maxWidth: fromConfig.maxWidth }}
+        initialValues={data}
+        autoComplete="off"
+        onValuesChange={onValuesChange}
+      >
+        <Form.Item label="启用审核" name="enabled" valuePropName="checked">
+          <FeatureSwitch featureId="ai-review-enabled" />
+        </Form.Item>
 
-      <Form.Item label="启用审核" name="enabled" valuePropName="checked">
-        <FeatureSwitch featureId="ai-review-enabled" />
-      </Form.Item>
-
-      {formData?.enabled && (
-        <>
-          <Form.Item label="审核引擎" name="provider">
-            <Select options={providerOptions} />
-          </Form.Item>
-
-          <Form.Item label="处理方式" name="mode">
-            <Select options={modeOptions} />
-          </Form.Item>
-
-          <Form.Item label="严格模式" name="strict_mode" valuePropName="checked" extra="开启后更严格地判定为不安全">
-            <FeatureSwitch featureId="ai-review-strict" />
-          </Form.Item>
-
-          <Card title="引擎配置" size="small" style={{ marginBottom: 16 }}>
-            {renderProviderConfig()}
-          </Card>
-
-          <Form.Item label="启用审核日志" name="log_enabled" valuePropName="checked">
-            <FeatureSwitch featureId="ai-review-log" />
-          </Form.Item>
-
-          {formData?.log_enabled && (
-            <Form.Item label="日志保留条数" name="log_max_entries">
-              <Input type="number" min={100} max={5000} />
+        {formData?.enabled && (
+          <>
+            <Form.Item label="审核引擎" name="provider">
+              <Select options={providerOptions} />
             </Form.Item>
-          )}
 
-          <Form.Item label=" " colon={false}>
-            <Button type="primary" onClick={handleTest} loading={testing}>
-              测试审核引擎
-            </Button>
-          </Form.Item>
+            <Form.Item label="处理方式" name="mode">
+              <Select options={modeOptions} />
+            </Form.Item>
 
-          {testResult && (
-            <Card title="测试结果" size="small">
-              <Space direction="vertical">
-                <div>当前引擎：{testResult.provider}</div>
-                <div>
-                  审核结果：
-                  <Tag color={testResult.result?.is_safe ? "green" : "red"}>
-                    {testResult.result?.is_safe ? "安全" : "不安全"}
-                  </Tag>
-                </div>
-                <div>置信度：{(testResult.result?.confidence * 100).toFixed(0)}%</div>
-                <div>原因：{testResult.result?.reason}</div>
-              </Space>
+            <Form.Item label="严格模式" name="strict_mode" valuePropName="checked" extra="开启后更严格地判定为不安全">
+              <FeatureSwitch featureId="ai-review-strict" />
+            </Form.Item>
+
+            <Card title="引擎配置" size="small" style={{ marginBottom: 16 }}>
+              {renderProviderConfig()}
             </Card>
-          )}
-        </>
-      )}
-    </Form>
+
+            <Form.Item label="启用审核日志" name="log_enabled" valuePropName="checked">
+              <FeatureSwitch featureId="ai-review-log" />
+            </Form.Item>
+
+            {formData?.log_enabled && (
+              <Form.Item label="日志保留条数" name="log_max_entries">
+                <Input type="number" min={100} max={5000} />
+              </Form.Item>
+            )}
+
+            <Form.Item label=" " colon={false}>
+              <Button type="primary" onClick={handleTest} loading={testing}>
+                测试审核引擎
+              </Button>
+            </Form.Item>
+
+            {testResult && (
+              <Card title="测试结果" size="small">
+                <Space direction="vertical">
+                  <div>当前引擎：{testResult.provider}</div>
+                  <div>
+                    审核结果：
+                    <Tag color={testResult.result?.is_safe ? "green" : "red"}>
+                      {testResult.result?.is_safe ? "安全" : "不安全"}
+                    </Tag>
+                  </div>
+                  <div>置信度：{(testResult.result?.confidence * 100).toFixed(0)}%</div>
+                  <div>原因：{testResult.result?.reason}</div>
+                </Space>
+              </Card>
+            )}
+          </>
+        )}
+      </Form>
+    </SettingsSection>
   );
 };
 

@@ -5,7 +5,7 @@ import { DataContext } from "@/tool/dataContext";
 import { AntConfig } from "@/tool/tool";
 import { searchHealthApi } from "@/api";
 import { SearchHealthSummary } from "@/tool/interface";
-import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
 const fromConfig = AntConfig.from;
 
@@ -117,37 +117,50 @@ const App: React.FC = () => {
   }, [formData]);
 
   return (
-    <Form
-      name="search_enhance"
-      labelCol={fromConfig.labelCol}
-      wrapperCol={fromConfig.wrapperCol}
-      style={{ maxWidth: fromConfig.maxWidth }}
-      initialValues={publicData}
-      autoComplete="off"
-      onValuesChange={onValuesChange}
-    >
-      <Form.Item extra={"站内搜索体验增强"}>
-        <h2>站内搜索增强</h2>
-      </Form.Item>
+    <SettingsSection title="搜索增强" description="站内搜索体验增强">
+      <Form
+        name="search_enhance"
+        labelCol={fromConfig.labelCol}
+        wrapperCol={fromConfig.wrapperCol}
+        style={{ maxWidth: fromConfig.maxWidth }}
+        initialValues={publicData}
+        autoComplete="off"
+        onValuesChange={onValuesChange}
+      >
+        <ModuleRow
+          title="关键词高亮"
+          featureId="performance-search_enhance-highlight_enabled"
+          enabled={!!formData.highlight_enabled}
+          onChange={(checked) => {
+            setFormData((prev: any) => ({ ...prev, highlight_enabled: checked }));
+          }}
+        />
 
-      <Form.Item label="关键词高亮" name="highlight_enabled" valuePropName="checked">
-        <FeatureSwitch featureId="performance-search_enhance-highlight_enabled" />
-      </Form.Item>
+        <ModuleRow
+          title="无结果推荐"
+          description="搜索无结果时显示热门标签"
+          featureId="performance-search_enhance-recommend_enabled"
+          enabled={!!formData.recommend_enabled}
+          onChange={(checked) => {
+            setFormData((prev: any) => ({ ...prev, recommend_enabled: checked }));
+          }}
+        />
 
-      <Form.Item label="无结果推荐" name="recommend_enabled" valuePropName="checked"
-        extra="搜索无结果时显示热门标签">
-        <FeatureSwitch featureId="performance-search_enhance-recommend_enabled" />
-      </Form.Item>
+        <ModuleRow
+          title="热词统计"
+          description="记录搜索热词（后台可查看）"
+          featureId="performance-search_enhance-hotwords_enabled"
+          enabled={!!formData.hotwords_enabled}
+          onChange={(checked) => {
+            setFormData((prev: any) => ({ ...prev, hotwords_enabled: checked }));
+          }}
+        />
 
-      <Form.Item label="热词统计" name="hotwords_enabled" valuePropName="checked"
-        extra="记录搜索热词（后台可查看）">
-        <FeatureSwitch featureId="performance-search_enhance-hotwords_enabled" />
-      </Form.Item>
-
-      <Form.Item wrapperCol={{ offset: fromConfig.labelCol.span, span: fromConfig.wrapperCol.span }}>
-        <SearchHealthPanel />
-      </Form.Item>
-    </Form>
+        <Form.Item wrapperCol={{ offset: fromConfig.labelCol.span, span: fromConfig.wrapperCol.span }}>
+          <SearchHealthPanel />
+        </Form.Item>
+      </Form>
+    </SettingsSection>
   );
 };
 

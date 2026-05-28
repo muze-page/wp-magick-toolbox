@@ -95,7 +95,7 @@ if (!class_exists('MaBox_Census_Single')) {
                 <!--标题-->
                 <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
                 <!--展示内容-->
-                <div id="MaBox_b2_shop_count"></div>
+                <div id="mabox_census_count"></div>
 
                 <!--在保存设置时调用WordPress函数以呈现错误。 -->
                 <?php settings_errors(); ?>

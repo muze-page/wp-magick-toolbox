@@ -1,4 +1,3 @@
-//页面
 import { Anchor, Affix } from "antd";
 import Comment from "@/components/page/comment";
 import Feature from "@/components/page/feature";
@@ -33,20 +32,16 @@ const App: React.FC = () => {
         <Anchor direction="horizontal" targetOffset={150} items={menuList} className="bg-[#f5f5f5]"/>
       </Affix>
       <div id="part-1">
-        <Feature /> {/**外观 */}
+        <Feature />
       </div>
       <div id="part-2">
         <Jurisdiction />
-        {/**权限 */}
       </div>
-
       <div id="part-3">
         <Function />
-        {/**功能 */}
       </div>
-
       <div id="part-4">
-        <Comment /> {/**评论 */}
+        <Comment />
       </div>
     </>
   );

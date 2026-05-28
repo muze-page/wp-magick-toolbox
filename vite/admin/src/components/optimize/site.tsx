@@ -1,4 +1,3 @@
-//站点 - 模版
 import React from "react";
 import { useState, useContext, useEffect } from "react";
 import { Form, Input } from "antd";
@@ -6,25 +5,19 @@ import { DataContext } from "@/tool/dataContext";
 import { OptimizeSite } from "@/tool/interface";
 import { defaultVarOption } from "@/tool/defaultVar";
 import { AntConfig } from "@/tool/tool";
-import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow, RiskNotice } from "@/components/settings-ui";
 
-//选项类型
 type FieldType = OptimizeSite;
 
-//Ant 组件配置
 const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
-  //拿到默认选项值和修改方法
   const { optionData, updateOption } = useContext(DataContext);
 
-  //简化并提供默认值
   const publicData = optionData.optimize?.site || defaultVarOption.optimize.site;
 
-  //创建变量并设默认值
   const [formData, setFormData] = useState(publicData || {});
 
-  //表单同步修改值
   const onValuesChange = (
     changedValues: Partial<FieldType>,
     _allValues: FieldType
@@ -35,130 +28,93 @@ const App: React.FC = () => {
     }));
   };
 
-  //表单值发生变化时更新选项值
   useEffect(() => {
     updateOption("optimize", "site", formData);
   }, [formData]);
 
   return (
-    <>
+    <SettingsSection title="站点" description="站点基础优化设置">
       <Form
         name="site"
         labelCol={fromConfig.labelCol}
         wrapperCol={fromConfig.wrapperCol}
         style={{ maxWidth: fromConfig.maxWidth }}
-        //表单默认值，只有初始化以及重置时生效
         initialValues={publicData}
-        //自动填充功能禁用
         autoComplete="off"
-        //指定当表单提交时要执行的回调函数
         onFinish={() => {}}
-        //指定当表单字段值发生变化时要执行的回调函数
         onValuesChange={onValuesChange}
       >
-        <Form.Item>
-          <h2>站点</h2>
-        </Form.Item>
-
-        <Form.Item<FieldType>
-          id="optimize-site-hide_top_toolbar"
-          label="隐藏顶部工具条"
-          name="hide_top_toolbar"
-          valuePropName="checked"
-          extra={"WordPress、主题和插件不再提示更新"}
-        >
-          <FeatureSwitch featureId="optimize-site-hide_top_toolbar" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="optimize-site-renew"
-          label="禁用自动更新"
-          name="renew"
-          valuePropName="checked"
-          extra={"WordPress、主题和插件不再提示更新"}
-        >
-          <FeatureSwitch featureId="optimize-site-renew" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="optimize-site-remove_RSS_version"
-          label="移除版本信息"
-          name="remove_RSS_version"
-          valuePropName="checked"
-          extra={
-            "从RSS源和网站中删除WordPress版本信息，如果您无法保持您的WordPres版本为最新，推荐开启"
-          }
-        >
-          <FeatureSwitch featureId="optimize-site-remove_RSS_version" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="optimize-site-no_escape"
-          label={'禁止title中的 "-" 被转义'}
-          name="no_escape"
-          valuePropName="checked"
-          extra={"让网页标题符号正常显示"}
-        >
-          <FeatureSwitch featureId="optimize-site-no_escape" />
-        </Form.Item>
-
-        <Form.Item<FieldType>
-          id="optimize-site-category_link_simplify"
-          label="分类链接简化"
-          name="category_link_simplify"
-          valuePropName="checked"
-          extra={"去掉分类目录链接中的 category 字符。"}
-        >
-          <FeatureSwitch featureId="optimize-site-category_link_simplify" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="optimize-site-search_link_simplify"
-          label="搜索链接优化"
-          name="search_link_simplify"
-          valuePropName="checked"
-          extra={
-            <>
-              <code>?s=关键词</code>改为<code>域名/search/关键词</code>
-            </>
-          }
-        >
-          <FeatureSwitch featureId="optimize-site-search_link_simplify" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="optimize-site-remove_sitemap_users"
-          label="安全 - 移除 wp-sitemap-users"
-          name="remove_sitemap_users"
-          valuePropName="checked"
-          extra={"移除原生站点地图中的用户信息部分，可减少用户信息暴露风险"}
-        >
-          <FeatureSwitch featureId="optimize-site-remove_sitemap_users" />
-        </Form.Item>
-        <Form.Item<FieldType>
-          id="optimize-site-user_list_show_nickname"
-          label="用户列表展示昵称"
-          name="user_list_show_nickname"
-          valuePropName="checked"
-          extra={"移除原生站点地图中的用户信息部分，可减少用户信息暴露风险"}
-        >
-          <FeatureSwitch featureId="optimize-site-user_list_show_nickname" />
-        </Form.Item>
-
-        <Form.Item<FieldType>
-          id="optimize-site-cdn_replace"
-          label="国内 CDN 替换"
-          name="cdn_replace"
-          valuePropName="checked"
-          extra={"将 WordPress 加载的国外资源替换为国内 CDN 镜像，提升国内访问速度"}
-        >
-          <FeatureSwitch featureId="optimize-site-cdn_replace" />
-        </Form.Item>
-
-        <Form.Item<FieldType>
-          id="optimize-site-cdn_gravatar"
-          label="Gravatar 头像替换"
-          name="cdn_gravatar"
-          valuePropName="checked"
-          extra={"将 gravatar.com 替换为国内镜像，解决头像无法加载的问题"}
-        >
-          <FeatureSwitch featureId="optimize-site-cdn_gravatar" />
-        </Form.Item>
+        <ModuleRow
+          title="隐藏顶部工具条"
+          description="WordPress、主题和插件不再提示更新"
+          featureId="optimize-site-hide_top_toolbar"
+          enabled={formData.hide_top_toolbar as boolean}
+          onChange={(checked: boolean) => onValuesChange({ hide_top_toolbar: checked } as Partial<FieldType>, formData)}
+        />
+        <RiskNotice warning="禁用自动更新可能导致安全风险" suggestion="建议仅在测试环境使用" />
+        <ModuleRow
+          title="禁用自动更新"
+          description="WordPress、主题和插件不再提示更新"
+          featureId="optimize-site-renew"
+          enabled={formData.renew as boolean}
+          onChange={(checked: boolean) => onValuesChange({ renew: checked } as Partial<FieldType>, formData)}
+        />
+        <ModuleRow
+          title="移除版本信息"
+          description="从RSS源和网站中删除WordPress版本信息，如果您无法保持您的WordPres版本为最新，推荐开启"
+          featureId="optimize-site-remove_RSS_version"
+          enabled={formData.remove_RSS_version as boolean}
+          onChange={(checked: boolean) => onValuesChange({ remove_RSS_version: checked } as Partial<FieldType>, formData)}
+        />
+        <ModuleRow
+          title={'禁止title中的 "-" 被转义'}
+          description="让网页标题符号正常显示"
+          featureId="optimize-site-no_escape"
+          enabled={formData.no_escape as boolean}
+          onChange={(checked: boolean) => onValuesChange({ no_escape: checked } as Partial<FieldType>, formData)}
+        />
+        <ModuleRow
+          title="分类链接简化"
+          description="去掉分类目录链接中的 category 字符。"
+          featureId="optimize-site-category_link_simplify"
+          enabled={formData.category_link_simplify as boolean}
+          onChange={(checked: boolean) => onValuesChange({ category_link_simplify: checked } as Partial<FieldType>, formData)}
+        />
+        <ModuleRow
+          title="搜索链接优化"
+          description='将 ?s=关键词 改为 域名/search/关键词'
+          featureId="optimize-site-search_link_simplify"
+          enabled={formData.search_link_simplify as boolean}
+          onChange={(checked: boolean) => onValuesChange({ search_link_simplify: checked } as Partial<FieldType>, formData)}
+        />
+        <ModuleRow
+          title="安全 - 移除 wp-sitemap-users"
+          description="移除原生站点地图中的用户信息部分，可减少用户信息暴露风险"
+          featureId="optimize-site-remove_sitemap_users"
+          enabled={formData.remove_sitemap_users as boolean}
+          onChange={(checked: boolean) => onValuesChange({ remove_sitemap_users: checked } as Partial<FieldType>, formData)}
+        />
+        <ModuleRow
+          title="用户列表展示昵称"
+          description="移除原生站点地图中的用户信息部分，可减少用户信息暴露风险"
+          featureId="optimize-site-user_list_show_nickname"
+          enabled={formData.user_list_show_nickname as boolean}
+          onChange={(checked: boolean) => onValuesChange({ user_list_show_nickname: checked } as Partial<FieldType>, formData)}
+        />
+        <ModuleRow
+          title="国内 CDN 替换"
+          description="将 WordPress 加载的国外资源替换为国内 CDN 镜像，提升国内访问速度"
+          featureId="optimize-site-cdn_replace"
+          enabled={formData.cdn_replace as boolean}
+          onChange={(checked: boolean) => onValuesChange({ cdn_replace: checked } as Partial<FieldType>, formData)}
+        />
+        <ModuleRow
+          title="Gravatar 头像替换"
+          description="将 gravatar.com 替换为国内镜像，解决头像无法加载的问题"
+          featureId="optimize-site-cdn_gravatar"
+          enabled={formData.cdn_gravatar as boolean}
+          onChange={(checked: boolean) => onValuesChange({ cdn_gravatar: checked } as Partial<FieldType>, formData)}
+        />
 
         <Form.Item<FieldType>
           label="Gravatar 镜像地址"
@@ -168,15 +124,13 @@ const App: React.FC = () => {
           <Input placeholder="gravatar.loli.net/avatar/" />
         </Form.Item>
 
-        <Form.Item<FieldType>
-          id="optimize-site-cdn_google_fonts"
-          label="Google Fonts 替换"
-          name="cdn_google_fonts"
-          valuePropName="checked"
-          extra={"将 fonts.googleapis.com 替换为国内镜像"}
-        >
-          <FeatureSwitch featureId="optimize-site-cdn_google_fonts" />
-        </Form.Item>
+        <ModuleRow
+          title="Google Fonts 替换"
+          description="将 fonts.googleapis.com 替换为国内镜像"
+          featureId="optimize-site-cdn_google_fonts"
+          enabled={formData.cdn_google_fonts as boolean}
+          onChange={(checked: boolean) => onValuesChange({ cdn_google_fonts: checked } as Partial<FieldType>, formData)}
+        />
 
         <Form.Item<FieldType>
           label="Google Fonts 镜像地址"
@@ -186,15 +140,13 @@ const App: React.FC = () => {
           <Input placeholder="fonts.loli.net" />
         </Form.Item>
 
-        <Form.Item<FieldType>
-          id="optimize-site-cdn_google_ajax"
-          label="Google Ajax 替换"
-          name="cdn_google_ajax"
-          valuePropName="checked"
-          extra={"将 ajax.googleapis.com 替换为 ajax.loli.net"}
-        >
-          <FeatureSwitch featureId="optimize-site-cdn_google_ajax" />
-        </Form.Item>
+        <ModuleRow
+          title="Google Ajax 替换"
+          description="将 ajax.googleapis.com 替换为 ajax.loli.net"
+          featureId="optimize-site-cdn_google_ajax"
+          enabled={formData.cdn_google_ajax as boolean}
+          onChange={(checked: boolean) => onValuesChange({ cdn_google_ajax: checked } as Partial<FieldType>, formData)}
+        />
 
         <Form.Item<FieldType>
           label="自定义 CDN 替换"
@@ -204,17 +156,15 @@ const App: React.FC = () => {
           <Input.TextArea rows={4} placeholder={"example.com/cdn/ => cdn.example.com/"} />
         </Form.Item>
 
-        <Form.Item<FieldType>
-          id="optimize-site-hide_email_ip"
-          label="隐藏邮件中的 IP"
-          name="hide_email_ip"
-          valuePropName="checked"
-          extra={"在 WordPress 发送的邮件中隐藏 IP 地址，保护用户隐私"}
-        >
-          <FeatureSwitch featureId="optimize-site-hide_email_ip" />
-        </Form.Item>
+        <ModuleRow
+          title="隐藏邮件中的 IP"
+          description="在 WordPress 发送的邮件中隐藏 IP 地址，保护用户隐私"
+          featureId="optimize-site-hide_email_ip"
+          enabled={formData.hide_email_ip as boolean}
+          onChange={(checked: boolean) => onValuesChange({ hide_email_ip: checked } as Partial<FieldType>, formData)}
+        />
       </Form>
-    </>
+    </SettingsSection>
   );
 };
 

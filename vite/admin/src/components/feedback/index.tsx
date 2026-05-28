@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { feedbackApi } from "@/api";
-import { Form, Input, Select, Button, message, Card, Statistic, Row, Col } from "antd";
+import { Form, Input, Select, Button, message, Card, Statistic, Row, Col, Segmented } from "antd";
 import { SendOutlined } from "@ant-design/icons";
 import { DataContext } from "@/tool/dataContext";
 import { AntConfig } from "@/tool/tool";
@@ -73,28 +73,16 @@ const App: React.FC = () => {
 
   return (
     <>
-      <div style={{ marginBottom: 16, display: "flex", gap: 8 }}>
-        {[
-          { key: "submit" as const, label: "提交反馈" },
-          { key: "settings" as const, label: "反馈设置" },
-          { key: "insights" as const, label: "数据洞察" },
-        ].map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            style={{
-              padding: "6px 16px",
-              border: "none",
-              borderRadius: 4,
-              cursor: "pointer",
-              background: activeTab === tab.key ? "#1677ff" : "#f0f0f0",
-              color: activeTab === tab.key ? "#fff" : "#333",
-            }}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <Segmented
+        options={[
+          { label: "提交反馈", value: "submit" },
+          { label: "反馈设置", value: "settings" },
+          { label: "数据洞察", value: "insights" },
+        ]}
+        value={activeTab}
+        onChange={(val) => setActiveTab(val as any)}
+        style={{ marginBottom: 16 }}
+      />
 
       {activeTab === "submit" && (
         <Card title="提交反馈" extra="反馈将自动附带环境信息（WordPress 版本、PHP 版本、主题等）">

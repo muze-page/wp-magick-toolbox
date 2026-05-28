@@ -11,7 +11,6 @@ const Dashboard = lazy(() => import("@/components/dashboard/index"));
 const Page = lazy(() => import("@/components/page/index"));
 const Optimize = lazy(() => import("@/components/optimize/index"));
 const Login = lazy(() => import("@/components/login/index"));
-const H5 = lazy(() => import("@/components/h5/index"));
 const Function = lazy(() => import("@/components/function/index"));
 const Shortcode = lazy(() => import("@/components/shortcode/index"));
 const Template = lazy(() => import("@/components/template/index"));
@@ -52,7 +51,6 @@ const navGroups: NavGroup[] = [
     groupLabel: "内容与页面",
     items: [
       { key: "1", label: "页面", icon: "dashicons-admin-page", component: Page },
-      { key: "4", label: "H5", icon: "dashicons-smartphone", component: H5 },
       { key: "7", label: "短代码", icon: "dashicons-editor-code", component: Shortcode },
       { key: "8", label: "页面模板", icon: "dashicons-layout", component: Template },
     ],
@@ -193,9 +191,11 @@ const App: React.FC = () => {
                   </small>
                 </h1>
               </div>
-              <div className="mabox-header-center">
-                <FeatureSearch onNavigate={handleSearchNavigate} style={{ maxWidth: isMobile ? "100%" : 280 }} />
-              </div>
+              {!isMobile && (
+                <div className="mabox-header-center">
+                  <FeatureSearch onNavigate={handleSearchNavigate} style={{ maxWidth: 280 }} />
+                </div>
+              )}
               <div className="mabox-header-right">
                 <Dropdown menu={helpDropdownItems} placement="bottomRight">
                   <Button type="text" icon={<QuestionCircleOutlined />} className="mabox-help-btn">
@@ -208,6 +208,11 @@ const App: React.FC = () => {
           </Affix>
 
           <div className="mabox-body">
+            {isMobile && (
+              <div className="mabox-mobile-search">
+                <FeatureSearch onNavigate={handleSearchNavigate} style={{ maxWidth: "100%" }} />
+              </div>
+            )}
             {isMobile && (
               <button
                 className="mabox-mobile-toggle"

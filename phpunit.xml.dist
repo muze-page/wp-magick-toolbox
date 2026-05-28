@@ -19,9 +19,6 @@
             <directory suffix=".php">./includes</directory>
             <file>magick-tool-box.php</file>
         </include>
-        <exclude>
-            <directory suffix=".php">./admin/partials/function/b2</directory>
-        </exclude>
     </coverage>
 
     <php>

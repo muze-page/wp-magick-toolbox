@@ -70,13 +70,6 @@ class MaBox_Admin
         //加载菜单用的 CSS 和 JS 资源
         add_action('admin_enqueue_scripts', array(__CLASS__, 'load_admin_script'));
 
-        // 添加Ajax请求处理函数
-        // add_action('wp_ajax_save_option_wmt', array(__CLASS__, 'save_option_wmt_callback')); // @deprecated 2.5.0 已迁移至 REST API
-
-        // 设置导入导出
-        // add_action('wp_ajax_export_settings', array(__CLASS__, 'export_settings_callback')); // @deprecated 2.5.0 已迁移至 REST API
-        // add_action('wp_ajax_import_settings', array(__CLASS__, 'import_settings_callback')); // @deprecated 2.5.0 已迁移至 REST API
-
         // 注册 REST API 端点
         add_action('rest_api_init', array(__CLASS__, 'register_rest_routes'));
     }

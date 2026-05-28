@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Form, Button, List, Alert, message } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { AntConfig } from "@/tool/tool";
-import FeatureSwitch from "@/basic/feature-switch";
+import { SettingsSection, ModuleRow } from "@/components/settings-ui";
 
 const fromConfig = AntConfig.from;
 
@@ -63,47 +63,51 @@ const App: React.FC = () => {
   };
 
   return (
-    <Form
-      name="seo_checker"
-      labelCol={fromConfig.labelCol}
-      wrapperCol={fromConfig.wrapperCol}
-      style={{ maxWidth: fromConfig.maxWidth }}
-      initialValues={publicData}
-      autoComplete="off"
-      onValuesChange={onValuesChange}
-    >
-      <Form.Item extra={"SEO 健康度检查"}>
-        <h2>SEO 检查助手</h2>
-      </Form.Item>
+    <SettingsSection title="SEO 检查助手" description="SEO 健康度检查">
+      <Form
+        name="seo_checker"
+        labelCol={fromConfig.labelCol}
+        wrapperCol={fromConfig.wrapperCol}
+        style={{ maxWidth: fromConfig.maxWidth }}
+        initialValues={publicData}
+        autoComplete="off"
+        onValuesChange={onValuesChange}
+      >
+        <ModuleRow
+          title="启用 SEO 检查"
+          description="定期检查网站 SEO 健康度"
+          featureId="performance-seo_checker-enabled"
+          enabled={!!formData.enabled}
+          onChange={(checked) => {
+            setFormData((prev: any) => ({ ...prev, enabled: checked }));
+          }}
+        />
 
-      <Form.Item label="启用" name="enabled" valuePropName="checked">
-        <FeatureSwitch featureId="performance-seo_checker-enabled" />
-      </Form.Item>
-
-      <Form.Item wrapperCol={fromConfig.wrapperCol}>
-        <Button type="primary" onClick={handleCheck} loading={checking}>
-          开始检查
-        </Button>
-        <Button style={{ marginLeft: 8 }} onClick={handleFixAlt}>
-          一键补全 Alt
-        </Button>
-      </Form.Item>
-
-      {issues.length > 0 && (
         <Form.Item wrapperCol={fromConfig.wrapperCol}>
-          <Alert message={"发现 " + issues.length + " 个问题"} type="warning" />
-          <List
-            size="small"
-            dataSource={issues}
-            renderItem={(item: any) => (
-              <List.Item>
-                <strong>{item.type}：</strong>{item.message}
-              </List.Item>
-            )}
-          />
+          <Button type="primary" onClick={handleCheck} loading={checking}>
+            开始检查
+          </Button>
+          <Button style={{ marginLeft: 8 }} onClick={handleFixAlt}>
+            一键补全 Alt
+          </Button>
         </Form.Item>
-      )}
-    </Form>
+
+        {issues.length > 0 && (
+          <Form.Item wrapperCol={fromConfig.wrapperCol}>
+            <Alert message={"发现 " + issues.length + " 个问题"} type="warning" />
+            <List
+              size="small"
+              dataSource={issues}
+              renderItem={(item: any) => (
+                <List.Item>
+                  <strong>{item.type}：</strong>{item.message}
+                </List.Item>
+              )}
+            />
+          </Form.Item>
+        )}
+      </Form>
+    </SettingsSection>
   );
 };
 
