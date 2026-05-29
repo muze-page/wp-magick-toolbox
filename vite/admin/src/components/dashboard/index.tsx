@@ -16,6 +16,7 @@ import {
   Badge,
   Input,
   Alert,
+  Switch,
 } from "antd";
 import {
   SafetyOutlined,
@@ -27,11 +28,12 @@ import {
   FileTextOutlined,
   RocketOutlined,
   SearchOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
 import { DataContext, serverDefaults } from "@/tool/dataContext";
 import { saveOption } from "@/axios/save";
 import { diagnosticsApi, searchHealthApi, settingsApi } from "@/api";
-import { DiagnosticSummary, DiagnosticItem, SearchHealthSummary } from "@/tool/interface";
+import { DiagnosticSummary, DiagnosticItem, DiagnosticFixSuggestion, SearchHealthSummary } from "@/tool/interface";
 import { getAllPresets, Preset, saveCustomPreset, deleteCustomPreset } from "@/tool/presets";
 import { getSnapshots, deleteSnapshot, restoreSnapshot, clearSnapshots, Snapshot, getDefaultConfig } from "@/tool/snapshot";
 import { Dropdown } from "antd";
@@ -230,6 +232,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [searchHealthError, setSearchHealthError] = useState(false);
   const [wizardVisible, setWizardVisible] = useState(false);
   const [wizardCompleted, setWizardCompleted] = useState(false);
+  const [fixModalVisible, setFixModalVisible] = useState(false);
+  const [selectedFixIds, setSelectedFixIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     setDiagnosticLoading(true);
@@ -361,18 +365,37 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     const lines: string[] = [];
     lines.push("# WP Magick Toolbox 诊断报告");
     lines.push("");
-    lines.push(`- 生成时间：${new Date().toLocaleString()}`);
+    lines.push(`- 生成时间：${diagnosticSummary.generated_at || new Date().toLocaleString()}`);
     lines.push(`- 体检评分：${diagnosticSummary.score} / 100`);
     lines.push(`- 总体状态：${diagnosticSummary.status === "good" ? "优秀" : diagnosticSummary.status === "warning" ? "良好" : "需优化"}`);
     lines.push("");
 
     lines.push("## 环境信息");
-    const envItem = diagnosticSummary.items?.find((i: DiagnosticItem) => i.id === "php_version");
-    if (envItem) lines.push(`- PHP 版本：${envItem.message}`);
-    const wpItem = diagnosticSummary.items?.find((i: DiagnosticItem) => i.id === "wp_version");
-    if (wpItem) lines.push(`- WordPress 版本：${wpItem.message}`);
-    const moduleItem = diagnosticSummary.items?.find((i: DiagnosticItem) => i.id === "module_count");
-    if (moduleItem) lines.push(`- ${moduleItem.message}`);
+    if (diagnosticSummary.environment) {
+      lines.push(`- PHP 版本：${diagnosticSummary.environment.php_version}`);
+      lines.push(`- WordPress 版本：${diagnosticSummary.environment.wp_version}`);
+      lines.push(`- 插件版本：${diagnosticSummary.environment.plugin_version}`);
+      lines.push(`- 固定链接：${diagnosticSummary.environment.permalink || "默认"}`);
+      lines.push(`- 对象缓存：${diagnosticSummary.environment.object_cache ? "已启用" : "未启用"}`);
+      lines.push(`- REST API：${diagnosticSummary.environment.rest_api_available ? "正常" : "不可用"}`);
+      lines.push(`- 站点地址：${diagnosticSummary.environment.site_url}`);
+    } else {
+      const envItem = diagnosticSummary.items?.find((i: DiagnosticItem) => i.id === "php_version");
+      if (envItem) lines.push(`- PHP 版本：${envItem.message}`);
+      const wpItem = diagnosticSummary.items?.find((i: DiagnosticItem) => i.id === "wp_version");
+      if (wpItem) lines.push(`- WordPress 版本：${wpItem.message}`);
+      const moduleItem = diagnosticSummary.items?.find((i: DiagnosticItem) => i.id === "module_count");
+      if (moduleItem) lines.push(`- ${moduleItem.message}`);
+    }
+    lines.push("");
+
+    lines.push("## 体检项");
+    if (diagnosticSummary.items) {
+      diagnosticSummary.items.forEach((item: DiagnosticItem) => {
+        const statusLabel = item.status === "good" ? "✓" : item.status === "warning" ? "⚠" : "✗";
+        lines.push(`- ${statusLabel} **${item.title}**：${item.message}`);
+      });
+    }
     lines.push("");
 
     if (diagnosticSummary.risks && diagnosticSummary.risks.length > 0) {
@@ -380,6 +403,17 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       diagnosticSummary.risks.forEach((risk: any) => {
         lines.push(`- **${risk.title}**（${risk.tier}）`);
         lines.push(`  ${risk.message}`);
+      });
+      lines.push("");
+    }
+
+    if (diagnosticSummary.fix_suggestions && diagnosticSummary.fix_suggestions.length > 0) {
+      lines.push("## 可一键修复的建议");
+      diagnosticSummary.fix_suggestions.forEach((fix: DiagnosticFixSuggestion) => {
+        lines.push(`- **${fix.title}**：${fix.reason}`);
+        fix.changes.forEach((change) => {
+          lines.push(`  - ${change.label}：${JSON.stringify(change.before)} → ${JSON.stringify(change.after)}（风险：${change.risk_level}）`);
+        });
       });
       lines.push("");
     }
@@ -400,6 +434,23 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       lines.push("");
     }
 
+    if (searchHealth && searchHealth.total_searches > 0) {
+      lines.push("## 搜索健康摘要");
+      lines.push(`- 统计范围：近 ${searchHealth.range_days} 天`);
+      lines.push(`- 总搜索量：${searchHealth.total_searches}`);
+      lines.push(`- 唯一关键词：${searchHealth.unique_terms}`);
+      const noResultTotal = searchHealth.no_result_terms.reduce((s, t) => s + t.no_result_count, 0);
+      const ratio = searchHealth.total_searches > 0 ? Math.round((noResultTotal / searchHealth.total_searches) * 100) : 0;
+      lines.push(`- 无结果比例：${ratio}%`);
+      if (searchHealth.top_terms.length > 0) {
+        lines.push("- 热门搜索词：" + searchHealth.top_terms.slice(0, 10).map((t) => `${t.term}(${t.count})`).join("、"));
+      }
+      if (searchHealth.no_result_terms.length > 0) {
+        lines.push("- 无结果搜索词：" + searchHealth.no_result_terms.slice(0, 10).map((t) => `${t.term}(${t.no_result_count})`).join("、"));
+      }
+      lines.push("");
+    }
+
     lines.push("---");
     lines.push("*本报告由 WP Magick Toolbox 体检中心自动生成*");
     lines.push("*报告不含任何 API Key、Secret 等敏感信息*");
@@ -417,7 +468,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         },
       });
     }).catch(() => {
-      // 降级：下载为文件
       const blob = new Blob([reportText], { type: "text/markdown" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -427,6 +477,78 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       URL.revokeObjectURL(url);
       message.success("诊断报告已下载");
     });
+  };
+
+  const handleOpenFixModal = () => {
+    if (!diagnosticSummary?.fix_suggestions?.length) return;
+    setSelectedFixIds(new Set(diagnosticSummary.fix_suggestions.map((f) => f.id)));
+    setFixModalVisible(true);
+  };
+
+  const handleToggleFix = (fixId: string) => {
+    setSelectedFixIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(fixId)) {
+        next.delete(fixId);
+      } else {
+        next.add(fixId);
+      }
+      return next;
+    });
+  };
+
+  const handleApplyFixes = () => {
+    if (!diagnosticSummary?.fix_suggestions) return;
+
+    const selectedFixes = diagnosticSummary.fix_suggestions.filter((f) =>
+      selectedFixIds.has(f.id)
+    );
+
+    if (selectedFixes.length === 0) {
+      message.info("请至少选择一项修复建议");
+      return;
+    }
+
+    const hasHighRisk = selectedFixes.some((f) =>
+      f.changes.some((c) => c.risk_level === "high")
+    );
+
+    const doApply = () => {
+      const updates: Record<string, Record<string, any>> = {};
+      selectedFixes.forEach((fix) => {
+        fix.changes.forEach((change) => {
+          const parts = change.path.split(".");
+          if (parts.length >= 3) {
+            const father = parts[0];
+            const son = parts[1];
+            const fieldKey = parts.slice(2).join(".");
+            if (!updates[father]) updates[father] = {};
+            if (!updates[father][son]) updates[father][son] = { ...(optionData[father]?.[son] || {}) };
+            updates[father][son][fieldKey] = change.after;
+          }
+        });
+      });
+      Object.keys(updates).forEach((father) => {
+        Object.keys(updates[father]).forEach((son) => {
+          updateOption(father, son, updates[father][son]);
+        });
+      });
+      setFixModalVisible(false);
+      message.success(`已应用 ${selectedFixes.length} 项修复到当前配置，请点击保存生效`);
+    };
+
+    if (hasHighRisk) {
+      confirm({
+        title: "确认应用高风险修改？",
+        icon: <ExclamationCircleOutlined />,
+        content: "选中的修复中包含高风险变更，请确认您了解其影响。",
+        okText: "确认应用",
+        cancelText: "取消",
+        onOk: doApply,
+      });
+    } else {
+      doApply();
+    }
   };
 
   const handleRestoreModuleDefault = (moduleKey: string) => {
@@ -658,6 +780,16 @@ const diagnosticScore = diagnosticSummary?.score ?? 60;
                 </div>
                 <div style={{ marginTop: 8 }}>
                   <Space wrap>
+                    {diagnosticSummary?.fix_suggestions && diagnosticSummary.fix_suggestions.length > 0 && (
+                      <Button
+                        size="small"
+                        type="primary"
+                        icon={<CheckCircleOutlined />}
+                        onClick={handleOpenFixModal}
+                      >
+                        可一键优化 {diagnosticSummary.fix_suggestions.length} 项
+                      </Button>
+                    )}
                     <Button
                       size="small"
                       icon={<FileTextOutlined />}
@@ -1038,6 +1170,84 @@ const diagnosticScore = diagnosticSummary?.score ?? 60;
             />
           </div>
         </Space>
+      </Modal>
+
+      <Modal
+        title="一键优化预览"
+        open={fixModalVisible}
+        onCancel={() => setFixModalVisible(false)}
+        width={680}
+        footer={
+          <Space>
+            <Button onClick={() => setFixModalVisible(false)}>取消</Button>
+            <Button
+              type="primary"
+              onClick={handleApplyFixes}
+              disabled={selectedFixIds.size === 0}
+            >
+              应用选中项（{selectedFixIds.size}）
+            </Button>
+          </Space>
+        }
+      >
+        <div style={{ marginBottom: 12 }}>
+          <Text type="secondary">
+            以下修复建议将应用到当前配置，应用后需点击"保存更改"才会生效。
+          </Text>
+        </div>
+        <List
+          size="small"
+          dataSource={diagnosticSummary?.fix_suggestions || []}
+          renderItem={(fix: DiagnosticFixSuggestion) => {
+            const checked = selectedFixIds.has(fix.id);
+            return (
+              <List.Item
+                style={{ padding: "8px 0" }}
+                actions={[
+                  <Switch
+                    key="toggle"
+                    size="small"
+                    checked={checked}
+                    onChange={() => handleToggleFix(fix.id)}
+                  />,
+                ]}
+              >
+                <List.Item.Meta
+                  title={
+                    <span>
+                      {fix.title}
+                      {fix.changes.some((c) => c.risk_level === "high") && (
+                        <Tag color="red" style={{ marginLeft: 8 }}>高风险</Tag>
+                      )}
+                      {fix.changes.some((c) => c.risk_level === "low") && (
+                        <Tag color="blue" style={{ marginLeft: 8 }}>低风险</Tag>
+                      )}
+                    </span>
+                  }
+                  description={
+                    <div>
+                      <Text type="secondary" style={{ fontSize: 12 }}>{fix.reason}</Text>
+                      <div style={{ marginTop: 4 }}>
+                        {fix.changes.map((change) => (
+                          <div key={change.path} style={{ fontSize: 12, marginTop: 2 }}>
+                            <Text type="secondary">{change.label}：</Text>
+                            <Text code style={{ color: "#f5222d", fontSize: 11 }}>
+                              {JSON.stringify(change.before)}
+                            </Text>
+                            <Text type="secondary"> → </Text>
+                            <Text code style={{ color: "#52c41a", fontSize: 11 }}>
+                              {JSON.stringify(change.after)}
+                            </Text>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  }
+                />
+              </List.Item>
+            );
+          }}
+        />
       </Modal>
     </div>
   );

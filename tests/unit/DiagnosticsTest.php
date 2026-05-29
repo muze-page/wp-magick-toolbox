@@ -37,6 +37,9 @@ class DiagnosticsTest extends TestCase {
         $this->assertArrayHasKey('recommendations', $summary);
         $this->assertArrayHasKey('risks', $summary);
         $this->assertArrayHasKey('service_hints', $summary);
+        $this->assertArrayHasKey('generated_at', $summary);
+        $this->assertArrayHasKey('environment', $summary);
+        $this->assertArrayHasKey('fix_suggestions', $summary);
 
         $this->assertIsInt($summary['score']);
         $this->assertGreaterThanOrEqual(0, $summary['score']);
@@ -47,6 +50,151 @@ class DiagnosticsTest extends TestCase {
         $this->assertIsArray($summary['recommendations']);
         $this->assertIsArray($summary['risks']);
         $this->assertIsArray($summary['service_hints']);
+        $this->assertNotEmpty($summary['generated_at']);
+        $this->assertIsArray($summary['environment']);
+        $this->assertArrayHasKey('php_version', $summary['environment']);
+        $this->assertArrayHasKey('wp_version', $summary['environment']);
+        $this->assertArrayHasKey('plugin_version', $summary['environment']);
+        $this->assertArrayHasKey('site_url', $summary['environment']);
+        $this->assertIsArray($summary['fix_suggestions']);
+    }
+
+    /**
+     * 测试 fix_suggestions：空配置时生成首批修复建议
+     */
+    public function test_fix_suggestions_with_empty_config(): void {
+        $method = new ReflectionMethod('MaBox_Diagnostics', 'get_fix_suggestions');
+
+        $suggestions = $method->invoke(null, array());
+        $this->assertIsArray($suggestions);
+        $this->assertGreaterThanOrEqual(4, count($suggestions));
+
+        foreach ($suggestions as $suggestion) {
+            $this->assertArrayHasKey('id', $suggestion);
+            $this->assertArrayHasKey('title', $suggestion);
+            $this->assertArrayHasKey('reason', $suggestion);
+            $this->assertArrayHasKey('severity', $suggestion);
+            $this->assertArrayHasKey('module', $suggestion);
+            $this->assertArrayHasKey('requires_confirmation', $suggestion);
+            $this->assertArrayHasKey('changes', $suggestion);
+            $this->assertIsArray($suggestion['changes']);
+
+            foreach ($suggestion['changes'] as $change) {
+                $this->assertArrayHasKey('path', $change);
+                $this->assertArrayHasKey('label', $change);
+                $this->assertArrayHasKey('before', $change);
+                $this->assertArrayHasKey('after', $change);
+                $this->assertArrayHasKey('risk_level', $change);
+                $this->assertContains($change['risk_level'], array('none', 'low', 'high'));
+            }
+        }
+    }
+
+    /**
+     * 测试 fix_suggestions：完整推荐配置时为空
+     */
+    public function test_fix_suggestions_with_full_config(): void {
+        $method = new ReflectionMethod('MaBox_Diagnostics', 'get_fix_suggestions');
+
+        $config = array(
+            'optimize' => array(
+                'site'   => array('remove_RSS_version' => true, 'hide_top_toolbar' => true),
+                'medium' => array('img_add_tag' => true),
+            ),
+            'page'     => array('function' => array('search_limit' => true)),
+            'function' => array('seo' => array('seo_home' => true)),
+            'login'    => array('security' => array('login_code' => true)),
+            'performance' => array('search_enhance' => array('hotwords_enabled' => true)),
+        );
+
+        $suggestions = $method->invoke(null, $config);
+        $this->assertIsArray($suggestions);
+        $this->assertCount(0, $suggestions);
+    }
+
+    /**
+     * 测试 fix_suggestions.changes 的 before/after/path/risk_level 正确
+     */
+    public function test_fix_suggestion_change_values(): void {
+        $method = new ReflectionMethod('MaBox_Diagnostics', 'get_fix_suggestions');
+
+        $suggestions = $method->invoke(null, array());
+
+        $wp_version_fix = null;
+        foreach ($suggestions as $s) {
+            if ($s['id'] === 'fix_remove_wp_version') {
+                $wp_version_fix = $s;
+                break;
+            }
+        }
+
+        $this->assertNotNull($wp_version_fix);
+        $this->assertCount(1, $wp_version_fix['changes']);
+        $change = $wp_version_fix['changes'][0];
+        $this->assertEquals('optimize.site.remove_RSS_version', $change['path']);
+        $this->assertEquals(false, $change['before']);
+        $this->assertEquals(true, $change['after']);
+        $this->assertEquals('low', $change['risk_level']);
+    }
+
+    /**
+     * 测试登录验证码修复建议使用有效的验证码模式
+     */
+    public function test_fix_suggestion_login_code_uses_math_mode(): void {
+        $method = new ReflectionMethod('MaBox_Diagnostics', 'get_fix_suggestions');
+
+        $suggestions = $method->invoke(null, array());
+
+        $login_fix = null;
+        foreach ($suggestions as $s) {
+            if ($s['id'] === 'fix_login_code') {
+                $login_fix = $s;
+                break;
+            }
+        }
+
+        $this->assertNotNull($login_fix);
+        $this->assertEquals('login.security.login_code', $login_fix['changes'][0]['path']);
+        $this->assertEquals('false', $login_fix['changes'][0]['before']);
+        $this->assertEquals('math', $login_fix['changes'][0]['after']);
+    }
+
+    /**
+     * 测试搜索频次修复建议保持布尔开关值
+     */
+    public function test_fix_suggestion_search_limit_uses_boolean_value(): void {
+        $method = new ReflectionMethod('MaBox_Diagnostics', 'get_fix_suggestions');
+
+        $suggestions = $method->invoke(null, array());
+
+        $search_fix = null;
+        foreach ($suggestions as $s) {
+            if ($s['id'] === 'fix_search_limit') {
+                $search_fix = $s;
+                break;
+            }
+        }
+
+        $this->assertNotNull($search_fix);
+        $this->assertEquals('page.function.search_limit', $search_fix['changes'][0]['path']);
+        $this->assertEquals(false, $search_fix['changes'][0]['before']);
+        $this->assertEquals(true, $search_fix['changes'][0]['after']);
+    }
+
+    /**
+     * 测试 fix_suggestions 首批不包含 high risk_level
+     */
+    public function test_fix_suggestions_no_high_risk(): void {
+        $method = new ReflectionMethod('MaBox_Diagnostics', 'get_fix_suggestions');
+
+        $suggestions = $method->invoke(null, array());
+
+        foreach ($suggestions as $suggestion) {
+            foreach ($suggestion['changes'] as $change) {
+                $this->assertNotEquals('high', $change['risk_level'],
+                    '首批修复建议不应包含 high risk_level');
+            }
+        }
     }
 
     /**

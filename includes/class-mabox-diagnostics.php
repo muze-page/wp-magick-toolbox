@@ -36,6 +36,7 @@ if (!class_exists('MaBox_Diagnostics')) {
             $recommendations = self::get_recommendations($config);
             $risks = self::get_risks($config, $active_modules, $tiers);
             $service_hints = self::get_service_hints($items, $risks, $env);
+            $fix_suggestions = self::get_fix_suggestions($config);
             $status = self::determine_status($score, $risks, $items);
 
             return array(
@@ -45,6 +46,9 @@ if (!class_exists('MaBox_Diagnostics')) {
                 'recommendations' => $recommendations,
                 'risks'           => $risks,
                 'service_hints'   => $service_hints,
+                'generated_at'    => current_time('mysql'),
+                'environment'     => $env,
+                'fix_suggestions' => $fix_suggestions,
             );
         }
 
@@ -478,6 +482,168 @@ if (!class_exists('MaBox_Diagnostics')) {
             }
 
             return $recommendations;
+        }
+
+        /**
+         * 获取可一键修复的建议项
+         *
+         * 每项包含具体的配置变更 diff，前端可预览并应用到当前配置。
+         * 只覆盖确定性高、低风险的开关项。
+         *
+         * @param array $config
+         * @return array
+         */
+        private static function get_fix_suggestions($config)
+        {
+            $suggestions = array();
+
+            $optimize_site = self::get_nested($config, 'optimize', 'site');
+            if (empty($optimize_site['remove_RSS_version'])) {
+                $suggestions[] = array(
+                    'id'                   => 'fix_remove_wp_version',
+                    'title'                => __('移除 WP 版本号', 'magick-toolbox'),
+                    'reason'               => __('减少信息泄露，提升安全性。', 'magick-toolbox'),
+                    'severity'             => 'low',
+                    'module'               => 'optimize',
+                    'requires_confirmation' => false,
+                    'changes'              => array(
+                        array(
+                            'path'       => 'optimize.site.remove_RSS_version',
+                            'label'      => __('移除 WP 版本号', 'magick-toolbox'),
+                            'before'     => false,
+                            'after'      => true,
+                            'risk_level' => 'low',
+                        ),
+                    ),
+                );
+            }
+
+            $page_function = self::get_nested($config, 'page', 'function');
+            if (empty($page_function['search_limit'])) {
+                $suggestions[] = array(
+                    'id'                   => 'fix_search_limit',
+                    'title'                => __('限制搜索频次', 'magick-toolbox'),
+                    'reason'               => __('防止恶意搜索消耗服务器资源。', 'magick-toolbox'),
+                    'severity'             => 'low',
+                    'module'               => 'page',
+                    'requires_confirmation' => false,
+                    'changes'              => array(
+                        array(
+                            'path'       => 'page.function.search_limit',
+                            'label'      => __('搜索频次限制', 'magick-toolbox'),
+                            'before'     => false,
+                            'after'      => true,
+                            'risk_level' => 'low',
+                        ),
+                    ),
+                );
+            }
+
+            $optimize_medium = self::get_nested($config, 'optimize', 'medium');
+            if (empty($optimize_medium['img_add_tag'])) {
+                $suggestions[] = array(
+                    'id'                   => 'fix_img_alt',
+                    'title'                => __('图片 Alt 自动补全', 'magick-toolbox'),
+                    'reason'               => __('提升图片 SEO 和可访问性。', 'magick-toolbox'),
+                    'severity'             => 'low',
+                    'module'               => 'optimize',
+                    'requires_confirmation' => false,
+                    'changes'              => array(
+                        array(
+                            'path'       => 'optimize.medium.img_add_tag',
+                            'label'      => __('图片 Alt 自动补全', 'magick-toolbox'),
+                            'before'     => false,
+                            'after'      => true,
+                            'risk_level' => 'low',
+                        ),
+                    ),
+                );
+            }
+
+            $seo = self::get_nested($config, 'function', 'seo');
+            if (empty($seo['seo_home'])) {
+                $suggestions[] = array(
+                    'id'                   => 'fix_seo_home',
+                    'title'                => __('首页 TDK', 'magick-toolbox'),
+                    'reason'               => __('首页标题/描述/关键词是 SEO 基础。', 'magick-toolbox'),
+                    'severity'             => 'low',
+                    'module'               => 'function',
+                    'requires_confirmation' => false,
+                    'changes'              => array(
+                        array(
+                            'path'       => 'function.seo.seo_home',
+                            'label'      => __('首页 TDK 开关', 'magick-toolbox'),
+                            'before'     => false,
+                            'after'      => true,
+                            'risk_level' => 'low',
+                        ),
+                    ),
+                );
+            }
+
+            $login_security = self::get_nested($config, 'login', 'security');
+            if (empty($login_security['login_code']) || $login_security['login_code'] === 'false' || $login_security['login_code'] === false) {
+                $suggestions[] = array(
+                    'id'                   => 'fix_login_code',
+                    'title'                => __('登录验证码', 'magick-toolbox'),
+                    'reason'               => __('防御暴力破解登录后台。', 'magick-toolbox'),
+                    'severity'             => 'low',
+                    'module'               => 'login',
+                    'requires_confirmation' => false,
+                    'changes'              => array(
+                        array(
+                            'path'       => 'login.security.login_code',
+                            'label'      => __('登录验证码', 'magick-toolbox'),
+                            'before'     => isset($login_security['login_code']) ? $login_security['login_code'] : 'false',
+                            'after'      => 'math',
+                            'risk_level' => 'low',
+                        ),
+                    ),
+                );
+            }
+
+            if (empty($optimize_site['hide_top_toolbar'])) {
+                $suggestions[] = array(
+                    'id'                   => 'fix_hide_toolbar',
+                    'title'                => __('隐藏顶部工具条', 'magick-toolbox'),
+                    'reason'               => __('前台访客不显示 WP 管理工具条，提升体验。', 'magick-toolbox'),
+                    'severity'             => 'low',
+                    'module'               => 'optimize',
+                    'requires_confirmation' => false,
+                    'changes'              => array(
+                        array(
+                            'path'       => 'optimize.site.hide_top_toolbar',
+                            'label'      => __('隐藏顶部工具条', 'magick-toolbox'),
+                            'before'     => false,
+                            'after'      => true,
+                            'risk_level' => 'low',
+                        ),
+                    ),
+                );
+            }
+
+            $search_enhance = self::get_nested($config, 'performance', 'search_enhance');
+            if (empty($search_enhance['hotwords_enabled'])) {
+                $suggestions[] = array(
+                    'id'                   => 'fix_search_logging',
+                    'title'                => __('开启搜索日志', 'magick-toolbox'),
+                    'reason'               => __('搜索日志已关闭，无法收集搜索健康数据。', 'magick-toolbox'),
+                    'severity'             => 'low',
+                    'module'               => 'performance',
+                    'requires_confirmation' => false,
+                    'changes'              => array(
+                        array(
+                            'path'       => 'performance.search_enhance.hotwords_enabled',
+                            'label'      => __('搜索日志', 'magick-toolbox'),
+                            'before'     => false,
+                            'after'      => true,
+                            'risk_level' => 'low',
+                        ),
+                    ),
+                );
+            }
+
+            return $suggestions;
         }
 
         /**
