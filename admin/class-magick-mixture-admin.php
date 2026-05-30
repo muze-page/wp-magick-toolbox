@@ -658,7 +658,7 @@ class MaBox_Admin
                     'validate_callback' => function ($value) {
                         return empty($value) || (is_numeric($value) && $value > 0);
                     },
-                    'sanitize_callback' => 'intval',
+                    'sanitize_callback' => array(__CLASS__, 'sanitize_int_arg'),
                 ),
             ),
         ), 'performance');
@@ -701,7 +701,7 @@ class MaBox_Admin
                     'validate_callback' => function ($value) {
                         return empty($value) || (is_numeric($value) && $value > 0);
                     },
-                    'sanitize_callback' => 'intval',
+                    'sanitize_callback' => array(__CLASS__, 'sanitize_int_arg'),
                 ),
             ),
         ), 'performance');
@@ -846,14 +846,14 @@ class MaBox_Admin
                     'validate_callback' => function ($value) {
                         return is_numeric($value) && $value > 0 && $value <= 1000;
                     },
-                    'sanitize_callback' => 'intval',
+                    'sanitize_callback' => array(__CLASS__, 'sanitize_int_arg'),
                 ),
                 'offset' => array(
                     'default'           => 0,
                     'validate_callback' => function ($value) {
                         return is_numeric($value) && $value >= 0;
                     },
-                    'sanitize_callback' => 'intval',
+                    'sanitize_callback' => array(__CLASS__, 'sanitize_int_arg'),
                 ),
             ),
         ), 'tools');
@@ -914,14 +914,14 @@ class MaBox_Admin
                     'validate_callback' => function ($value) {
                         return is_numeric($value) && $value > 0;
                     },
-                    'sanitize_callback' => 'intval',
+                    'sanitize_callback' => array(__CLASS__, 'sanitize_int_arg'),
                 ),
                 'score' => array(
                     'required'          => true,
                     'validate_callback' => function ($value) {
                         return is_numeric($value) && $value >= 1 && $value <= 5;
                     },
-                    'sanitize_callback' => 'intval',
+                    'sanitize_callback' => array(__CLASS__, 'sanitize_int_arg'),
                 ),
             ),
         ), 'public');
@@ -966,7 +966,7 @@ class MaBox_Admin
                     'required'          => false,
                     'type'              => 'integer',
                     'description'       => '文章批量推送的偏移量',
-                    'sanitize_callback' => 'intval',
+                    'sanitize_callback' => array(__CLASS__, 'sanitize_int_arg'),
                 ),
             ),
         ), 'domestic');
@@ -1020,7 +1020,7 @@ class MaBox_Admin
                         'type'              => 'integer',
                         'description'       => '统计天数范围',
                         'default'           => 30,
-                        'sanitize_callback' => 'intval',
+                        'sanitize_callback' => array(__CLASS__, 'sanitize_int_arg'),
                         'validate_callback' => function ($value) {
                             return is_numeric($value) && (int) $value >= 1 && (int) $value <= 365;
                         },
@@ -1054,6 +1054,11 @@ class MaBox_Admin
             $nonce = $request->get_param('nonce');
         }
         return wp_verify_nonce($nonce, 'mabox_public_api') !== false;
+    }
+
+    public static function sanitize_int_arg($value)
+    {
+        return intval($value);
     }
 
     public static function get_config($config, $property, $defaultValue = false)

@@ -156,8 +156,18 @@ class SearchHealthTest extends TestCase
 
     public function test_rest_summary_structure(): void
     {
-        $method = new ReflectionMethod('MaBox_Search_Health', 'rest_get_summary');
         $this->assertTrue(method_exists('MaBox_Search_Health', 'rest_get_summary'));
+
+        $request = new class {
+            public function get_param($key) {
+                return $key === 'days' ? 30 : null;
+            }
+        };
+        $response = MaBox_Search_Health::rest_get_summary($request);
+
+        $this->assertTrue($response['success']);
+        $this->assertArrayHasKey('data', $response);
+        $this->assertEquals(30, $response['data']['range_days']);
     }
 
     public function test_rest_log_search_writes_with_keyword(): void

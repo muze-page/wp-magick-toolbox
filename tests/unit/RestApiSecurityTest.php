@@ -114,6 +114,17 @@ class RestApiSecurityTest extends TestCase {
         $this->assertStringContainsString("'validate_callback'", $content, 'REST API 参数应该有 validate_callback');
     }
 
+    public function test_rest_integer_sanitize_callback_accepts_wp_rest_arguments(): void {
+        $this->assertSame(30, call_user_func(array('MaBox_Admin', 'sanitize_int_arg'), '30', null, 'days'));
+    }
+
+    public function test_rest_routes_do_not_use_internal_intval_sanitize_callback(): void {
+        $admin_file = dirname(__DIR__, 2) . '/admin/class-magick-mixture-admin.php';
+        $content = file_get_contents($admin_file);
+
+        $this->assertStringNotContainsString("'sanitize_callback' => 'intval'", $content, 'REST 参数不应直接使用 intval，WordPress 会传多个参数并在 PHP 8 下触发 ArgumentCountError');
+    }
+
     public function test_batch_replace_has_dangerous_content_filter(): void {
         $admin_file = dirname(__DIR__, 2) . '/admin/class-magick-mixture-admin.php';
         $content = file_get_contents($admin_file);

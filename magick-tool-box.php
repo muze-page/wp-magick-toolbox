@@ -64,7 +64,8 @@ define('MAGICK_MIXTURE_OPTION_PERFORMANCE', 'Magick_ToolBox_Option_Performance')
 /**
  * 用于定义需要用到的插件类，
  */
-require plugin_dir_path(__FILE__) . 'includes/class-magick-mixture.php';
+require_once plugin_dir_path(__FILE__) . 'includes/autoload.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-magick-mixture.php';
 
 
 

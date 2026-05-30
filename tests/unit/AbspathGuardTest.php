@@ -87,4 +87,16 @@ class AbspathGuardTest extends TestCase {
         $this->assertStringContainsString("defined('WPINC')", $content, '主文件应该有 WPINC 检查');
         $this->assertStringContainsString("defined('ABSPATH')", $content, '主文件应该有 ABSPATH 检查');
     }
+
+    public function test_main_plugin_file_loads_autoloader_before_core_class(): void {
+        $main_file = dirname(__DIR__, 2) . '/magick-tool-box.php';
+        $content = file_get_contents($main_file);
+
+        $autoload_pos = strpos($content, "includes/autoload.php");
+        $core_pos = strpos($content, "includes/class-magick-mixture.php");
+
+        $this->assertNotFalse($autoload_pos, '主文件应该加载 includes/autoload.php');
+        $this->assertNotFalse($core_pos, '主文件应该加载核心插件类');
+        $this->assertLessThan($core_pos, $autoload_pos, '自动加载器应该先于核心插件类加载');
+    }
 }

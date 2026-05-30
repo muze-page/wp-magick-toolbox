@@ -13,7 +13,10 @@ if (!class_exists('MaBox_Search_Health')) {
             if (empty($days)) {
                 $days = 30;
             }
-            return rest_ensure_response(self::get_summary($days));
+            return rest_ensure_response(array(
+                'success' => true,
+                'data' => self::get_summary($days),
+            ));
         }
 
         public static function get_summary($days = 30)
