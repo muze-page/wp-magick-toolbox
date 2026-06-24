@@ -1,0 +1,58 @@
+# AGENTS.md - WP Magick Toolbox
+
+## Session Startup Protocol
+
+Every AI development session should start with:
+
+1. Run `git status --short --branch`.
+2. Read `README.md`.
+3. Read the relevant release wrap-up or development note before editing.
+4. Briefly report the focused module and intended verification gate.
+
+## Product Boundary
+
+WP Magick Toolbox is a WordPress utility plugin for site owners. Keep changes
+inside the existing plugin feature surface unless a separate design note says
+otherwise.
+
+Do not fold Npcink Core, Toolkit, Adapter, Cloud Addon, or Cloud control-plane
+responsibilities into this plugin. Governed AI writes, proposal approval,
+provider runtime, billing, queues, or cross-repo workflow truth belong outside
+this repository.
+
+## AI Development Rules
+
+- Write a compact change envelope before editing: target repositories, focused
+  module, intended change, explicit non-goals, public contracts touched,
+  expected files, files or areas that must not change, required gates,
+  cross-repo matrix requirement, and rollback plan.
+- Keep changes scoped to one module per session.
+- Before staging, inspect `git status --short --branch` and `git diff --stat`.
+  Stage only files changed for the current task. Do not use `git add -A` in a
+  mixed worktree.
+- Do not run `git reset --hard`, `git checkout -- .`, or equivalent destructive
+  cleanup unless the user explicitly asks for that exact operation.
+- Before committing, verify `git diff --cached --stat` and
+  `git diff --cached --name-only`; after committing, verify
+  `git show --name-status --stat HEAD`.
+- For multi-repo milestones, run the central matrix from
+  `/Users/muze/gitee/npcink-toolbox` instead of copying the script here:
+  `composer quality:matrix` for status and `composer quality:matrix:run` before
+  cross-repo closeout.
+
+## Verification Gates
+
+Default gate:
+
+```bash
+composer test
+```
+
+Static analysis:
+
+```bash
+composer phpstan
+```
+
+Before finishing a code session, run the narrowest useful gate and report
+exactly what passed or failed.
