@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "antd": "^5.17.0",
-    "default-passive-events": "^2.0.0",
+    "default-passive-events": "^4.0.0",
     "echarts": "^5.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
