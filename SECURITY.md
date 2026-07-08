@@ -11,7 +11,7 @@
 
 We take the security of WP Magick Toolbox seriously. If you discover a security vulnerability, please follow these steps:
 
-1. **Do NOT** open a public issue on Gitee
+1. **Do NOT** open a public issue for sensitive security reports
 2. Send details to the repository maintainer via private message
 3. Include:
    - Description of the vulnerability

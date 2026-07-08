@@ -3,7 +3,7 @@
 > 面向中国 WordPress 站长的一站式实用工具箱插件
 > 版本：**2.6.1** | 功能数：**60+** | 授权：**GPL-2.0**
 
-[![CI](https://github.com/npcink/wp-magick-toolbox/actions/workflows/ci.yml/badge.svg)](https://github.com/npcink/wp-magick-toolbox/actions/workflows/ci.yml)
+[![CI](https://github.com/muze-page/wp-magick-toolbox/actions/workflows/ci.yml/badge.svg)](https://github.com/muze-page/wp-magick-toolbox/actions/workflows/ci.yml)
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-4.6%2B-blue)](https://wordpress.org)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green)](https://php.net)
 [![License](https://img.shields.io/badge/License-GPL%202.0-orange)](LICENSE)
@@ -18,7 +18,7 @@ WP Magick Toolbox 是一款面向中国 WordPress 站长的免费工具箱插件
 
 - 📖 **在线文档**：[docs.npc.ink](https://docs.npc.ink)（搭建中）
 - 🌐 **作者博客**：[npc.ink](https://www.npc.ink)
-- 📦 **Gitee 仓库**：[gitee.com/gitgreat/wp-magick-toolbox](https://gitee.com/gitgreat/wp-magick-toolbox)
+- 📦 **GitHub 仓库**：[github.com/muze-page/wp-magick-toolbox](https://github.com/muze-page/wp-magick-toolbox)
 
 ---
 
@@ -35,7 +35,7 @@ WP Magick Toolbox 是一款面向中国 WordPress 站长的免费工具箱插件
 
 ```bash
 # 克隆仓库
-git clone https://gitee.com/gitgreat/wp-magick-toolbox.git
+git clone https://github.com/muze-page/wp-magick-toolbox.git
 cd wp-magick-toolbox
 
 # 安装前端依赖（3 个独立 Vite 项目）
