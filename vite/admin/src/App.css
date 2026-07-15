@@ -330,6 +330,102 @@
   border-top: 1px solid var(--mabox-border);
 }
 
+.mabox-save-trust {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  gap: 10px;
+}
+
+.mabox-save-status {
+  color: var(--mabox-muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.mabox-save-trust--pending .mabox-save-status {
+  color: var(--mabox-accent);
+}
+
+.mabox-save-trust--error .mabox-save-status {
+  color: #b32d2e;
+}
+
+.mabox-save-action {
+  flex: 0 0 auto;
+  min-width: 88px;
+}
+
+.mabox-diff-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
+  gap: 16px;
+}
+
+.mabox-diff-item-heading {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+}
+
+.mabox-diff-risk-tag {
+  flex: 0 0 auto;
+  margin-inline-end: 0;
+  font-size: 11px;
+}
+
+.mabox-diff-values {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  max-width: 62%;
+  color: var(--mabox-text);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: right;
+  gap: 6px;
+}
+
+.mabox-diff-value {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.mabox-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.mabox-diff-value--before,
+.mabox-diff-arrow {
+  color: var(--mabox-muted);
+}
+
+.mabox-diff-value--after {
+  color: var(--mabox-text);
+}
+
+.mabox-diff-value--high-risk {
+  color: #b32d2e;
+  font-weight: 600;
+}
+
 .mabox-mobile-toggle {
   display: none;
   width: 100%;
@@ -410,6 +506,45 @@
 
   .mabox-header-right {
     flex-shrink: 0;
+  }
+
+  .mabox-footer {
+    width: 100%;
+    padding: 8px 10px;
+  }
+
+  .mabox-footer .mabox-save-trust {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .mabox-save-status {
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .mabox-save-action {
+    min-width: 96px;
+  }
+
+  .mabox-diff-item {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mabox-diff-values {
+    align-items: flex-start;
+    flex-direction: column;
+    width: 100%;
+    max-width: none;
+    text-align: left;
+    gap: 4px;
+  }
+
+  .mabox-diff-arrow {
+    transform: rotate(90deg);
+    transform-origin: center;
   }
 
   .mabox-help-btn span:last-child {

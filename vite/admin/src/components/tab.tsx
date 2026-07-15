@@ -388,7 +388,7 @@ const App: React.FC = () => {
 
         {isMobile && (
           <footer className="mabox-footer">
-            <Save label="保存更改" />
+            <Save />
           </footer>
         )}
       </div>

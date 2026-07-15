@@ -1,4 +1,5 @@
 import { ConfigDiffItem, SecretChanges, SecretPath, SecretStatus } from "@/tool/interface";
+import { getFeatureLabelForPath, getFeatureRiskLevelForPath } from "@/tool/featureIndex";
 
 const SECRET_LABELS: Record<SecretPath, string> = {
   "domestic.wechat.appsecret": "微信 AppSecret",
@@ -25,15 +26,6 @@ export function diffSecretChanges(
   });
 }
 
-/**
- * 高风险功能路径映射
- * key: path 格式（点分隔），与 riskyFeature.tsx 中的 featureId 对应
- */
-const RISKY_PATHS: Record<string, { label: string; title: string }> = {
-  "optimize.medium.no_auto_size": { label: "禁止缩略图", title: "禁止缩略图" },
-  "domestic.login_security.attempt_limit_enabled": { label: "登录尝试保护", title: "登录尝试保护" },
-};
-
 const PATH_LABELS: Record<string, string> = {
   "domestic.login_security.attempt_limit_enabled": "登录尝试保护",
   "domestic.login_security.attempt_limit_count": "失败尝试上限",
@@ -54,17 +46,12 @@ function isEnabled(value: unknown): boolean {
 }
 
 /**
- * 判断路径是否对应高风险功能
- */
-function isRiskyPath(path: string): boolean {
-  return !!RISKY_PATHS[path];
-}
-
-/**
  * 获取路径的人类可读标签
  */
 function getPathLabel(path: string): string {
-  return PATH_LABELS[path] || RISKY_PATHS[path]?.label || path;
+  return PATH_LABELS[path]
+    || getFeatureLabelForPath(path)
+    || "设置项";
 }
 
 /**
@@ -108,13 +95,12 @@ export function diffConfig(before: any, after: any): ConfigDiffItem[] {
 
       if (!valuesEqual(beforeVal, afterVal)) {
         const path = pathParts.join(".");
-        const isRisky = isRiskyPath(path);
         const wasEnabled = isEnabled(beforeVal);
         const nowEnabled = isEnabled(afterVal);
 
         let riskLevel: ConfigDiffItem["riskLevel"] = "none";
-        if (isRisky && !wasEnabled && nowEnabled) {
-          riskLevel = "high";
+        if (!wasEnabled && nowEnabled) {
+          riskLevel = getFeatureRiskLevelForPath(path);
         }
 
         diffs.push({

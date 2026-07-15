@@ -17,6 +17,19 @@ const PRESET_TO_DISPLAY_TAG: Record<string, string | undefined> = {
   security: "安全",
 };
 
+// UI Schema 未缓存或返回不完整时的安全兜底。仅镜像当前 PHP Schema 中的 high 路径；
+// 后续应由单一 Schema 生成该契约，避免长期手工同步。
+const CURRENT_HIGH_PATHS = new Set([
+  "performance.db_clean.enabled",
+]);
+
+type FeatureRiskLevel = "none" | "low" | "high";
+
+function parseRiskLevel(level: unknown): FeatureRiskLevel | null {
+  if (level === "none" || level === "low" || level === "high") return level;
+  return null;
+}
+
 function schemaToSearchItems(schema: UiSchemaMap): SearchItem[] {
   const items: SearchItem[] = [];
   for (const [id, entry] of Object.entries(schema)) {
@@ -65,6 +78,31 @@ export async function fetchFeatureIndex(): Promise<SearchItem[]> {
     return cachedIndex;
   }
   return searchIndex;
+}
+
+export function getFeatureLabelForPath(path: string): string | null {
+  const schema = getUiSchemaSync();
+  if (schema) {
+    const schemaEntry = Object.values(schema).find((entry) => entry.path === path);
+    if (schemaEntry?.label) return schemaEntry.label;
+  }
+
+  const featureId = path.split(".").join("-");
+  const searchItem = getFeatureIndexSync().find(
+    (item) => item.id === featureId || item.aliases?.includes(featureId),
+  );
+  return searchItem?.label || null;
+}
+
+export function getFeatureRiskLevelForPath(path: string): FeatureRiskLevel {
+  const schema = getUiSchemaSync();
+  if (schema) {
+    const schemaEntry = Object.values(schema).find((entry) => entry.path === path);
+    const schemaRiskLevel = parseRiskLevel(schemaEntry?.risk?.level);
+    if (schemaRiskLevel) return schemaRiskLevel;
+  }
+
+  return CURRENT_HIGH_PATHS.has(path) ? "high" : "none";
 }
 
 function mergeIndex(schema: UiSchemaMap): SearchItem[] {

@@ -1,17 +1,12 @@
-import { useContext, useState, useEffect } from "react";
-import { Button, Space, message } from "antd";
+import { useContext, useMemo, useState } from "react";
+import { Button, message } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { saveOption } from "@/axios/save";
-import { diffConfig, diffSecretChanges, getDiffSummary } from "@/tool/diff";
+import { diffConfig, diffSecretChanges } from "@/tool/diff";
 import DiffModal from "@/components/diff-modal";
 import { ConfigDiffItem } from "@/tool/interface";
-import { UpOutlined } from "@ant-design/icons";
 
-interface SaveProps {
-  label?: string;
-}
-
-const App: React.FC<SaveProps> = ({ label = "保存" }) => {
+const App: React.FC = () => {
   const {
     optionData,
     refreshOption,
@@ -24,6 +19,14 @@ const App: React.FC<SaveProps> = ({ label = "保存" }) => {
   const [saving, setSaving] = useState(false);
   const [diffVisible, setDiffVisible] = useState(false);
   const [diffs, setDiffs] = useState<ConfigDiffItem[]>([]);
+  const changes = useMemo(
+    () => [
+      ...diffConfig(lastSavedOption, optionData),
+      ...diffSecretChanges(secretStatus, secretChanges),
+    ],
+    [lastSavedOption, optionData, secretChanges, secretStatus],
+  );
+  const changeCount = changes.length;
 
   const doSave = async () => {
     setSaving(true);
@@ -46,16 +49,7 @@ const App: React.FC<SaveProps> = ({ label = "保存" }) => {
   };
 
   const handleSaveClick = () => {
-    const changes = [
-      ...diffConfig(lastSavedOption, optionData),
-      ...diffSecretChanges(secretStatus, secretChanges),
-    ];
-    const summary = getDiffSummary(changes);
-
-    if (!summary.hasChanges) {
-      message.info("配置未做任何更改，无需保存");
-      return;
-    }
+    if (changes.length === 0) return;
 
     setDiffs(changes);
     setDiffVisible(true);
@@ -66,52 +60,42 @@ const App: React.FC<SaveProps> = ({ label = "保存" }) => {
     doSave();
   };
 
-  const [showButton, setShowButton] = useState(false);
-  useEffect(() => {
-    const handleScroll = () => {
-      // 获取当前滚动的垂直距离
-      const scrollY = window.scrollY || window.pageYOffset;
-      // 设置一个阈值，例如 50vh，即页面高度的一半
-      const threshold = window.innerHeight * 0.5;
+  let statusText = "已保存";
+  let buttonText = "保存";
+  let statusKind = "saved";
 
-      if (scrollY > threshold) {
-        setShowButton(true);
-      } else {
-        setShowButton(false);
-      }
-    };
+  if (saving) {
+    statusText = "正在保存…";
+    buttonText = "正在保存…";
+    statusKind = "saving";
+  } else if (settingsState === "loading") {
+    statusText = "正在读取设置…";
+    statusKind = "loading";
+  } else if (settingsState === "error") {
+    statusText = "设置不可用";
+    statusKind = "error";
+  } else if (changeCount > 0) {
+    statusText = `${changeCount} 项待保存`;
+    buttonText = "查看并保存";
+    statusKind = "pending";
+  }
 
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const handleButtonClick = () => {
-    // 滚动到页面顶部
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const saveDisabled = saving || settingsState !== "ready" || changeCount === 0;
 
   return (
-    <div>
-      <Space size={"large"}>
-        {showButton && (
-          <Button
-            type="text"
-            shape="circle"
-            onClick={handleButtonClick}
-            icon={<UpOutlined />}
-          ></Button>
-        )}
-        <Button
-          type="primary"
-          onClick={handleSaveClick}
-          loading={saving}
-          disabled={settingsState !== "ready"}
-        >
-          {label}
-        </Button>
-      </Space>
+    <div className={`mabox-save-trust mabox-save-trust--${statusKind}`}>
+      <span className="mabox-save-status" role="status" aria-live="polite" aria-atomic="true">
+        {statusText}
+      </span>
+      <Button
+        className="mabox-save-action"
+        type="primary"
+        onClick={handleSaveClick}
+        loading={saving}
+        disabled={saveDisabled}
+      >
+        {buttonText}
+      </Button>
       <DiffModal
         visible={diffVisible}
         diffs={diffs}

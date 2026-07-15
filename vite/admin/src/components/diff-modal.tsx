@@ -63,31 +63,36 @@ const DiffModal: React.FC<DiffModalProps> = ({
           </Text>
         )}
         <List
+          className="mabox-diff-list"
           size="small"
           bordered
           dataSource={diffs}
           renderItem={(item) => (
-            <List.Item>
-              <div className="mabox-full-width">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <Text strong>
-                    {item.label}
-                    {item.riskLevel === "high" && (
-                      <Tag color="red" style={{ marginLeft: 8, fontSize: 11 }}>
-                        高风险
-                      </Tag>
-                    )}
-                  </Text>
-                  <Text type="secondary" style={{ fontSize: 12 }}>
-                    {formatValue(item.before)} <span style={{ color: "#999" }}>→</span>{" "}
-                    <Text style={{ color: item.riskLevel === "high" ? "#f5222d" : "#52c41a" }}>
-                      {formatValue(item.after)}
-                    </Text>
-                  </Text>
+            <List.Item className="mabox-diff-list-item">
+              <div className="mabox-diff-item">
+                <div className="mabox-diff-item-heading">
+                  <Text strong>{item.label}</Text>
+                  {item.riskLevel === "high" && (
+                    <Tag color="red" className="mabox-diff-risk-tag">
+                      高风险
+                    </Tag>
+                  )}
                 </div>
-                <Text type="secondary" style={{ fontSize: 11 }}>
-                  {item.path}
-                </Text>
+                <div className="mabox-diff-values">
+                  <span className="mabox-diff-value mabox-diff-value--before">
+                    <span className="mabox-visually-hidden">原值：</span>
+                    {formatValue(item.before)}
+                  </span>
+                  <span className="mabox-diff-arrow" aria-hidden="true">→</span>
+                  <span
+                    className={`mabox-diff-value mabox-diff-value--after ${
+                      item.riskLevel === "high" ? "mabox-diff-value--high-risk" : ""
+                    }`}
+                  >
+                    <span className="mabox-visually-hidden">新值：</span>
+                    {formatValue(item.after)}
+                  </span>
+                </div>
               </div>
             </List.Item>
           )}

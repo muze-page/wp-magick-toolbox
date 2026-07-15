@@ -93,6 +93,85 @@ describe("featureIndex", () => {
     });
   });
 
+  describe("getFeatureLabelForPath", () => {
+    it("优先使用已加载 schema 标签，并以静态功能索引覆盖已知路径", async () => {
+      mockGetUiSchemaSync.mockReturnValue(null);
+      const { getFeatureLabelForPath } = await import("@/tool/featureIndex");
+
+      expect(getFeatureLabelForPath("optimize.site.hide_top_toolbar")).toBe("隐藏顶部工具条");
+
+      mockGetUiSchemaSync.mockReturnValue({
+        "optimize-test-display_name": {
+          path: "optimize.test.display_name",
+          type: "string",
+          label: "显示名称",
+          feature_id: "optimize-test-display_name",
+        },
+      });
+      expect(getFeatureLabelForPath("optimize.test.display_name")).toBe("显示名称");
+    });
+  });
+
+  describe("getFeatureRiskLevelForPath", () => {
+    it("Schema 未缓存时仍把当前真实 high 识别为 high", async () => {
+      mockGetUiSchemaSync.mockReturnValue(null);
+      const { getFeatureRiskLevelForPath } = await import("@/tool/featureIndex");
+
+      expect(getFeatureRiskLevelForPath("performance.db_clean.enabled")).toBe("high");
+      expect(getFeatureRiskLevelForPath("optimize.medium.no_auto_size")).toBe("none");
+    });
+
+    it("已加载时以 UI Schema 的精确 path 风险等级为权威", async () => {
+      mockGetUiSchemaSync.mockReturnValue({
+        "performance-db_clean-enabled": {
+          path: "performance.db_clean.enabled",
+          type: "boolean",
+          label: "数据库清理优化",
+          risk: {
+            level: "high",
+            title: "数据库清理",
+            warning: "不可逆",
+            suggestion: "先备份",
+          },
+        },
+        "optimize-medium-no_auto_size": {
+          path: "optimize.medium.no_auto_size",
+          type: "boolean",
+          label: "禁止缩略图",
+          risk: {
+            level: "low",
+            title: "禁止缩略图",
+            warning: "可能不兼容",
+            suggestion: "先检查主题",
+          },
+        },
+      });
+      const { getFeatureRiskLevelForPath } = await import("@/tool/featureIndex");
+
+      expect(getFeatureRiskLevelForPath("performance.db_clean.enabled")).toBe("high");
+      expect(getFeatureRiskLevelForPath("optimize.medium.no_auto_size")).toBe("low");
+
+      mockGetUiSchemaSync.mockReturnValue({
+        "performance-db_clean-enabled": {
+          path: "performance.db_clean.enabled",
+          type: "boolean",
+          label: "数据库清理优化",
+        },
+      });
+      expect(getFeatureRiskLevelForPath("performance.db_clean.enabled")).toBe("high");
+
+      mockGetUiSchemaSync.mockReturnValue({
+        "performance-db_clean-enabled": {
+          path: "performance.db_clean.enabled",
+          type: "boolean",
+          label: "数据库清理优化",
+          risk: { level: "none" },
+        },
+      });
+      expect(getFeatureRiskLevelForPath("performance.db_clean.enabled")).toBe("none");
+    });
+  });
+
   describe("risk_tags vs preset_tags display logic", () => {
     it("uses risk_tags as display tags when available", async () => {
       const schema = {

@@ -1,6 +1,6 @@
 # ADR: Pre-GA 管理后台清场式重构
 
-- 状态：已接受；工作包 1-7 已验收，工作包 8A-8B 已完成自动化与 Local 验收，工作包 9A 已完成自动化验收
+- 状态：已接受；工作包 1-7 已验收，工作包 8A-8B 已完成自动化与 Local 验收，工作包 9A-9B 已完成自动化与 Local 验收
 - 日期：2026-07-15
 - 决策范围：WP Magick Toolbox 管理后台应用外壳
 
@@ -393,6 +393,34 @@
 4. admin 入口不再导入 `default-passive-events`，admin manifest/lock importer 同步删除该直接依赖；`count` 子项目仍有真实入口引用，因此共享 lockfile 中的包快照按需保留。
 5. `vite build` 后由 `vite/admin/src/check-admin-css-isolation.mjs` 递归发现 `dist` 下全部 CSS，并以 jsdom/CSSOM 解析普通规则及媒体规则；选择器列表只在顶层逗号处分隔，不会误拆 `:where()`、`:is()`、属性或字符串中的逗号。若构建工具重新生成裸全局类、元素或 reset，构建会直接失败。脚本位于发布 ZIP 已排除的 `src/`，普通 Vitest 不依赖被忽略的 `dist`，可在 clean checkout 独立运行。
 6. 自动化门禁：admin Vitest 16 个文件/104 项测试通过；TypeScript 与 Vite build 通过；构建扫描确认 2 个 CSS 文件/286 个选择器全部位于 `.mabox-*` 命名空间，`index.css` 从旧基线约 15.20 kB 收口为 13.63 kB；ESLint 0 error、frozen offline install、PHP 语法、PHPUnit 338 项测试/3354 个断言、PHPStan 0 error 和 `git diff --check` 通过。
+
+## 工作包 9B：保存信任条与差异确认
+
+| 项目 | 决定 |
+| --- | --- |
+| 目标仓库 | `/Users/muze/gitee/wp-magick-toolbox` |
+| 聚焦模块 | `vite/admin` 的全局保存反馈与设置差异确认弹窗 |
+| 失败证据 | 保存区只在点击后计算 diff，读取中、读取失败、无改动和待保存缺少持续可见的状态；无改动仍弹 toast；保存组件混入滚动监听和返回顶部按钮；差异弹窗暴露内部 path，并把普通变更后的值误用成功绿色表达 |
+| 预期变更 | 用普通设置 diff 与凭据 diff 的真实总数建立稳定保存状态；无改动禁用保存；高风险仍显式确认；差异默认只显示用户标签与前后值；桌面头部和移动粘性底栏采用同一紧凑信任条布局 |
+| 明确非目标 | 不改导航、设置表单、Ant Design、REST/敏感设置契约、业务设置、代码分块、前台项目或兄弟仓库 |
+| 公共契约 | 保存请求与凭据操作契约不变；新增 `role=status`、`aria-live=polite` 的可访问状态反馈；差异标签从已加载 UI Schema 或静态功能索引解析，未知设置使用安全通用标签，弹窗不再把内部 path 呈现给用户 |
+| 预期文件 | `src/tool/save.tsx`、`src/tool/diff.ts`、`src/tool/featureIndex.ts`、`src/components/diff-modal.tsx`、`src/App.tsx`、`src/components/tab.tsx`、`src/App.css`、聚焦 Vitest 与本 ADR |
+| 不得改变 | WordPress/PHP 运行时、设置 Schema、其他后台功能、构建分块、用户未跟踪排障文档和兄弟仓库 |
+| 必需门禁 | admin Vitest、TypeScript、Vite build 与 CSS 隔离扫描、ESLint quiet error gate、`git diff --check`、桌面与 320px Local 浏览器验收 |
+| 跨仓矩阵 | 不需要；保存状态与确认界面只属于本仓库 admin bundle |
+| 回滚计划 | 回滚本工作包局部变更即可恢复旧保存区；不增加 feature flag、双轨保存或兼容层 |
+
+### 工作包 9B 实施事实
+
+1. 保存组件持续组合 `diffConfig()` 与 `diffSecretChanges()`，以真实总数呈现五态：读取中为“正在读取设置…”，读取失败为“设置不可用”，无改动为“已保存”，有改动为“N 项待保存”，提交期间为“正在保存…”；状态使用 polite live region。
+2. 只有设置成功读取且真实 diff 非空时，“查看并保存”才可用；读取中、读取失败和无改动均显示禁用的“保存”。无改动不再弹 toast，点击处理仍保留无 diff 的防御性短路。
+3. 保存成功、保存失败以及“写入已成功但回读失败”继续使用彼此不同的诚实反馈。凭据 draft 只在写入成功后清空，随后仍强制回读服务端状态。保存组件中的滚动 state/effect、全局 scroll 监听、返回顶部图标和按钮已删除。
+4. 差异弹窗删除内部 path，只显示用户标签及格式化后的前后值；普通 after 使用正文中性色，高风险开启仍有红色警告、标签、结果值和危险确认按钮。长值允许任意断行，移动断点将前后值改为上下排列；每组值包含视觉隐藏的“原值：”与“新值：”文本，不依赖箭头或不含值的容器 `aria-label` 传达变化。
+5. 主代理首次 Local 320px 验收发现，仅删除 path 副行仍会因 `diffConfig()` 的旧回退规则把 `optimize.site.hide_top_toolbar` 当作 label 展示。标签解析现优先使用显式字段标签，再按已加载 UI Schema 的精确 `path` 匹配，继而按静态功能索引的 feature ID/alias 匹配；未知设置统一显示“设置项”，不再回退内部 path。真实路径现显示“隐藏顶部工具条”。
+6. 复审又发现旧 `RISKY_PATHS` 把 PHP UI Schema 中的两个 `low` 路径硬编码为 `high`，同时遗漏真正的 `performance.db_clean.enabled=high`。风险等级现按已缓存 UI Schema 的精确 path/risk.level 解析；Schema 显式给出的 `none`、`low`、`high` 均优先于静态镜像。由于 FeatureSearch 异步加载 Schema 而 Save 可能先渲染，未缓存、缺条目或风险元数据不完整时，以只包含当前 PHP Schema 唯一 high 路径的 `CURRENT_HIGH_PATHS` 最小镜像安全兜底。旧高风险硬编码已删除；该镜像是生成单一 Schema 契约前的明确临时边界。
+7. 桌面头部与移动粘性底栏共用紧凑保存信任条；移动底栏用状态与操作两端布局并限制按钮最小宽度，320px 不依赖水平滚动。错误的全局 `message.config({ rtl: true })` 已删除，其他 message 配置保持不变。
+8. Save/DiffModal 9 项测试覆盖读取、错误、无改动、普通与凭据真实计数、异步保存、写入失败、回读失败、读屏原值/新值、path 隐藏、中性普通变更和高风险确认；Diff/FeatureIndex 回归另锁定真实路径标签、Schema 标签、未知路径安全回退、Schema high/low 权威值和 Schema 未缓存/不完整时的真实 high 兜底。全量 admin Vitest 17 个文件/116 项测试通过；TypeScript、Vite build、2 个 CSS 文件/308 个选择器隔离扫描、ESLint quiet error gate 和 `git diff --check` 通过。
+9. Local 桌面复验确认无改动时稳定显示“已保存”且保存按钮禁用，`body`/document 宽度均为 1280px。320px 下切换“隐藏顶部工具条”后显示“1 项待保存 / 查看并保存”，差异弹窗显示用户标签且内部 path 数量为 0，页面和弹窗均无横向溢出；取消并刷新后开关恢复关闭。数据库清理开启流程先显示即时高风险确认，随后保存弹窗继续显示 1 项高风险、危险确认按钮及“原值/新值”读屏标签，内部 path 数量为 0；取消并刷新后开关恢复关闭，整个验收未写入配置。控制台没有新增 warning/error，只有 WordPress 的 JQMIGRATE 普通日志。
 
 ## 结果复核
 

@@ -20,13 +20,42 @@ describe("diffConfig", () => {
     expect(diffs[0].riskLevel).toBe("none");
   });
 
-  it("高风险功能从关闭到开启时标记为 high", () => {
+  it("真实设置路径使用功能索引中的用户标签而不是内部 path", () => {
+    const before = { optimize: { site: { hide_top_toolbar: false } } };
+    const after = { optimize: { site: { hide_top_toolbar: true } } };
+
+    const diffs = diffConfig(before, after);
+
+    expect(diffs).toEqual([
+      expect.objectContaining({
+        path: "optimize.site.hide_top_toolbar",
+        label: "隐藏顶部工具条",
+        before: false,
+        after: true,
+      }),
+    ]);
+    expect(diffs[0].label).not.toBe(diffs[0].path);
+  });
+
+  it("未知设置不以内部 path 作为用户标签", () => {
+    const diffs = diffConfig(
+      { optimize: { unknown_group: { private_key: false } } },
+      { optimize: { unknown_group: { private_key: true } } },
+    );
+
+    expect(diffs[0]).toEqual(expect.objectContaining({
+      path: "optimize.unknown_group.private_key",
+      label: "设置项",
+    }));
+  });
+
+  it("Schema 未缓存时不会把低风险功能硬编码为 high", () => {
     const before = { optimize: { medium: { no_auto_size: false } } };
     const after = { optimize: { medium: { no_auto_size: true } } };
     const diffs = diffConfig(before, after);
     expect(diffs).toHaveLength(1);
     expect(diffs[0].path).toBe("optimize.medium.no_auto_size");
-    expect(diffs[0].riskLevel).toBe("high");
+    expect(diffs[0].riskLevel).toBe("none");
   });
 
   it("高风险功能从开启到关闭时标记为 none", () => {
@@ -43,7 +72,7 @@ describe("diffConfig", () => {
     const diffs = diffConfig(before, after);
     expect(diffs).toHaveLength(1);
     expect(diffs[0].path).toBe("optimize.medium.no_auto_size");
-    expect(diffs[0].riskLevel).toBe("high");
+    expect(diffs[0].riskLevel).toBe("none");
   });
 
   it("普通字符串变化标记为 none", () => {
@@ -79,7 +108,7 @@ describe("diffConfig", () => {
       expect.objectContaining({
         path: "domestic.login_security.attempt_limit_enabled",
         label: "登录尝试保护",
-        riskLevel: "high",
+        riskLevel: "none",
       }),
       expect.objectContaining({
         path: "domestic.login_security.attempt_window_minutes",
@@ -130,37 +159,33 @@ describe("diffConfig", () => {
 
   it("高风险项排序在前", () => {
     const before = {
-      optimize: { medium: { no_auto_size: false }, site: { remove_RSS_version: false } },
+      optimize: { site: { remove_RSS_version: false } },
+      performance: { db_clean: { enabled: false } },
     };
     const after = {
-      optimize: { medium: { no_auto_size: true }, site: { remove_RSS_version: true } },
+      optimize: { site: { remove_RSS_version: true } },
+      performance: { db_clean: { enabled: true } },
     };
     const diffs = diffConfig(before, after);
-    expect(diffs[0].path).toBe("optimize.medium.no_auto_size");
+    expect(diffs[0].path).toBe("performance.db_clean.enabled");
     expect(diffs[0].riskLevel).toBe("high");
     expect(diffs[1].path).toBe("optimize.site.remove_RSS_version");
     expect(diffs[1].riskLevel).toBe("none");
   });
 
-  it("所有已知高风险路径都被识别", () => {
-    const riskyPaths = [
-      { path: ["optimize", "medium", "no_auto_size"], before: false, after: true },
-      { path: ["domestic", "login_security", "attempt_limit_enabled"], before: false, after: true },
-    ];
+  it("Schema 未缓存时仍以静态最小权威镜像识别真实 high", () => {
+    const before = { performance: { db_clean: { enabled: false } } };
+    const after = { performance: { db_clean: { enabled: true } } };
 
-    riskyPaths.forEach(({ path, before, after }) => {
-      const beforeObj = path.reduceRight(
-        (acc, key) => ({ [key]: acc }),
-        before as any
-      );
-      const afterObj = path.reduceRight(
-        (acc, key) => ({ [key]: acc }),
-        after as any
-      );
-      const diffs = diffConfig(beforeObj, afterObj);
-      expect(diffs).toHaveLength(1);
-      expect(diffs[0].riskLevel).toBe("high");
-    });
+    const diffs = diffConfig(before, after);
+
+    expect(diffs).toEqual([
+      expect.objectContaining({
+        path: "performance.db_clean.enabled",
+        label: "数据库清理优化",
+        riskLevel: "high",
+      }),
+    ]);
   });
 });
 
