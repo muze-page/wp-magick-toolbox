@@ -25,7 +25,6 @@ parameters:
         - admin/partials/page/function/go/wx_community.php
         - admin/partials/page/function/go/zhihu.php
         - admin/partials/shortcode/build/render.php
-        - admin/partials/login/security/login_verify.php
     bootstrapFiles:
         - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
         - phpstan-bootstrap.php

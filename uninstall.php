@@ -21,7 +21,6 @@ delete_option('Magick_ToolBox_Option_Optimize');
 delete_option('Magick_ToolBox_Option_Page');
 delete_option('Magick_ToolBox_Option_Function');
 delete_option('Magick_ToolBox_Option_H5');
-delete_option('Magick_ToolBox_Option_Login');
 delete_option('Magick_ToolBox_Option_Shortcode');
 delete_option('Magick_ToolBox_Option_Template');
 // 删除 2.2.0+ 新增模块选项键

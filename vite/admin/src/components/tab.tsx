@@ -23,7 +23,6 @@ import Save from "@/tool/save";
 const Dashboard = lazy(() => import("@/components/dashboard/index"));
 const Page = lazy(() => import("@/components/page/index"));
 const Optimize = lazy(() => import("@/components/optimize/index"));
-const Login = lazy(() => import("@/components/login/index"));
 const Function = lazy(() => import("@/components/function/index"));
 const Domestic = lazy(() => import("@/components/domestic/index"));
 const Performance = lazy(() => import("@/components/performance/index"));
@@ -61,7 +60,6 @@ const navGroups: NavGroup[] = [
       { key: "site", label: "站点与媒体", icon: "dashicons-admin-site-alt3", component: Optimize },
       { key: "content", label: "内容与页面", icon: "dashicons-admin-page", component: Page },
       { key: "seo", label: "SEO 与增强", icon: "dashicons-search", component: Function },
-      { key: "security", label: "登录与安全", icon: "dashicons-lock", component: Login },
       { key: "china", label: "国内生态", icon: "dashicons-location-alt", component: Domestic },
     ],
   },

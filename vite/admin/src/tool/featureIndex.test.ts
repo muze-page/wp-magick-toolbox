@@ -44,6 +44,21 @@ describe("featureIndex", () => {
       expect(readingProgressItem!.label).toBe("页顶阅读进度条");
       expect(readingProgressItem!.tabKey).toBe("content");
     });
+
+    it("does not recreate the retired login captcha entry from legacy schema", async () => {
+      mockGetUiSchemaSync.mockReturnValue({
+        "login-security-login_code": {
+          path: "login.security.login_code",
+          type: "string",
+          label: "登录验证码",
+          group: "安全",
+          feature_id: "login-security-login_code",
+        },
+      });
+      const { getFeatureIndexSync } = await import("@/tool/featureIndex");
+
+      expect(getFeatureIndexSync().some((item) => item.id === "login-security-login_code")).toBe(false);
+    });
   });
 
   describe("fetchFeatureIndex", () => {
@@ -131,6 +146,7 @@ describe("featureIndex", () => {
       const validViews = new Set<string>(ADMIN_VIEWS);
       expect(searchIndex.every((item) => validViews.has(item.tabKey))).toBe(true);
       expect(searchIndex.some((item) => /^\d+$/.test(item.tabKey))).toBe(false);
+      expect(searchIndex.some((item) => item.id === "login-security-login_code")).toBe(false);
     });
   });
 });

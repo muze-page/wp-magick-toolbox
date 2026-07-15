@@ -103,7 +103,6 @@ class DiagnosticsTest extends TestCase {
             ),
             'page'     => array('function' => array('search_limit' => true)),
             'function' => array('seo' => array('seo_home' => true)),
-            'login'    => array('security' => array('login_code' => true)),
             'performance' => array('search_enhance' => array('hotwords_enabled' => true)),
         );
 
@@ -137,26 +136,41 @@ class DiagnosticsTest extends TestCase {
         $this->assertEquals('low', $change['risk_level']);
     }
 
-    /**
-     * 测试登录验证码修复建议使用有效的验证码模式
-     */
-    public function test_fix_suggestion_login_code_uses_math_mode(): void {
-        $method = new ReflectionMethod('MaBox_Diagnostics', 'get_fix_suggestions');
+    public function test_retired_login_verification_is_absent_from_diagnostics(): void {
+        $legacy_config = array('login' => array('security' => array('login_code' => 'math')));
+        $env = array(
+            'php_version'        => '8.1',
+            'wp_version'         => '6.4',
+            'permalink'          => '/%postname%/',
+            'object_cache'       => true,
+            'rest_api_available' => true,
+        );
 
-        $suggestions = $method->invoke(null, array());
+        $score_method = new ReflectionMethod('MaBox_Diagnostics', 'calculate_score');
+        $this->assertSame(
+            $score_method->invoke(null, array(), $env),
+            $score_method->invoke(null, $legacy_config, $env),
+            'Retired login verification must not affect the health score'
+        );
 
-        $login_fix = null;
-        foreach ($suggestions as $s) {
-            if ($s['id'] === 'fix_login_code') {
-                $login_fix = $s;
-                break;
-            }
-        }
+        $recommendations_method = new ReflectionMethod('MaBox_Diagnostics', 'get_recommendations');
+        $fixes_method = new ReflectionMethod('MaBox_Diagnostics', 'get_fix_suggestions');
+        $diagnostic_output = serialize(array(
+            $recommendations_method->invoke(null, array()),
+            $fixes_method->invoke(null, array()),
+        ));
 
-        $this->assertNotNull($login_fix);
-        $this->assertEquals('login.security.login_code', $login_fix['changes'][0]['path']);
-        $this->assertEquals('false', $login_fix['changes'][0]['before']);
-        $this->assertEquals('math', $login_fix['changes'][0]['after']);
+        $this->assertStringNotContainsString('rec_login_code', $diagnostic_output);
+        $this->assertStringNotContainsString('fix_login_code', $diagnostic_output);
+        $this->assertStringNotContainsString('login.security.login_code', $diagnostic_output);
+
+        $items_method = new ReflectionMethod('MaBox_Diagnostics', 'get_diagnostic_items');
+        $items = $items_method->invoke(null, $legacy_config, $env, array(), array());
+        $this->assertNotContains(
+            'login_security',
+            array_column($items, 'id'),
+            'Retired login verification must not remain as a diagnostic health item'
+        );
     }
 
     /**
@@ -205,7 +219,6 @@ class DiagnosticsTest extends TestCase {
 
         $config = array(
             'function' => array('seo' => array('seo_home' => true, 'seo_single' => true, 'seo_category' => true)),
-            'login'    => array('security' => array('login_code' => true)),
             'optimize' => array(
                 'site'   => array('remove_RSS_version' => true, 'hide_top_toolbar' => true),
                 'medium' => array('img_add_tag' => true, 'upload_auto_name' => true),
@@ -222,8 +235,8 @@ class DiagnosticsTest extends TestCase {
         );
 
         $score = $method->invoke(null, $config, $env);
-        // 基础 60 + 5*3(seo) + 5(login) + 5(remove_RSS) + 3(toolbar) + 5(search) + 3(img_alt) + 4(upload_name) - 3(no CDN) = 97
-        $this->assertEquals(97, $score);
+        // 基础 60 + 5*3(seo) + 5(remove_RSS) + 3(toolbar) + 5(search) + 3(img_alt) + 4(upload_name) - 3(no CDN) = 92
+        $this->assertEquals(92, $score);
     }
 
     /**
@@ -329,7 +342,6 @@ class DiagnosticsTest extends TestCase {
             ),
             'page'     => array('function' => array('search_limit' => true)),
             'function' => array('seo' => array('seo_home' => true)),
-            'login'    => array('security' => array('login_code' => true)),
             'performance' => array('search_enhance' => array('hotwords_enabled' => true)),
         );
 
@@ -407,7 +419,6 @@ class DiagnosticsTest extends TestCase {
         // 全部正向配置 + 完美环境
         $max_config = array(
             'function' => array('seo' => array('seo_home' => true, 'seo_single' => true, 'seo_category' => true)),
-            'login'    => array('security' => array('login_code' => true)),
             'optimize' => array(
                 'site'   => array('remove_RSS_version' => true, 'hide_top_toolbar' => true),
                 'medium' => array('img_add_tag' => true, 'upload_auto_name' => true),

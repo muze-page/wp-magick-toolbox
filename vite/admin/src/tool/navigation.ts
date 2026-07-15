@@ -3,7 +3,6 @@ export const ADMIN_VIEWS = [
   "site",
   "content",
   "seo",
-  "security",
   "china",
   "maintenance",
   "about",

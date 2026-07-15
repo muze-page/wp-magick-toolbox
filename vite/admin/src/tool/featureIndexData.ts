@@ -26,7 +26,6 @@ export const searchIndex: SearchItem[] = [
   { id: "page-function-maintenance_tips", label: "维护提示页", tabKey: "content", tabLabel: "内容与页面", section: "功能", keywords: ["maintenance", "维护", "闭站"], tags: ["谨慎"], aliases: ["page-feature-maintenance_tips"] },
   { id: "function-seo-seo_home", label: "首页 TDK", tabKey: "seo", tabLabel: "SEO 与增强", section: "SEO", keywords: ["tdk", "首页", "seo", "标题", "描述"], tags: ["推荐", "SEO"] },
   { id: "function-seo-seo_single", label: "文章 SEO", tabKey: "seo", tabLabel: "SEO 与增强", section: "SEO", keywords: ["seo", "文章", "关键词"], tags: ["推荐", "SEO"] },
-  { id: "login-security-login_code", label: "登录验证码", tabKey: "security", tabLabel: "登录与安全", section: "安全", keywords: ["captcha", "验证码"], tags: ["推荐", "安全"] },
   { id: "domestic-compliance-icp", label: "ICP 备案号", tabKey: "china", tabLabel: "国内生态", section: "合规", keywords: ["icp", "备案", "合规"], tags: ["推荐"] },
   { id: "domestic-compliance-police_enabled", label: "公安网备号", tabKey: "china", tabLabel: "国内生态", section: "合规", keywords: ["公安", "网备", "备案"], tags: ["推荐"], aliases: ["domestic-compliance-police"] },
   { id: "domestic-compliance-cookie_enabled", label: "Cookie 同意弹窗", tabKey: "china", tabLabel: "国内生态", section: "合规", keywords: ["cookie", "隐私", "弹窗"], aliases: ["domestic-compliance-cookie"] },

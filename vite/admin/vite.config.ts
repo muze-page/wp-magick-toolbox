@@ -31,7 +31,6 @@ export default defineConfig({
           'tab-dashboard': ['./src/components/dashboard/index'],
           'tab-page': ['./src/components/page/index'],
           'tab-optimize': ['./src/components/optimize/index'],
-          'tab-login': ['./src/components/login/index'],
           'tab-function': ['./src/components/function/index'],
           'tab-about': ['./src/components/about/index'],
           // 公共依赖

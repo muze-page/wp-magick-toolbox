@@ -1,6 +1,6 @@
 # ADR: Pre-GA 管理后台清场式重构
 
-- 状态：已接受，工作包 1-5 已验收（含真实 Local 站点烟测）
+- 状态：已接受，工作包 1-6 已验收（含真实 Local 站点烟测与独立复审）
 - 日期：2026-07-15
 - 决策范围：WP Magick Toolbox 管理后台应用外壳
 
@@ -43,17 +43,17 @@
 
 ### 2. 信息架构
 
-首个切片建立以下语义分区：
+当前管理后台收口为以下七个语义分区：
 
 - 概览
 - 站点与媒体
-- 内容与 SEO
-- 安全
-- 国内生态
+- 内容与页面
+- SEO 与增强
+- 国内生态（含登录与评论安全）
 - 维护工具
 - 关于与帮助
 
-导航项使用语义化 `view` 值，不再使用 `0`、`1`、`13` 等数字约定。当前功能页面可作为迁移期内容挂载到新分区，但不得新增数字路由。AI 审核不再出现在主导航；Provider Runtime 已在工作包 2 从正式插件清退。
+导航项使用语义化 `view` 值，不再使用 `0`、`1`、`13` 等数字约定。当前功能页面可作为迁移期内容挂载到新分区，但不得新增数字路由。AI 审核不再出现在主导航；Provider Runtime 已在工作包 2 从正式插件清退。工作包 6 又删除了只承载不可信验证码的重复“登录与安全”入口，真实登录安全设置统一归入国内生态。
 
 ### 3. 概览页职责
 
@@ -124,11 +124,11 @@
 
 ## 后续工作包
 
-1. 建立单一模块 manifest/config schema，并生成前端类型与搜索索引。
-2. 按“站点与媒体、内容与 SEO、安全、国内生态、维护工具”逐域迁移设置页面。
-3. 删除 Ant Design、Tailwind 和孤立的管理后台组件，稳定到 WordPress 组件体系。
-4. 继续收口 OSS、百度、微信等非 AI 模块的浏览器端敏感配置注入。
-5. 统一 pnpm 锁文件、CI 命令、版本与功能文档（工作包 3 已完成），再执行发布前人工验收。
+1. 重建 `domestic.login_security` 的激活边界，使每个高风险开关能按自身配置加载，并补齐锁定、恢复和防误伤的端到端测试。
+2. 狭窄修复 `category_link_simplify` 生命周期 Hook 和 `ban_auto_size` 缺少过滤返回值两项已确认行为债务。
+3. 建立单一模块 manifest/config schema，并生成或校验前端类型与搜索索引，继续减少手写重复真相。
+4. 逐步缩减 Ant Design、Tailwind 和大体积共享 chunk，稳定到更轻的 WordPress 管理界面组件边界。
+5. 完成发布前人工验收、风险功能恢复路径验证和打包检查。
 
 ## 工作包 2：AI Provider Runtime 清退变更信封
 
@@ -244,11 +244,38 @@
 - Local 站点通过符号链接直接挂载当前仓库。新触发前台、未登录后台和受保护设置 REST 请求分别返回 HTTP 200/302/401，符合当前访问边界；PHP error 与 PHP-FPM 日志均无新增字节，没有新的 fatal、参数错误或模块接口告警。
 - 本工作包未混入模块业务重写。复核时另记录三项既有行为债务：`category_link_simplify` 在运行时才注册激活/停用 Hook，大概率错过 WordPress 生命周期；`ban_auto_size` 的尺寸过滤回调没有返回 `$sizes`；`login.login_verify` 被标记为 `admin` scope，但 Local 当前 WordPress 核心的 `is_admin()` 在没有 `current_screen` 或 `WP_ADMIN` 时返回 false，`wp-login.php` 也未定义 `WP_ADMIN`，因此模块可能不会在真实登录页加载；其数学与随机验证又都信任客户端隐藏字段中回传的挑战值，且随机字符串在校验时被强制转为整数，不能作为可信的登录保护。下一工作包应优先删除或重做该登录验证，而不是只改 scope；另两项再作狭窄的功能正确性处理，都不回流到本次机械契约变更。
 
+## 工作包 6：不可信登录验证码清退变更信封
+
+| 项目 | 决定 |
+| --- | --- |
+| 目标仓库 | `/Users/muze/gitee/wp-magick-toolbox` |
+| 聚焦模块 | 旧 `login.login_verify` 运行时、空顶层 `login` 设置域，以及对应的管理界面、诊断和当前文档 |
+| 失败证据 | 模块不会可靠进入 `wp-login.php` 请求；数学挑战由客户端回传参与校验；随机挑战还会被强制转为整数，均不能构成可信的登录保护 |
+| 预期变更 | 删除验证码实现与注册；删除已无其他字段的 `login` Option/Schema/前端数据域；删除重复“登录与安全”主导航、搜索项和失真诊断；登录防护设置只保留现有 `domestic.login_security` 表面 |
+| 明确非目标 | 不在本包重写国内登录安全实现，不修复分类链接或图片尺寸两项独立债务，不引入第三方验证码、迁移器、兼容路由、功能开关或兄弟仓库改动 |
+| 公共契约 | 模块数从 59 收口为 58；设置 GET/POST 不再包含顶层 `login`；`security` 不再是合法 Admin view，旧查询值按未知 view 回到概览 |
+| 预期文件 | Registry/Tier/Autoload、验证码实现、Config Schema/Manager/常量、Diagnostics、React 设置壳/概览/搜索/类型、测试、README/VitePress/功能清单、本 ADR |
+| 不得改变 | `domestic.login_security` 字段及运行时、其他工具模块、构建产物、AI 参考快照、用户未跟踪排障文档、兄弟仓库 |
+| 必需门禁 | PHPUnit/PHPStan/PHP lint、admin Vitest/TypeScript/lint/build、VitePress build、旧能力残留扫描、`git diff --check`、Local 登录页/后台设置页/新增日志检查 |
+| 跨仓矩阵 | 不需要；被删除的设置和运行时全部属于本插件 |
+| 回滚计划 | 以一个聚焦提交交付；回滚该提交即可恢复旧实现，不保留双轨兼容 |
+
+### 工作包 6 结果复核
+
+- `login.login_verify` 已从 Registry、Tier、Autoload 和实现文件中删除；注册模块从 59 个收口为 58 个。已无其他字段的顶层 `login` Schema、Option 常量、Config Manager 映射、卸载认知和前端 Option/default/type 同步删除，设置域从 6 个收口为 5 个。
+- Diagnostics 不再为验证码加分，也不再输出“可有效防御暴力破解”的健康项、推荐或自动修复。负向测试锁定旧配置不会影响评分、不会重新进入诊断或被浏览器设置契约接受。
+- 管理后台当前为 7 个语义 `view`；旧 `view=security` 按未知路由回到概览。概览只按后端真实的 `fail_limit_enabled` 模块加载门槛展示登录保护，安全面板会直接聚焦国内生态的登录安全配置。
+- 独立审查发现 `domestic.login_security` 是一个复合模块，但 Registry 只以“账号失败限制”作为统一加载门槛；仅开启用户名枚举等其他开关时运行时不会加载。本包未越界重写该高风险运行时，而是删除 Dashboard 假阳性，并在当前功能清单和 VitePress 中明确依赖关系；拆分激活边界列为下一工作包首项。
+- README、功能清单和 VitePress 已删除验证码能力、页面与链接；明确标为历史快照的旧文档保留原始事实，并继续以本 ADR、代码、Schema 和测试作为当前权威。
+- 自动化门禁：PHPUnit 309 项测试/3136 个断言，PHPStan 0 error，变更 PHP 语法检查、admin Vitest 14 个文件/90 项测试、TypeScript、严格 ESLint、Vite build、VitePress build、Composer 校验、残留扫描和 `git diff --check` 均通过。
+- Local 管理员登录态中，概览与国内生态正常加载，旧安全路由回到概览，`wp-login.php` 只保留 WordPress 原生登录表单，浏览器 console 无 error/warning。开发数据库中的旧 `Magick_ToolBox_Option_Login` 已删除，浏览器配置只剩 5 个当前域；新触发前台、登录页和未登录后台请求分别返回 200/200/302，PHP、PHP-FPM 和 Nginx 错误日志均无增量。
+- PHP/安全契约与前端/产品表面分别完成独立复审；审查发现的 Dashboard 假阳性、深链未聚焦、ADR/功能统计漂移均已修正，最终结论均为 Approve，无剩余 P0–P2。
+
 ## 结果复核
 
 首个垂直切片已完成独立代码审查和浏览器烟测，改进假说成立：
 
-- 数字 Tab 已由 8 个语义化 `view` 取代，刷新、返回和未知路由回退行为可用。
+- 数字 Tab 最初由 8 个语义化 `view` 取代；工作包 6 合并重复安全入口后，当前 7 个 `view` 的刷新、返回和未知路由回退行为可用。
 - Dashboard 删除了预设市场、拖拽收藏、向导、备份编排、默认 60 分和不可达 `13`。
 - 数据库清理、媒体健康、SEO 检查和百度推送不再硬编码 REST 根地址或读取错误 nonce。
 - 数据库清理回调改为直接读取 `WP_REST_Request` JSON；百度批推从前后端共同阻止游标停滞。
@@ -260,4 +287,4 @@
 
 浏览器烟测先使用 Vite 默认数据验证桌面/移动结构、语义路由、浏览器返回、未知路由、搜索定位和接口失败状态；工作包 4 又在真实 Local WordPress 管理员登录态中验证了 WordPress 管理栏、服务端成功响应和敏感设置闭环。
 
-整个 Pre-GA Reset 尚未完成；AI Provider Runtime 清退已由工作包 2 收口，pnpm/CI 可重复基线已由工作包 3 收口，敏感设置契约已由工作包 4 收口，注册模块与 Loader 的运行时契约已由工作包 5 收口。其余发布前主要问题是三项已确认模块行为债务、重复 manifest/schema，以及 Ant Design/Tailwind 和大 chunk 带来的前端维护与性能成本。
+整个 Pre-GA Reset 尚未完成；AI Provider Runtime 清退已由工作包 2 收口，pnpm/CI 可重复基线已由工作包 3 收口，敏感设置契约已由工作包 4 收口，注册模块与 Loader 的运行时契约已由工作包 5 收口，不可信登录验证码已由工作包 6 清退。其余发布前主要问题是国内登录安全复合模块的单一激活门槛、两项已确认模块行为债务、重复 manifest/schema，以及 Ant Design/Tailwind 和大 chunk 带来的前端维护与性能成本。

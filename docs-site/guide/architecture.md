@@ -36,7 +36,6 @@ WP Magick Toolbox
 | `Magick_ToolBox_Option_Optimize` | 站点、媒体和后台优化 |
 | `Magick_ToolBox_Option_Page` | 页面功能、外观和评论 |
 | `Magick_ToolBox_Option_Function` | SEO、统计与辅助功能 |
-| `Magick_ToolBox_Option_Login` | 登录安全配置 |
 | `Magick_ToolBox_Option_Domestic` | 国内生态配置 |
 | `Magick_ToolBox_Option_Performance` | OSS 和维护工具配置 |
 

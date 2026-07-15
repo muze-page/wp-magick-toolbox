@@ -15,12 +15,11 @@ describe("admin navigation", () => {
       "site",
       "content",
       "seo",
-      "security",
       "china",
       "maintenance",
       "about",
     ]);
-    expect(isAdminView("security")).toBe(true);
+    expect(isAdminView("security")).toBe(false);
     expect(isAdminView("13")).toBe(false);
   });
 
@@ -30,6 +29,8 @@ describe("admin navigation", () => {
 
   it("falls back to overview for missing or unknown views", () => {
     expect(getAdminViewFromSearch("?page=MaBox_config")).toBe("overview");
+    expect(getAdminViewFromSearch("?page=MaBox_config&view=security")).toBe("overview");
+    expect(normalizeAdminView("security")).toBe("overview");
     expect(normalizeAdminView("13")).toBe("overview");
     expect(normalizeAdminView("unknown")).toBe("overview");
   });

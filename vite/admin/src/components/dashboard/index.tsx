@@ -6,7 +6,7 @@ import type { DiagnosticSummary, Option, SearchHealthSummary } from "@/tool/inte
 
 import "./overview.css";
 
-type OverviewView = "site" | "content" | "seo" | "security" | "china" | "maintenance";
+type OverviewView = "site" | "content" | "seo" | "china" | "maintenance";
 
 interface DashboardProps {
   onNavigate?: (view: OverviewView, itemId?: string) => void;
@@ -61,15 +61,8 @@ function countBooleanToggles(value: unknown): ToggleStats {
   return stats;
 }
 
-function isEnabled(value: unknown): boolean {
-  return value === true || (typeof value === "string" && value !== "" && value !== "false");
-}
-
 function getSecurityChecks(optionData: Option): SecurityCheck[] {
-  const loginProtected =
-    isEnabled(optionData.login?.security?.login_code) ||
-    Boolean(optionData.domestic?.login_security?.fail_limit_enabled) ||
-    Boolean(optionData.domestic?.login_security?.ban_enumeration_enabled);
+  const loginProtected = Boolean(optionData.domestic?.login_security?.fail_limit_enabled);
 
   const commentProtections = [
     optionData.page?.comment?.interval,
@@ -119,17 +112,15 @@ function buildNextSteps(
   searchState: RemoteState<SearchHealthSummary>,
 ): NextStep[] {
   const steps: NextStep[] = [];
-  const loginProtected =
-    isEnabled(optionData.login?.security?.login_code) ||
-    Boolean(optionData.domestic?.login_security?.fail_limit_enabled);
+  const loginProtected = Boolean(optionData.domestic?.login_security?.fail_limit_enabled);
 
   if (!loginProtected) {
     steps.push({
       id: "login-protection",
       title: "补齐登录防护",
-      description: "启用验证码或失败次数限制，降低后台暴力破解风险。",
-      view: "security",
-      action: "前往安全设置",
+      description: "启用登录失败限制，降低后台暴力破解风险。",
+      view: "china",
+      action: "前往国内生态",
     });
   }
 
@@ -286,7 +277,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   );
   const securityReady = securityChecks.filter((item) => item.status === "good").length;
 
-  const navigate = (view: OverviewView) => {
+  const navigate = (view: OverviewView, itemId?: string) => {
+    if (itemId) {
+      onNavigate?.(view, itemId);
+      return;
+    }
     onNavigate?.(view);
   };
 
@@ -449,8 +444,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               </li>
             ))}
           </ul>
-          <button className="mabox-overview__full-button" type="button" onClick={() => navigate("security")}>
-            管理安全设置
+          <button
+            className="mabox-overview__full-button"
+            type="button"
+            onClick={() => navigate("china", "domestic-login_security-fail_limit_enabled")}
+          >
+            管理国内安全设置
           </button>
         </section>
       </div>

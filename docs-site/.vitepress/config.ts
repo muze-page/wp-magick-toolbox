@@ -143,8 +143,6 @@ export default defineConfig({
         {
           text: '登录安全',
           items: [
-            { text: '数学验证码', link: '/features/login-security/math-captcha' },
-            { text: '随机混合验证码', link: '/features/login-security/random-captcha' },
             { text: '失败锁定 IP', link: '/features/login-security/login-lock-ip' },
             { text: '自定义登录入口', link: '/features/login-security/custom-login-url' },
             { text: '登录日志', link: '/features/login-security/login-log' },

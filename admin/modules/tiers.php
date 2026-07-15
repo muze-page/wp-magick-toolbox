@@ -26,7 +26,6 @@ return array(
         'seo.seo_home', 'seo.seo_single', 'seo.seo_category', 'seo.seo_tag',
         'seo.seo_category_add_meat',
         'auxiliary.census_single', 'auxiliary.ban_malice_search',
-        'login.login_verify',
 
         'domestic.compliance', 'domestic.wechat',
         'domestic.comment_security', 'domestic.login_security',

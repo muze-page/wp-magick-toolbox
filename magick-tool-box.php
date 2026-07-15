@@ -36,7 +36,6 @@ define('MAGICK_TOOLBOX_ACTIVE_MODULES', 'Magick_ToolBox_Active_Modules');
 define('MAGICK_MIXTURE_OPTION_OPTIMIZE', 'Magick_ToolBox_Option_Optimize');
 define('MAGICK_MIXTURE_OPTION_PAGE', 'Magick_ToolBox_Option_Page');
 define('MAGICK_MIXTURE_OPTION_FUNCTION', 'Magick_ToolBox_Option_Function');
-define('MAGICK_MIXTURE_OPTION_LOGIN', 'Magick_ToolBox_Option_Login');
 
 
 /**

@@ -48,7 +48,6 @@ spl_autoload_register(function ($class) {
         'MaBox_Hide_Top_Toolbar' => 'admin/partials/optimize/site/hide_top_toolbar.php',
         'MaBox_Image_Add_Tag' => 'admin/partials/optimize/medium/image_add_tag.php',
         'MaBox_Interface_Category_Data' => 'admin/partials/page/jurisdiction/interface_category_data.php',
-        'MaBox_Login_Verify' => 'admin/partials/login/security/login_verify.php',
         'MaBox_Maintenance_Tips' => 'admin/partials/page/function/maintenance_tips.php',
         'MaBox_No_Escape' => 'admin/partials/optimize/site/no_escape.php',
         'MaBox_Medium_Ban_Auto_Size' => 'admin/partials/optimize/medium/ban_auto_size.php',

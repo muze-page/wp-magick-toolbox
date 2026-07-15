@@ -102,11 +102,6 @@ if (!class_exists('MaBox_Diagnostics')) {
                 $score += 5;
             }
 
-            $login_security = self::get_nested($config, 'login', 'security');
-            if (!empty($login_security['login_code']) && $login_security['login_code'] !== 'false' && $login_security['login_code'] !== false) {
-                $score += 5;
-            }
-
             $optimize_site = self::get_nested($config, 'optimize', 'site');
             if (!empty($optimize_site['remove_RSS_version'])) {
                 $score += 5;
@@ -299,19 +294,6 @@ if (!class_exists('MaBox_Diagnostics')) {
                 'action'  => $seo_basic ? '' : __('去配置 SEO', 'magick-toolbox'),
             );
 
-            // 登录安全
-            $login_security = self::get_nested($config, 'login', 'security');
-            $login_code_on = !empty($login_security['login_code']) && $login_security['login_code'] !== 'false' && $login_security['login_code'] !== false;
-            $items[] = array(
-                'id'      => 'login_security',
-                'title'   => __('登录安全', 'magick-toolbox'),
-                'status'  => $login_code_on ? 'good' : 'warning',
-                'message' => $login_code_on
-                    ? __('已启用登录验证码，可有效防御暴力破解。', 'magick-toolbox')
-                    : __('未启用登录验证码，建议开启以增强后台安全。', 'magick-toolbox'),
-                'action'  => $login_code_on ? '' : __('去配置登录安全', 'magick-toolbox'),
-            );
-
             // 媒体优化
             $optimize_medium = self::get_nested($config, 'optimize', 'medium');
             $img_tag_on = !empty($optimize_medium['img_add_tag']);
@@ -449,17 +431,6 @@ if (!class_exists('MaBox_Diagnostics')) {
                 );
             }
 
-            $login_security = self::get_nested($config, 'login', 'security');
-            if (empty($login_security['login_code']) || $login_security['login_code'] === 'false' || $login_security['login_code'] === false) {
-                $recommendations[] = array(
-                    'id'     => 'rec_login_code',
-                    'title'  => __('登录验证码', 'magick-toolbox'),
-                    'module' => 'login',
-                    'field'  => 'security.login_code',
-                    'reason' => __('防御暴力破解登录后台。', 'magick-toolbox'),
-                );
-            }
-
             if (empty($optimize_site['hide_top_toolbar'])) {
                 $recommendations[] = array(
                     'id'     => 'rec_hide_toolbar',
@@ -575,27 +546,6 @@ if (!class_exists('MaBox_Diagnostics')) {
                             'label'      => __('首页 TDK 开关', 'magick-toolbox'),
                             'before'     => false,
                             'after'      => true,
-                            'risk_level' => 'low',
-                        ),
-                    ),
-                );
-            }
-
-            $login_security = self::get_nested($config, 'login', 'security');
-            if (empty($login_security['login_code']) || $login_security['login_code'] === 'false' || $login_security['login_code'] === false) {
-                $suggestions[] = array(
-                    'id'                   => 'fix_login_code',
-                    'title'                => __('登录验证码', 'magick-toolbox'),
-                    'reason'               => __('防御暴力破解登录后台。', 'magick-toolbox'),
-                    'severity'             => 'low',
-                    'module'               => 'login',
-                    'requires_confirmation' => false,
-                    'changes'              => array(
-                        array(
-                            'path'       => 'login.security.login_code',
-                            'label'      => __('登录验证码', 'magick-toolbox'),
-                            'before'     => isset($login_security['login_code']) ? $login_security['login_code'] : 'false',
-                            'after'      => 'math',
                             'risk_level' => 'low',
                         ),
                     ),

@@ -62,10 +62,6 @@ export type Option = {
     seo: FunctionSeo; //简单 SEO 功能
     config: FunctionTips; //简单提示
   };
-  //登录
-  login: {
-    security: LoginSecurity; //安全
-  };
   //国内生态
   domestic: {
     compliance: DomesticCompliance; //备案与合规
@@ -319,11 +315,6 @@ export type FunctionSeo = {
   description: string; //网站描述
   seo_single: boolean; //文章SEO
   seo_category: boolean; //分类和标签SEO
-};
-
-//登录安全
-export type LoginSecurity = {
-  login_code: string; //登录验证码
 };
 
 //下拉列表类型

@@ -5,7 +5,6 @@ import { SearchItem, searchIndex } from "@/tool/featureIndexData";
 const MODULE_TAB_MAP: Record<string, { tabKey: string; tabLabel: string }> = {
   page: { tabKey: "content", tabLabel: "内容与页面" },
   optimize: { tabKey: "site", tabLabel: "站点与媒体" },
-  login: { tabKey: "security", tabLabel: "登录与安全" },
   function: { tabKey: "seo", tabLabel: "SEO 与增强" },
   domestic: { tabKey: "china", tabLabel: "国内生态" },
   performance: { tabKey: "maintenance", tabLabel: "维护工具" },

@@ -401,17 +401,6 @@ return array(
         'config_path' => 'function.auxiliary',
     ),
 
-    // ========== 登录页 ==========
-    'login.login_verify' => array(
-        'class'     => 'MaBox_Login_Verify',
-        'file'      => 'login/security/login_verify.php',
-        'option_key'=> 'login.security.login_code',
-        'category'  => 'login',
-        'scope'     => 'admin',
-        'config_path' => 'login.security',
-        'risk_tags' => array('推荐', '安全', '仅后台'),
-    ),
-
     // ========== 导入导出 ==========
     'function.config' => array(
         'class'     => 'MaBox_Config',

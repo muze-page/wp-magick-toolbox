@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import Dashboard from "@/components/dashboard";
 import { DataContext, emptySecretStatus } from "@/tool/dataContext";
 import { defaultVarOption } from "@/tool/defaultVar";
-import type { DiagnosticSummary, SearchHealthSummary } from "@/tool/interface";
+import type { DiagnosticSummary, Option, SearchHealthSummary } from "@/tool/interface";
 
 const apiMocks = vi.hoisted(() => ({
   getDiagnosticsSummary: vi.fn(),
@@ -52,11 +52,11 @@ const emptySearchSummary: SearchHealthSummary = {
   recommendations: [],
 };
 
-function renderDashboard(onNavigate = vi.fn()) {
+function renderDashboard(onNavigate = vi.fn(), optionData: Option = defaultVarOption) {
   render(
     <DataContext.Provider
       value={{
-        optionData: defaultVarOption,
+        optionData,
         updateOption: vi.fn(),
         refreshOption: vi.fn(),
         lastSavedOption: defaultVarOption,
@@ -163,13 +163,43 @@ describe("现代概览页", () => {
     apiMocks.getSearchSummary.mockResolvedValue({ success: true, data: emptySearchSummary });
     const onNavigate = renderDashboard();
 
-    fireEvent.click(await screen.findByRole("button", { name: "前往安全设置" }));
+    fireEvent.click(await screen.findByRole("button", { name: "前往国内生态" }));
     fireEvent.click(screen.getByRole("button", { name: "打开维护工具" }));
     fireEvent.click(screen.getByRole("button", { name: "检查搜索设置" }));
 
-    expect(onNavigate).toHaveBeenNthCalledWith(1, "security");
+    expect(onNavigate).toHaveBeenNthCalledWith(1, "china");
     expect(onNavigate).toHaveBeenNthCalledWith(2, "maintenance");
     expect(onNavigate).toHaveBeenNthCalledWith(3, "content");
     expect(onNavigate).not.toHaveBeenCalledWith("13", expect.anything());
+  });
+
+  it("安全状态入口仍指向国内生态中的真实登录保护", async () => {
+    apiMocks.getDiagnosticsSummary.mockResolvedValue({ success: true, data: diagnosticSummary });
+    apiMocks.getSearchSummary.mockResolvedValue({ success: true, data: emptySearchSummary });
+    const onNavigate = renderDashboard();
+
+    fireEvent.click(await screen.findByRole("button", { name: "管理国内安全设置" }));
+
+    expect(onNavigate).toHaveBeenCalledWith("china", "domestic-login_security-fail_limit_enabled");
+  });
+
+  it("只按当前后端模块激活门判断登录保护", () => {
+    apiMocks.getDiagnosticsSummary.mockReturnValue(new Promise(() => {}));
+    apiMocks.getSearchSummary.mockReturnValue(new Promise(() => {}));
+    const optionData: Option = {
+      ...defaultVarOption,
+      domestic: {
+        ...defaultVarOption.domestic,
+        login_security: {
+          ...defaultVarOption.domestic.login_security,
+          ban_enumeration_enabled: true,
+        },
+      },
+    };
+
+    renderDashboard(vi.fn(), optionData);
+
+    expect(screen.getByText("尚未启用登录防护")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "前往国内生态" })).toBeInTheDocument();
   });
 });

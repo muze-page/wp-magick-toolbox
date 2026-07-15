@@ -82,7 +82,6 @@ class ModuleRegistryConsistency_Test extends TestCase {
             'auxiliary.baidu_tonji'       => 'function.auxiliary',
             'auxiliary.google_tonji'      => 'function.auxiliary',
             'auxiliary.biying_tonji'      => 'function.auxiliary',
-            'login.login_verify'          => 'login.security',
         );
 
         foreach ($expected_paths as $module_id => $config_path) {
@@ -176,8 +175,6 @@ class ModuleRegistryConsistency_Test extends TestCase {
 
         $this->assertArrayNotHasKey('baidu_push', $schema['domestic']);
         $this->assertArrayNotHasKey('anti_crawler', $schema['page']['function']);
-        $this->assertArrayNotHasKey('tecent_id', $schema['login']['security']);
-        $this->assertArrayNotHasKey('tecent_key', $schema['login']['security']);
         $this->assertArrayNotHasKey('domestic.baidu_push', $registry);
         $this->assertArrayNotHasKey('page.anti_crawler', $registry);
         foreach ($tiers as $modules) {
@@ -509,9 +506,38 @@ class ModuleRegistryConsistency_Test extends TestCase {
         $this->assertArrayNotHasKey('comment_emote', $schema['page']['comment'], 'page.comment.comment_emote should not exist in schema');
     }
 
-    public function test_schema_login_beautify_branch_removed(): void {
+    public function test_legacy_login_verification_removed_from_backend_contracts(): void {
         $schema = MaBox_Config_Schema::get_schema();
-        $this->assertArrayNotHasKey('beautify', $schema['login']);
+        $map = MaBox_Config_Manager::get_module_map();
+        $registry = MaBox_Module_Loader::get_registry();
+        $tiers = MaBox_Module_Loader::get_tiers();
+        $autoload = file_get_contents(self::$plugin_dir . '/includes/autoload.php');
+        $plugin = file_get_contents(self::$plugin_dir . '/magick-tool-box.php');
+        $uninstall = file_get_contents(self::$plugin_dir . '/uninstall.php');
+        $phpstan = file_get_contents(self::$plugin_dir . '/phpstan.neon');
+
+        $this->assertCount(58, $registry, 'The registry should contain 58 modules after retiring login verification');
+        $this->assertArrayNotHasKey('login.login_verify', $registry);
+        foreach ($tiers as $modules) {
+            $this->assertNotContains('login.login_verify', $modules);
+        }
+        $this->assertStringNotContainsString('MaBox_Login_Verify', $autoload);
+        $this->assertFileDoesNotExist(self::$plugin_dir . '/admin/partials/login/security/login_verify.php');
+
+        $this->assertArrayNotHasKey('login', $schema);
+        $this->assertArrayNotHasKey('login', $map);
+        $this->assertArrayNotHasKey('login', MaBox_Config_Schema::get_defaults());
+        $this->assertFalse(defined('MAGICK_MIXTURE_OPTION_LOGIN'));
+
+        $legacy_browser_settings = MaBox_Config_Schema::get_defaults();
+        $legacy_browser_settings['login'] = array('security' => array('login_code' => 'math'));
+        $legacy_validation = MaBox_Config_Schema::validate_browser_settings($legacy_browser_settings);
+        $this->assertFalse($legacy_validation['valid']);
+        $this->assertContains('settings.login 不是已知字段', $legacy_validation['errors']);
+
+        $this->assertStringNotContainsString('MAGICK_MIXTURE_OPTION_LOGIN', $plugin);
+        $this->assertStringNotContainsString('Magick_ToolBox_Option_Login', $uninstall);
+        $this->assertStringNotContainsString('login/security/login_verify.php', $phpstan);
     }
 
     public function test_schema_page_function_has_no_removed_fields(): void {

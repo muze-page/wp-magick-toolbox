@@ -164,11 +164,6 @@ const FunctionTips = {
   tips_link: str, //按钮链接
 };
 
-//登录安全
-const LoginSecurity = {
-  login_code: "false", //登录验证码
-};
-
 //国内生态 - 备案与合规
 const DomesticCompliance = {
   icp_enabled: boo,
@@ -289,10 +284,6 @@ export const defaultVarOption = {
     feature: PageFeature, //外观特效
     function: PageFunction, //页面功能
     jurisdiction: PageJurisdiction, //权限
-  },
-  //登录
-  login: {
-    security: LoginSecurity, //安全
   },
   //国内生态
   domestic: {

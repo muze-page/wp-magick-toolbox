@@ -25,13 +25,13 @@ class MaBox_Config_Manager_Test extends TestCase {
         $map = MaBox_Config_Manager::get_module_map();
 
         $expected_keys = array(
-            'optimize', 'page', 'function', 'login',
-            'domestic', 'performance',
+            'optimize', 'page', 'function', 'domestic', 'performance',
         );
 
         foreach ($expected_keys as $key) {
             $this->assertArrayHasKey($key, $map, "Module map should contain '$key'");
         }
+        $this->assertArrayNotHasKey('login', $map, 'Retired login option domain must not remain in the module map');
     }
 
     /**
@@ -52,7 +52,7 @@ class MaBox_Config_Manager_Test extends TestCase {
      */
     public function test_module_map_has_correct_count(): void {
         $map = MaBox_Config_Manager::get_module_map();
-        $this->assertCount(6, $map);
+        $this->assertCount(5, $map);
     }
 
     /**

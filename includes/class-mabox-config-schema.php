@@ -145,13 +145,6 @@ if (!class_exists('MaBox_Config_Schema')) {
                         'tips_link'     => array('type' => 'string',  'default' => '', 'sanitize' => 'esc_url_raw'),
                     ),
                 ),
-                'login' => array(
-                    '_option_key' => MAGICK_MIXTURE_OPTION_LOGIN,
-                    'security' => array(
-                        'login_code' => array('type' => 'string',  'default' => 'false', 'sanitize' => 'sanitize_text_field'),
-                    ),
-                ),
-
                 'domestic' => array(
                     '_option_key' => MAGICK_MIXTURE_OPTION_DOMESTIC,
                     'compliance' => array(

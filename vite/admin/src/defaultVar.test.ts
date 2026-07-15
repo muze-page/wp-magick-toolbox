@@ -6,7 +6,7 @@ describe('defaultVar', () => {
     expect(defaultVarOption).toHaveProperty('optimize');
     expect(defaultVarOption).toHaveProperty('page');
     expect(defaultVarOption).toHaveProperty('function');
-    expect(defaultVarOption).toHaveProperty('login');
+    expect(defaultVarOption).not.toHaveProperty('login');
     expect(defaultVarOption).toHaveProperty('domestic');
     expect(defaultVarOption).toHaveProperty('performance');
   });
@@ -22,6 +22,11 @@ describe('defaultVar', () => {
     expect(defaultVarOption.page).toHaveProperty('feature');
     expect(defaultVarOption.page).toHaveProperty('function');
     expect(defaultVarOption.page).toHaveProperty('jurisdiction');
+  });
+
+  it('should keep real login protections under domestic settings', () => {
+    expect(defaultVarOption.domestic.login_security).toHaveProperty('fail_limit_enabled');
+    expect(defaultVarOption.domestic.login_security).toHaveProperty('ban_enumeration_enabled');
   });
 
   it('should have valid url_site format', () => {
