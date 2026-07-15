@@ -6,11 +6,11 @@
  * 将 IP 地址替换为 [已隐藏]，保护用户隐私。
  */
 if (!class_exists('MaBox_Hide_Email_IP')) {
-    class MaBox_Hide_Email_IP {
+    class MaBox_Hide_Email_IP implements MaBox_Module_Interface {
 
         private static $option;
 
-        public static function run($config) {
+        public static function run($config = array()) {
             self::$option = $config;
             add_filter('wp_mail', array(__CLASS__, 'hide_ip_in_email'));
         }

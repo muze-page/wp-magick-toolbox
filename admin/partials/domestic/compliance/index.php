@@ -1,8 +1,8 @@
 <?php
 if (!class_exists('MaBox_Domestic_Compliance')) {
-    class MaBox_Domestic_Compliance {
+    class MaBox_Domestic_Compliance implements MaBox_Module_Interface {
         private static $config;
-        public static function run($config) {
+        public static function run($config = array()) {
             self::$config = $config;
             add_action('wp_footer', array(__CLASS__, 'render_footer'), 100);
             add_action('wp_enqueue_scripts', array(__CLASS__, 'enqueue_cookie_assets'));

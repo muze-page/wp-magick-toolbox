@@ -1,11 +1,11 @@
 <?php
 
 if (!class_exists('MaBox_Page_Reading_Progress')) {
-    class MaBox_Page_Reading_Progress
+    class MaBox_Page_Reading_Progress implements MaBox_Module_Interface
     {
         private static $option;
 
-        public static function run($config)
+        public static function run($config = array())
         {
             self::$option = $config;
             add_action('wp_enqueue_scripts', array(__CLASS__, 'load_assets'));

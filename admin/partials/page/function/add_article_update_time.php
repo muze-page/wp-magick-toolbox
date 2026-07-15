@@ -6,9 +6,9 @@
  */
 
 if (!class_exists('MaBox_Single_Add_Last_Updated_Date')) {
-    class MaBox_Single_Add_Last_Updated_Date
+    class MaBox_Single_Add_Last_Updated_Date implements MaBox_Module_Interface
     {
-        public static function run()
+        public static function run($config = array())
         {
             add_filter('the_content', array(__CLASS__, 'add_last_updated_date'));
         }

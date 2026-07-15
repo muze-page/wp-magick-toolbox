@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('MaBox_Comment_Sensitive_Words')) {
-    class MaBox_Comment_Sensitive_Words
+    class MaBox_Comment_Sensitive_Words implements MaBox_Module_Interface
     {
         private static $option;
 
@@ -31,7 +31,7 @@ if (!class_exists('MaBox_Comment_Sensitive_Words')) {
             'netflix' => array('nf', '网飞', 'nai fei'),
         );
 
-        public static function run($config)
+        public static function run($config = array())
         {
             self::$option = $config;
             add_filter('preprocess_comment', array(__CLASS__, 'check_comment'));

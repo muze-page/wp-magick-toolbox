@@ -1,8 +1,8 @@
 <?php
 if (!class_exists('MaBox_Domestic_Comment_Security')) {
-    class MaBox_Domestic_Comment_Security {
+    class MaBox_Domestic_Comment_Security implements MaBox_Module_Interface {
         private static $config;
-        public static function run($config) {
+        public static function run($config = array()) {
             self::$config = $config;
             if (!empty($config['blacklist_enabled'])) {
                 add_filter('preprocess_comment', array(__CLASS__, 'check_blacklist'), 1);

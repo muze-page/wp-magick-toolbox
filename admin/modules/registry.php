@@ -254,6 +254,7 @@ return array(
         'option_key'=> 'page.function.maintenance_tips',
         'category'  => 'page',
         'scope'     => 'frontend',
+        'config_path' => 'page.function',
     ),
     'page.default_thumbnail' => array(
         'class'     => 'MaBox_Page_Default_Thumbnail',
@@ -294,6 +295,7 @@ return array(
         'option_key'=> 'page.jurisdiction.category_id',
         'category'  => 'page',
         'scope'     => 'frontend',
+        'config_path' => 'page.jurisdiction',
         'risk_tags' => array('仅前台'),
     ),
     'page.hide_tag' => array(
@@ -302,6 +304,7 @@ return array(
         'option_key'=> 'page.jurisdiction.tag_id',
         'category'  => 'page',
         'scope'     => 'frontend',
+        'config_path' => 'page.jurisdiction',
         'risk_tags' => array('仅前台'),
     ),
     'page.hide_page' => array(
@@ -310,6 +313,7 @@ return array(
         'option_key'=> 'page.jurisdiction.page_id',
         'category'  => 'page',
         'scope'     => 'frontend',
+        'config_path' => 'page.jurisdiction',
         'risk_tags' => array('仅前台'),
     ),
 
@@ -370,6 +374,7 @@ return array(
         'option_key'=> 'function.auxiliary.no_malice_key',
         'category'  => 'function',
         'scope'     => 'frontend',
+        'config_path' => 'function.auxiliary',
     ),
     'auxiliary.baidu_tonji' => array(
         'class'     => 'MaBox_Baidu_Tonji',
@@ -377,6 +382,7 @@ return array(
         'option_key'=> 'function.auxiliary.baidu_tonji',
         'category'  => 'function',
         'scope'     => 'frontend',
+        'config_path' => 'function.auxiliary',
     ),
     'auxiliary.google_tonji' => array(
         'class'     => 'MaBox_Google_Tonji',
@@ -384,6 +390,7 @@ return array(
         'option_key'=> 'function.auxiliary.google_tonji',
         'category'  => 'function',
         'scope'     => 'frontend',
+        'config_path' => 'function.auxiliary',
     ),
     'auxiliary.biying_tonji' => array(
         'class'     => 'MaBox_Biying_Tonji',
@@ -391,6 +398,7 @@ return array(
         'option_key'=> 'function.auxiliary.biying_tonji',
         'category'  => 'function',
         'scope'     => 'frontend',
+        'config_path' => 'function.auxiliary',
     ),
 
     // ========== 登录页 ==========
@@ -400,6 +408,7 @@ return array(
         'option_key'=> 'login.security.login_code',
         'category'  => 'login',
         'scope'     => 'admin',
+        'config_path' => 'login.security',
         'risk_tags' => array('推荐', '安全', '仅后台'),
     ),
 

@@ -8,12 +8,12 @@
  *     如需全局移除需额外添加 script_loader_tag / style_loader_tag 过滤器
  */
 if (!class_exists('MaBox_Remove_WP_Version')) {
-    class MaBox_Remove_WP_Version
+    class MaBox_Remove_WP_Version implements MaBox_Module_Interface
     {
         /**
          * 执行代码
          */
-        public static  function run()
+        public static function run($config = array())
         {
             add_filter('the_generator', array(__CLASS__, 'remove_wp_version'));
         }

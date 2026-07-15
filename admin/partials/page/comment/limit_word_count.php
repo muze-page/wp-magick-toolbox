@@ -6,10 +6,10 @@
  */
 
 if (!class_exists('MaBox_Comment_Limit_Word_Count')) {
-    class MaBox_Comment_Limit_Word_Count
+    class MaBox_Comment_Limit_Word_Count implements MaBox_Module_Interface
     {
         public static $option; //配置
-        public static function run($config)
+        public static function run($config = array())
         {
             self::$option = $config;
             add_filter('pre_comment_approved', array(__CLASS__, 'set_comments_length'), 10, 2);

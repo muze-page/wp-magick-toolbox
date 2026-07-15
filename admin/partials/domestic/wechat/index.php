@@ -1,8 +1,8 @@
 <?php
 if (!class_exists('MaBox_Domestic_Wechat')) {
-    class MaBox_Domestic_Wechat {
+    class MaBox_Domestic_Wechat implements MaBox_Module_Interface {
         private static $config;
-        public static function run($config) {
+        public static function run($config = array()) {
             self::$config = $config;
             if (!empty($config['jssdk_enabled']) && !empty($config['appid'])) {
                 add_action('wp_enqueue_scripts', array(__CLASS__, 'jssdk_config'));

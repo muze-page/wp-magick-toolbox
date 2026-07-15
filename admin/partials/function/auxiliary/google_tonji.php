@@ -5,13 +5,15 @@
  * 来源：
  */
 if (!class_exists('MaBox_Google_Tonji')) {
-    class MaBox_Google_Tonji
+    class MaBox_Google_Tonji implements MaBox_Module_Interface
     {
 
         private static $option;
-        public static function run($config)
+        public static function run($config = array())
         {
-            self::$option = $config;
+            self::$option = isset($config['google_tonji']) && is_string($config['google_tonji'])
+                ? $config['google_tonji']
+                : '';
             add_action('wp_head', array(__CLASS__, 'meta_tag'));
         }
         public static function meta_tag()

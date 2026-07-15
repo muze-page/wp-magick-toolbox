@@ -5,14 +5,14 @@
  */
 
 if (!class_exists('MaBox_Page_Hide_Tag')) {
-    class MaBox_Page_Hide_Tag
+    class MaBox_Page_Hide_Tag implements MaBox_Module_Interface
     {
         private static $id_array; //标签数组
         private static $tip_content; //提示信息
-        public static function run($array, $id_tip_content)
+        public static function run($config = array())
         {
-            self::$id_array = $array;
-            self::$tip_content = $id_tip_content;
+            self::$id_array = MaBox_Admin::get_config($config, 'tag_id', array());
+            self::$tip_content = MaBox_Admin::get_config($config, 'tip_content', '');
             add_action('the_content', array(__CLASS__, 'restrict_content_for_specific_tags')); //隐藏标签下的文章
         }
 

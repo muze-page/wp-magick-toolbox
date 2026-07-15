@@ -5,9 +5,9 @@
  */
 
 if (!class_exists('MaBox_Interface_Category_Data')) {
-    class MaBox_Interface_Category_Data
+    class MaBox_Interface_Category_Data implements MaBox_Module_Interface
     {
-        public static function run()
+        public static function run($config = array())
         {
         }
 

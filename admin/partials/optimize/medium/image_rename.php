@@ -5,11 +5,13 @@
  * 来源：
  */
 if (!class_exists('MaBox_Medium_Image_Rename')) {
-    class MaBox_Medium_Image_Rename
+    class MaBox_Medium_Image_Rename implements MaBox_Module_Interface
     {
         //加载
-        public static function run($upload_auto_name)
+        public static function run($config = array())
         {
+            $upload_auto_name = MaBox_Admin::get_config($config, 'upload_auto_name', 'false');
+
             switch ($upload_auto_name) {
                     //时间
                 case 'math':

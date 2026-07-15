@@ -4,10 +4,10 @@
  * 来源：
  */
 if (!class_exists('MaBox_Image_Add_Tag')) {
-    class MaBox_Image_Add_Tag
+    class MaBox_Image_Add_Tag implements MaBox_Module_Interface
     {
         //加载
-        public static function run()
+        public static function run($config = array())
         {
             add_filter('the_content', array(__CLASS__, 'image_alt_tag'), 99999);
         }

@@ -5,10 +5,10 @@
  * 来源：https://www.npc.ink/15286.html
  */
 if (!class_exists('MaBox_Single_Keyword_Add_Link')) {
-    class MaBox_Single_Keyword_Add_Link
+    class MaBox_Single_Keyword_Add_Link implements MaBox_Module_Interface
     {
         //加载
-        public static function run()
+        public static function run($config = array())
         {
             add_filter('the_content', array(__CLASS__, 'tag_link'), 1);
         }

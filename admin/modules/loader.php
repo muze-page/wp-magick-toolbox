@@ -97,37 +97,35 @@ if (!class_exists('MaBox_Module_Loader')) {
                 return;
             }
 
-            // 验证模块是否实现接口契约
+            // 验证模块是否实现接口契约。不合规模块必须停止加载。
             $class = $meta['class'];
             if (!is_subclass_of($class, 'MaBox_Module_Interface')) {
                 if (class_exists('MaBox_Audit_Logger')) {
-                    MaBox_Audit_Logger::log('warning', 'config', "Module {$class} does not implement MaBox_Module_Interface");
+                    MaBox_Audit_Logger::log('error', 'config', "Module {$class} does not implement MaBox_Module_Interface");
                 } else {
                     error_log("[MaBox] Module {$class} does not implement MaBox_Module_Interface");
                 }
+                return;
             }
 
-            // 统一调用 run() 方法，兼容非标准方法名（如 runs）
-            $method = 'run';
-            if (!method_exists($class, 'run')) {
-                if (method_exists($class, 'runs')) {
-                    $method = 'runs';
+            if (!is_callable(array($class, 'run'))) {
+                if (class_exists('MaBox_Audit_Logger')) {
+                    MaBox_Audit_Logger::log('error', 'config', "Module {$class} has no callable run() method");
                 } else {
-                    if (class_exists('MaBox_Audit_Logger')) {
-                        MaBox_Audit_Logger::log('error', 'config', "Module {$class} has no run() or runs() method");
-                    } else {
-                        error_log("[MaBox] Module {$class} has no run() or runs() method");
-                    }
-                    return;
+                    error_log("[MaBox] Module {$class} has no callable run() method");
+                }
+                return;
+            }
+
+            $module_config = array();
+            if (!empty($meta['config_path'])) {
+                $resolved_config = self::get_nested_value($config, $meta['config_path']);
+                if (is_array($resolved_config)) {
+                    $module_config = $resolved_config;
                 }
             }
 
-            if (!empty($meta['config_path'])) {
-                $module_config = self::get_nested_value($config, $meta['config_path']);
-                call_user_func(array($meta['class'], $method), $module_config);
-            } else {
-                call_user_func(array($meta['class'], $method));
-            }
+            call_user_func(array($class, 'run'), $module_config);
         }
 
         public static function get_module_meta($module_id) {

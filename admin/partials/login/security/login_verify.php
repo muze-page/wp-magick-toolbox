@@ -5,10 +5,12 @@
  * 仅保留本地数学与随机验证，不加载第三方验证运行时。
  */
 if (!class_exists('MaBox_Login_Verify')) {
-    class MaBox_Login_Verify
+    class MaBox_Login_Verify implements MaBox_Module_Interface
     {
-        public static function run($login_code)
+        public static function run($config = array())
         {
+            $login_code = MaBox_Admin::get_config($config, 'login_code', 'false');
+
             switch ($login_code) {
                 case 'math':
                     self::run_math();

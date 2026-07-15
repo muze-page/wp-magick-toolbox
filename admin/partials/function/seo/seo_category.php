@@ -5,9 +5,9 @@
  * 来源：https://www.npc.ink/4596.html
  */
 if (!class_exists('MaBox_Seo_Category')) {
-    class MaBox_Seo_Category
+    class MaBox_Seo_Category implements MaBox_Module_Interface
     {
-        public static function run()
+        public static function run($config = array())
         {
             add_action('wp', array(__CLASS__, 'add_meta'));
         }

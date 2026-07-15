@@ -5,9 +5,9 @@
  * 来源：https://www.huitheme.com/wordpress-search.html
  */
 if (!class_exists('MaBox_Search_Link_Simplify')) {
-    class MaBox_Search_Link_Simplify
+    class MaBox_Search_Link_Simplify implements MaBox_Module_Interface
     {
-        public static  function run()
+        public static function run($config = array())
         {
             add_action('template_redirect', array(__CLASS__, 'redirect_search'));
         }

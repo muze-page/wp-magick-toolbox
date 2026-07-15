@@ -5,10 +5,10 @@
  * 来源：https://www.huitheme.com/wp-sitemap-users.html
  */
 if (!class_exists('MaBox_Remove_Sitemap_Users')) {
-    class MaBox_Remove_Sitemap_Users
+    class MaBox_Remove_Sitemap_Users implements MaBox_Module_Interface
     {
 
-        public static  function run()
+        public static function run($config = array())
         {
             /**
              * Sitemap xml 禁止 wp-sitemap-users-1.xml

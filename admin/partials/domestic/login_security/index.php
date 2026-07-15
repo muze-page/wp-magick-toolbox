@@ -1,8 +1,8 @@
 <?php
 if (!class_exists('MaBox_Domestic_Login_Security')) {
-    class MaBox_Domestic_Login_Security {
+    class MaBox_Domestic_Login_Security implements MaBox_Module_Interface {
         private static $config;
-        public static function run($config) {
+        public static function run($config = array()) {
             self::$config = $config;
             if (!empty($config['fail_limit_enabled'])) {
                 add_action('wp_login_failed', array(__CLASS__, 'record_failed_login'));

@@ -4,11 +4,11 @@
  * 限制未登录用户的搜索频率，防止恶意搜索
  */
 if (!class_exists('MaBox_Page_Search_Limit')) {
-    class MaBox_Page_Search_Limit
+    class MaBox_Page_Search_Limit implements MaBox_Module_Interface
     {
         private static $option;
 
-        public static function run($config)
+        public static function run($config = array())
         {
             self::$option = $config;
             add_action('pre_get_posts', array(__CLASS__, 'check_search_limit'));

@@ -5,9 +5,9 @@
  * 来源：https://www.huitheme.com/add_user_nickname_column.html
  */
 if (!class_exists('MaBox_User_List_Show_Nickname')) {
-    class MaBox_User_List_Show_Nickname
+    class MaBox_User_List_Show_Nickname implements MaBox_Module_Interface
     {
-        public static function run()
+        public static function run($config = array())
         {
             add_filter('manage_users_columns', array(__CLASS__, 'add_user_nickname_column'));
             add_action('manage_users_custom_column',  array(__CLASS__, 'show_user_nickname_column_content'), 20, 3);

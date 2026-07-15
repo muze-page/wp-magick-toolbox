@@ -7,10 +7,10 @@
  * 只做了描述，标签标题和标签关键词没做
  */
 if (!class_exists('MaBox_Seo_Tag')) {
-    class MaBox_Seo_Tag
+    class MaBox_Seo_Tag implements MaBox_Module_Interface
     {
 
-        public static function run()
+        public static function run($config = array())
         {
             add_action('wp_head', array(__CLASS__, 'seo_tag'), 1);
         }

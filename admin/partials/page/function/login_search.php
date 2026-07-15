@@ -4,9 +4,9 @@
  * 未登录用户无法使用搜索功能
  */
 if (!class_exists('MaBox_Page_Login_Search')) {
-    class MaBox_Page_Login_Search
+    class MaBox_Page_Login_Search implements MaBox_Module_Interface
     {
-        public static function run()
+        public static function run($config = array())
         {
             add_action('pre_get_posts', array(__CLASS__, 'check_login_search'));
         }

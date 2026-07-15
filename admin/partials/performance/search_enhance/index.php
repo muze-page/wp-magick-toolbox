@@ -1,8 +1,8 @@
 <?php
 if (!class_exists('MaBox_Performance_Search_Enhance')) {
-    class MaBox_Performance_Search_Enhance {
+    class MaBox_Performance_Search_Enhance implements MaBox_Module_Interface {
         private static $config;
-        public static function run($config) {
+        public static function run($config = array()) {
             self::$config = $config;
             if (!empty($config['highlight_enabled'])) {
                 add_filter('the_excerpt', array(__CLASS__, 'highlight_search'));

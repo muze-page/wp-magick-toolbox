@@ -5,17 +5,20 @@
  * 来源：https://www.npc.ink/277953.html
  */
 if (!class_exists('MaBox_Ban_Malice_Search')) {
-    class MaBox_Ban_Malice_Search
+    class MaBox_Ban_Malice_Search implements MaBox_Module_Interface
     {
 
         /**
-         * @param $keyword_arr 关键词数组
+         * @param array $config 辅助功能配置。
          */
-        public static function run($keyword_arr)
+        public static function run($config = array())
         {
-            // 使用 use 语法将 $keyword_arr 传递给回调函数
-            add_action('template_redirect', function () use ($keyword_arr) {
-                self::ban_malice_search($keyword_arr);
+            $keyword_content = isset($config['malice_keu_content']) && is_string($config['malice_keu_content'])
+                ? $config['malice_keu_content']
+                : '';
+
+            add_action('template_redirect', function () use ($keyword_content) {
+                self::ban_malice_search($keyword_content);
             });
         }
 

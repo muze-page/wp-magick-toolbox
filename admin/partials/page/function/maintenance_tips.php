@@ -6,7 +6,7 @@
  */
 
 if (!class_exists('MaBox_Maintenance_Tips')) {
-    class MaBox_Maintenance_Tips
+    class MaBox_Maintenance_Tips implements MaBox_Module_Interface
     {
 
         private static $configs; //配置
@@ -17,9 +17,9 @@ if (!class_exists('MaBox_Maintenance_Tips')) {
         /**
          * 传来的页面类型
          */
-        public static function run($config)
+        public static function run($config = array())
         {
-            self::$configs = $config; //展示类型
+            self::$configs = MaBox_Admin::get_config($config, 'maintenance_tips', 'false'); //展示类型
             self::$blogname =  get_bloginfo('name');
             self::$blogdescription = get_bloginfo('description');
             self::$url = plugin_dir_url((__FILE__)) . 'maintenance/';

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
+class ModuleRegistryWpWidgetStub {
+}
+
 class ModuleRegistryConsistency_Test extends TestCase {
 
     private static $plugin_dir;
@@ -23,6 +26,88 @@ class ModuleRegistryConsistency_Test extends TestCase {
                 "Module '$module_id' file does not exist at: {$meta['file']}"
             );
         }
+    }
+
+    public function test_every_registered_module_implements_the_runtime_contract(): void {
+        if (!class_exists('WP_Widget')) {
+            class_alias('ModuleRegistryWpWidgetStub', 'WP_Widget');
+        }
+
+        $registry = MaBox_Module_Loader::get_registry();
+        $partials_dir = self::$plugin_dir . '/admin/partials/';
+
+        foreach ($registry as $module_id => $meta) {
+            require_once $partials_dir . $meta['file'];
+
+            $this->assertTrue(
+                class_exists($meta['class']),
+                "Module '$module_id' class '{$meta['class']}' should exist"
+            );
+
+            $class = new ReflectionClass($meta['class']);
+            $this->assertTrue(
+                $class->implementsInterface('MaBox_Module_Interface'),
+                "Module '$module_id' should implement MaBox_Module_Interface"
+            );
+            $this->assertFalse(
+                $class->hasMethod('runs'),
+                "Module '$module_id' should not expose the retired runs() entrypoint"
+            );
+            $this->assertTrue(
+                $class->hasMethod('run'),
+                "Module '$module_id' should expose run()"
+            );
+
+            $method = $class->getMethod('run');
+            $this->assertTrue($method->isPublic(), "Module '$module_id' run() should be public");
+            $this->assertTrue($method->isStatic(), "Module '$module_id' run() should be static");
+
+            $parameters = $method->getParameters();
+            $this->assertCount(1, $parameters, "Module '$module_id' run() should accept one config argument");
+            $this->assertSame('config', $parameters[0]->getName(), "Module '$module_id' should name its argument config");
+            $this->assertTrue($parameters[0]->isOptional(), "Module '$module_id' config should be optional");
+            $this->assertTrue($parameters[0]->isDefaultValueAvailable(), "Module '$module_id' config should have a default");
+            $this->assertSame(array(), $parameters[0]->getDefaultValue(), "Module '$module_id' config should default to an empty array");
+        }
+    }
+
+    public function test_parameterized_modules_receive_their_configuration_subtree(): void {
+        $registry = MaBox_Module_Loader::get_registry();
+        $expected_paths = array(
+            'page.maintenance_tips'       => 'page.function',
+            'page.hide_category'          => 'page.jurisdiction',
+            'page.hide_tag'               => 'page.jurisdiction',
+            'page.hide_page'              => 'page.jurisdiction',
+            'auxiliary.ban_malice_search' => 'function.auxiliary',
+            'auxiliary.baidu_tonji'       => 'function.auxiliary',
+            'auxiliary.google_tonji'      => 'function.auxiliary',
+            'auxiliary.biying_tonji'      => 'function.auxiliary',
+            'login.login_verify'          => 'login.security',
+        );
+
+        foreach ($expected_paths as $module_id => $config_path) {
+            $this->assertSame(
+                $config_path,
+                isset($registry[$module_id]['config_path']) ? $registry[$module_id]['config_path'] : null,
+                "Module '$module_id' should receive '$config_path'"
+            );
+        }
+    }
+
+    public function test_loader_has_no_legacy_runs_fallback(): void {
+        $loader = file_get_contents(self::$plugin_dir . '/admin/modules/loader.php');
+
+        $this->assertStringNotContainsString("method_exists(\$class, 'runs')", $loader);
+        $this->assertStringNotContainsString('run() or runs()', $loader);
+    }
+
+    public function test_autoloader_maps_the_module_interface(): void {
+        $autoload = file_get_contents(self::$plugin_dir . '/includes/autoload.php');
+
+        $this->assertStringContainsString(
+            "'MaBox_Module_Interface' => 'includes/interface-mabox-module.php'",
+            $autoload
+        );
     }
 
     public function test_no_escape_module_file_exists(): void {

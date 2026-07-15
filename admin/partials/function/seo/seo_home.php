@@ -1,12 +1,12 @@
 <?php
 //简单SEO - 首页TDK 
 if (!class_exists('MaBox_Seo_Home')) {
-    class MaBox_Seo_Home
+    class MaBox_Seo_Home implements MaBox_Module_Interface
     {
         private static $config;
-        public static function run($option)
+        public static function run($config = array())
         {
-            self::$config = $option;
+            self::$config = $config;
             //添加首页标题需要先移除默认的，这里还做不到
             add_action('wp', array(__CLASS__, 'add_meta'));
         }

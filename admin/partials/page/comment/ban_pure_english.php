@@ -6,9 +6,9 @@
  */
 
 if (!class_exists('MaBox_Comment_Ban_Pure_English')) {
-    class MaBox_Comment_Ban_Pure_English
+    class MaBox_Comment_Ban_Pure_English implements MaBox_Module_Interface
     {
-        public static function run()
+        public static function run($config = array())
         {
             add_filter('pre_comment_approved', array(__CLASS__, 'refused_english_comments'), 10, 2);
         }

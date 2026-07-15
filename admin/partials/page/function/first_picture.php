@@ -6,9 +6,9 @@
  */
 
 if (!class_exists('MaBox_Single_First_Picture')) {
-    class MaBox_Single_First_Picture
+    class MaBox_Single_First_Picture implements MaBox_Module_Interface
     {
-        public static function run()
+        public static function run($config = array())
         {
             add_action('the_post', array(__CLASS__, 'huitheme_auto_set_featured_image'));
         }

@@ -1,13 +1,15 @@
 <?php
 
 if (!class_exists('MaBox_Baidu_Tonji')) {
-    class MaBox_Baidu_Tonji
+    class MaBox_Baidu_Tonji implements MaBox_Module_Interface
     {
         private static $option;
 
-        public static function run($config)
+        public static function run($config = array())
         {
-            self::$option = $config;
+            self::$option = isset($config['baidu_tonji']) && is_string($config['baidu_tonji'])
+                ? $config['baidu_tonji']
+                : '';
             add_action('wp_footer', array(__CLASS__, 'render'), 999);
         }
 

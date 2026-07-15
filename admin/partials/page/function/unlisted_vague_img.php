@@ -1,9 +1,9 @@
 <?php
 
 if (!class_exists('MaBox_Unlisted_Vague_Img')) {
-    class MaBox_Unlisted_Vague_Img
+    class MaBox_Unlisted_Vague_Img implements MaBox_Module_Interface
     {
-        public static function run()
+        public static function run($config = array())
         {
             add_action('wp_head', array(__CLASS__, 'render'), 999);
         }

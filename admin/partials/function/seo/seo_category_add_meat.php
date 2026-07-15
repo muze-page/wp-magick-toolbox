@@ -5,9 +5,9 @@
  * 来源：https://www.npc.ink/4596.html
  */
 if (!class_exists('MaBox_Seo_Category_Add_Meat')) {
-    class MaBox_Seo_Category_Add_Meat
+    class MaBox_Seo_Category_Add_Meat implements MaBox_Module_Interface
     {
-        public static function run()
+        public static function run($config = array())
         {
             //添加分类的关键词
             add_action('category_add_form_fields', array(__CLASS__, 'add_category_field'), 10, 2); // 分类添加字段

@@ -1,8 +1,8 @@
 <?php
 if (!class_exists('MaBox_Performance_Db_Clean')) {
-    class MaBox_Performance_Db_Clean {
+    class MaBox_Performance_Db_Clean implements MaBox_Module_Interface {
         private static $config;
-        public static function run($config) {
+        public static function run($config = array()) {
             self::$config = $config;
             if (!empty($config['auto_clean'])) {
                 $schedule = !empty($config['auto_clean_schedule']) ? $config['auto_clean_schedule'] : 'weekly';

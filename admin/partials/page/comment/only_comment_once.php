@@ -6,9 +6,9 @@
  */
 
 if (!class_exists('MaBox_Comment_Only_Once')) {
-    class MaBox_Comment_Only_Once
+    class MaBox_Comment_Only_Once implements MaBox_Module_Interface
     {
-        public static function run()
+        public static function run($config = array())
         {
             add_filter('pre_comment_approved', array(__CLASS__, 'ludou_only_one_comment'), 10, 2);
         }

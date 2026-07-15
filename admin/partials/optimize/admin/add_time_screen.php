@@ -5,10 +5,10 @@
  * 来源：https://rudrastyh.com/wordpress/date-range-filter.html
  */
 if (!class_exists('MaBox_Admin_Add_Time_Screen')) {
-    class MaBox_Admin_Add_Time_Screen
+    class MaBox_Admin_Add_Time_Screen implements MaBox_Module_Interface
     {
         //加载
-        public static function run()
+        public static function run($config = array())
         {
             // 如果不想删除默认的“按月筛选”，请删除/注释此行
             //add_filter('months_dropdown_results', '__return_empty_array');

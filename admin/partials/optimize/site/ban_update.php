@@ -6,12 +6,12 @@
  * 参考：https://m.wpjam.com/m/disable-wordpress-auto-update/
  */
 if (!class_exists('MaBox_Ban_Update')) {
-    class MaBox_Ban_Update
+    class MaBox_Ban_Update implements MaBox_Module_Interface
     {
         /**
          * 执行代码
          */
-        public static  function run()
+        public static function run($config = array())
         {
             self::ban_update();
             // 禁止主题自动检查更新

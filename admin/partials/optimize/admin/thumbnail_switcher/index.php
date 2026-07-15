@@ -6,10 +6,10 @@
  * 来源2：https://www.huitheme.com/wordpress_posts_custom_thumbnail.html
  */
 if (!class_exists('MaBox_Admin_Single_Thumbnail_Switcher')) {
-    class MaBox_Admin_Single_Thumbnail_Switcher
+    class MaBox_Admin_Single_Thumbnail_Switcher implements MaBox_Module_Interface
     {
         //加载
-        public static function run()
+        public static function run($config = array())
         {
             // 加载 test.php 文件
             require_once 'easy-thumbnail-switcher.php';

@@ -5,12 +5,12 @@
  * 来源：https://www.huitheme.com/show_admin_bar.html
  */
 if (!class_exists('MaBox_Hide_Top_Toolbar')) {
-    class MaBox_Hide_Top_Toolbar
+    class MaBox_Hide_Top_Toolbar implements MaBox_Module_Interface
     {
         /**
          * 执行代码
          */
-        public static  function run()
+        public static function run($config = array())
         {
 
             // 

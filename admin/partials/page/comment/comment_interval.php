@@ -6,10 +6,10 @@
  */
 
 if (!class_exists('MaBox_Page_Comment_Interval')) {
-    class MaBox_Page_Comment_Interval
+    class MaBox_Page_Comment_Interval implements MaBox_Module_Interface
     {
         public static $option; //配置
-        public static function run($config)
+        public static function run($config = array())
         {
             self::$option = $config;
             add_filter('comment_flood_filter', array(__CLASS__, 'suren_comment_flood_filter'), 10, 3);

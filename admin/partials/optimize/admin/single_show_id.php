@@ -5,10 +5,10 @@
  * 来源：https://blog.csdn.net/qq_39339179/article/details/119135050
  */
 if (!class_exists('MaBox_Admin_Single_Show_ID')) {
-    class MaBox_Admin_Single_Show_ID
+    class MaBox_Admin_Single_Show_ID implements MaBox_Module_Interface
     {
         //加载
-        public static function run()
+        public static function run($config = array())
         {
             add_action('admin_init', array(__CLASS__, 'add_list_id_run'));
         }

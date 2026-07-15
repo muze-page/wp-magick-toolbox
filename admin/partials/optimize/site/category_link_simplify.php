@@ -5,12 +5,12 @@
  * 来源： No Category Base (WPML) v1.3
  */
 if (!class_exists('MaBox_Category_Link_Simplify')) {
-    class MaBox_Category_Link_Simplify
+    class MaBox_Category_Link_Simplify implements MaBox_Module_Interface
     {
         /**
          * 执行代码
          */
-        public static function run()
+        public static function run($config = array())
         {
             /* hooks */
             register_activation_hook(__FILE__,    array(__CLASS__, 'no_category_base_refresh_rules'));

@@ -5,10 +5,10 @@
  * 来源：
  */
 if (!class_exists('MaBox_Medium_Ban_Auto_Size')) {
-    class MaBox_Medium_Ban_Auto_Size
+    class MaBox_Medium_Ban_Auto_Size implements MaBox_Module_Interface
     {
         //加载
-        public static function run()
+        public static function run($config = array())
         {
             self::run_ban_auto_size();
         }

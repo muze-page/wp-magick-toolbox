@@ -5,11 +5,11 @@
  * 支持 dry-run 预览和回滚功能
  */
 if (!class_exists('MaBox_Page_Batch_Replace')) {
-    class MaBox_Page_Batch_Replace
+    class MaBox_Page_Batch_Replace implements MaBox_Module_Interface
     {
         private static $option;
 
-        public static function run($config)
+        public static function run($config = array())
         {
             self::$option = $config;
             add_filter('content_save_pre', array(__CLASS__, 'replace_on_save'), 10, 1);

@@ -10,10 +10,10 @@
  * 3. 使用 wp_check_filetype_and_ext 验证文件类型
  */
 if (!class_exists('MaBox_Medium_Svg_Support')) {
-    class MaBox_Medium_Svg_Support
+    class MaBox_Medium_Svg_Support implements MaBox_Module_Interface
     {
         //加载
-        public static function run()
+        public static function run($config = array())
         {
             self::run_add_svg();
         }

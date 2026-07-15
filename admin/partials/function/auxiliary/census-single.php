@@ -5,10 +5,10 @@
  */
 
 if (!class_exists('MaBox_Census_Single')) {
-    class MaBox_Census_Single
+    class MaBox_Census_Single implements MaBox_Module_Interface
     {
 
-        public static function run()
+        public static function run($config = array())
         {
             //add_action('wp_loaded', array(__CLASS__, 'load'));
             //添加发文统计菜单

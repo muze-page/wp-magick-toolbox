@@ -6,11 +6,11 @@
  * 包括：Google 字体、Gravatar 头像、Google Ajax 等
  */
 if (!class_exists('MaBox_CDN_Replace')) {
-    class MaBox_CDN_Replace
+    class MaBox_CDN_Replace implements MaBox_Module_Interface
     {
         private static $option;
 
-        public static function run($config)
+        public static function run($config = array())
         {
             self::$option = $config;
             add_action('init', array(__CLASS__, 'do_replace'));

@@ -1,6 +1,6 @@
 # ADR: Pre-GA 管理后台清场式重构
 
-- 状态：已接受，工作包 1-4 已验收（含真实 Local 站点烟测）
+- 状态：已接受，工作包 1-5 已验收（含真实 Local 站点烟测）
 - 日期：2026-07-15
 - 决策范围：WP Magick Toolbox 管理后台应用外壳
 
@@ -218,6 +218,32 @@
 - 本轮没有使用真实微信或 OSS 凭据，也没有向外部 Provider 发起上传/JSSDK 鉴权请求；验证范围是 WordPress 设置契约、模块加载和禁用态安全短路。
 - 注册表静态复核另发现：59 个注册模块中仍有 56 个未实现 `MaBox_Module_Interface`，其中 10 个模块的必传参数与 loader 调用方式不匹配，启用后可能触发 `ArgumentCountError`。这是独立的运行时模块契约工作包，不在本安全设置提交中机械修改 56 个模块。
 
+## 工作包 5：运行时模块契约变更信封
+
+| 项目 | 决定 |
+| --- | --- |
+| 目标仓库 | `/Users/muze/gitee/wp-magick-toolbox` |
+| 聚焦模块 | 59 个注册模块、模块 Loader 与 Registry 的内部运行时契约 |
+| 失败证据 | 56 个注册类未实现接口；10 个入口要求必传参数，而 Loader 在没有 `config_path` 时零参调用；Loader 对非接口模块只告警仍继续，并保留无实际消费者的 `runs()` 兼容分支 |
+| 预期变更 | 所有注册类统一实现 `MaBox_Module_Interface`；唯一入口为 `public static function run($config = array())`；Loader 始终传数组、配置缺失时传空数组、违约时拒绝加载 |
+| 明确非目标 | 不顺带重写模块业务行为，不修改管理界面、REST/敏感设置契约、数据库结构或兄弟仓库，不保留零参、标量参数或 `runs()` 双轨兼容 |
+| 公共契约 | 仅收口插件内部模块初始化契约；9 个需要关联设置的模块通过 Registry `config_path` 接收对应子树，`hide_email_ip` 保持无配置依赖 |
+| 预期文件 | `admin/modules/{loader,registry}.php`、56 个未合规模块文件、`includes/autoload.php`、全局契约与 Loader 回归测试、本 ADR |
+| 不得改变 | 前端源码与构建产物、工作包 4 设置契约、AI 参考快照、用户未跟踪排障文档、兄弟仓库 |
+| 必需门禁 | 注册表反射契约、Loader 配置路由/拒绝违约测试、PHP lint、`composer test`、`composer phpstan`、自动加载隔离验证、Local 前后台请求与新增日志检查、`git diff --check` |
+| 跨仓矩阵 | 不需要；契约及全部消费者都在本仓库 |
+| 回滚计划 | 以一个聚焦提交交付；回滚该提交即恢复旧契约，不增加 feature flag 或长期兼容层 |
+
+### 工作包 5 结果复核
+
+- 59/59 个注册模块现在都显式实现 `MaBox_Module_Interface`，并统一为一个 public static `run($config = array())` 入口；反射门禁逐项锁定类、接口、方法可见性、static、参数数量/名称/默认值，并禁止 `runs()` 复活。
+- Loader 不再零参调用模块，也不再尝试 `runs()`；无 `config_path`、路径缺失或结果非数组时统一传空数组。未实现接口的类会记录 error 并立即返回，不再“告警后继续”。
+- 原 10 个参数数量风险已消除：维护提示、三个隐藏内容模块、恶意搜索、三个统计验证和登录验证码按对应配置子树取值；隐藏邮件 IP 不依赖配置但接受统一数组参数。
+- `MaBox_Module_Interface` 已纳入项目自动加载映射；隔离 PHP 进程直接自动加载模块类时，接口也能按契约解析，不再依赖 Loader 必须先被触发的隐式顺序。
+- 自动化门禁：PHPUnit 309 项测试/3170 个断言，PHPStan 0 error，全部变更 PHP 文件语法检查、自动加载隔离验证和 `git diff --check` 通过。
+- Local 站点通过符号链接直接挂载当前仓库。新触发前台、未登录后台和受保护设置 REST 请求分别返回 HTTP 200/302/401，符合当前访问边界；PHP error 与 PHP-FPM 日志均无新增字节，没有新的 fatal、参数错误或模块接口告警。
+- 本工作包未混入模块业务重写。复核时另记录三项既有行为债务：`category_link_simplify` 在运行时才注册激活/停用 Hook，大概率错过 WordPress 生命周期；`ban_auto_size` 的尺寸过滤回调没有返回 `$sizes`；`login.login_verify` 被标记为 `admin` scope，但 Local 当前 WordPress 核心的 `is_admin()` 在没有 `current_screen` 或 `WP_ADMIN` 时返回 false，`wp-login.php` 也未定义 `WP_ADMIN`，因此模块可能不会在真实登录页加载；其数学与随机验证又都信任客户端隐藏字段中回传的挑战值，且随机字符串在校验时被强制转为整数，不能作为可信的登录保护。下一工作包应优先删除或重做该登录验证，而不是只改 scope；另两项再作狭窄的功能正确性处理，都不回流到本次机械契约变更。
+
 ## 结果复核
 
 首个垂直切片已完成独立代码审查和浏览器烟测，改进假说成立：
@@ -234,4 +260,4 @@
 
 浏览器烟测先使用 Vite 默认数据验证桌面/移动结构、语义路由、浏览器返回、未知路由、搜索定位和接口失败状态；工作包 4 又在真实 Local WordPress 管理员登录态中验证了 WordPress 管理栏、服务端成功响应和敏感设置闭环。
 
-整个 Pre-GA Reset 尚未完成；AI Provider Runtime 清退已由工作包 2 收口，pnpm/CI 可重复基线已由工作包 3 收口，敏感设置契约已由工作包 4 收口。其余发布阻断项包括注册模块与 loader 的运行时契约不一致、重复 manifest/schema，以及 Ant Design/Tailwind 和大 chunk 带来的前端维护与性能成本。
+整个 Pre-GA Reset 尚未完成；AI Provider Runtime 清退已由工作包 2 收口，pnpm/CI 可重复基线已由工作包 3 收口，敏感设置契约已由工作包 4 收口，注册模块与 Loader 的运行时契约已由工作包 5 收口。其余发布前主要问题是三项已确认模块行为债务、重复 manifest/schema，以及 Ant Design/Tailwind 和大 chunk 带来的前端维护与性能成本。

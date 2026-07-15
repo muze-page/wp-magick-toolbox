@@ -6,10 +6,10 @@
  * keywords：文章标签
  */
 if (!class_exists('MaBox_Seo_Single')) {
-    class MaBox_Seo_Single
+    class MaBox_Seo_Single implements MaBox_Module_Interface
     {
 
-        public static function run()
+        public static function run($config = array())
         {
             add_action('wp_head', array(__CLASS__, 'seo_single'), 1);
         }

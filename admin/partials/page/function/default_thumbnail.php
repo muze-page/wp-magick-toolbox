@@ -4,11 +4,11 @@
  * 当文章没有特色图时，使用默认缩略图
  */
 if (!class_exists('MaBox_Page_Default_Thumbnail')) {
-    class MaBox_Page_Default_Thumbnail
+    class MaBox_Page_Default_Thumbnail implements MaBox_Module_Interface
     {
         private static $option;
 
-        public static function run($config)
+        public static function run($config = array())
         {
             self::$option = $config;
             add_filter('post_thumbnail_html', array(__CLASS__, 'default_thumbnail'), 10, 5);

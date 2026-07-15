@@ -5,10 +5,10 @@
  * 来源：https://rudrastyh.com/wordpress/filter-posts-by-author.html
  */
 if (!class_exists('MaBox_Admin_Single_Add_User_Screen')) {
-    class MaBox_Admin_Single_Add_User_Screen
+    class MaBox_Admin_Single_Add_User_Screen implements MaBox_Module_Interface
     {
         //加载
-        public static function run()
+        public static function run($config = array())
         {
             add_action('restrict_manage_posts', array(__CLASS__, 'rudr_filter_by_the_author'));
         }
