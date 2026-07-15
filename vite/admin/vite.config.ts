@@ -1,12 +1,30 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 //配置路径
 import path from "path";
 
-const site="/wp-content/plugins/wp-magick-toolbox/"
+const isolateAdminBootstrap = (): Plugin => ({
+  name: "mabox-isolate-admin-bootstrap",
+  enforce: "post",
+  generateBundle(_options, bundle) {
+    const bootstrap = bundle["index.js"];
+    if (!bootstrap || bootstrap.type !== "chunk" || !bootstrap.isEntry) {
+      this.error("Admin bootstrap index.js was not emitted as an entry chunk");
+    }
+    if (bootstrap.dynamicImports.length !== 1) {
+      this.error("Admin bootstrap must have exactly one dynamic app entry");
+    }
+
+    const appEntry = bootstrap.dynamicImports[0];
+    bootstrap.code = `void import(${JSON.stringify(`./${appEntry}`)});\n`;
+    bootstrap.imports = [];
+  },
+});
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    isolateAdminBootstrap(),
     react(),
     //打包分析
     //visualizer({
@@ -17,37 +35,40 @@ export default defineConfig({
     //}),
   ],
   build: {
+    manifest: ".vite/manifest.json",
+    cssCodeSplit: false,
+    modulePreload: false,
     rollupOptions: {
+      input: {
+        index: path.resolve(__dirname, "index.html"),
+        app: path.resolve(__dirname, "src/main.tsx"),
+      },
       output: {
         // 指定 chunk 文件名（含导出的代码）
         //chunkFileNames: 'js/[name].js',
         // 指定静态资源文件名（不含导出的代码）
         //assetFileNames: 'assets/[name].[ext]',
-        entryFileNames: "index.js",
-        assetFileNames: "[name][extname]",
-        chunkFileNames: "[name].js",
-        manualChunks: {
-          // 按 Tab 拆分，实现按需加载
-          'tab-dashboard': ['./src/components/dashboard/index'],
-          'tab-page': ['./src/components/page/index'],
-          'tab-optimize': ['./src/components/optimize/index'],
-          'tab-function': ['./src/components/function/index'],
-          'tab-about': ['./src/components/about/index'],
-          // 公共依赖
-          'vendor': ['react', 'react-dom'],
-        },
+        entryFileNames: (chunkInfo) =>
+          chunkInfo.name === "index"
+            ? "index.js"
+            : "assets/[name]-[hash].js",
+        assetFileNames: (assetInfo) =>
+          assetInfo.name?.endsWith(".css")
+            ? "index.css"
+            : "assets/[name]-[hash][extname]",
+        chunkFileNames: "assets/[name]-[hash].js",
       },
     },
     //sourcemap: true,//保留映射关系，方便调试
-    chunkSizeWarningLimit: 1600,
+    chunkSizeWarningLimit: 900,
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
     },
   },
-    //媒体资源打包前缀，避免图片无法正常显示
-    base: site + "vite/admin/dist/",
+  // 资源相对于入口文件解析，兼容自定义 wp-content 与插件目录。
+  base: "./",
       //代理
   server: {
     //host: "0.0.0.0",

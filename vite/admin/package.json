@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && node src/check-admin-css-isolation.mjs",
+    "build": "tsc && vite build && node src/check-admin-css-isolation.mjs && node src/check-admin-build-contract.mjs",
+    "check:build-contract": "node src/check-admin-build-contract.mjs",
     "check:embed-css": "node src/check-admin-css-isolation.mjs",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
     "preview": "vite preview",

@@ -145,7 +145,6 @@ class MaBox_Admin
      */
     public static  function load_admin_script($hook)
     {
-        $ver = self::$version;
         $name = self::$plugin_name;
 
         //是否是指定页面
@@ -154,11 +153,19 @@ class MaBox_Admin
         }
 
         //准备地址
+        $index_css_path = plugin_dir_path(__DIR__) . 'vite/admin/dist/index.css';
+        $index_js_path = plugin_dir_path(__DIR__) . 'vite/admin/dist/index.js';
         $index_css = plugin_dir_url(__DIR__) . 'vite/admin/dist/index.css';
         $index_js = plugin_dir_url(__DIR__) . 'vite/admin/dist/index.js';
+        $index_css_version = is_file($index_css_path)
+            ? self::$version . '-' . (string) filemtime($index_css_path)
+            : self::$version;
+        $index_js_version = is_file($index_js_path)
+            ? self::$version . '-' . (string) filemtime($index_js_path)
+            : self::$version;
 
-        wp_enqueue_style($name, $index_css, array(), $ver, false);
-        wp_enqueue_script($name, $index_js, array(), $ver, true);
+        wp_enqueue_style($name, $index_css, array(), $index_css_version, false);
+        wp_enqueue_script($name, $index_js, array(), $index_js_version, true);
 
         $MaBox_array = array(
             'cat_arr' => self::get_cat_data(),

@@ -1,6 +1,6 @@
 # ADR: Pre-GA 管理后台清场式重构
 
-- 状态：已接受；工作包 1-7 已验收，工作包 8A-8B 已完成自动化与 Local 验收，工作包 9A-9B 已完成自动化与 Local 验收
+- 状态：已接受；工作包 1-7 已验收，工作包 8A-8B 已完成自动化与 Local 验收，工作包 9A-9C 已完成自动化与 Local 验收
 - 日期：2026-07-15
 - 决策范围：WP Magick Toolbox 管理后台应用外壳
 
@@ -422,6 +422,33 @@
 8. Save/DiffModal 9 项测试覆盖读取、错误、无改动、普通与凭据真实计数、异步保存、写入失败、回读失败、读屏原值/新值、path 隐藏、中性普通变更和高风险确认；Diff/FeatureIndex 回归另锁定真实路径标签、Schema 标签、未知路径安全回退、Schema high/low 权威值和 Schema 未缓存/不完整时的真实 high 兜底。全量 admin Vitest 17 个文件/116 项测试通过；TypeScript、Vite build、2 个 CSS 文件/308 个选择器隔离扫描、ESLint quiet error gate 和 `git diff --check` 通过。
 9. Local 桌面复验确认无改动时稳定显示“已保存”且保存按钮禁用，`body`/document 宽度均为 1280px。320px 下切换“隐藏顶部工具条”后显示“1 项待保存 / 查看并保存”，差异弹窗显示用户标签且内部 path 数量为 0，页面和弹窗均无横向溢出；取消并刷新后开关恢复关闭。数据库清理开启流程先显示即时高风险确认，随后保存弹窗继续显示 1 项高风险、危险确认按钮及“原值/新值”读屏标签，内部 path 数量为 0；取消并刷新后开关恢复关闭，整个验收未写入配置。控制台没有新增 warning/error，只有 WordPress 的 JQMIGRATE 普通日志。
 
+## 工作包 9C：管理后台构建分块与资源路径契约
+
+| 项目 | 决定 |
+| --- | --- |
+| 目标仓库 | `/Users/muze/gitee/wp-magick-toolbox` |
+| 聚焦模块 | `vite/admin` 的生产分块、资源 URL 与 build 后预算门禁 |
+| 失败证据 | 对象形式 `manualChunks` 把 Dashboard/Page 及其共享依赖强制提升为首屏 preload：旧产物首次加载 JS 为 1,345,339 B（1,313.81 KiB）/ gzip 432,686 B（422.54 KiB），最大 `tab-dashboard.js` 为 1,258,457 B（1,228.96 KiB）/ gzip 400,324 B（390.94 KiB），另生成 28 B 的空 `vendor.js`；生产 base 又硬编码 `/wp-content/plugins/wp-magick-toolbox/`，与 PHP `plugin_dir_url()` 支持实际安装目录的契约冲突；全部 lazy chunk 使用固定文件名，跨版本更新时旧入口缓存可能请求新旧内容错配的同名文件 |
+| 预期变更 | 删除错误手工分块并让 `React.lazy()`/模块图决定异步边界；生产 base 改为 `./`；入口和合并后的 CSS 保持 PHP 可 enqueue 的固定名称，并以插件版本加文件修改时间刷新 URL，其余 JS/图片使用内容 hash；降低 chunk warning；build 后从 HTML module script/modulepreload 和 Vite manifest 递归静态 import，验证首次加载、全图可达、最大 chunk、路径与缓存契约 |
+| 明确非目标 | 不拆 Dashboard、不替换 Ant Design、不改业务 UI、REST/Schema、其他 Vite 子项目、锁文件或兄弟仓库 |
+| 公共契约 | PHP 仍 enqueue 固定 `dist/index.js` 与 `dist/index.css`，查询版本为插件版本与对应构建文件 mtime 的组合；lazy JS 与图片使用 hash 文件名且相对于实际 dist URL 解析；initial JS raw 不超过 900 KiB、gzip 不超过 300 KiB，最大单个 JS chunk 使用同一上限 |
+| 预期文件 | `admin/class-magick-mixture-admin.php`、`vite.config.ts`、`index.html`、`package.json`、`src/bootstrap.ts`、`src/check-admin-build-contract.mjs`、聚焦 Vitest 与本 ADR |
+| 不得改变 | PHP/WordPress 运行时、业务源码、其他前端项目、发布包固定入口、用户未跟踪排障文档和兄弟仓库 |
+| 必需门禁 | admin Vitest、TypeScript/Vite build、CSS 隔离与构建契约扫描、ESLint quiet error gate、`git diff --check` |
+| 跨仓矩阵 | 不需要；资源构建和全部消费者都在本仓库 |
+| 回滚计划 | 回滚本工作包即可恢复旧分块与 base；不保留双轨配置、feature flag 或运行时兼容层 |
+
+### 工作包 9C 自动化实施事实
+
+1. 删除对象形式 `manualChunks` 后，Vite 按现有 7 个 `React.lazy()` 动态入口和真实共享依赖生成模块图；旧 `tab-dashboard.js`/`tab-page.js` 首屏 preload 与 28 B `vendor.js` 均消失，HTML 的 modulepreload 集合从 `{tab-dashboard.js, tab-page.js}` 收口为空。
+2. PHP 继续 enqueue 固定 `index.js`；该文件现在只是 41 B 的 bootstrap，只立即导入唯一 hashed app entry，不承载或导出 React/Context/预加载运行时。`cssCodeSplit=false` 将全部 308 个已隔离选择器合并到唯一 `index.css`，固定两文件使用“插件版本-对应文件 mtime”作为查询版本。hashed 图包含 1 个 app entry、7 个路由动态入口、12 个共享 JS chunk 及 4 个图片/SVG；Vite manifest 只服务构建契约，不形成运行时依赖。
+3. 生产 `base` 从硬编码插件安装路径改为 `./`。构建后的 HTML 只含 `src="./index.js"` 与 `href="./index.css"`，bootstrap 只含 `void import("./assets/app-hash.js")`，其余动态 import 也全部相对于 hashed 模块；全部产物扫描未发现 `/wp-content/plugins/`，资源从 PHP 实际 enqueue 的 dist URL 解析且无需硬编码安装目录。
+4. 新扫描器解析 HTML 的 module script、modulepreload 和 stylesheet，再以 `.vite/manifest.json` 锁定 fixed bootstrap 的唯一 immediate app import，并把 app entry 及其静态 imports 计入真实首次闭包；其余 7 个 route dynamic entries 才作为 lazy。它同时读取 `dist/index.js`，要求产物严格只执行 `void import("./<manifest appEntry>")`，不允许空 bootstrap、错误 hash 或额外逻辑借正确 manifest 过关；随后以 `imports + dynamicImports` 验证全图可达，禁止任何 hashed chunk 反向 import 带 query 的固定入口，并逐文件分别维护 raw 与 gzip 最大 chunk。路径逃逸、缺文件/manifest 键、lazy chunk 进入首屏、孤儿/空 vendor、拆分 CSS、非 hash 资源、硬编码插件路径及预算超限均 fail closed。
+5. 当前真实首次加载为 791,127 B（772.58 KiB）/ gzip 257,968 B（251.92 KiB），固定 bootstrap 为 41 B / gzip 61 B，最大 chunk 为 hashed app entry 790,051 B（771.53 KiB）/ gzip 257,307 B（251.28 KiB），均低于 900/300 KiB 双预算；相对旧基线，首次 raw/gzip 分别下降 41.19%/40.38%，最大 chunk raw/gzip 分别下降 37.22%/35.73%。`chunkSizeWarningLimit` 从 1600 KiB 降为 900 KiB。
+6. Scanner 10 项聚焦测试覆盖配置源契约、PHP 固定入口 mtime/module 契约、bootstrap→hashed app、空 bootstrap 与错误 hashed app 产物、hash chunk 禁止反向 import fixed bootstrap、initial/dynamic 图、路径与 manifest 缺失、raw/gzip 预算异构反例、hash/孤儿 vendor/硬编码路径、单 CSS 与 HTML 固定入口。全量 admin Vitest 18 个文件/126 项测试、TypeScript/Vite build、1 个 CSS 文件/308 个选择器隔离扫描、构建契约扫描、ESLint quiet error gate 和 `git diff --check` 均通过；PHPUnit 338 项/3354 个断言、PHPStan 0 error 已通过。
+7. 首次 Local 验收出现空白页，先后排除了 MIME、`type="module"`、相对 URL、文件 404、`dataLocal` 和固定入口缓存。浏览器最终捕获 React #321 invalid hook call：WP 只给固定入口 URL 加 `?ver=`，而 Vite 旧图让 hashed app/route chunks 反向 import 无 query 的 `../index.js`，浏览器把两种 URL 当作两个模块 identity，导致两份 React dispatcher/Context。显式 hashed app entry 与构建期 bootstrap 隔离现保证固定入口没有共享导出，manifest 和 scanner 同时禁止反向边。
+8. 登录态最终 Local 验收使用新鲜页面确认固定入口为 `index.js?ver=2.6.1-1784128230`，React #321 与后续 `removeChild` NotFoundError 均消失。`overview/site/content/seo/china/maintenance/about` 七个语义路由逐一硬刷新，均有一份 shell、状态为“已保存”、内容非空且无设置读取失败；1280px 下无横向溢出，320px 的 maintenance 页面同样保持 shell、已保存状态及 `body/document=320px`。控制台没有新增 warning/error，只有 WordPress JQMIGRATE 普通日志。
+
 ## 结果复核
 
 首个垂直切片已完成独立代码审查和浏览器烟测，改进假说成立：
@@ -438,4 +465,4 @@
 
 浏览器烟测先使用 Vite 默认数据验证桌面/移动结构、语义路由、浏览器返回、未知路由、搜索定位和接口失败状态；工作包 4 又在真实 Local WordPress 管理员登录态中验证了 WordPress 管理栏、服务端成功响应和敏感设置闭环。
 
-整个 Pre-GA Reset 尚未完成；AI Provider Runtime 清退已由工作包 2 收口，pnpm/CI 可重复基线已由工作包 3 收口，敏感设置契约已由工作包 4 收口，注册模块与 Loader 的运行时契约已由工作包 5 收口，不可信登录验证码已由工作包 6 清退。工作包 7 已冻结登录安全的最小最终契约，工作包 8A-8B 已修复分类链接简化生命周期和自动图片尺寸过滤器两项行为债务，工作包 9A 已移除 admin Tailwind 管线并建立宿主隔离门禁。其余主要问题是重复 manifest/schema，以及 Ant Design 和大 chunk 带来的前端维护与性能成本。
+整个 Pre-GA Reset 尚未完成；AI Provider Runtime 清退已由工作包 2 收口，pnpm/CI 可重复基线已由工作包 3 收口，敏感设置契约已由工作包 4 收口，注册模块与 Loader 的运行时契约已由工作包 5 收口，不可信登录验证码已由工作包 6 清退。工作包 7 已冻结登录安全的最小最终契约，工作包 8A-8B 已修复分类链接简化生命周期和自动图片尺寸过滤器两项行为债务，工作包 9A-9C 已建立宿主隔离、保存信任反馈及可审计构建/缓存契约。其余主要问题是重复 manifest/schema，以及 Ant Design 仍带来的前端维护与首屏体积成本。
