@@ -1,6 +1,6 @@
 # ADR: Pre-GA 管理后台清场式重构
 
-- 状态：已接受，工作包 1-6 已验收（含真实 Local 站点烟测与独立复审）
+- 状态：已接受；工作包 1-6 已验收，工作包 7 实施中（待自动化门禁与真实 Local 恢复验收）
 - 日期：2026-07-15
 - 决策范围：WP Magick Toolbox 管理后台应用外壳
 
@@ -124,7 +124,7 @@
 
 ## 后续工作包
 
-1. 重建 `domestic.login_security` 的激活边界，使每个高风险开关能按自身配置加载，并补齐锁定、恢复和防误伤的端到端测试。
+1. 完成工作包 7 的自动化门禁、紧急恢复和真实 Local 登录烟测。
 2. 狭窄修复 `category_link_simplify` 生命周期 Hook 和 `ban_auto_size` 缺少过滤返回值两项已确认行为债务。
 3. 建立单一模块 manifest/config schema，并生成或校验前端类型与搜索索引，继续减少手写重复真相。
 4. 逐步缩减 Ant Design、Tailwind 和大体积共享 chunk，稳定到更轻的 WordPress 管理界面组件边界。
@@ -271,6 +271,56 @@
 - Local 管理员登录态中，概览与国内生态正常加载，旧安全路由回到概览，`wp-login.php` 只保留 WordPress 原生登录表单，浏览器 console 无 error/warning。开发数据库中的旧 `Magick_ToolBox_Option_Login` 已删除，浏览器配置只剩 5 个当前域；新触发前台、登录页和未登录后台请求分别返回 200/200/302，PHP、PHP-FPM 和 Nginx 错误日志均无增量。
 - PHP/安全契约与前端/产品表面分别完成独立复审；审查发现的 Dashboard 假阳性、深链未聚焦、ADR/功能统计漂移均已修正，最终结论均为 Approve，无剩余 P0–P2。
 
+## 工作包 7：登录安全运行时收口变更信封
+
+| 项目 | 决定 |
+| --- | --- |
+| 目标仓库 | `/Users/muze/gitee/wp-magick-toolbox` |
+| 聚焦模块 | `domestic.login_security` 运行时、设置 Schema、管理界面、搜索/概览和当前事实文档 |
+| 失败证据 | 旧复合模块只以 `fail_limit_enabled` 激活；锁定过滤器晚于 WordPress 密码校验；锁定请求会延长自身 TTL；可信代理不可配置；自定义登录地址、登录日志和后台 IP 白名单分别存在锁死、写放大和错误保护边界 |
+| 预期变更 | 以 clean break 收口为“登录尝试保护”和“限制匿名作者枚举”两项能力；独立激活；使用固定窗口、可验证代理链和紧急恢复边界；同步删除失效字段与产品表面 |
+| 保留字段 | `attempt_limit_enabled`、`attempt_limit_count`、`attempt_window_minutes`、`lock_duration_minutes`、`trusted_proxies`、`anonymous_author_guard_enabled` |
+| 删除能力 | 自定义登录地址、独立 IP 锁定、登录通知、登录日志、后台 IP 白名单，以及对应字段、搜索项、UI 和当前文档 |
+| 明确非目标 | 不实现验证码、双因素认证、纯账号全局锁、纯 IP 全局锁、登录审计系统、WAF/防火墙、兼容映射、迁移器、Cloud/Addon 能力或兄弟仓库改动 |
+| 公共契约 | `domestic.login_security` 只接受六个保留字段；登录尝试保护与匿名作者枚举限制可独立启用；`MABOX_DISABLE_LOGIN_PROTECTION` 只紧急绕过登录尝试保护 |
+| 预期文件 | 登录安全运行时、Registry/Metadata、Config Schema、React 默认值/类型/UI/搜索/概览、PHP/前端测试、README、功能清单、VitePress 与本 ADR |
+| 不得改变 | WordPress 原生登录 URL、其他国内生态模块、其他工具模块、AI 参考快照、历史实施报告、用户未跟踪排障文档和兄弟仓库 |
+| 必需门禁 | 登录行为 PHPUnit、Registry/Schema 契约、PHPStan/PHP lint、admin Vitest/TypeScript/lint/build、VitePress build、链接与旧能力残留扫描、`git diff --check`、Local 登录/恢复/REST/日志烟测 |
+| 跨仓矩阵 | 不需要；设置、运行时和全部消费者均在本仓库 |
+| 回滚计划 | 以一个聚焦提交交付；回滚该提交恢复工作包 6 基线，不保留旧字段兼容、双轨运行或隐藏 UI |
+
+### 工作包 7 决策
+
+1. 登录尝试保护只按“已存在的 WordPress user ID + 已解析客户端 IP”组合计数，不建立可被远程滥用的纯账号全局锁，也不让共享出口 IP 形成纯 IP 全局锁。
+2. 失败计数使用固定统计窗口；达到阈值后使用独立、固定时长的锁定状态。由模块自身返回的锁定错误不得再次累计或延长锁定，成功登录清除对应组合状态。
+3. `trusted_proxies` 每行只接受一个精确 IPv4 或 IPv6 地址，不接受 CIDR、域名或通配符。`REMOTE_ADDR` 未命中可信列表时完全忽略 `X-Forwarded-For`；命中时验证完整转发链，并从右向左跳过可信跳点，取第一个非可信 IP。链无效或没有可识别客户端时跳过本次执法，不使用共享哨兵 IP。
+4. 匿名作者枚举限制只收紧匿名数字作者查询和匿名 REST 用户读取；具备相应权限的编辑器、管理员和 REST 客户端继续使用 WordPress 原生作者工作流。
+5. `MABOX_DISABLE_LOGIN_PROTECTION` 是紧急恢复常量，不是长期功能开关，也不关闭匿名作者枚举限制。日常配置仍以本地设置 Option 为唯一真相。
+6. 自定义登录地址、独立 IP 锁定、登录通知、登录日志和后台 IP 白名单不迁移、不隐藏、不移往 Cloud；其代码和产品表面直接删除。
+
+### 工作包 7 验收清单
+
+- [x] 两项保留能力可分别独立激活；全部关闭时模块不注册登录安全 Hook。
+- [x] 同一用户使用用户名或邮箱登录时归一到同一 user ID；不同来源 IP 不形成账号全局锁。
+- [x] 固定窗口、锁定到期、成功清理和自身锁定错误不续期均有行为测试。
+- [x] 非可信来源不能用 XFF 覆盖 `REMOTE_ADDR`；可信多跳代理、伪造左侧地址、IPv4/IPv6、非法链和无法解析场景均有测试。
+- [x] 匿名作者查询受限，同时已授权编辑器的 REST 用户读取和作者选择正常。
+- [x] 紧急常量和 WP-CLI 恢复步骤在真实 Local 站点验证，恢复后常量可安全移除。
+- [x] 删除字段不能从 Schema、设置 GET/POST、浏览器默认值、搜索、概览、文档或构建产物重新进入产品。
+- [x] 自动化门禁、VitePress 构建、链接扫描、残留扫描、Local 登录页/后台/REST 和新增日志检查给出真实结果。
+
+### 工作包 7 结果复核
+
+- `domestic.login_security` 已 clean break 收口为六字段、两能力契约；Loader 的 `activation_paths` 使用显式 ANY-OF 语义，非法或自相矛盾的声明失败关闭。旧自定义登录地址、独立 IP 锁、登录通知、登录日志和后台 IP 白名单已从当前运行时、Schema、设置 UI、搜索、概览和文档删除。
+- 登录尝试保护在 WordPress 密码哈希前检查锁定，按 user ID 与已解析客户端 IP 的组合使用固定统计窗口和独立固定锁定时长。用户名与邮箱归一、来源隔离、未知账号与无法解析 IP 跳过、成功清理、锁定错误不续期和到期恢复均有行为测试。
+- 可信代理列表在服务端保存边界逐行校验并规范化精确 IPv4/IPv6；CIDR、域名、通配符或任一非法行会让整串配置拒绝写入。运行时同样不会让混合非法列表部分生效，并覆盖可信多跳、伪造左侧 XFF、IPv4/IPv6、非法链和无法解析场景。
+- 匿名作者保护已对齐 WordPress 对 `author` 参数的清洗语义，`author=1`、`author=x1` 和 `author=+1` 均不能绕过；匿名 `/wp/v2/users*` 被收紧，已登录管理员的原生 REST 用户读取仍返回 200。紧急常量只绕过登录尝试保护，不影响匿名作者保护。
+- 独立复审在提交前发现并修正了非法代理“保存成功但运行时忽略”、混合作者参数绕过、`risk.level=none` 空白风险弹窗、Schema 首次加载失败时确认降级、整数参数界面与运行时漂移，以及概览与恢复文案漂移，并为各路径补回归测试。
+- 根代理复跑结果：PHPUnit 330 项测试、3323 个断言通过，PHPStan 0 error，全部 PHP 语法检查通过；Admin Vitest 15 个文件、100 项测试通过，TypeScript 与 Vite build 通过，ESLint 0 error、137 个既有 warning；VitePress build 与 `git diff --check` 通过。生产构建仍有约 1.26 MB 的 `tab-dashboard.js` 大块，属于后续前端拆包债务。
+- 真实 Local 站点先验证非法代理列表被 REST 保存边界拒绝且数据库零写入，再保存两项能力。临时订阅者连续两次错误密码后，正确密码请求被锁定提示阻止；加入 `MABOX_DISABLE_LOGIN_PROTECTION=true` 后正确密码恢复为 302，同时匿名作者查询仍为 302、匿名 REST 用户端点仍为 404。按文档执行 WP-CLI Option patch 与 cache flush 后移除常量，正确密码继续恢复为 302。
+- Local 最终状态已清理：临时用户、测试 Cookie、紧急常量和登录 transient 均不存在；登录安全配置保留六个当前字段并恢复为两开关关闭、`5/15/30` 默认数值和空可信代理，激活模块中不再包含 `domestic.login_security`。PHP 日志只新增两条预期配置更新 INFO，PHP-FPM 与 Nginx 错误日志无增量。
+- 已知剩余风险：失败计数仍使用 WordPress transient 的读、加、写序列，极端并发请求可能丢失增量。数据库 transient 与外部对象缓存没有统一 CAS 契约，本包没有用仅覆盖部分后端的 `wp_cache_incr` 或临时 Option 锁伪装成原子实现；如发布定位要求强限流保证，应另立存储与原子后端工作包。
+
 ## 结果复核
 
 首个垂直切片已完成独立代码审查和浏览器烟测，改进假说成立：
@@ -287,4 +337,4 @@
 
 浏览器烟测先使用 Vite 默认数据验证桌面/移动结构、语义路由、浏览器返回、未知路由、搜索定位和接口失败状态；工作包 4 又在真实 Local WordPress 管理员登录态中验证了 WordPress 管理栏、服务端成功响应和敏感设置闭环。
 
-整个 Pre-GA Reset 尚未完成；AI Provider Runtime 清退已由工作包 2 收口，pnpm/CI 可重复基线已由工作包 3 收口，敏感设置契约已由工作包 4 收口，注册模块与 Loader 的运行时契约已由工作包 5 收口，不可信登录验证码已由工作包 6 清退。其余发布前主要问题是国内登录安全复合模块的单一激活门槛、两项已确认模块行为债务、重复 manifest/schema，以及 Ant Design/Tailwind 和大 chunk 带来的前端维护与性能成本。
+整个 Pre-GA Reset 尚未完成；AI Provider Runtime 清退已由工作包 2 收口，pnpm/CI 可重复基线已由工作包 3 收口，敏感设置契约已由工作包 4 收口，注册模块与 Loader 的运行时契约已由工作包 5 收口，不可信登录验证码已由工作包 6 清退。工作包 7 已冻结登录安全的最小最终契约，旧复合模块单一激活门槛不再作为后续设计债务；发布前仍须完成本包自动化与 Local 恢复验收。其余主要问题是两项已确认模块行为债务、重复 manifest/schema，以及 Ant Design/Tailwind 和大 chunk 带来的前端维护与性能成本。

@@ -47,18 +47,20 @@ if (!class_exists('MaBox_Module_Loader')) {
                     }
                 }
 
-                $option_key = $meta['option_key'];
-                $value = self::get_nested_value($config, $option_key);
+                $activation_paths = self::get_activation_paths($meta);
+                $is_active = false;
 
-                if (empty($value)) {
-                    continue;
+                foreach ($activation_paths as $activation_path) {
+                    $value = self::get_nested_value($config, $activation_path);
+                    if (self::is_activation_value_enabled($value)) {
+                        $is_active = true;
+                        break;
+                    }
                 }
 
-                if (is_string($value) && $value === 'false') {
-                    continue;
+                if ($is_active) {
+                    $active[] = $module_id;
                 }
-
-                $active[] = $module_id;
             }
 
             return $active;
@@ -179,6 +181,67 @@ if (!class_exists('MaBox_Module_Loader')) {
                 }
             }
             return 'advanced'; // 默认层级
+        }
+
+        /**
+         * 将单路径和复合模块激活契约归一化为 ANY-OF 路径列表。
+         *
+         * activation_paths 一旦声明即为权威契约。空列表、关联数组、
+         * 重复或非法路径均失败关闭，不回退到 option_key。
+         */
+        private static function get_activation_paths($meta) {
+            if (array_key_exists('activation_paths', $meta)) {
+                $paths = $meta['activation_paths'];
+                if (!is_array($paths) || empty($paths)) {
+                    return array();
+                }
+
+                if (array_keys($paths) !== range(0, count($paths) - 1)) {
+                    return array();
+                }
+
+                foreach ($paths as $path) {
+                    if (!self::is_valid_activation_path($path)) {
+                        return array();
+                    }
+                }
+
+                if (count(array_unique($paths, SORT_STRING)) !== count($paths)) {
+                    return array();
+                }
+
+                if (
+                    !isset($meta['option_key'])
+                    || !is_string($meta['option_key'])
+                    || $paths[0] !== $meta['option_key']
+                ) {
+                    return array();
+                }
+
+                return $paths;
+            }
+
+            if (
+                !isset($meta['option_key'])
+                || !self::is_valid_activation_path($meta['option_key'])
+            ) {
+                return array();
+            }
+
+            return array($meta['option_key']);
+        }
+
+        private static function is_valid_activation_path($path) {
+            return is_string($path)
+                && preg_match('/^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*$/D', $path) === 1;
+        }
+
+        private static function is_activation_value_enabled($value) {
+            if (empty($value)) {
+                return false;
+            }
+
+            return !is_string($value) || $value !== 'false';
         }
 
         private static function get_nested_value($data, $path) {

@@ -6,7 +6,8 @@ import { AntConfig } from "@/tool/tool";
 import { domesticApi } from "@/api";
 import DiffModal from "@/components/diff-modal";
 import { mergeEnvironmentProposal } from "@/components/domestic/environment-plan";
-import { ModuleCard, DetailDrawer, RiskNotice, ModuleRow, SecretField } from "@/components/settings-ui";
+import { ModuleCard, DetailDrawer, ModuleRow, SecretField } from "@/components/settings-ui";
+import type { DomesticLoginSecurity } from "@/tool/interface";
 
 const fromConfig = AntConfig.from;
 const { TextArea } = Input;
@@ -361,14 +362,14 @@ const CommentSecurityCard: React.FC<{ drawerOpen?: boolean; onDrawerOpenChange?:
 
 const LoginSecurityCard: React.FC<{ drawerOpen?: boolean; onDrawerOpenChange?: (open: boolean) => void }> = ({ drawerOpen: extDrawerOpen, onDrawerOpenChange }) => {
   const { optionData, updateOption } = useContext(DataContext);
-  const publicData = optionData.domestic?.login_security || {};
-  const [formData, setFormData] = useState(publicData || {});
+  const publicData = optionData.domestic.login_security;
+  const [formData, setFormData] = useState<DomesticLoginSecurity>(publicData);
   const [intDrawerOpen, setIntDrawerOpen] = useState(false);
   const drawerOpen = extDrawerOpen ?? intDrawerOpen;
   const setDrawerOpen = onDrawerOpenChange ?? setIntDrawerOpen;
 
-  const onValuesChange = (changedValues: any, _allValues?: any) => {
-    setFormData((prev: any) => ({ ...prev, ...changedValues }));
+  const onValuesChange = (changedValues: Partial<DomesticLoginSecurity>) => {
+    setFormData((previous) => ({ ...previous, ...changedValues }));
   };
 
   useEffect(() => { updateOption("domestic", "login_security", formData); }, [formData]);
@@ -377,69 +378,58 @@ const LoginSecurityCard: React.FC<{ drawerOpen?: boolean; onDrawerOpenChange?: (
     <>
       <ModuleCard
         title="登录安全"
-        description="暴力破解防护、自定义登录地址、IP 白名单"
-        featureId="domestic-login_security-fail_limit_enabled"
+        description="管理登录尝试限制与匿名作者枚举"
+        featureId="domestic-login_security"
         tags={["安全"]}
         switchable={false}
         actionLabel="配置"
         onAction={() => setDrawerOpen(true)}
-        aliases={["domestic-login-fail-limit", "domestic-login-custom-url", "domestic-login-ip-whitelist", "domestic-login-ip_lock", "domestic-login-login_notify", "domestic-login-login_log", "domestic-login_security-ban_enumeration_enabled"]}
       />
-      <DetailDrawer title="登录安全配置" visible={drawerOpen} onClose={() => setDrawerOpen(false)} description="登录安全中心，防止暴力破解">
-        <RiskNotice warning="自定义登录地址和 IP 限制可能导致管理员无法登录" suggestion="建议先配置 IP 白名单再开启限制" />
+      <DetailDrawer
+        title="登录安全设置"
+        visible={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        description="两项能力可独立启用，保存后才会在站点生效。"
+      >
         <Form labelCol={fromConfig.labelCol} wrapperCol={fromConfig.wrapperCol} style={{ maxWidth: fromConfig.maxWidth }} initialValues={publicData} onValuesChange={onValuesChange}>
           <ModuleRow
-            title="登录失败限制"
-            featureId="domestic-login_security-fail_limit_enabled"
-            enabled={!!formData.fail_limit_enabled}
-            onChange={(checked: boolean) => onValuesChange({ fail_limit_enabled: checked })}
-          />
-          <Form.Item label="最大失败次数" name="fail_limit_count"><InputNumber min={3} max={20} /></Form.Item>
-          <Form.Item label="锁定时间(分钟)" name="fail_lock_duration"><InputNumber min={5} max={1440} /></Form.Item>
+            title="登录尝试保护"
+            description="在统计窗口内限制同一已存在账号与来源 IP 组合的连续失败尝试"
+            featureId="domestic-login_security-attempt_limit_enabled"
+            enabled={!!formData.attempt_limit_enabled}
+            onChange={(checked: boolean) => onValuesChange({ attempt_limit_enabled: checked })}
+          >
+            <Form.Item label="失败尝试上限" name="attempt_limit_count">
+              <InputNumber min={2} max={20} precision={0} step={1} />
+            </Form.Item>
+            <Form.Item label="统计窗口（分钟）" name="attempt_window_minutes">
+              <InputNumber min={1} max={1440} precision={0} step={1} />
+            </Form.Item>
+            <Form.Item label="锁定时长（分钟）" name="lock_duration_minutes">
+              <InputNumber min={1} max={1440} precision={0} step={1} />
+            </Form.Item>
+            <details style={{ marginTop: 8 }}>
+              <summary style={{ cursor: "pointer", fontWeight: 500 }}>高级：可信代理</summary>
+              <p style={{ color: "#666", margin: "8px 0 12px" }}>
+                仅在站点位于 CDN 或反向代理之后，且代理会覆盖 X-Forwarded-For 时填写。
+                留空时系统只信任 REMOTE_ADDR。
+              </p>
+              <Form.Item
+                label="代理出口 IP"
+                name="trusted_proxies"
+                extra="每行一个可信代理 IP；不要填写访客 IP 或整个公网网段。"
+              >
+                <TextArea rows={3} placeholder={"203.0.113.10\n2001:db8::10"} />
+              </Form.Item>
+            </details>
+          </ModuleRow>
           <ModuleRow
-            title="IP 失败锁定"
-            featureId="domestic-login_security-ip_lock_enabled"
-            enabled={!!formData.ip_lock_enabled}
-            onChange={(checked: boolean) => onValuesChange({ ip_lock_enabled: checked })}
+            title="限制匿名作者枚举"
+            description="收紧未登录访问中的作者参数与 REST 用户端点"
+            featureId="domestic-login_security-anonymous_author_guard_enabled"
+            enabled={!!formData.anonymous_author_guard_enabled}
+            onChange={(checked: boolean) => onValuesChange({ anonymous_author_guard_enabled: checked })}
           />
-          <Form.Item label="IP 失败锁定次数" name="ip_lock_count"><InputNumber min={5} max={50} /></Form.Item>
-          <Form.Item label="IP 锁定时间(分钟)" name="ip_lock_duration"><InputNumber min={5} max={1440} /></Form.Item>
-          <ModuleRow
-            title="自定义登录地址"
-            description="隐藏默认 wp-login.php 登录入口"
-            featureId="domestic-login_security-custom_login_enabled"
-            enabled={!!formData.custom_login_enabled}
-            onChange={(checked: boolean) => onValuesChange({ custom_login_enabled: checked })}
-          />
-          <Form.Item label="登录 slug" name="custom_login_slug" extra="如：my-login"><Input /></Form.Item>
-          <ModuleRow
-            title="禁止用户名枚举"
-            featureId="domestic-login_security-ban_enumeration_enabled"
-            enabled={!!formData.ban_enumeration_enabled}
-            onChange={(checked: boolean) => onValuesChange({ ban_enumeration_enabled: checked })}
-          />
-          <ModuleRow
-            title="登录通知"
-            description="登录成功时发送邮件通知管理员"
-            featureId="domestic-login_security-login_notify_enabled"
-            enabled={!!formData.login_notify_enabled}
-            onChange={(checked: boolean) => onValuesChange({ login_notify_enabled: checked })}
-          />
-          <ModuleRow
-            title="登录日志"
-            description="记录所有登录尝试"
-            featureId="domestic-login_security-login_log_enabled"
-            enabled={!!formData.login_log_enabled}
-            onChange={(checked: boolean) => onValuesChange({ login_log_enabled: checked })}
-          />
-          <ModuleRow
-            title="IP 白名单"
-            description="仅允许白名单 IP 访问后台"
-            featureId="domestic-login_security-ip_whitelist_enabled"
-            enabled={!!formData.ip_whitelist_enabled}
-            onChange={(checked: boolean) => onValuesChange({ ip_whitelist_enabled: checked })}
-          />
-          <Form.Item label="白名单 IP" name="ip_whitelist" extra="每行一个"><TextArea rows={4} /></Form.Item>
         </Form>
       </DetailDrawer>
     </>

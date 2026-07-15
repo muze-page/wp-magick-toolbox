@@ -34,6 +34,7 @@ interface NextStep {
   title: string;
   description: string;
   view: OverviewView;
+  itemId?: string;
   action: string;
 }
 
@@ -61,8 +62,16 @@ function countBooleanToggles(value: unknown): ToggleStats {
   return stats;
 }
 
+function getLoginSecurityEnabledCount(optionData: Option): number {
+  const loginSecurity = optionData.domestic?.login_security;
+  return [
+    loginSecurity?.attempt_limit_enabled,
+    loginSecurity?.anonymous_author_guard_enabled,
+  ].filter(Boolean).length;
+}
+
 function getSecurityChecks(optionData: Option): SecurityCheck[] {
-  const loginProtected = Boolean(optionData.domestic?.login_security?.fail_limit_enabled);
+  const loginSecurityEnabledCount = getLoginSecurityEnabledCount(optionData);
 
   const commentProtections = [
     optionData.page?.comment?.interval,
@@ -79,9 +88,9 @@ function getSecurityChecks(optionData: Option): SecurityCheck[] {
 
   return [
     {
-      label: "登录保护",
-      detail: loginProtected ? "已启用至少一项登录防护" : "尚未启用登录防护",
-      status: loginProtected ? "good" : "attention",
+      label: "登录安全配置",
+      detail: `已启用 ${loginSecurityEnabledCount}/2 项登录安全配置`,
+      status: loginSecurityEnabledCount === 2 ? "good" : loginSecurityEnabledCount === 1 ? "partial" : "attention",
     },
     {
       label: "评论防护",
@@ -112,14 +121,15 @@ function buildNextSteps(
   searchState: RemoteState<SearchHealthSummary>,
 ): NextStep[] {
   const steps: NextStep[] = [];
-  const loginProtected = Boolean(optionData.domestic?.login_security?.fail_limit_enabled);
+  const attemptLimitEnabled = Boolean(optionData.domestic?.login_security?.attempt_limit_enabled);
 
-  if (!loginProtected) {
+  if (!attemptLimitEnabled) {
     steps.push({
       id: "login-protection",
-      title: "补齐登录防护",
-      description: "启用登录失败限制，降低后台暴力破解风险。",
+      title: "启用登录尝试保护",
+      description: "限制同一已存在账号与来源 IP 组合的连续失败尝试，并使用固定统计窗口和锁定时长。",
       view: "china",
+      itemId: "domestic-login_security-attempt_limit_enabled",
       action: "前往国内生态",
     });
   }
@@ -271,12 +281,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
   const stats = useMemo(() => countBooleanToggles(optionData), [optionData]);
   const securityChecks = useMemo(() => getSecurityChecks(optionData), [optionData]);
+  const loginSecurityEnabledCount = useMemo(() => getLoginSecurityEnabledCount(optionData), [optionData]);
   const nextSteps = useMemo(
     () => buildNextSteps(optionData, diagnosticState, searchState),
     [diagnosticState, optionData, searchState],
   );
-  const securityReady = securityChecks.filter((item) => item.status === "good").length;
-
   const navigate = (view: OverviewView, itemId?: string) => {
     if (itemId) {
       onNavigate?.(view, itemId);
@@ -308,9 +317,9 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <span>共 {stats.total} 个布尔开关</span>
         </article>
         <article className="mabox-overview__metric">
-          <span className="mabox-overview__metric-label">安全检查</span>
-          <strong>{securityReady} / {securityChecks.length}</strong>
-          <span>{securityReady === securityChecks.length ? "基础防护完整" : "仍有项目需要确认"}</span>
+          <span className="mabox-overview__metric-label">登录安全配置</span>
+          <strong>{loginSecurityEnabledCount} / 2</strong>
+          <span>已启用 {loginSecurityEnabledCount}/2 项</span>
         </article>
         <article className="mabox-overview__metric">
           <span className="mabox-overview__metric-label">下一步</span>
@@ -418,7 +427,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               <li key={step.id}>
                 <span className="mabox-overview__step-index" aria-hidden="true">{index + 1}</span>
                 <div><strong>{step.title}</strong><p>{step.description}</p></div>
-                <button type="button" onClick={() => navigate(step.view)}>
+                <button type="button" onClick={() => navigate(step.view, step.itemId)}>
                   {step.action}<span className="dashicons dashicons-arrow-right-alt2" aria-hidden="true" />
                 </button>
               </li>
@@ -447,7 +456,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <button
             className="mabox-overview__full-button"
             type="button"
-            onClick={() => navigate("china", "domestic-login_security-fail_limit_enabled")}
+            onClick={() => navigate("china", "domestic-login_security-attempt_limit_enabled")}
           >
             管理国内安全设置
           </button>

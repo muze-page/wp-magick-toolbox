@@ -54,17 +54,23 @@ class MetadataAggregationTest extends TestCase {
         $this->assertTrue($meta['always_load'], 'always_load from manifest should be preserved');
     }
 
-    public function test_manifest_adds_high_risk(): void {
+    public function test_login_security_manifest_keeps_neutral_merged_activation_contract(): void {
         MaBox_Module_Metadata::reset_cache();
         $merged = MaBox_Module_Metadata::get_registry();
 
         $this->assertArrayHasKey('domestic.login_security', $merged);
         $meta = $merged['domestic.login_security'];
 
-        $this->assertEquals('high', $meta['risk']['level']);
-        $this->assertEquals('自定义登录地址', $meta['risk']['title']);
-        $this->assertTrue($meta['risk']['noDismiss']);
-        $this->assertEquals('domestic.login_security', $meta['config_path']);
+        $this->assertSame('domestic.login_security.attempt_limit_enabled', $meta['option_key']);
+        $this->assertSame(array(
+            'domestic.login_security.attempt_limit_enabled',
+            'domestic.login_security.anonymous_author_guard_enabled',
+        ), $meta['activation_paths']);
+        $this->assertSame('domestic.login_security', $meta['config_path']);
+        $this->assertArrayNotHasKey('risk', $meta);
+
+        $ui = MaBox_Module_Metadata::get_ui_metadata();
+        $this->assertSame('none', $ui['domestic.login_security']['risk']['level']);
     }
 
     public function test_ui_metadata_excludes_internal_keys(): void {

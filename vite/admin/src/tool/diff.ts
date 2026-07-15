@@ -31,6 +31,16 @@ export function diffSecretChanges(
  */
 const RISKY_PATHS: Record<string, { label: string; title: string }> = {
   "optimize.medium.no_auto_size": { label: "禁止缩略图", title: "禁止缩略图" },
+  "domestic.login_security.attempt_limit_enabled": { label: "登录尝试保护", title: "登录尝试保护" },
+};
+
+const PATH_LABELS: Record<string, string> = {
+  "domestic.login_security.attempt_limit_enabled": "登录尝试保护",
+  "domestic.login_security.attempt_limit_count": "失败尝试上限",
+  "domestic.login_security.attempt_window_minutes": "统计窗口（分钟）",
+  "domestic.login_security.lock_duration_minutes": "锁定时长（分钟）",
+  "domestic.login_security.trusted_proxies": "可信代理 IP",
+  "domestic.login_security.anonymous_author_guard_enabled": "限制匿名作者枚举",
 };
 
 /**
@@ -54,7 +64,7 @@ function isRiskyPath(path: string): boolean {
  * 获取路径的人类可读标签
  */
 function getPathLabel(path: string): string {
-  return RISKY_PATHS[path]?.label || path;
+  return PATH_LABELS[path] || RISKY_PATHS[path]?.label || path;
 }
 
 /**

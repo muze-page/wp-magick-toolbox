@@ -369,19 +369,12 @@ export type DomesticCommentSecurity = {
 };
 
 export type DomesticLoginSecurity = {
-  fail_limit_enabled: boolean;
-  fail_limit_count: number;
-  fail_lock_duration: number;
-  ip_lock_enabled: boolean;
-  ip_lock_count: number;
-  ip_lock_duration: number;
-  custom_login_enabled: boolean;
-  custom_login_slug: string;
-  ban_enumeration_enabled: boolean;
-  login_notify_enabled: boolean;
-  login_log_enabled: boolean;
-  ip_whitelist_enabled: boolean;
-  ip_whitelist: string;
+  attempt_limit_enabled: boolean;
+  attempt_limit_count: number;
+  attempt_window_minutes: number;
+  lock_duration_minutes: number;
+  trusted_proxies: string;
+  anonymous_author_guard_enabled: boolean;
 };
 
 // ===== 性能优化 =====

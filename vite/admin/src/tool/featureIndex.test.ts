@@ -64,12 +64,12 @@ describe("featureIndex", () => {
   describe("fetchFeatureIndex", () => {
     it("returns merged index after schema fetch", async () => {
       mockFetchUiSchema.mockResolvedValue({
-        "domestic-login_security-custom_login_enabled": {
-          path: "domestic.login_security.custom_login_enabled",
+        "domestic-login_security-attempt_limit_enabled": {
+          path: "domestic.login_security.attempt_limit_enabled",
           type: "boolean",
-          label: "自定义登录地址",
+          label: "登录尝试保护",
           group: "登录安全",
-          feature_id: "domestic-login_security-custom_login_enabled",
+          feature_id: "domestic-login_security-attempt_limit_enabled",
           risk_tags: ["安全"],
           preset_tags: ["security"],
         },
@@ -77,10 +77,11 @@ describe("featureIndex", () => {
       mockGetUiSchemaSync.mockReturnValue(null);
       const { fetchFeatureIndex } = await import("@/tool/featureIndex");
       const index = await fetchFeatureIndex();
-      const loginItem = index.find((i) => i.id === "domestic-login_security-custom_login_enabled");
+      const loginItem = index.find((i) => i.id === "domestic-login_security-attempt_limit_enabled");
       expect(loginItem).toBeDefined();
       expect(loginItem!.tags).toEqual(["安全"]);
       expect(loginItem!.tabKey).toBe("china");
+      expect(index.filter((i) => i.id === "domestic-login_security-attempt_limit_enabled")).toHaveLength(1);
     });
 
     it("returns base index when schema fetch fails", async () => {
@@ -147,6 +148,19 @@ describe("featureIndex", () => {
       expect(searchIndex.every((item) => validViews.has(item.tabKey))).toBe(true);
       expect(searchIndex.some((item) => /^\d+$/.test(item.tabKey))).toBe(false);
       expect(searchIndex.some((item) => item.id === "login-security-login_code")).toBe(false);
+      expect(searchIndex.map((item) => item.id)).toEqual(expect.arrayContaining([
+        "domestic-login_security-attempt_limit_enabled",
+        "domestic-login_security-anonymous_author_guard_enabled",
+      ]));
+      expect(searchIndex.some((item) => [
+        "domestic-login_security-fail_limit_enabled",
+        "domestic-login_security-ip_lock_enabled",
+        "domestic-login_security-custom_login_enabled",
+        "domestic-login_security-ban_enumeration_enabled",
+        "domestic-login_security-login_notify_enabled",
+        "domestic-login_security-login_log_enabled",
+        "domestic-login_security-ip_whitelist_enabled",
+      ].includes(item.id))).toBe(false);
     });
   });
 });

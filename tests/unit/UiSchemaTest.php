@@ -24,8 +24,7 @@ class UiSchemaTest extends TestCase {
             'optimize-medium-no_auto_size',
             'performance-db_clean-enabled',
             'optimize-medium-medium_add_svg',
-            'domestic-login_security-custom_login_enabled',
-            'domestic-login_security-ip_lock_enabled',
+            'domestic-login_security-attempt_limit_enabled',
         );
 
         $found_feature_ids = array();
@@ -38,6 +37,27 @@ class UiSchemaTest extends TestCase {
         foreach ($risky_feature_ids as $fid) {
             $this->assertContains($fid, $found_feature_ids, "Risky feature ID '{$fid}' must exist in uiSchema");
         }
+    }
+
+    public function test_login_security_ui_schema_uses_only_reset_feature_ids(): void {
+        $ui = MaBox_Config_Schema::get_ui_schema();
+        $serialized = serialize($ui);
+
+        $this->assertStringContainsString('domestic-login_security-attempt_limit_enabled', $serialized);
+        $this->assertStringContainsString('domestic-login_security-anonymous_author_guard_enabled', $serialized);
+        $this->assertStringNotContainsString('domestic-login_security-custom_login_enabled', $serialized);
+        $this->assertStringNotContainsString('domestic-login_security-ip_lock_enabled', $serialized);
+
+        $attempt = $ui['domestic-login_security-attempt_limit_enabled'];
+        $anonymous = $ui['domestic-login_security-anonymous_author_guard_enabled'];
+        $this->assertSame('登录尝试保护', $attempt['label']);
+        $this->assertSame('low', $attempt['risk']['level']);
+        $this->assertSame(
+            '确认开启后请在保存前核对可信代理；如发生误锁，可在 wp-config.php 中将 MABOX_DISABLE_LOGIN_PROTECTION 定义为 true 后恢复。',
+            $attempt['risk']['suggestion']
+        );
+        $this->assertSame('限制匿名作者枚举', $anonymous['label']);
+        $this->assertSame('none', $anonymous['risk']['level']);
     }
 
     public function test_ui_schema_structure(): void {

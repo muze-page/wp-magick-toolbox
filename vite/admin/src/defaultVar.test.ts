@@ -25,8 +25,22 @@ describe('defaultVar', () => {
   });
 
   it('should keep real login protections under domestic settings', () => {
-    expect(defaultVarOption.domestic.login_security).toHaveProperty('fail_limit_enabled');
-    expect(defaultVarOption.domestic.login_security).toHaveProperty('ban_enumeration_enabled');
+    expect(defaultVarOption.domestic.login_security).toEqual({
+      attempt_limit_enabled: false,
+      attempt_limit_count: 5,
+      attempt_window_minutes: 15,
+      lock_duration_minutes: 30,
+      trusted_proxies: '',
+      anonymous_author_guard_enabled: false,
+    });
+
+    expect(defaultVarOption.domestic.login_security).not.toHaveProperty('fail_limit_enabled');
+    expect(defaultVarOption.domestic.login_security).not.toHaveProperty('ip_lock_enabled');
+    expect(defaultVarOption.domestic.login_security).not.toHaveProperty('custom_login_enabled');
+    expect(defaultVarOption.domestic.login_security).not.toHaveProperty('ban_enumeration_enabled');
+    expect(defaultVarOption.domestic.login_security).not.toHaveProperty('login_notify_enabled');
+    expect(defaultVarOption.domestic.login_security).not.toHaveProperty('login_log_enabled');
+    expect(defaultVarOption.domestic.login_security).not.toHaveProperty('ip_whitelist_enabled');
   });
 
   it('should have valid url_site format', () => {

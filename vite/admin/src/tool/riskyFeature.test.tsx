@@ -84,6 +84,30 @@ describe("riskyFeature", () => {
       const result = checkRiskyFeature("optimize-site-hide_top_toolbar", true, onConfirm);
       expect(result).toBe(true);
     });
+
+    it("treats an explicit level none entry as non-risky", async () => {
+      mockGetUiSchemaSync.mockReturnValue({
+        "domestic-login_security-anonymous_author_guard_enabled": {
+          path: "domestic.login_security.anonymous_author_guard_enabled",
+          type: "boolean",
+          feature_id: "domestic-login_security-anonymous_author_guard_enabled",
+          risk: { level: "none" },
+        },
+      });
+      const { Modal } = await import("antd");
+      const { checkRiskyFeature } = await import("@/tool/riskyFeature");
+      const onConfirm = vi.fn();
+
+      const result = checkRiskyFeature(
+        "domestic-login_security-anonymous_author_guard_enabled",
+        true,
+        onConfirm,
+      );
+
+      expect(result).toBe(true);
+      expect(Modal.confirm).not.toHaveBeenCalled();
+      expect(onConfirm).not.toHaveBeenCalled();
+    });
   });
 
   describe("checkRiskyFeature - schema not cached", () => {
@@ -126,6 +150,54 @@ describe("riskyFeature", () => {
       expect(result).toBe(false);
       expect(mockFetchUiSchema).toHaveBeenCalled();
     });
+
+    it("continues without a modal when fetched schema marks the feature as level none", async () => {
+      let cachedSchema: Record<string, unknown> | null = null;
+      const fetchedSchema = {
+        "domestic-login_security-anonymous_author_guard_enabled": {
+          path: "domestic.login_security.anonymous_author_guard_enabled",
+          type: "boolean",
+          feature_id: "domestic-login_security-anonymous_author_guard_enabled",
+          risk: { level: "none" },
+        },
+      };
+      mockGetUiSchemaSync.mockImplementation(() => cachedSchema);
+      mockFetchUiSchema.mockImplementation(async () => {
+        cachedSchema = fetchedSchema;
+        return fetchedSchema;
+      });
+      const { Modal } = await import("antd");
+      const { checkRiskyFeature } = await import("@/tool/riskyFeature");
+      const onConfirm = vi.fn();
+
+      const result = checkRiskyFeature(
+        "domestic-login_security-anonymous_author_guard_enabled",
+        true,
+        onConfirm,
+      );
+
+      expect(result).toBe(false);
+      await vi.waitFor(() => {
+        expect(onConfirm).toHaveBeenCalledTimes(1);
+      });
+      expect(Modal.confirm).not.toHaveBeenCalled();
+    });
+
+    it("continues a non-risky change when schema fetch resolves without data", async () => {
+      mockGetUiSchemaSync.mockReturnValue(null);
+      mockFetchUiSchema.mockResolvedValue(null);
+      const { Modal } = await import("antd");
+      const { checkRiskyFeature } = await import("@/tool/riskyFeature");
+      const onConfirm = vi.fn();
+
+      const result = checkRiskyFeature("optimize-test-fetch-failure", true, onConfirm);
+
+      expect(result).toBe(false);
+      await vi.waitFor(() => {
+        expect(onConfirm).toHaveBeenCalledTimes(1);
+      });
+      expect(Modal.confirm).not.toHaveBeenCalled();
+    });
   });
 
   describe("checkRiskyFeature - static RISKY_FEATURES fallback", () => {
@@ -136,6 +208,33 @@ describe("riskyFeature", () => {
       const onConfirm = vi.fn();
       const result = checkRiskyFeature("optimize-medium-no_auto_size", true, onConfirm);
       expect(result).toBe(false);
+    });
+
+    it("keeps login protection confirmation available when schema is unavailable", async () => {
+      mockGetUiSchemaSync.mockReturnValue(null);
+      mockFetchUiSchema.mockResolvedValue(null);
+      const { Modal } = await import("antd");
+      const { checkRiskyFeature } = await import("@/tool/riskyFeature");
+      const onConfirm = vi.fn();
+
+      const result = checkRiskyFeature(
+        "domestic-login_security-attempt_limit_enabled",
+        true,
+        onConfirm,
+      );
+
+      expect(result).toBe(false);
+      expect(mockFetchUiSchema).not.toHaveBeenCalled();
+      expect(Modal.confirm).toHaveBeenCalledWith(expect.objectContaining({
+        title: "您正在开启「登录尝试保护」",
+      }));
+
+      const confirmOptions = vi.mocked(Modal.confirm).mock.calls[0][0];
+      expect(JSON.stringify(confirmOptions.content)).toContain(
+        "确认开启后请在保存前核对可信代理；如发生误锁，可在 wp-config.php 中将 MABOX_DISABLE_LOGIN_PROTECTION 定义为 true 后恢复。",
+      );
+      confirmOptions.onOk?.();
+      expect(onConfirm).toHaveBeenCalledTimes(1);
     });
   });
 

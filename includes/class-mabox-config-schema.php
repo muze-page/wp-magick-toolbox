@@ -188,19 +188,31 @@ if (!class_exists('MaBox_Config_Schema')) {
                         'log_enabled'               => array('type' => 'boolean', 'default' => false),
                     ),
                     'login_security' => array(
-                        'fail_limit_enabled'    => array('type' => 'boolean', 'default' => false),
-                        'fail_limit_count'      => array('type' => 'number',  'default' => 5, 'min' => 1),
-                        'fail_lock_duration'    => array('type' => 'number',  'default' => 30, 'min' => 1),
-                        'ip_lock_enabled'       => array('type' => 'boolean', 'default' => false, 'risk' => array('level' => 'low', 'title' => 'IP 锁定', 'warning' => 'IP 锁定可能在反向代理环境下误判，导致正常用户被锁定。', 'suggestion' => '如使用 CDN 或反向代理，请配置可信代理 IP。'), 'feature_id' => 'domestic-login_security-ip_lock_enabled', 'label' => 'IP 锁定', 'group' => '登录安全'),
-                        'ip_lock_count'         => array('type' => 'number',  'default' => 10, 'min' => 1),
-                        'ip_lock_duration'      => array('type' => 'number',  'default' => 60, 'min' => 1),
-                        'custom_login_enabled'  => array('type' => 'boolean', 'default' => false, 'risk' => array('level' => 'high', 'title' => '自定义登录地址', 'warning' => '修改登录地址后，原 wp-login.php 将被重定向，配置错误可能导致无法登录。', 'suggestion' => '记住新的登录地址，避免锁定自己。', 'noDismiss' => true), 'feature_id' => 'domestic-login_security-custom_login_enabled', 'label' => '自定义登录地址', 'group' => '登录安全'),
-                        'custom_login_slug'     => array('type' => 'string',  'default' => 'my-login', 'sanitize' => 'sanitize_title'),
-                        'ban_enumeration_enabled' => array('type' => 'boolean', 'default' => false),
-                        'login_notify_enabled'  => array('type' => 'boolean', 'default' => false),
-                        'login_log_enabled'     => array('type' => 'boolean', 'default' => false),
-                        'ip_whitelist_enabled'  => array('type' => 'boolean', 'default' => false),
-                        'ip_whitelist'          => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_textarea_field'),
+                        'attempt_limit_enabled' => array(
+                            'type'       => 'boolean',
+                            'default'    => false,
+                            'feature_id' => 'domestic-login_security-attempt_limit_enabled',
+                            'label'      => '登录尝试保护',
+                            'group'      => '登录安全',
+                            'risk'       => array(
+                                'level'      => 'low',
+                                'title'      => '登录尝试保护',
+                                'warning'    => '可信代理配置错误可能让多个访客共享同一来源 IP，造成账号误锁。',
+                                'suggestion' => '确认开启后请在保存前核对可信代理；如发生误锁，可在 wp-config.php 中将 MABOX_DISABLE_LOGIN_PROTECTION 定义为 true 后恢复。',
+                            ),
+                        ),
+                        'attempt_limit_count' => array('type' => 'number', 'default' => 5, 'min' => 2, 'max' => 20, 'integer' => true),
+                        'attempt_window_minutes' => array('type' => 'number', 'default' => 15, 'min' => 1, 'max' => 1440, 'integer' => true),
+                        'lock_duration_minutes' => array('type' => 'number', 'default' => 30, 'min' => 1, 'max' => 1440, 'integer' => true),
+                        'trusted_proxies' => array('type' => 'string', 'default' => '', 'format' => 'ip_list'),
+                        'anonymous_author_guard_enabled' => array(
+                            'type'       => 'boolean',
+                            'default'    => false,
+                            'feature_id' => 'domestic-login_security-anonymous_author_guard_enabled',
+                            'label'      => '限制匿名作者枚举',
+                            'group'      => '登录安全',
+                            'risk'       => array('level' => 'none'),
+                        ),
                     ),
                 ),
                 'performance' => array(
@@ -516,6 +528,27 @@ if (!class_exists('MaBox_Config_Schema')) {
                     $errors[] = "{$path}.{$field_key} 必须为 {$type} 类型";
                     continue;
                 }
+                if ($type === 'number' && !empty($field_def['integer'])) {
+                    if (!is_int($values[$field_key])) {
+                        $errors[] = "{$path}.{$field_key} 必须为整数";
+                        continue;
+                    }
+                    if (isset($field_def['min']) && $values[$field_key] < $field_def['min']) {
+                        $errors[] = "{$path}.{$field_key} 不能小于 {$field_def['min']}";
+                        continue;
+                    }
+                    if (isset($field_def['max']) && $values[$field_key] > $field_def['max']) {
+                        $errors[] = "{$path}.{$field_key} 不能大于 {$field_def['max']}";
+                        continue;
+                    }
+                }
+                if ($type === 'string' && isset($field_def['format']) && $field_def['format'] === 'ip_list') {
+                    $ip_list = self::sanitize_ip_list($values[$field_key]);
+                    if (!$ip_list['valid']) {
+                        $errors[] = "{$path}.{$field_key} {$ip_list['error']}";
+                        continue;
+                    }
+                }
                 if ($type === 'array' && isset($field_def['items']) && is_array($field_def['items'])) {
                     self::validate_array_items(
                         $values[$field_key],
@@ -632,6 +665,18 @@ if (!class_exists('MaBox_Config_Schema')) {
                     return array('valid' => true, 'value' => $sanitized, 'error' => null);
 
                 case 'number':
+                    if (!empty($field_def['integer'])) {
+                        if (!is_int($value)) {
+                            return array('valid' => false, 'value' => $field_def['default'], 'error' => 'Expected integer');
+                        }
+                        if (
+                            (isset($field_def['min']) && $value < $field_def['min'])
+                            || (isset($field_def['max']) && $value > $field_def['max'])
+                        ) {
+                            return array('valid' => false, 'value' => $field_def['default'], 'error' => 'Integer out of range');
+                        }
+                        return array('valid' => true, 'value' => $value, 'error' => null);
+                    }
                     $sanitized = is_numeric($value) ? floatval($value) : $field_def['default'];
                     if (isset($field_def['min']) && $sanitized < $field_def['min']) {
                         $sanitized = $field_def['min'];
@@ -654,6 +699,9 @@ if (!class_exists('MaBox_Config_Schema')) {
                     if (!empty($field_def['sensitive'])) {
                         return array('valid' => true, 'value' => $sanitized, 'error' => null);
                     }
+                    if (isset($field_def['format']) && $field_def['format'] === 'ip_list') {
+                        return self::sanitize_ip_list($sanitized);
+                    }
                     $sanitize_fn = !empty($field_def['sanitize']) ? $field_def['sanitize'] : 'sanitize_text_field';
                     if (is_callable($sanitize_fn)) {
                         $sanitized = call_user_func($sanitize_fn, $sanitized);
@@ -669,6 +717,52 @@ if (!class_exists('MaBox_Config_Schema')) {
                 default:
                     return array('valid' => true, 'value' => $value, 'error' => null);
             }
+        }
+
+        /**
+         * 校验并规范化逐行精确 IP 列表。
+         *
+         * 任一非空行无效时整串失败，避免有效行与无效行混合后形成
+         * 看似已保存、实际只部分生效的可信代理配置。
+         */
+        private static function sanitize_ip_list($value) {
+            if (!is_string($value)) {
+                return array('valid' => false, 'value' => '', 'error' => '必须为字符串');
+            }
+
+            if (trim($value) === '') {
+                return array('valid' => true, 'value' => '', 'error' => null);
+            }
+
+            $lines = preg_split('/\r\n|\r|\n/', $value);
+            if (!is_array($lines)) {
+                return array('valid' => false, 'value' => '', 'error' => '格式无效');
+            }
+
+            $normalized = array();
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if ($line === '') {
+                    continue;
+                }
+                if (filter_var($line, FILTER_VALIDATE_IP) === false) {
+                    return array('valid' => false, 'value' => '', 'error' => '每个非空行必须是精确 IPv4 或 IPv6 地址');
+                }
+
+                $packed = @inet_pton($line);
+                $canonical = $packed !== false ? @inet_ntop($packed) : false;
+                if (!is_string($canonical)) {
+                    return array('valid' => false, 'value' => '', 'error' => '每个非空行必须是精确 IPv4 或 IPv6 地址');
+                }
+
+                $normalized[strtolower($canonical)] = true;
+            }
+
+            return array(
+                'valid' => true,
+                'value' => implode("\n", array_keys($normalized)),
+                'error' => null,
+            );
         }
 
         /**

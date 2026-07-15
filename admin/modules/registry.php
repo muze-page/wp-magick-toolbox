@@ -455,13 +455,17 @@ return array(
 
     // ========== 国内生态 - 登录安全 ==========
     'domestic.login_security' => array(
-        'class'     => 'MaBox_Domestic_Login_Security',
-        'file'      => 'domestic/login_security/index.php',
-        'option_key'=> 'domestic.login_security.fail_limit_enabled',
-        'category'  => 'domestic',
-        'scope'     => 'both',
-        'config_path' => 'domestic.login_security',
-        'risk_tags' => array('推荐', '安全'),
+        'class'            => 'MaBox_Domestic_Login_Security',
+        'file'             => 'domestic/login_security/index.php',
+        'option_key'       => 'domestic.login_security.attempt_limit_enabled',
+        'activation_paths' => array(
+            'domestic.login_security.attempt_limit_enabled',
+            'domestic.login_security.anonymous_author_guard_enabled',
+        ),
+        'category'         => 'domestic',
+        'scope'            => 'both',
+        'config_path'      => 'domestic.login_security',
+        'risk_tags'        => array('推荐', '安全'),
     ),
 
     // ========== 性能优化 - 对象存储 ==========

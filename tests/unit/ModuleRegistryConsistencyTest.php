@@ -82,6 +82,7 @@ class ModuleRegistryConsistency_Test extends TestCase {
             'auxiliary.baidu_tonji'       => 'function.auxiliary',
             'auxiliary.google_tonji'      => 'function.auxiliary',
             'auxiliary.biying_tonji'      => 'function.auxiliary',
+            'domestic.login_security'     => 'domestic.login_security',
         );
 
         foreach ($expected_paths as $module_id => $config_path) {
@@ -91,6 +92,51 @@ class ModuleRegistryConsistency_Test extends TestCase {
                 "Module '$module_id' should receive '$config_path'"
             );
         }
+    }
+
+    public function test_domestic_login_security_has_exact_activation_and_schema_contracts(): void {
+        $registry = MaBox_Module_Loader::get_registry();
+        $schema = MaBox_Config_Schema::get_schema();
+        $meta = $registry['domestic.login_security'];
+        $login_schema = $schema['domestic']['login_security'];
+
+        $activation_paths = array(
+            'domestic.login_security.attempt_limit_enabled',
+            'domestic.login_security.anonymous_author_guard_enabled',
+        );
+        $this->assertSame($activation_paths[0], $meta['option_key']);
+        $this->assertSame($activation_paths, $meta['activation_paths']);
+        $this->assertSame(
+            array(
+                'attempt_limit_enabled',
+                'attempt_limit_count',
+                'attempt_window_minutes',
+                'lock_duration_minutes',
+                'trusted_proxies',
+                'anonymous_author_guard_enabled',
+            ),
+            array_keys($login_schema)
+        );
+
+        foreach ($activation_paths as $path) {
+            $field = substr($path, strlen('domestic.login_security.'));
+            $this->assertSame('boolean', $login_schema[$field]['type']);
+        }
+
+        $this->assertSame(5, $login_schema['attempt_limit_count']['default']);
+        $this->assertSame(2, $login_schema['attempt_limit_count']['min']);
+        $this->assertSame(20, $login_schema['attempt_limit_count']['max']);
+        $this->assertTrue($login_schema['attempt_limit_count']['integer']);
+        $this->assertSame(15, $login_schema['attempt_window_minutes']['default']);
+        $this->assertSame(1, $login_schema['attempt_window_minutes']['min']);
+        $this->assertSame(1440, $login_schema['attempt_window_minutes']['max']);
+        $this->assertTrue($login_schema['attempt_window_minutes']['integer']);
+        $this->assertSame(30, $login_schema['lock_duration_minutes']['default']);
+        $this->assertSame(1, $login_schema['lock_duration_minutes']['min']);
+        $this->assertSame(1440, $login_schema['lock_duration_minutes']['max']);
+        $this->assertTrue($login_schema['lock_duration_minutes']['integer']);
+        $this->assertSame('', $login_schema['trusted_proxies']['default']);
+        $this->assertSame('ip_list', $login_schema['trusted_proxies']['format']);
     }
 
     public function test_loader_has_no_legacy_runs_fallback(): void {

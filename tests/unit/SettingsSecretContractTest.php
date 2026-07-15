@@ -259,6 +259,79 @@ class SettingsSecretContractTest extends TestCase
         }
     }
 
+    public function test_login_security_accepts_and_canonicalizes_exact_ipv4_and_ipv6_proxy_addresses(): void
+    {
+        $settings = $this->browserSettings();
+        $settings['domestic']['login_security']['trusted_proxies'] = implode("\r\n", array(
+            '203.0.113.10',
+            '2001:0db8:0000:0000:0000:0000:0000:0010',
+            '203.0.113.10',
+        ));
+        $expected = "203.0.113.10\n2001:db8::10";
+
+        $browser_validation = MaBox_Config_Schema::validate_browser_settings($settings);
+        $this->assertTrue($browser_validation['valid']);
+
+        $merge = MaBox_Config_Manager::merge_secret_changes($settings, array(), array());
+        $this->assertTrue($merge['success']);
+        $sanitized = MaBox_Config_Schema::validate_full_config($merge['data']);
+        $this->assertTrue($sanitized['valid']);
+        $this->assertSame($expected, $sanitized['data']['domestic']['login_security']['trusted_proxies']);
+
+        $response = MaBox_Admin::rest_save_settings(new SettingsContractRequest(array(
+            'settings' => $settings,
+            'secretChanges' => array(),
+        )));
+
+        $this->assertIsArray($response);
+        $this->assertTrue($response['success']);
+        $this->assertSame(
+            $expected,
+            $GLOBALS['_test_option_store']['Magick_ToolBox_Option_Domestic']['login_security']['trusted_proxies']
+        );
+    }
+
+    public function test_login_security_rejects_invalid_proxy_lists_and_non_integer_limits_without_writes(): void
+    {
+        $invalid_cases = array(
+            'CIDR proxy' => array('trusted_proxies', '10.0.0.0/24'),
+            'proxy domain' => array('trusted_proxies', 'proxy.example.com'),
+            'proxy wildcard' => array('trusted_proxies', '10.0.0.*'),
+            'mixed valid and invalid proxies' => array('trusted_proxies', "203.0.113.10\nnot-an-ip"),
+            'fractional attempt count' => array('attempt_limit_count', 2.5),
+            'floating point whole attempt window' => array('attempt_window_minutes', 15.0),
+            'fractional lock duration' => array('lock_duration_minutes', 30.5),
+            'attempt count below minimum' => array('attempt_limit_count', 1),
+            'attempt count above maximum' => array('attempt_limit_count', 21),
+            'attempt window below minimum' => array('attempt_window_minutes', 0),
+            'lock duration above maximum' => array('lock_duration_minutes', 1441),
+        );
+
+        foreach ($invalid_cases as $label => $case) {
+            $settings = $this->browserSettings();
+            $settings['domestic']['login_security'][$case[0]] = $case[1];
+            $GLOBALS['_test_option_store'] = array(
+                'Magick_ToolBox_Option_Domestic' => array('sentinel' => $label),
+            );
+            MaBox_Config_Manager::clear_cache();
+            $before = $GLOBALS['_test_option_store'];
+
+            $browser_validation = MaBox_Config_Schema::validate_browser_settings($settings);
+            $manager_result = MaBox_Config_Manager::merge_secret_changes($settings, array(), array());
+            $rest_result = MaBox_Admin::rest_save_settings(new SettingsContractRequest(array(
+                'settings' => $settings,
+                'secretChanges' => array(),
+            )));
+
+            $this->assertFalse($browser_validation['valid'], "{$label} should fail browser boundary validation");
+            $this->assertFalse($manager_result['success'], "{$label} should fail manager validation");
+            $this->assertInstanceOf(WP_Error::class, $rest_result, "{$label} should fail REST validation");
+            $this->assertSame('rest_invalid_data', $rest_result->get_error_code(), $label);
+            $this->assertSame(400, $rest_result->get_error_data()['status'], $label);
+            $this->assertSame($before, $GLOBALS['_test_option_store'], "{$label} must not write options");
+        }
+    }
+
     public function test_complete_settings_with_keep_replace_and_clear_save_successfully(): void
     {
         $current = $this->configWithSecrets(self::CANARY);

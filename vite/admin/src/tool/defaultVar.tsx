@@ -211,19 +211,12 @@ const DomesticCommentSecurity = {
 
 //国内生态 - 登录安全
 const DomesticLoginSecurity = {
-  fail_limit_enabled: boo,
-  fail_limit_count: 5,
-  fail_lock_duration: 30,
-  ip_lock_enabled: boo,
-  ip_lock_count: 10,
-  ip_lock_duration: 60,
-  custom_login_enabled: boo,
-  custom_login_slug: 'my-login',
-  ban_enumeration_enabled: boo,
-  login_notify_enabled: boo,
-  login_log_enabled: boo,
-  ip_whitelist_enabled: boo,
-  ip_whitelist: '',
+  attempt_limit_enabled: boo,
+  attempt_limit_count: 5,
+  attempt_window_minutes: 15,
+  lock_duration_minutes: 30,
+  trusted_proxies: '',
+  anonymous_author_guard_enabled: boo,
 };
 
 //性能优化 - 对象存储

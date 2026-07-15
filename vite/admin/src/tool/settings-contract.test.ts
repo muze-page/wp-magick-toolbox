@@ -103,6 +103,11 @@ describe("设置 REST 契约", () => {
       (settings.optimize.site as Record<string, unknown>).unexpected = true;
       return settings;
     }],
+    ["已清退的登录安全字段", () => {
+      const settings = freshDefaults();
+      (settings.domestic.login_security as unknown as Record<string, unknown>).fail_limit_enabled = false;
+      return settings;
+    }],
     ["字段类型错误", () => {
       const settings = freshDefaults();
       settings.page.jurisdiction.category_id = ["1" as unknown as number];

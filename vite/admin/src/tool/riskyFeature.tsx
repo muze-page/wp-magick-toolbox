@@ -22,43 +22,44 @@ const RISKY_FEATURES: Record<string, { title: string; warning: string; suggestio
     warning: "SVG 文件可能包含恶意脚本，已做安全过滤但仍需注意。",
     suggestion: "仅允许可信用户上传 SVG 文件。",
   },
-  "domestic-login_security-custom_login_enabled": {
-    title: "自定义登录地址",
-    warning: "修改登录地址后，原 wp-login.php 将被重定向，配置错误可能导致无法登录。",
-    suggestion: "记住新的登录地址，避免锁定自己。",
-    noDismiss: true,
-  },
-  "domestic-login_security-ip_lock_enabled": {
-    title: "IP 锁定",
-    warning: "IP 锁定可能在反向代理环境下误判，导致正常用户被锁定。",
-    suggestion: "如使用 CDN 或反向代理，请配置可信代理 IP。",
+  "domestic-login_security-attempt_limit_enabled": {
+    title: "登录尝试保护",
+    warning: "可信代理配置错误可能让多个访客共享同一来源 IP，造成账号误锁。",
+    suggestion: "确认开启后请在保存前核对可信代理；如发生误锁，可在 wp-config.php 中将 MABOX_DISABLE_LOGIN_PROTECTION 定义为 true 后恢复。",
   },
 };
 
 const STORAGE_KEY = "mabox_risky_dismissed";
+
+function normalizeRiskInfo(risk: RiskInfo | undefined): { title: string; warning: string; suggestion: string; noDismiss?: boolean } | null {
+  if (
+    !risk
+    || risk.level === "none"
+    || typeof risk.title !== "string"
+    || typeof risk.warning !== "string"
+    || typeof risk.suggestion !== "string"
+  ) {
+    return null;
+  }
+
+  return {
+    title: risk.title,
+    warning: risk.warning,
+    suggestion: risk.suggestion,
+    noDismiss: risk.noDismiss,
+  };
+}
 
 function resolveRiskInfoSync(featureId: string): { title: string; warning: string; suggestion: string; noDismiss?: boolean } | null {
   const schema = getUiSchemaSync();
   if (schema) {
     const entry = schema[featureId];
     if (entry?.risk) {
-      const r = entry.risk as RiskInfo;
-      return {
-        title: r.title,
-        warning: r.warning,
-        suggestion: r.suggestion,
-        noDismiss: r.noDismiss,
-      };
+      return normalizeRiskInfo(entry.risk as RiskInfo);
     }
     for (const [, val] of Object.entries(schema)) {
       if (val.feature_id === featureId && val.risk) {
-        const r = val.risk as RiskInfo;
-        return {
-          title: r.title,
-          warning: r.warning,
-          suggestion: r.suggestion,
-          noDismiss: r.noDismiss,
-        };
+        return normalizeRiskInfo(val.risk as RiskInfo);
       }
     }
   }

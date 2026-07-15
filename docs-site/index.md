@@ -11,7 +11,7 @@ hero:
       link: /guide/getting-started
     - theme: alt
       text: 功能总览
-      link: /features/site-optimization/disable-title-escape
+      link: /features/overview
     - theme: alt
       text: 开发指南
       link: /guide/development
@@ -25,7 +25,7 @@ features:
     details: 备案合规、微信 JSSDK、OSS 对接和 Cookie 弹窗，专为中国站长设计
   - icon: 🛡️
     title: 安全防护
-    details: 登录失败锁定、自定义入口、评论敏感词过滤和评论安全中心，全方位保护您的站点
+    details: 登录尝试保护、匿名作者枚举限制和评论治理，保持能力边界清晰且可恢复
   - icon: 🎨
     title: 精美后台界面
     details: 语义化导航、任务型概览、明确的加载与错误状态，以及审慎的设置保存流程

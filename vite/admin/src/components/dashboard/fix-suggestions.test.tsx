@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import Dashboard from "@/components/dashboard";
@@ -167,7 +167,11 @@ describe("现代概览页", () => {
     fireEvent.click(screen.getByRole("button", { name: "打开维护工具" }));
     fireEvent.click(screen.getByRole("button", { name: "检查搜索设置" }));
 
-    expect(onNavigate).toHaveBeenNthCalledWith(1, "china");
+    expect(onNavigate).toHaveBeenNthCalledWith(
+      1,
+      "china",
+      "domestic-login_security-attempt_limit_enabled",
+    );
     expect(onNavigate).toHaveBeenNthCalledWith(2, "maintenance");
     expect(onNavigate).toHaveBeenNthCalledWith(3, "content");
     expect(onNavigate).not.toHaveBeenCalledWith("13", expect.anything());
@@ -180,10 +184,10 @@ describe("现代概览页", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "管理国内安全设置" }));
 
-    expect(onNavigate).toHaveBeenCalledWith("china", "domestic-login_security-fail_limit_enabled");
+    expect(onNavigate).toHaveBeenCalledWith("china", "domestic-login_security-attempt_limit_enabled");
   });
 
-  it("只按当前后端模块激活门判断登录保护", () => {
+  it("只开启匿名作者保护时诚实显示 1/2 并继续建议登录尝试保护", () => {
     apiMocks.getDiagnosticsSummary.mockReturnValue(new Promise(() => {}));
     apiMocks.getSearchSummary.mockReturnValue(new Promise(() => {}));
     const optionData: Option = {
@@ -192,14 +196,43 @@ describe("现代概览页", () => {
         ...defaultVarOption.domestic,
         login_security: {
           ...defaultVarOption.domestic.login_security,
-          ban_enumeration_enabled: true,
+          anonymous_author_guard_enabled: true,
         },
       },
     };
 
     renderDashboard(vi.fn(), optionData);
 
-    expect(screen.getByText("尚未启用登录防护")).toBeInTheDocument();
+    const securityPanel = screen.getByRole("heading", { name: "安全状态" }).closest("section");
+    expect(securityPanel).not.toBeNull();
+    expect(within(securityPanel as HTMLElement).getByText("登录安全配置")).toBeInTheDocument();
+    expect(screen.getByText("已启用 1/2 项登录安全配置")).toBeInTheDocument();
+    expect(screen.getByText("已启用 1/2 项")).toBeInTheDocument();
+    expect(screen.getByText("启用登录尝试保护")).toBeInTheDocument();
+    expect(screen.getByText("限制同一已存在账号与来源 IP 组合的连续失败尝试，并使用固定统计窗口和锁定时长。")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "前往国内生态" })).toBeInTheDocument();
+    expect(screen.queryByText("基础防护完整")).not.toBeInTheDocument();
+  });
+
+  it("两项登录安全配置均启用时显示 2/2 且不再给出补齐建议", () => {
+    apiMocks.getDiagnosticsSummary.mockReturnValue(new Promise(() => {}));
+    apiMocks.getSearchSummary.mockReturnValue(new Promise(() => {}));
+    const optionData: Option = {
+      ...defaultVarOption,
+      domestic: {
+        ...defaultVarOption.domestic,
+        login_security: {
+          ...defaultVarOption.domestic.login_security,
+          attempt_limit_enabled: true,
+          anonymous_author_guard_enabled: true,
+        },
+      },
+    };
+
+    renderDashboard(vi.fn(), optionData);
+
+    expect(screen.getByText("已启用 2/2 项登录安全配置")).toBeInTheDocument();
+    expect(screen.getByText("已启用 2/2 项")).toBeInTheDocument();
+    expect(screen.queryByText("启用登录尝试保护")).not.toBeInTheDocument();
   });
 });

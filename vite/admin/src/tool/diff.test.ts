@@ -55,6 +55,39 @@ describe("diffConfig", () => {
     expect(diffs[0].riskLevel).toBe("none");
   });
 
+  it("登录安全字段在保存摘要中使用可读标签", () => {
+    const before = {
+      domestic: {
+        login_security: {
+          attempt_limit_enabled: false,
+          attempt_window_minutes: 15,
+        },
+      },
+    };
+    const after = {
+      domestic: {
+        login_security: {
+          attempt_limit_enabled: true,
+          attempt_window_minutes: 30,
+        },
+      },
+    };
+
+    const diffs = diffConfig(before, after);
+
+    expect(diffs).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        path: "domestic.login_security.attempt_limit_enabled",
+        label: "登录尝试保护",
+        riskLevel: "high",
+      }),
+      expect.objectContaining({
+        path: "domestic.login_security.attempt_window_minutes",
+        label: "统计窗口（分钟）",
+      }),
+    ]));
+  });
+
   it("嵌套对象变化生成多条 diff", () => {
     const before = {
       optimize: { site: { remove_RSS_version: false, hide_top_toolbar: false } },
@@ -112,6 +145,7 @@ describe("diffConfig", () => {
   it("所有已知高风险路径都被识别", () => {
     const riskyPaths = [
       { path: ["optimize", "medium", "no_auto_size"], before: false, after: true },
+      { path: ["domestic", "login_security", "attempt_limit_enabled"], before: false, after: true },
     ];
 
     riskyPaths.forEach(({ path, before, after }) => {

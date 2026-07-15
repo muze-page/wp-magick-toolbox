@@ -18,7 +18,7 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/' },
       { text: '快速开始', link: '/guide/getting-started' },
-      { text: '功能文档', link: '/features/site-optimization/disable-title-escape' },
+      { text: '功能文档', link: '/features/overview' },
       { text: '开发指南', link: '/guide/development' },
       { text: '更新日志', link: '/guide/changelog' },
     ],
@@ -37,6 +37,7 @@ export default defineConfig({
           text: '站点管理',
           items: [
             { text: '体检中心', link: '/guide/health-center' },
+            { text: '配置变更与恢复', link: '/guide/config-recovery' },
           ],
         },
         {
@@ -143,9 +144,8 @@ export default defineConfig({
         {
           text: '登录安全',
           items: [
-            { text: '失败锁定 IP', link: '/features/login-security/login-lock-ip' },
-            { text: '自定义登录入口', link: '/features/login-security/custom-login-url' },
-            { text: '登录日志', link: '/features/login-security/login-log' },
+            { text: '登录尝试保护', link: '/features/login-security/login-attempt-protection' },
+            { text: '限制匿名作者枚举', link: '/features/login-security/anonymous-author-guard' },
           ],
         },
         {
