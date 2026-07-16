@@ -1,10 +1,23 @@
 # Changelog
 
-All notable changes to WP Magick Toolbox will be documented in this file.
+All notable changes to Magick Toolbox will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [3.0.1] - 2026-07-16
+
+### Changed
+- WordPress.org 公开显示名改为 Magick Toolbox，发布 slug 与文本域统一为 `magick-toolbox`
+- 插件 Header 补齐 GPL 许可证和文本域，WordPress.org readme 补齐英文产品说明、第三方服务披露、公开源码和可复现 Vite 构建命令
+- 删除没有对应资产的 Screenshots 说明；品牌资产留待目录审核通过并取得 SVN 后提交
+
+### Fixed
+- 恢复国内访问连通性检测的 TLS 证书校验，并把自动镜像建议统一为已披露的 Loli.net 默认值
+
+### Compatibility
+- 保持仓库名 `wp-magick-toolbox`、主文件名、`MAGICK_MIXTURE_*` 常量名和既有 Option key 不变；本版本不迁移或重置设置
 
 ## [3.0.0] - 2026-07-16
 

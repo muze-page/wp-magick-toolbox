@@ -3,14 +3,17 @@
 defined('ABSPATH') || exit;
 
 /*
- * Plugin Name: WP Magick Toolbox
- * Description: 魔法工具箱，诸多实用且有趣的功能合集，简单易用；详情请见插件中的「关于」页内容
+ * Plugin Name: Magick Toolbox
+ * Description: An opt-in toolbox for site settings, media, SEO, security, integrations, diagnostics, and maintenance.
  * Plugin URI: https://www.npc.ink/277510.html
- * Version: 3.0.0
+ * Version: 3.0.1
  * Author: Npcink
  * Author URI: https://www.npc.ink/
  * Requires at least: 6.0
  * Requires PHP:      7.4
+ * License:           GPL-2.0-or-later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       magick-toolbox
  */
 //调试内容，在后台顶部显示一个通知
 // 如果直接调用此文件，请中止。
@@ -26,7 +29,7 @@ if (!defined('WPINC')) {
 //定义插件名
 define('MAGICK_MIXTURE_NAME', 'magick-optimize');
 //定义插件版本
-define('MAGICK_MIXTURE_VERSION', '3.0.0');
+define('MAGICK_MIXTURE_VERSION', '3.0.1');
 define('MAGICK_TOOLBOX_ACTIVE_MODULES', 'Magick_ToolBox_Active_Modules');
 
 /**

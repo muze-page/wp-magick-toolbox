@@ -1,7 +1,9 @@
-# WP Magick Toolbox
+# Magick Toolbox
 
 > 面向中国 WordPress 站长的一站式实用工具箱插件
-> 版本：**3.0.0** | 阶段：**预备发布** | 授权：**GPL-2.0**
+> 版本：**3.0.1** | 阶段：**WordPress.org 整改中** | 授权：**GPL-2.0**
+
+GitHub `v3.0.0` 已正式发布；`3.0.1` 正在完成 WordPress.org 的公开名称、发布 slug、第三方服务披露和可复现构建说明，尚未提交目录审核。
 
 [![CI](https://github.com/muze-page/wp-magick-toolbox/actions/workflows/ci.yml/badge.svg)](https://github.com/muze-page/wp-magick-toolbox/actions/workflows/ci.yml)
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-6.0%2B-blue)](https://wordpress.org)
@@ -12,7 +14,7 @@
 
 ## 简介
 
-WP Magick Toolbox 是一款面向中国 WordPress 站长的免费工具箱插件。3.0.0 以 57 个注册模块为运行边界，通过七个语义化管理视图提供站点优化、内容与 SEO、登录安全、国内生态和维护诊断等能力。
+Magick Toolbox 是一款面向中国 WordPress 站长的免费工具箱插件。3.0.1 以 57 个注册模块为运行边界，通过七个语义化管理视图提供站点优化、内容与 SEO、登录安全、国内生态和维护诊断等能力。
 
 **核心定位**：在一个插件内集中提供可按需启用的常见站点设置与维护工具。
 
@@ -95,11 +97,19 @@ pnpm dev:admin
 
 - 启用搜索健康后，热词与无结果统计会在站点本地数据库记录搜索词和计数；这些数据不由插件自动上传给作者。
 - 启用相关能力后，登录安全、审计与诊断可能在站点本地记录登录失败、IP 地址、操作事件和诊断结果，站点管理员应按自身隐私政策和保留周期管理这些数据。
-- 第三方集成只在管理员显式启用并配置后发起请求；国内访问连通性检测只在管理员主动运行检查时请求目标服务。传输内容及后续处理受所选服务和站点配置约束。
+- 第三方集成只在管理员显式启用并配置后发起请求；国内访问连通性检测只在管理员主动运行检查时请求目标服务。微信 JSSDK、对象存储、百度统计、CDN 镜像及检测目标的触发条件、数据流向和法律链接见 [WordPress.org readme](readme.txt)。
 
 ---
 
 ## 更新记录
+
+### 3.0.1 — 2026-07-16
+
+- 公开显示名改为 Magick Toolbox，WordPress.org 发布 slug 与文本域统一为 `magick-toolbox`
+- 补齐插件 Header、外部服务披露、公开源码与可复现 Vite 构建说明
+- 删除没有对应资产的截图说明；待目录审核通过并取得 SVN 后再单独提交品牌资产
+- 恢复国内访问连通性检测的 TLS 证书校验，并把自动镜像建议统一为已披露的 Loli.net 默认值
+- 保持既有运行时常量名和 Option key 不变，不迁移或重置现有设置
 
 ### 3.0.0 — 2026-07-16
 
