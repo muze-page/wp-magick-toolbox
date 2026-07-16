@@ -1,5 +1,4 @@
 import React, { lazy, Suspense, useCallback, useEffect, useState } from "react";
-import { Alert, Spin } from "antd";
 
 import FeatureSearch from "@/components/feature-search";
 import {
@@ -29,9 +28,12 @@ const Performance = lazy(() => import("@/components/performance/index"));
 const About = lazy(() => import("@/components/about/index"));
 
 const TabFallback = (
-  <div className="mabox-view-loading" role="status" aria-live="polite">
-    <span className="mabox-view-loading-spinner" aria-hidden="true" />
-    <span>正在加载设置…</span>
+  <div className="mabox-view-state mabox-view-state--loading" role="status" aria-live="polite">
+    <span className="mabox-view-state-spinner" aria-hidden="true" />
+    <span className="mabox-view-state-copy">
+      <strong>正在加载当前页面</strong>
+      <span>设置读取完成，正在准备页面内容。</span>
+    </span>
   </div>
 );
 
@@ -206,7 +208,8 @@ const App: React.FC = () => {
       }
       if (!element) return;
 
-      element.scrollIntoView({ behavior: "smooth", block: "center" });
+      const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+      element.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
       element.classList.add("mabox-search-target");
       highlightTimer = window.setTimeout(() => element?.classList.remove("mabox-search-target"), 2000);
     };
@@ -238,22 +241,32 @@ const App: React.FC = () => {
 
     if (settingsState === "loading") {
       return (
-        <div className="mabox-view-loading" role="status" aria-live="polite">
-          <Spin size="small" />
-          <span>正在读取站点设置…</span>
+        <div className="mabox-view-state mabox-view-state--loading" role="status" aria-live="polite">
+          <span className="mabox-view-state-spinner" aria-hidden="true" />
+          <span className="mabox-view-state-copy">
+            <strong>正在读取站点设置</strong>
+            <span>读取完成前不会启用保存。</span>
+          </span>
         </div>
       );
     }
 
     if (settingsState === "error") {
       return (
-        <Alert
-          type="error"
-          showIcon
-          message="无法读取站点设置"
-          description={`${settingsError || "设置接口请求失败"}。为避免覆盖真实配置，保存功能已禁用。`}
-          action={<button type="button" className="button" onClick={() => loadSettings().catch(() => {})}>重新读取</button>}
-        />
+        <div className="mabox-view-state mabox-view-state--error" role="alert">
+          <span className="dashicons dashicons-warning mabox-view-state-icon" aria-hidden="true" />
+          <span className="mabox-view-state-copy">
+            <strong>无法读取站点设置</strong>
+            <span>{`${settingsError || "设置接口请求失败"}。为避免覆盖真实配置，保存功能已禁用。`}</span>
+          </span>
+          <button
+            type="button"
+            className="mabox-view-state-action"
+            onClick={() => loadSettings().catch(() => {})}
+          >
+            重新读取
+          </button>
+        </div>
       );
     }
 

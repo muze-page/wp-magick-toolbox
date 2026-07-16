@@ -86,6 +86,7 @@ describe('admin build contract scanner', () => {
     expect(config).toContain('manifest: ".vite/manifest.json"');
     expect(config).toContain('cssCodeSplit: false');
     expect(config).toContain('modulePreload: false');
+    expect(config).toContain('chunkSizeWarningLimit: 400');
     expect(config).toContain('chunkInfo.name === "index"');
     expect(config).toContain('path.resolve(__dirname, "src/main.tsx")');
     expect(config).toContain('chunkFileNames: "assets/[name]-[hash].js"');
@@ -161,17 +162,17 @@ describe('admin build contract scanner', () => {
 
   it('rejects over-budget initial JS and non-hashed lazy chunks', () => {
     expect(() => scan(createFixture({
-      files: { 'assets/main-fedcba98.js': Buffer.alloc(901 * 1024, 1) },
+      files: { 'assets/main-fedcba98.js': Buffer.alloc(401 * 1024, 1) },
     }))).toThrow(/Initial JS raw .* exceeds/);
 
     expect(() => scan(createFixture({
-      files: { 'assets/main-fedcba98.js': randomBytes(400 * 1024) },
+      files: { 'assets/main-fedcba98.js': randomBytes(200 * 1024) },
     }))).toThrow(/Initial JS gzip .* exceeds/);
 
     expect(() => scan(createFixture({
       files: {
-        'assets/main-fedcba98.js': Buffer.alloc(800 * 1024, 1),
-        'assets/lazy-12345678.js': randomBytes(400 * 1024),
+        'assets/main-fedcba98.js': Buffer.alloc(100 * 1024, 1),
+        'assets/lazy-12345678.js': randomBytes(200 * 1024),
       },
     }))).toThrow(/Largest JS gzip .* exceeds/);
 

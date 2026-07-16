@@ -6,10 +6,10 @@ import { JSDOM } from 'jsdom';
 
 const KIB = 1024;
 const DEFAULT_BUDGETS = Object.freeze({
-  initialRaw: 900 * KIB,
-  initialGzip: 300 * KIB,
-  chunkRaw: 900 * KIB,
-  chunkGzip: 300 * KIB,
+  initialRaw: 400 * KIB,
+  initialGzip: 140 * KIB,
+  chunkRaw: 400 * KIB,
+  chunkGzip: 140 * KIB,
 });
 const BOOTSTRAP_BUDGETS = Object.freeze({ raw: 10 * KIB, gzip: 5 * KIB });
 const HASHED_CHUNK_PATTERN = /^assets\/.+-[A-Za-z0-9_-]{8}\.js$/;

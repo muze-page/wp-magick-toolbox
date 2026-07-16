@@ -56,7 +56,7 @@ export default defineConfig({
       },
     },
     //sourcemap: true,//保留映射关系，方便调试
-    chunkSizeWarningLimit: 900,
+    chunkSizeWarningLimit: 400,
   },
   resolve: {
     alias: {

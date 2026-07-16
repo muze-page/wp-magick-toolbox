@@ -167,6 +167,8 @@ pnpm lint
 
 构建产物分别位于 `vite/admin/dist/` 与 `vite/count/dist/`，发布包只保留这两个目录。`vite/public/` 已退役；仓库根目录 `public/` 仍是 WordPress 前台 PHP/CSS 运行层。
 
+Admin 的导航、搜索、加载/错误状态、通知和保存按钮属于轻量原生外壳；复杂表单、Drawer、Table 与风险/保存确认 Modal 继续按视图或操作懒加载 Ant Design。不要通过 `manualChunks` 把业务视图或共享依赖提升回首屏。构建扫描器把首次静态闭包和单个 JS chunk 的 raw/gzip 上限锁定为 400/140 KiB，并要求固定 bootstrap、无 modulepreload、单一 CSS 和全部动态产物可达。
+
 ### 类型安全
 
 所有前端项目使用 `global.d.ts` 扩展 `Window` 接口：

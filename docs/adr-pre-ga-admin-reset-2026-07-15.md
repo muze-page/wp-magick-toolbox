@@ -127,8 +127,8 @@
 1. 完成工作包 7 的自动化门禁、紧急恢复和真实 Local 登录烟测。
 2. 工作包 8A-8B 狭窄收口 `category_link_simplify` 生命周期和 `ban_auto_size` 过滤器返回契约，不在其上扩大功能范围。
 3. 工作包 13 建立单一模块 manifest/config schema，并生成前端类型与搜索索引，已完成。
-4. 逐步缩减 Ant Design、Tailwind 和大体积共享 chunk，稳定到更轻的 WordPress 管理界面组件边界。
-5. 完成发布前人工验收、风险功能恢复路径验证和打包检查。
+4. 工作包 14A 将导航、搜索、状态、通知和保存外壳从 Ant Design 解耦，复杂表单继续按需复用，已完成。
+5. 工作包 14B 完成版本事实、真实发布 ZIP、远端 CI 与正式发布人工验收。
 
 ## 工作包 2：AI Provider Runtime 清退变更信封
 
@@ -558,6 +558,34 @@
 7. 自动化门禁通过：设置契约 `--check`、Composer validate、129 个 PHP 文件语法检查、PHPUnit 345 项测试/3711 个断言、PHPStan 0 error；Admin coverage 24 个文件/133 项测试，语句覆盖率 46.19%，Admin/Count TypeScript 和 ESLint 0 error（Admin 129/Count 3 个既有 warning）；Admin 构建首次 JS 773,205 B / gzip 251,972 B，Count JS 621,637 B / gzip 206,439 B，CSS/构建契约、VitePress build、185 项 ZIP 边界模拟、生成器确定性与 `git diff --check` 均通过。
 8. Local WordPress 7.0.1 登录态烟测覆盖 overview/site/content/seo/china/maintenance/about 七个语义视图；“数据库清理”搜索只返回生成索引中的匹配项并正确定位 maintenance，风险开关弹窗取消后仍为关闭且保存按钮未激活；320 px 视口无横向溢出，控制台无 warning/error，最终返回 overview 且未保存任何设置。
 
+## 工作包 14A：轻量 Admin 外壳与按需 Ant 边界
+
+| 项目 | 决定 |
+| --- | --- |
+| 目标仓库 | `/Users/muze/gitee/wp-magick-toolbox` |
+| 聚焦模块 | Admin 导航外壳的搜索、加载/错误状态、通知和保存确认加载链，以及对应构建预算 |
+| 失败证据 | 工作包 13 的真实首次 JS 为 773,205 B / gzip 251,972 B；虽然 7 个业务视图已经 `React.lazy()`，`App/Tab/FeatureSearch/Save/Axios/Favorites` 仍把 Ant message、Input/List/Tag/Button/Alert/Spin/Modal 及共享 rc 依赖静态带入首屏 |
+| 预期变更 | 原生化首屏搜索、状态和保存按钮；用单一轻量通知替换 Ant message；保存确认只在点击后安全加载；复杂表单、Drawer、Table 和 Modal 继续按需复用 Ant |
+| 明确非目标 | 不全量清退 Ant Design、不重写业务表单/Drawer/Table/风险 Modal、不改 REST、Schema、设置 payload、路由、Count、依赖版本、插件版本或数据库 |
+| 公共契约 | 7 个语义视图、33 条搜索、收藏、设置读取失败禁用、差异确认、敏感设置、风险确认及通知文案不变；Ant 中文 locale 继续由根 `ConfigProvider` 提供 |
+| 预期文件 | Admin 外壳/搜索/保存/通知与测试、6 个 message 消费者、构建扫描/配置、README、当前开发指南与本 ADR |
+| 不得改变 | 业务设置控件、REST/权限/nonce、生成式设置合同、Count、发布 `dist` 跟踪边界、历史文档、用户未跟踪排障文档和兄弟仓库 |
+| 必需门禁 | 聚焦与全量 Admin 测试/coverage、TypeScript、ESLint、Admin/Count build、CSS 隔离、首屏前后对比、PHPUnit/PHPStan/设置生成检查、Local 七视图/搜索/保存取消/移动端烟测和 `git diff --check` |
+| 跨仓矩阵 | 不需要；外壳、消费者、构建合同和验证均在本仓库 |
+| 回滚计划 | 单独回滚工作包 14A 即恢复 Ant 外壳；不保留双通知、双搜索或运行时 feature flag |
+
+### 工作包 14A 实施事实
+
+1. `FeatureSearch` 改为原生 search/list/button 与 Dashicons，不新增依赖；继续消费 33 条生成索引并显示前 20 项，保留收藏、跳转、清空和无结果。Escape、上下/Home/End、失焦关闭、展开 ARIA 与“关闭后第一次方向键”提交竞态均有回归测试，收藏状态色对白底对比度为 6.79:1。
+2. 新 `notice` 统一接管 Axios、收藏、保存和 6 个业务视图的 24 个 Ant message 调用，保留原文、2 秒和最多 3 条合同；可见通知使用 `textContent`，稳定的隐藏 polite/assertive live region 在挂载后更新，避免 HTML 注入、漏报或双重播报。生产源码不再存在 Ant message 双轨。
+3. `Tab` 的读取/懒加载/错误状态改为原生语义结构，仍以 `role=status/alert` 告知状态并在读取失败时禁止保存；搜索定位遵循 reduced-motion。原生保存按钮继续显示可信状态与真实差异数，两个无限 spinner 在 reduced-motion 下停止动画。
+4. 保存确认由可测试的显式 dynamic import 加载：慢加载时显示可见准备状态，chunk 失败只提示并保留待保存内容且允许重试；首次加载后 Modal 保持挂载并只切 `visible`，取消恢复触发按钮焦点，确认则在关闭提交后的下一帧聚焦保存状态区。复杂 Ant Modal 本身没有重写。
+5. 根 `ConfigProvider + zhCN` 与复杂业务表单继续保留 Ant；默认 overview 不再静态加载 Ant message、搜索列表、Alert/Spin 或保存 Modal。生产 manifest 仍有 7 个视图动态入口，并新增独立保存确认入口；没有使用 `manualChunks` 伪装收益。
+6. 最终首次 JS 为 317,060 B / gzip 109,117 B，较工作包 13 基线减少 456,145 B（58.99%）/ 142,855 B（56.70%）；固定 bootstrap 仍为 41 B / gzip 61 B，modulepreload 为空。构建强制预算与 Vite warning 同步从 900/300 KiB 收紧为 400/140 KiB；单 CSS 为 31.05 kB / gzip 6.20 kB，390 个选择器通过宿主隔离。
+7. 独立审查曾阻断消息配置漂移、两套通知、lazy chunk rejection、Modal 直接卸载丢焦点、搜索展开状态/首次方向键竞态、live region 漏报和 reduced-motion 七类问题；均按根因修复并新增回归，最终复审无 P0-P2。
+8. 自动化门禁：Admin coverage 25 个文件/147 项测试，语句覆盖率 47.97%；Admin/Count TypeScript 与 ESLint 0 error（Admin 129/Count 3 个既有 warning）；Admin/Count build、CSS/构建扫描、PHPUnit 345 项测试/3711 个断言、PHPStan 0 error、设置契约检查、Composer strict validate 和 `git diff --check` 通过。
+9. Local WordPress 7.0.1 登录态烟测覆盖七个语义视图且均无错误状态或横向溢出；搜索框的展开/关闭、Escape 后首次 ArrowDown、数据库清理跳转与目标高亮通过。风险确认和保存差异 Modal 均只取消：前者保持开关关闭，后者在关闭动画后恢复“查看并保存”焦点；测试用关键词高亮开关与收藏状态均已还原，最终 overview 为“已保存”且保存禁用。320 px 下 document/wpcontent/shell 均无溢出，移动导航与搜索可见，console warning/error 为 0，未写入任何设置。
+
 ## 结果复核
 
 首个垂直切片已完成独立代码审查和浏览器烟测，改进假说成立：
@@ -574,4 +602,4 @@
 
 浏览器烟测先使用 Vite 默认数据验证桌面/移动结构、语义路由、浏览器返回、未知路由、搜索定位和接口失败状态；工作包 4 又在真实 Local WordPress 管理员登录态中验证了 WordPress 管理栏、服务端成功响应和敏感设置闭环。
 
-整个 Pre-GA Reset 尚未完成；AI Provider Runtime 清退已由工作包 2 收口，pnpm/CI 可重复基线已由工作包 3 收口，敏感设置契约已由工作包 4 收口，注册模块与 Loader 的运行时契约已由工作包 5 收口，不可信登录验证码已由工作包 6 清退。工作包 7 已冻结登录安全的最小最终契约，工作包 8A-8B 已修复分类链接简化生命周期和自动图片尺寸过滤器两项行为债务，工作包 9A-9C 已建立宿主隔离、保存信任反馈及可审计构建/缓存契约，工作包 10A-11 已收口生成式设置契约和前端工程/发布边界，工作包 12 删除 7 条死或无消费者路由并修复分类数据 REST 闭环，工作包 13 又完成单一 Manifest/Schema 与生成式前端合同。当前主要剩余问题是 Ant Design 仍带来的前端维护与首屏体积成本，以及正式发布前的人工验收与版本收口。
+整个 Pre-GA Reset 尚未完成；AI Provider Runtime 清退已由工作包 2 收口，pnpm/CI 可重复基线已由工作包 3 收口，敏感设置契约已由工作包 4 收口，注册模块与 Loader 的运行时契约已由工作包 5 收口，不可信登录验证码已由工作包 6 清退。工作包 7 已冻结登录安全的最小最终契约，工作包 8A-8B 已修复分类链接简化生命周期和自动图片尺寸过滤器两项行为债务，工作包 9A-9C 已建立宿主隔离、保存信任反馈及可审计构建/缓存契约，工作包 10A-11 已收口生成式设置契约和前端工程/发布边界，工作包 12 删除 7 条死或无消费者路由并修复分类数据 REST 闭环，工作包 13 完成单一 Manifest/Schema 与生成式前端合同，工作包 14A 又把 Admin 首屏 Ant 成本降低约 57%–59%，同时保留复杂表单的按需复用。当前主要剩余问题已收敛为正式发布的版本事实、真实 ZIP/CI 合同和最终人工验收；不建议为了“纯粹去 Ant”继续重写稳定业务控件。
