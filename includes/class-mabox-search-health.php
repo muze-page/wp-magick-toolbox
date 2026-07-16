@@ -28,7 +28,7 @@ if (!class_exists('MaBox_Search_Health')) {
                 $config = array();
             }
 
-            $cutoff = date('Y-m-d', strtotime("-{$days} days"));
+            $cutoff = self::calendar_date_days_ago(current_time('Y-m-d'), $days);
             $total_searches = 0;
             $term_stats = array();
 
@@ -156,9 +156,25 @@ if (!class_exists('MaBox_Search_Health')) {
             return array('count' => 0, 'no_result_count' => 0, 'last_searched_at' => '');
         }
 
+        private static function calendar_date_days_ago($site_date, $days)
+        {
+            $date = \DateTimeImmutable::createFromFormat(
+                '!Y-m-d',
+                $site_date,
+                new \DateTimeZone('UTC')
+            );
+            if (!$date) {
+                return $site_date;
+            }
+
+            return $date
+                ->modify('-' . max(0, (int) $days) . ' days')
+                ->format('Y-m-d');
+        }
+
         private static function prune_old_entries($log)
         {
-            $cutoff = date('Y-m-d', strtotime('-' . self::$keep_days . ' days'));
+            $cutoff = self::calendar_date_days_ago(current_time('Y-m-d'), self::$keep_days);
             foreach ($log as $date => $terms) {
                 if ($date < $cutoff) {
                     unset($log[$date]);

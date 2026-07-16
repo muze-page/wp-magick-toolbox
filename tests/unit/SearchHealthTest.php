@@ -71,7 +71,7 @@ class SearchHealthTest extends TestCase
     public function test_old_data_migration(): void
     {
         global $_test_option_store;
-        $today = date('Y-m-d');
+        $today = current_time('Y-m-d');
         $_test_option_store['mabox_search_log'] = array(
             $today => array(
                 'legacy-term' => 5,
@@ -86,20 +86,57 @@ class SearchHealthTest extends TestCase
         $this->assertEquals(0, $summary['top_terms'][0]['no_result_count']);
     }
 
+    public function test_calendar_day_cutoff_is_independent_of_runtime_timezone_and_dst(): void
+    {
+        $original_timezone = date_default_timezone_get();
+
+        try {
+            foreach (array('America/New_York', 'Europe/Berlin', 'Asia/Shanghai') as $runtime_timezone) {
+                date_default_timezone_set($runtime_timezone);
+
+                $this->assertSame('2024-03-09', $this->calendarDateDaysAgo('2024-03-10', 1));
+                $this->assertSame('2024-11-02', $this->calendarDateDaysAgo('2024-11-03', 1));
+                $this->assertSame('2024-02-29', $this->calendarDateDaysAgo('2024-03-01', 1));
+            }
+        } finally {
+            date_default_timezone_set($original_timezone);
+        }
+    }
+
+    public function test_summary_includes_cutoff_day_and_excludes_previous_day(): void
+    {
+        global $_test_option_store;
+        $today = current_time('Y-m-d');
+        $cutoff_date = $this->calendarDateDaysAgo($today, 30);
+        $expired_date = $this->calendarDateDaysAgo($today, 31);
+        $_test_option_store['mabox_search_log'] = array(
+            $expired_date => array('expired-term' => array('count' => 5, 'no_result_count' => 0, 'last_searched_at' => '')),
+            $cutoff_date => array('boundary-term' => array('count' => 2, 'no_result_count' => 0, 'last_searched_at' => '')),
+        );
+
+        $summary = self::$method_get_summary->invoke(null, 30);
+
+        $this->assertEquals(2, $summary['total_searches']);
+        $this->assertSame(array('boundary-term'), array_column($summary['top_terms'], 'term'));
+    }
+
     public function test_prune_old_entries(): void
     {
         global $_test_option_store;
-        $old_date = date('Y-m-d', strtotime('-60 days'));
-        $today = date('Y-m-d');
+        $today = current_time('Y-m-d');
+        $cutoff_date = $this->calendarDateDaysAgo($today, 30);
+        $expired_date = $this->calendarDateDaysAgo($today, 31);
         $_test_option_store['mabox_search_log'] = array(
-            $old_date => array('old-term' => array('count' => 10, 'no_result_count' => 0, 'last_searched_at' => '')),
+            $expired_date => array('old-term' => array('count' => 10, 'no_result_count' => 0, 'last_searched_at' => '')),
+            $cutoff_date => array('boundary-term' => array('count' => 4, 'no_result_count' => 0, 'last_searched_at' => '')),
             $today => array('new-term' => array('count' => 3, 'no_result_count' => 0, 'last_searched_at' => '')),
         );
 
         self::$method_log->invoke(null, 'trigger-prune', true);
 
         $log = $_test_option_store['mabox_search_log'];
-        $this->assertArrayNotHasKey($old_date, $log);
+        $this->assertArrayNotHasKey($expired_date, $log);
+        $this->assertArrayHasKey($cutoff_date, $log);
         $this->assertArrayHasKey($today, $log);
     }
 
@@ -262,5 +299,13 @@ class SearchHealthTest extends TestCase
                 $this->assertEquals(0, $item['no_result_count']);
             }
         }
+    }
+
+    private function calendarDateDaysAgo(string $site_date, int $days): string
+    {
+        $method = new ReflectionMethod('MaBox_Search_Health', 'calendar_date_days_ago');
+        $method->setAccessible(true);
+
+        return $method->invoke(null, $site_date, $days);
     }
 }

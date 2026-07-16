@@ -37,7 +37,7 @@ if (!class_exists('MaBox_Medium_Image_Rename')) {
         {
             $info = pathinfo($file['name']);
             $ext = $info['extension'];
-            $filedate = date('YmdHis') . rand(10, 99); //为了避免时间重复，再加一段2位的随机数
+            $filedate = wp_date('YmdHis') . wp_rand(10, 99); //为了避免时间重复，再加一段2位的随机数
             $file['name'] = $filedate . '.' . $ext;
             return $file;
         }

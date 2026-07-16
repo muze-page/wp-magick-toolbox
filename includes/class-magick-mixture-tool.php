@@ -8,10 +8,34 @@ defined('ABSPATH') || exit;
 if (!class_exists('MaBox_Tool')) {
     class MaBox_Tool
     {
-        private static $time;
-        public function __construct()
+        /**
+         * 获取 WordPress 站点本地日期时间。
+         *
+         * WordPress 返回的本地时间字符串是事实源；DateTimeImmutable 仅负责
+         * 后续日历运算，避免把 PHP 默认时区或固定偏移混入站点日期。
+         */
+        protected static function current_site_datetime()
         {
-            self::$time = self::get_time();
+            $current_time = current_time('mysql');
+            $date_time = DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $current_time);
+
+            if ($date_time instanceof DateTimeImmutable) {
+                return $date_time;
+            }
+
+            return new DateTimeImmutable($current_time);
+        }
+
+        /**
+         * 将日期输入转换为不可变日期对象。
+         */
+        private static function parse_date($value)
+        {
+            try {
+                return new DateTimeImmutable(trim((string) $value));
+            } catch (Exception $exception) {
+                return false;
+            }
         }
 
         /**
@@ -87,29 +111,15 @@ if (!class_exists('MaBox_Tool')) {
          */
         public static function get_time()
         {
-            $a = strtotime(current_time("Y-m-d H:i:s")); //当前时间戳
-            $todaytime = strtotime(current_time("Y-m-d", false)); //今日起始时间戳
+            $today = static::current_site_datetime()->setTime(0, 0, 0);
+            $dates = array();
+
+            for ($days_ago = 0; $days_ago < 7; $days_ago++) {
+                $dates[] = $today->modify('-' . $days_ago . ' days')->format('Y-m-d');
+            }
 
             return array(
-                'a' => array(
-                    date("Y-m-d", $todaytime),
-                    // date("Y-m-d H:i:s", $todaytime),
-                    date("Y-m-d", $todaytime - 24 * 60 * 60 * 1),
-                    date("Y-m-d", $todaytime - 24 * 60 * 60 * 2),
-                    date("Y-m-d", $todaytime - 24 * 60 * 60 * 3),
-                    date("Y-m-d", $todaytime - 24 * 60 * 60 * 4),
-                    date("Y-m-d", $todaytime - 24 * 60 * 60 * 5),
-                    date("Y-m-d", $todaytime - 24 * 60 * 60 * 6),
-                ),
-                'b' => array(
-                    date("Y-m-d H:i:s", $todaytime - 8 * 60 * 60),
-                    date("Y-m-d H:i:s", $todaytime - 24 * 60 * 60 * 1 - 8 * 60 * 60),
-                    date("Y-m-d H:i:s", $todaytime - 24 * 60 * 60 * 2 - 8 * 60 * 60),
-                    date("Y-m-d H:i:s", $todaytime - 24 * 60 * 60 * 3 - 8 * 60 * 60),
-                    date("Y-m-d H:i:s", $todaytime - 24 * 60 * 60 * 4 - 8 * 60 * 60),
-                    date("Y-m-d H:i:s", $todaytime - 24 * 60 * 60 * 5 - 8 * 60 * 60),
-                    date("Y-m-d H:i:s", $todaytime - 24 * 60 * 60 * 6 - 8 * 60 * 60),
-                ),
+                'a' => $dates,
             );
         }
         /**
@@ -118,11 +128,17 @@ if (!class_exists('MaBox_Tool')) {
         public static function export_handle_time($type = 'start', $time = '2023-03-31')
         {
             $handle_time = '';
+            $date_time = self::parse_date($time);
+
+            if (!$date_time) {
+                return $handle_time;
+            }
+
             if ($type === 'start') {
-                $handle_time = date('Y-m-d H:i:s', strtotime($time . '00:00:00'));
+                $handle_time = $date_time->setTime(0, 0, 0)->format('Y-m-d H:i:s');
             }
             if ($type === 'end') {
-                $handle_time = date('Y-m-d H:i:s', strtotime($time . '23:59:59'));
+                $handle_time = $date_time->setTime(23, 59, 59)->format('Y-m-d H:i:s');
             }
             return $handle_time;
         }
@@ -132,67 +148,52 @@ if (!class_exists('MaBox_Tool')) {
          */
         public static function getDateFromRange($startdate, $enddate)
         {
-            $stimestamp = strtotime($startdate);
-            $etimestamp = strtotime($enddate);
-            // 计算日期段内有多少天
-            $days = ($etimestamp - $stimestamp) / 86400 + 1;
-            // 保存每天日期
-            $date = array();
-            for ($i = 0; $i < $days; $i++) {
-                $date[] = date('Y-m-d', $stimestamp + (86400 * $i));
+            $start = self::parse_date($startdate);
+            $end = self::parse_date($enddate);
+
+            if (!$start || !$end) {
+                return array();
             }
-            return $date;
+
+            $current = $start->setTime(0, 0, 0);
+            $last = $end->setTime(0, 0, 0);
+            $dates = array();
+
+            while ($current <= $last) {
+                $dates[] = $current->format('Y-m-d');
+                $current = $current->modify('+1 day');
+            }
+
+            return $dates;
         }
         /**
          * 输出本周、上周、本月、上月时间数组
          */
         public static function get_time_long($type = "this_week")
         {
+            $today = static::current_site_datetime()->setTime(0, 0, 0);
 
-            /**
-             *输出本周数组
-             */
-            if ($type == "this_week") {
-                //本周开始时间戳
-                $startTime = date("Y-m-d ", mktime(0, 0, 0, (int)date('m'), (int)date('d') - (int)date('w') + 1, (int)date('y')));
-                //本周结束时间戳
-                $overTime = date("Y-m-d ", mktime(23, 59, 59, (int)date('m'), (int)date('d') - (int)date('w') + 7, (int)date('y')));
-                $date = self::getDateFromRange($startTime, $overTime);
-                return $date;
-            };
-            /**
-             *输出上周数组
-             */
-            if ($type == "last_week") {
-                //本周开始时间戳
-                $startTime = date("Y-m-d ", mktime(0, 0, 0, (int)date('m'), (int)date('d') - (int)date('w') + 1 - 7, (int)date('Y')));
-                //本周结束时间戳
-                $overTime = date("Y-m-d ", mktime(23, 59, 59, (int)date('m'), (int)date('d') - (int)date('w') + 7 - 7, (int)date('Y')));
-                $date = self::getDateFromRange($startTime, $overTime);
-                return $date;
+            if ($type === 'this_week' || $type === 'last_week') {
+                $days_since_monday = (int) $today->format('N') - 1;
+                $start = $today->modify('-' . $days_since_monday . ' days');
+
+                if ($type === 'last_week') {
+                    $start = $start->modify('-7 days');
+                }
+
+                $end = $start->modify('+6 days');
+                return self::getDateFromRange($start->format('Y-m-d'), $end->format('Y-m-d'));
             }
-            /**
-             *输出本月数组
-             */
-            if ($type == "this_month") {
-                //本月起始时间日期格式
-                $startTime = date("Y-m-d ", mktime(0, 0, 0, date('m'), 1, date('Y')));
-                //本月结束时间日期格式
-                $overTime = date("Y-m-d", mktime(23, 59, 59, date('m'), date('t'), date('Y')));
-                $date = self::getDateFromRange($startTime, $overTime);
-                return $date;
+
+            if ($type === 'this_month' || $type === 'last_month') {
+                $start = $type === 'this_month'
+                    ? $today->modify('first day of this month')
+                    : $today->modify('first day of last month');
+                $end = $start->modify('last day of this month');
+
+                return self::getDateFromRange($start->format('Y-m-d'), $end->format('Y-m-d'));
             }
-            /**
-             * 输出上一个月的数组
-             */
-            if ($type == "last_month") {
-                $month = 1;
-                // 1代表上个月，可以增加数字追溯前几个月的时间
-                $startTime = date("Y-m-d", mktime(0, 0, 0, date("m") - 1 * $month, 1, date("Y")));
-                $overTime = date("Y-m-d", mktime(23, 59, 59, date("m") - ($month - 1), 0, date("Y")));
-                $date = self::getDateFromRange($startTime, $overTime);
-                return $date;
-            }
+
             $msg = "参数错误！";
             return $msg;
         }
@@ -213,16 +214,16 @@ if (!class_exists('MaBox_Tool')) {
              */
             if ($time == 'today') {
 
-                $today = getdate();
+                $today = static::current_site_datetime();
                 $today_args = array(
                     'post_type' => $type, //类型
                     'post_status' => $status, //状态
                     'post__not_in' => get_option('sticky_posts'), //排除置顶文章
                     'date_query' => array( //时间
                         array(
-                            'year' => $today['year'],
-                            'month' => $today['mon'],
-                            'day' => $today['mday'],
+                            'year' => (int) $today->format('Y'),
+                            'month' => (int) $today->format('n'),
+                            'day' => (int) $today->format('j'),
                         ),
                     ),
                 );
@@ -236,9 +237,10 @@ if (!class_exists('MaBox_Tool')) {
              *参考：https://developer.wordpress.org/reference/classes/wp_query/#date-parameters
              */
             if ($time == 'week') {
+                $today = static::current_site_datetime();
                 $time_week = array(
-                    'year' => date('Y'),
-                    'week' => date('W'),
+                    'year' => (int) $today->format('Y'),
+                    'week' => (int) $today->format('W'),
                 );
                 $args_week = array(
                     'post_type' => $type,
@@ -329,7 +331,7 @@ if (!class_exists('MaBox_Tool')) {
             //存储数据
             $arr = array();
             //拿到今天的时间
-            $today = getdate();
+            $today = static::current_site_datetime();
 
             /**
              * 今天
@@ -341,9 +343,9 @@ if (!class_exists('MaBox_Tool')) {
                 'post__not_in' => get_option('sticky_posts'), //排除置顶文章
                 'date_query' => array( //时间
                     array(
-                        'year' => $today['year'],
-                        'month' => $today['mon'],
-                        'day' => $today['mday'],
+                        'year' => (int) $today->format('Y'),
+                        'month' => (int) $today->format('n'),
+                        'day' => (int) $today->format('j'),
                         //after’=>’1 day ago’
                     ),
 
@@ -358,9 +360,9 @@ if (!class_exists('MaBox_Tool')) {
             $args = array(
                 'date_query' => array(
                     array(
-                        'year' => $today['year'],
-                        'month' => $today['mon'],
-                        'day' => $today['mday'],
+                        'year' => (int) $today->format('Y'),
+                        'month' => (int) $today->format('n'),
+                        'day' => (int) $today->format('j'),
                     ),
 
                 ),
@@ -371,7 +373,7 @@ if (!class_exists('MaBox_Tool')) {
 
             //获取今天的注册数量
             global $wpdb;
-            $todate = date("Y-m-d");
+            $todate = $today->format('Y-m-d');
             $sql = $wpdb->prepare(
                 "SELECT COUNT(*) AS num FROM `{$wpdb->prefix}users` WHERE SUBSTRING(`user_registered`,1,10) = %s",
                 $todate

@@ -25,7 +25,7 @@ if (!class_exists('MaBox_Domestic_Compliance')) {
                 if (!empty($c['copyright_html'])) {
                     $output .= wp_kses_post($c['copyright_html']);
                 } else {
-                    $output .= '&copy; ' . date('Y') . ' ' . esc_html(get_bloginfo('name')) . ' 版权所有';
+                    $output .= '&copy; ' . wp_date('Y') . ' ' . esc_html(get_bloginfo('name')) . ' 版权所有';
                 }
             }
             if ($output) {
