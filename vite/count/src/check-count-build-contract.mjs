@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Script } from 'node:vm';
+import { createContext, Script } from 'node:vm';
 import { gzipSync } from 'node:zlib';
 import { JSDOM } from 'jsdom';
 
@@ -70,6 +70,89 @@ try {
 } catch (error) {
   const message = error instanceof Error ? error.message : String(error);
   throw new Error(`Count index.js must remain classic-script-compatible: ${message}`);
+}
+
+const inspectWordpressGlobalIsolation = (source) => {
+  const mutations = [];
+  const wordpressTarget = { marker: 'wordpress-global' };
+  const wordpressGlobal = new Proxy(wordpressTarget, {
+    set(target, property, value) {
+      mutations.push(`set:${String(property)}`);
+      return Reflect.set(target, property, value);
+    },
+    defineProperty(target, property, descriptor) {
+      mutations.push(`define:${String(property)}`);
+      return Reflect.defineProperty(target, property, descriptor);
+    },
+    deleteProperty(target, property) {
+      mutations.push(`delete:${String(property)}`);
+      return Reflect.deleteProperty(target, property);
+    },
+  });
+  const scriptSandbox = { wp: wordpressGlobal };
+  scriptSandbox.window = scriptSandbox;
+  const scriptContext = createContext(scriptSandbox);
+  let executionError = null;
+  let resolvedWordpressGlobal = null;
+
+  try {
+    new Script(source, { filename: 'count/dist/index.js' })
+      .runInContext(scriptContext, { timeout: 1000 });
+  } catch (error) {
+    executionError = error;
+  }
+
+  try {
+    resolvedWordpressGlobal = new Script('wp').runInContext(scriptContext);
+  } catch {
+    // A global lexical declaration can shadow the object property and remain
+    // uninitialized after an early error. Either outcome violates isolation.
+  }
+
+  return {
+    executionError,
+    preserved: scriptContext.wp === wordpressGlobal
+      && resolvedWordpressGlobal === wordpressGlobal
+      && mutations.length === 0,
+  };
+};
+
+for (const [label, unsafeSource] of [
+  ['global lexical binding', 'const wp = {};'],
+  ['global assignment', 'wp = {};'],
+  ['global mutation', 'wp.polluted = true;'],
+]) {
+  if (inspectWordpressGlobalIsolation(unsafeSource).preserved) {
+    throw new Error(`Count WordPress-global isolation guard missed a ${label}`);
+  }
+}
+
+const normalizedJavascriptSource = javascriptSource.trim();
+if (!normalizedJavascriptSource.startsWith('(function(){')
+    || !normalizedJavascriptSource.slice(0, 160).includes('"use strict";')
+    || !normalizedJavascriptSource.endsWith('})();')) {
+  throw new Error('Count index.js must remain a strict IIFE classic bundle');
+}
+if (/(?:window|globalThis|self)(?:\.wp|\[['"]wp['"]\])\s*=/.test(javascriptSource)) {
+  throw new Error('Count index.js must not assign WordPress window.wp directly');
+}
+
+const bundleIsolation = inspectWordpressGlobalIsolation(javascriptSource);
+if (!bundleIsolation.preserved) {
+  throw new Error('Count index.js must isolate bundled symbols from WordPress window.wp');
+}
+if (!bundleIsolation.executionError
+    || bundleIsolation.executionError.name !== 'ReferenceError'
+    || bundleIsolation.executionError.message !== 'navigator is not defined') {
+  const message = bundleIsolation.executionError
+    ? `${bundleIsolation.executionError.name}: ${bundleIsolation.executionError.message}`
+    : 'bundle unexpectedly completed without the browser DOM';
+  throw new Error(`Count isolation sandbox stopped unexpectedly: ${message}`);
+}
+
+const chartSource = readFileSync(join(sourceDirectory, 'components/block/column_more.tsx'), 'utf8');
+if (!chartSource.includes('width: "100%"') || !chartSource.includes('new ResizeObserver')) {
+  throw new Error('Count charts must remain responsive to their WordPress admin container');
 }
 
 const cssSource = readFileSync(join(distDirectory, 'index.css'), 'utf8');

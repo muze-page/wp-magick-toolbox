@@ -33,15 +33,32 @@
 }
 #mabox_census_count .single-box {
   display: flex;
+  min-width: 0;
+}
+#mabox_census_count .single-box .left {
+  flex: 1 1 600px;
+  min-width: 0;
+  max-width: 600px;
 }
 #mabox_census_count .single-box .right {
   display: flex;
+  flex: 1 1 360px;
+  min-width: 0;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
 }
+#mabox_census_count .count-chart {
+  min-width: 0;
+}
 @media screen and (max-width: 768px) {
   #mabox_census_count .single-box {
     flex-wrap: wrap;
+  }
+  #mabox_census_count .single-box .left,
+  #mabox_census_count .single-box .right {
+    flex-basis: 100%;
+    width: 100%;
+    max-width: 100%;
   }
 }

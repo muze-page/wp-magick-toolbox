@@ -498,7 +498,7 @@
 
 1. `vite/` 只保留一份依赖清单、pnpm lockfile 与 ESLint 配置；Admin/Count 不再是子 package，但仍保留各自的源码、TypeScript/Vite 配置和独立输出目录。
 2. 无 WordPress 运行时消费者的 `vite/public` 整体删除；仍由插件 bootstrap 使用的仓库根 `public/` 完整保留，二者边界已在当前文档中明确。
-3. Count PHP consumer 保持 `index_page_magick-census-single`、`_census_css`/`_census_js` handle、`#mabox_census_count` 与 `dataLocal.countData` 不变；CSS 和 JS 各自改用文件 mtime 形成缓存版本，缺少构建文件时安全回退插件版本。
+3. Count PHP consumer 使用与 `index.php` 父菜单匹配的 `dashboard_page_magick-census-single` 页面 hook，并保持 `_census_css`/`_census_js` handle、`#mabox_census_count` 与 `dataLocal.countData` 不变；CSS 和 JS 各自改用文件 mtime 形成缓存版本，缺少构建文件时安全回退插件版本。
 4. CI 的前端 job 在根目录一次安装并依次执行共享 typecheck、lint、coverage 和 build；受检的 Admin/Count `dist` 作为 artifact 直接交给 ZIP job，避免发布阶段再次安装和构建。ZIP 门禁明确要求四个固定文件存在，只允许两份 `dist` 进入 `vite/` 发布边界，并拒绝 `vite/public`、源码或配置文件。
 5. PHPUnit 不再要求 gitignore 的 Count `dist` 预先存在，而是锁定源码入口与 PHP consumer 契约；真实构建文件存在性由前端 build 与 ZIP 两层门禁负责。
 6. README、当前构建指南和 VitePress 已统一为“一套前端工程、两个独立产物”；早期开发手册和按需加载规范只增加权威边界提示，历史 release wrap-up 与阶段总结保持原文。

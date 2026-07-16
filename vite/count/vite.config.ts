@@ -15,6 +15,10 @@ export default defineConfig({
     modulePreload: false,
     rollupOptions: {
       output: {
+        // Count is enqueued as a classic WordPress admin script. Keep every
+        // bundled symbol inside an IIFE so minified dependency names cannot
+        // overwrite globals such as WordPress' window.wp.
+        format: "iife",
         // 指定 chunk 文件名（含导出的代码）
         //chunkFileNames: 'js/[name].js',
         // 指定静态资源文件名（不含导出的代码）

@@ -40,7 +40,7 @@ if (!class_exists('MaBox_Census_Single')) {
         //页面加载图标用css和js
         public static function load_enqueue_admin_script($hook)
         {
-            if ('index_page_magick-census-single' != $hook) {
+            if ('dashboard_page_magick-census-single' != $hook) {
                 return;
             }
 

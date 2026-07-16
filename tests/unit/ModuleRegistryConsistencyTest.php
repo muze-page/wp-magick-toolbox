@@ -286,12 +286,14 @@ class ModuleRegistryConsistency_Test extends TestCase {
         $this->assertStringNotContainsString('MaBox_b2_shop_count', $content);
     }
 
-    public function test_count_frontend_source_and_php_asset_contract_exist(): void {
+    public function test_count_frontend_source_and_dashboard_page_asset_contract_exist(): void {
         $this->assertFileExists(self::$plugin_dir . '/vite/count/src/main.tsx');
         $this->assertFileExists(self::$plugin_dir . '/vite/count/vite.config.ts');
 
         $loader = file_get_contents(self::$plugin_dir . '/admin/partials/function/auxiliary/census-single.php');
-        $this->assertStringContainsString("'index_page_magick-census-single'", $loader);
+        // WordPress maps an index.php submenu to dashboard_page_{$menu_slug}, not index_page_{$menu_slug}.
+        $this->assertStringContainsString("'dashboard_page_magick-census-single'", $loader);
+        $this->assertStringNotContainsString("'index_page_magick-census-single'", $loader);
         $this->assertStringContainsString("'vite/count/dist/index.css'", $loader);
         $this->assertStringContainsString("'vite/count/dist/index.js'", $loader);
         $this->assertStringContainsString('filemtime($build_css_path)', $loader);

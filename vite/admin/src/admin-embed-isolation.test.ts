@@ -75,6 +75,52 @@ const collectStyleSelectors = (cssSource: string): string[] => {
   return selectors;
 };
 
+const collectMediaRuleDeclarations = (
+  cssSource: string,
+  mediaText: string,
+  selectorText: string,
+): Record<string, string> => {
+  const style = document.createElement('style');
+  style.textContent = cssSource;
+  document.head.append(style);
+
+  if (!style.sheet) {
+    style.remove();
+    throw new Error('App.css could not be parsed');
+  }
+
+  let declarations: Record<string, string> | null = null;
+
+  Array.from(style.sheet.cssRules).forEach((rule) => {
+    if (rule.type !== 4) return;
+
+    const mediaRule = rule as CSSMediaRule;
+    if (mediaRule.media.mediaText !== mediaText) return;
+
+    Array.from(mediaRule.cssRules).forEach((nestedRule) => {
+      if (nestedRule.type !== 1) return;
+
+      const styleRule = nestedRule as CSSStyleRule;
+      if (styleRule.selectorText !== selectorText) return;
+
+      declarations = Object.fromEntries(
+        Array.from(styleRule.style).map((property) => [
+          property,
+          styleRule.style.getPropertyValue(property),
+        ]),
+      );
+    });
+  });
+
+  style.remove();
+
+  if (!declarations) {
+    throw new Error(`Missing ${selectorText} inside @media ${mediaText}`);
+  }
+
+  return declarations;
+};
+
 describe('WordPress admin embed isolation', () => {
   it('uses only mabox-namespaced selectors without a Tailwind/PostCSS pipeline', () => {
     const appStyleSource = readRelativeFile('./App.css');
@@ -151,6 +197,29 @@ describe('WordPress admin embed isolation', () => {
     expect(selectImageSource).toContain('rootClassName="mabox-admin-modal"');
     expect(riskyFeatureSource).toContain('rootClassName: "mabox-admin-modal"');
     expect(dbCleanSource).toContain('rootClassName: "mabox-admin-modal"');
+  });
+
+  it('keeps the mobile workspace within the admin shell width', () => {
+    const appStyleSource = readRelativeFile('./App.css');
+    const bodyDeclarations = collectMediaRuleDeclarations(
+      appStyleSource,
+      '(max-width: 782px)',
+      '.mabox-body',
+    );
+    const mainDeclarations = collectMediaRuleDeclarations(
+      appStyleSource,
+      '(max-width: 782px)',
+      '.mabox-main',
+    );
+
+    expect(bodyDeclarations).toMatchObject({
+      'align-items': 'stretch',
+      'flex-direction': 'column',
+    });
+    expect(mainDeclarations).toMatchObject({
+      'max-width': '100%',
+      width: '100%',
+    });
   });
 
   it('does not patch document events from the admin entry point', () => {
