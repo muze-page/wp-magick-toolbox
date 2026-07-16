@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：两次评论间隔
  * 来源：https://www.npc.ink/19960.html

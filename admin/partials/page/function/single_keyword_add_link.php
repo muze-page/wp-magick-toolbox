@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：文章中出现的标签自动添加链接
  * 来源：https://www.npc.ink/15286.html

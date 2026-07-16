@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：按日期筛选文章和媒体
  * 来源：https://rudrastyh.com/wordpress/date-range-filter.html

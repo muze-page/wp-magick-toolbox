@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 if (!class_exists('MaBox_Performance_Oss')) {
     class MaBox_Performance_Oss implements MaBox_Module_Interface {
         private static $config;

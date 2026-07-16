@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：禁止纯英文评论
  * 来源：https://www.npc.ink/18129.html

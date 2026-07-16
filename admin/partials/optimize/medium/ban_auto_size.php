@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 功能：禁止自动生成缩略图
  * 来源：

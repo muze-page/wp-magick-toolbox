@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 if (!class_exists('MaBox_Page_Reading_Progress')) {
     class MaBox_Page_Reading_Progress implements MaBox_Module_Interface
     {

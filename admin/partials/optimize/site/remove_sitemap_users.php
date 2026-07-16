@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：从原生站点地图中移除用户信息部分
  * 来源：https://www.huitheme.com/wp-sitemap-users.html

@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：一篇文章只能评论一次，管理员不受影响
  * 来源：https://www.npc.ink/13477.html

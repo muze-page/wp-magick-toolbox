@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：禁用WordPress更新
  * 来源：https://www.npc.ink/15932.html

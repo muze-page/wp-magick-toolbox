@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 class TS_Easy_Thumbnail_Switcher {
 
     public $add_new_str;

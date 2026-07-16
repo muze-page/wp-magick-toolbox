@@ -1,4 +1,7 @@
 <?php
+
+defined('ABSPATH') || exit;
+
 //默认带图
 include plugin_dir_path((__FILE__)) . '../index.php'; // 获取数据
 

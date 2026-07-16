@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：隐藏顶部工具条，仅管理员和编辑可见
  * 来源：https://www.huitheme.com/show_admin_bar.html

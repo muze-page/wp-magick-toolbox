@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 if (!class_exists('MaBox_Performance_Seo_Checker')) {
     class MaBox_Performance_Seo_Checker implements MaBox_Module_Interface {
         private static $config;

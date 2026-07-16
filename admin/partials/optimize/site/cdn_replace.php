@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 国内 CDN 资源替换
  * 将 WordPress 加载的国外资源替换为国内 CDN 镜像

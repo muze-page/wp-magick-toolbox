@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 if (!class_exists('MaBox_Domestic_Login_Security')) {
     class MaBox_Domestic_Login_Security implements MaBox_Module_Interface {
         const LOCK_ERROR_CODE = 'mabox_login_attempt_locked';

@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：用户列表展示昵称
  * 来源：https://www.huitheme.com/add_user_nickname_column.html

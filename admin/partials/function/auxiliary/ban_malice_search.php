@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 
 /**
  * 效果：屏蔽恶意关键词搜索词

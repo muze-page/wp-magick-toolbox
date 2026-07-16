@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：评论所需的最少和最多字数
  * 来源：https://www.npc.ink/17995.html

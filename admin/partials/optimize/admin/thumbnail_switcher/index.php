@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：文章列表添加缩略图展示、添加和删除
  * 来源1：https://wordpress.org/plugins/easy-thumbnail-switcher/

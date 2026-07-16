@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 /**
  * 隐私与外部服务说明
  *

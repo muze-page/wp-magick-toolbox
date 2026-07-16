@@ -1,3 +1,6 @@
+<?php
+defined('ABSPATH') || exit;
+?>
             <!--载入倒计时-->
             <link href="<?php echo $file_url . "countdown/style.css" ?>" rel="stylesheet" type="text/css" />
             <script type="text/javascript" src="<?php echo $file_url . "countdown/main.js" ?>"></script>

@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：修改WordPress搜索结果的链接样式
  * 来源：https://www.huitheme.com/wordpress-search.html

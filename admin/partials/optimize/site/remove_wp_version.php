@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：从RSS源和网站中删除WordPress版本
  * 来源：https://rudrastyh.com/wordpress/11-security- steps.html

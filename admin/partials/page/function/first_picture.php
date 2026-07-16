@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：未设置特色图时，自动将第一张图设为特色图
  * 来源：https://www.huitheme.com/wordpress-auto-featured-image.html

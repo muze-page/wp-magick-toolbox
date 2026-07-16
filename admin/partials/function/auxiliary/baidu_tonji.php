@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 
 if (!class_exists('MaBox_Baidu_Tonji')) {
     class MaBox_Baidu_Tonji implements MaBox_Module_Interface

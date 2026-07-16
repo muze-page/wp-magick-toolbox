@@ -1,4 +1,7 @@
 <?php
+
+defined('ABSPATH') || exit;
+
 /**
  * A library that shows various admin notices
  */

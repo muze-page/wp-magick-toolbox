@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：文章列表显示文章ID
  * 来源：https://blog.csdn.net/qq_39339179/article/details/119135050

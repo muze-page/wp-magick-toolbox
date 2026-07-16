@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 if (!class_exists('MaBox_Comment_Sensitive_Words')) {
     class MaBox_Comment_Sensitive_Words implements MaBox_Module_Interface
     {

@@ -1,4 +1,7 @@
 <?php
+
+defined('ABSPATH') || exit;
+
 /**
  * 隐藏邮件中的 IP 地址
  *

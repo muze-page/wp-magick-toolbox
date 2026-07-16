@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：去除分类链接中的category字符串
  * 来源： No Category Base (WPML) v1.3

@@ -19,8 +19,24 @@ class AbspathGuardTest extends TestCase {
             new RecursiveDirectoryIterator($root, RecursiveDirectoryIterator::SKIP_DOTS)
         );
 
-        // ai/ 保存 reference-only 快照，并由发布包规则整体排除，不属于插件运行源码。
-        $exclude_dirs = array('vendor', 'node_modules', '.git', '.opencode', '.sisyphus', '.vscode', '.github', 'tests', 'vite', 'admin/partials', 'ai');
+        // 这些目录由发布包规则整体排除，不属于插件运行源码；ai/ 包含 reference-only 快照。
+        $exclude_dirs = array(
+            'vendor',
+            'node_modules',
+            '.git',
+            '.opencode',
+            '.sisyphus',
+            '.vscode',
+            '.github',
+            'tests',
+            'vite',
+            'ai',
+            'docs',
+            'docs-site',
+            'bin',
+            'stubs',
+        );
+        $exclude_files = array('phpstan-bootstrap.php');
 
         foreach ($iterator as $file) {
             if ($file->getExtension() !== 'php') {
@@ -32,12 +48,12 @@ class AbspathGuardTest extends TestCase {
             // 排除不需要检查的目录
             $skip = false;
             foreach ($exclude_dirs as $dir) {
-                if (strpos($relative, $dir . '/') === 0 || strpos($relative, $dir) === 0) {
+                if ($relative === $dir || strpos($relative, $dir . '/') === 0) {
                     $skip = true;
                     break;
                 }
             }
-            if ($skip) {
+            if ($skip || in_array($relative, $exclude_files, true)) {
                 continue;
             }
 

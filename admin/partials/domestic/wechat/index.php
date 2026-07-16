@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 if (!class_exists('MaBox_Domestic_Wechat')) {
     class MaBox_Domestic_Wechat implements MaBox_Module_Interface {
         private static $config;

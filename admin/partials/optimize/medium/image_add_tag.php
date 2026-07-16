@@ -1,4 +1,7 @@
 <?php
+
+defined('ABSPATH') || exit;
+
 /**
  * 功能：给图片添加alt标签
  * 来源：

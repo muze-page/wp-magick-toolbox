@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 if (!class_exists('MaBox_Performance_Media_Health')) {
     class MaBox_Performance_Media_Health implements MaBox_Module_Interface {
         private static $config;

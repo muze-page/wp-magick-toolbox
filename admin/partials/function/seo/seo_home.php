@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 //简单SEO - 首页TDK 
 if (!class_exists('MaBox_Seo_Home')) {
     class MaBox_Seo_Home implements MaBox_Module_Interface

@@ -1,4 +1,7 @@
 <?php
+
+defined('ABSPATH') || exit;
+
 /*
  暂停页模版
  */

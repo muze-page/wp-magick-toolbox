@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 功能：媒体库支持SVG格式（安全模式）
  * 来源：

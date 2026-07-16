@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 if (!class_exists('MaBox_Unlisted_Vague_Img')) {
     class MaBox_Unlisted_Vague_Img implements MaBox_Module_Interface
     {

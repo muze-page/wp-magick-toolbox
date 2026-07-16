@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 
 /**
  * 效果：简单SEO - 分类和标签添加输入框

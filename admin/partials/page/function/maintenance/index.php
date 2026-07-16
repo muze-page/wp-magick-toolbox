@@ -1,4 +1,7 @@
 <?php
+
+defined('ABSPATH') || exit;
+
 //暂停维护页
 
 //网站名：

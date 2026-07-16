@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /**
  * 效果：后台文章管理中添加作者过滤器
  * 来源：https://rudrastyh.com/wordpress/filter-posts-by-author.html

@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 //简单SEO - 文章SEO
 /**
  * title：文章标题

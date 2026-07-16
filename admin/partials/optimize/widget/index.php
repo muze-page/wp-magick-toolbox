@@ -1,4 +1,7 @@
 <?php
+
+defined('ABSPATH') || exit;
+
 /**
  * 魔法工具箱小工具
  *
