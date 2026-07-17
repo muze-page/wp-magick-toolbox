@@ -3,17 +3,17 @@
 defined('ABSPATH') || exit;
 
 /*
- * Plugin Name: Magick Toolbox
+ * Plugin Name: Npcink Site Toolbox
  * Description: An opt-in toolbox for site settings, media, SEO, security, integrations, diagnostics, and maintenance.
  * Plugin URI: https://www.npc.ink/277510.html
- * Version: 3.0.1
+ * Version: 3.1.0
  * Author: Npcink
  * Author URI: https://www.npc.ink/
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       magick-toolbox
+ * Text Domain:       npcink-site-toolbox
  */
 //调试内容，在后台顶部显示一个通知
 // 如果直接调用此文件，请中止。
@@ -27,9 +27,9 @@ if (!defined('WPINC')) {
  *重命名此插件，并在发布新版本时进行更新。
  */
 //定义插件名
-define('MAGICK_MIXTURE_NAME', 'magick-optimize');
+define('MAGICK_MIXTURE_NAME', 'npcink-site-toolbox');
 //定义插件版本
-define('MAGICK_MIXTURE_VERSION', '3.0.1');
+define('MAGICK_MIXTURE_VERSION', '3.1.0');
 define('MAGICK_TOOLBOX_ACTIVE_MODULES', 'Magick_ToolBox_Active_Modules');
 
 /**
@@ -67,20 +67,8 @@ add_action(
 
 
 
-/**
- * 开始执行插件。
- *
- *由于插件内的所有内容都是通过钩子注册的，
- *然后从文件中的这一点启动插件
- *不影响页面生命周期。
- *
- */
-function magick_toolbox_run()
-{
-    $plugin = new Magick_Mixture();
-    $plugin->run();
-}
-magick_toolbox_run();
+// 插件仅通过 WordPress 钩子注册行为，不需要暴露额外的全局启动函数。
+(new Magick_Mixture())->run();
 
 // 插件激活时初始化路由表
 register_activation_hook(__FILE__, function() {
@@ -91,6 +79,6 @@ register_activation_hook(__FILE__, function() {
 
 //设置按钮
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
-    $links[] = '<a href="' . get_admin_url(null, 'plugins.php?page=MaBox_config') . '">' . __('设置', 'magick-toolbox') . '</a>';
+    $links[] = '<a href="' . get_admin_url(null, 'plugins.php?page=npcink-site-toolbox') . '">' . __('设置', 'npcink-site-toolbox') . '</a>';
     return $links;
 });

@@ -39,6 +39,9 @@ composer.lock
 *.tmp
 *.temp
 phpunit.phar
+npcink-site-toolbox-*.zip
+npcink-site-toolbox.zip
+npcink-site-toolbox.zip.sha256
 magick-toolbox-*.zip
 magick-toolbox.zip
 magick-toolbox.zip.sha256

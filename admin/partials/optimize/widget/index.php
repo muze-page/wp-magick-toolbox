@@ -3,7 +3,7 @@
 defined('ABSPATH') || exit;
 
 /**
- * 魔法工具箱小工具
+ * Npcink Site Toolbox小工具
  *
  * 提供多个实用小工具，可在侧边栏或页脚使用。
  */
@@ -28,7 +28,7 @@ if (!class_exists('MaBox_Widgets')) {
         public function __construct() {
             parent::__construct(
                 'mabox_site_stats',
-                '魔法工具箱 - 站点统计',
+                'Npcink Site Toolbox - 站点统计',
                 array('description' => '显示站点文章、评论、用户等统计信息')
             );
         }
@@ -83,7 +83,7 @@ if (!class_exists('MaBox_Widgets')) {
         public function __construct() {
             parent::__construct(
                 'mabox_recent_posts_thumb',
-                '魔法工具箱 - 最新文章（带图）',
+                'Npcink Site Toolbox - 最新文章（带图）',
                 array('description' => '显示最新文章列表，带特色图缩略图')
             );
         }

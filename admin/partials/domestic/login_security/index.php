@@ -42,7 +42,7 @@ if (!class_exists('MaBox_Domestic_Login_Security')) {
 
             return new WP_Error(
                 self::LOCK_ERROR_CODE,
-                __('登录尝试过多，请稍后再试。', 'magick-toolbox')
+                __('登录尝试过多，请稍后再试。', 'npcink-site-toolbox')
             );
         }
 

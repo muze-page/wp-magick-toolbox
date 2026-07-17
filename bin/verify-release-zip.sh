@@ -2,7 +2,7 @@
 
 set -Eeuo pipefail
 
-PLUGIN_SLUG="magick-toolbox"
+PLUGIN_SLUG="npcink-site-toolbox"
 
 fail() {
   printf 'release:verify: %s\n' "$*" >&2
@@ -44,7 +44,7 @@ cleanup() {
 }
 trap cleanup EXIT HUP INT TERM
 
-temporary_root="$(mktemp -d "${TMPDIR:-/tmp}/magick-toolbox-verify.XXXXXX")"
+temporary_root="$(mktemp -d "${TMPDIR:-/tmp}/npcink-site-toolbox-verify.XXXXXX")"
 entries_file="$temporary_root/entries.txt"
 extract_root="$temporary_root/extracted"
 mkdir -p -- "$extract_root"
@@ -115,7 +115,7 @@ extracted_symlink="$(find "$package_root" -type l -print -quit)"
 [ -z "$extracted_symlink" ] || fail "extracted package contains a symlink: $extracted_symlink"
 
 required_files=(
-  "magick-tool-box.php"
+  "npcink-site-toolbox.php"
   "readme.txt"
   "LICENSE"
   "index.php"
@@ -148,8 +148,8 @@ for required_file in "${required_files[@]}"; do
   [ -f "$package_root/$required_file" ] || fail "missing required release file: $required_file"
 done
 
-header_versions="$(sed -nE 's/^[[:space:]]*\*[[:space:]]*Version:[[:space:]]*([^[:space:]]+).*/\1/p' "$package_root/magick-tool-box.php")"
-constant_versions="$(sed -nE "s/.*MAGICK_MIXTURE_VERSION[^,]*,[[:space:]]*['\"]([^'\"]+)['\"].*/\1/p" "$package_root/magick-tool-box.php")"
+header_versions="$(sed -nE 's/^[[:space:]]*\*[[:space:]]*Version:[[:space:]]*([^[:space:]]+).*/\1/p' "$package_root/npcink-site-toolbox.php")"
+constant_versions="$(sed -nE "s/.*MAGICK_MIXTURE_VERSION[^,]*,[[:space:]]*['\"]([^'\"]+)['\"].*/\1/p" "$package_root/npcink-site-toolbox.php")"
 stable_versions="$(sed -nE 's/^[[:space:]]*Stable tag:[[:space:]]*([^[:space:]]+).*/\1/p' "$package_root/readme.txt")"
 
 header_count="$(printf '%s\n' "$header_versions" | sed '/^[[:space:]]*$/d' | wc -l | tr -d '[:space:]')"

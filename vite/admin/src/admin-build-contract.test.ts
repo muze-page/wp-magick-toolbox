@@ -193,7 +193,7 @@ describe('admin build contract scanner', () => {
     }))).toThrow(/Orphan JS artifact is unreachable|Empty vendor chunk found/);
 
     expect(() => scan(createFixture({
-      files: { 'index.css': 'url(/wp-content/plugins/wp-magick-toolbox/image.png)' },
+      files: { 'index.css': 'url(/wp-content/plugins/npcink-site-toolbox/image.png)' },
     }))).toThrow(/Hardcoded \/wp-content\/plugins\/ path/);
   });
 

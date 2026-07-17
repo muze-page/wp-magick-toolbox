@@ -2,6 +2,16 @@
 
 ## 待发布
 
+## 3.1.0 — 2026-07-17
+
+### 品牌与发布契约
+
+- 公开显示名统一为 Npcink Site Toolbox
+- 主文件、目标 WordPress.org slug、文本域、后台页、REST namespace 和发布 ZIP 统一使用 `npcink-site-toolbox`
+- GitHub 仓库计划同步更名为 `npcink-site-toolbox`
+- 保留内部 `MaBox_*` 类、`MAGICK_MIXTURE_*` 常量名和既有 Option key
+- 增加 ADR-0003 与公开身份契约测试
+
 ## 3.0.0 — 2026-07-16
 
 ### 重构

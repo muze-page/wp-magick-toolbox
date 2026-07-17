@@ -17,7 +17,7 @@ final class SiteHealthI18nTest extends TestCase
         $pattern = '~'
             . preg_quote('/* translators: ' . $translator_context . ' */', '~')
             . '\\s*'
-            . preg_quote("__('" . $format . "', 'magick-toolbox')", '~')
+            . preg_quote("__('" . $format . "', 'npcink-site-toolbox')", '~')
             . '~u';
 
         $this->assertSame(
@@ -38,7 +38,7 @@ final class SiteHealthI18nTest extends TestCase
         $source = $this->source();
         $pattern = '~sprintf\\(\\s*'
             . '/\\* translators: [^*]+ \\*/\\s*'
-            . preg_quote("__('" . $format . "', 'magick-toolbox')", '~')
+            . preg_quote("__('" . $format . "', 'npcink-site-toolbox')", '~')
             . ',\\s*'
             . preg_quote($first_argument, '~')
             . ',\\s*'
@@ -58,7 +58,7 @@ final class SiteHealthI18nTest extends TestCase
         $matches = array();
 
         preg_match_all(
-            "/__\\('([^'\\n]*%[^'\\n]*)', 'magick-toolbox'\\)/u",
+            "/__\\('([^'\\n]*%[^'\\n]*)', 'npcink-site-toolbox'\\)/u",
             $source,
             $matches,
             PREG_OFFSET_CAPTURE

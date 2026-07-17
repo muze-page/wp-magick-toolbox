@@ -39,7 +39,7 @@ if (!class_exists('MaBox_Single_Keyword_Add_Link')) {
                     //连接代码
                     $cleankeyword = stripslashes($keyword);
                     /* translators: %s: Tag name used in the generated link title. */
-                    $url = "<strong><a href=\"$link\" title=\"" . str_replace('%s', addcslashes($cleankeyword, '$'), __('查看所有文章关于 %s', 'magick-toolbox')) . "\"";
+                    $url = "<strong><a href=\"$link\" title=\"" . str_replace('%s', addcslashes($cleankeyword, '$'), __('查看所有文章关于 %s', 'npcink-site-toolbox')) . "\"";
                     $url .= 'target="_blank"';
                     $url .= ">" . addcslashes($cleankeyword, '$') . "</a></strong>";
                     $limit = wp_rand($match_num_from, $match_num_to);

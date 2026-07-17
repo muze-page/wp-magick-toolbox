@@ -1,10 +1,11 @@
-=== Magick Toolbox ===
+=== Npcink Site Toolbox ===
+Contributors: npcink
 Donate link: https://www.npc.ink/
 Tags: toolbox, optimization, security, performance
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 3.0.1
+Stable tag: 3.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +13,7 @@ An opt-in toolbox for WordPress site settings, media, SEO, security, China-focus
 
 == Description ==
 
-Magick Toolbox is a utility plugin for WordPress site owners. Version 3.0.1 provides 55 opt-in modules in seven task-oriented admin views. Features cover site and media settings, content and SEO, login and comment safeguards, China-focused integrations, diagnostics, and maintenance.
+Npcink Site Toolbox is a utility plugin for WordPress site owners. Version 3.1.0 provides 55 opt-in modules in seven task-oriented admin views. Features cover site and media settings, content and SEO, login and comment safeguards, China-focused integrations, diagnostics, and maintenance.
 
 = Current features =
 
@@ -31,8 +32,8 @@ All modules that contact a third party are disabled by default. An administrator
 == Installation ==
 
 1. Install the ZIP through Plugins > Add Plugin > Upload Plugin, or copy the plugin directory to `/wp-content/plugins/`.
-2. Activate Magick Toolbox from the Plugins screen.
-3. Open Plugins > Magick Toolbox and enable only the features you need.
+2. Activate Npcink Site Toolbox from the Plugins screen.
+3. Open Plugins > Npcink Site Toolbox and enable only the features you need.
 
 == Frequently Asked Questions ==
 
@@ -50,7 +51,7 @@ Deactivate and delete the plugin. Its uninstall routine removes the options crea
 
 = Is it translation-ready? =
 
-Yes. Its text domain is `magick-toolbox`.
+Yes. Its text domain is `npcink-site-toolbox`.
 
 == External Services ==
 
@@ -80,11 +81,11 @@ Google Search Console and Bing Webmaster Tools options only print administrator-
 
 == Source Code and Build ==
 
-The public, maintained source for the minified JavaScript and CSS shipped in this plugin is available at [GitHub](https://github.com/muze-page/wp-magick-toolbox). Reproduce the Admin and Count assets with:
+The public, maintained source for the minified JavaScript and CSS shipped in this plugin is available at [GitHub](https://github.com/muze-page/npcink-site-toolbox). Reproduce the Admin and Count assets with:
 
-`git clone https://github.com/muze-page/wp-magick-toolbox.git`
+`git clone https://github.com/muze-page/npcink-site-toolbox.git`
 
-`cd wp-magick-toolbox/vite`
+`cd npcink-site-toolbox/vite`
 
 `corepack enable`
 
@@ -95,6 +96,13 @@ The public, maintained source for the minified JavaScript and CSS shipped in thi
 The generated files are written to `vite/admin/dist/` and `vite/count/dist/`.
 
 == Changelog ==
+
+= 3.1.0 =
+* Release date: 2026-07-17.
+* Unified the public identity as Npcink Site Toolbox.
+* Aligned the plugin file, target WordPress.org slug, text domain, admin page, REST namespace, and release ZIP with `npcink-site-toolbox`.
+* Added public-identity and release-package contract tests.
+* Kept internal `MaBox_*` classes, `MAGICK_MIXTURE_*` constant names, and existing option keys unchanged; no settings migration or reset is required.
 
 = 3.0.1 =
 * Release date: 2026-07-16.
@@ -173,6 +181,9 @@ The generated files are written to `vite/admin/dist/` and `vite/count/dist/`.
 * Vite 构建工具迁移
 
 == Upgrade Notice ==
+
+= 3.1.0 =
+Public identity is now Npcink Site Toolbox. Existing settings keys are unchanged; no reset or data migration is required.
 
 = 3.0.1 =
 This release aligns public WordPress.org metadata and documentation. It does not reset existing settings or change runtime option keys.

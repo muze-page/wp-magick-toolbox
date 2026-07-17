@@ -4,12 +4,12 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 2.0.x   | :white_check_mark: |
-| < 2.0   | :x:                |
+| 3.1.x   | :white_check_mark: |
+| < 3.1   | :x:                |
 
 ## Reporting a Vulnerability
 
-We take the security of WP Magick Toolbox seriously. If you discover a security vulnerability, please follow these steps:
+We take the security of Npcink Site Toolbox seriously. If you discover a security vulnerability, please follow these steps:
 
 1. **Do NOT** open a public issue for sensitive security reports
 2. Send details to the repository maintainer via private message

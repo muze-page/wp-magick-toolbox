@@ -255,9 +255,9 @@ if (!class_exists('MaBox_Search_Health')) {
             foreach ($daily_term_counts as $term => $count) {
                 $reason = '';
                 if ($count > 100) {
-                    $reason = __('单关键词搜索频次异常（超过 100 次）', 'magick-toolbox');
+                    $reason = __('单关键词搜索频次异常（超过 100 次）', 'npcink-site-toolbox');
                 } elseif ($total_searches > 0 && ($count / $total_searches) > 0.1) {
-                    $reason = __('单关键词占比过高（超过 10%）', 'magick-toolbox');
+                    $reason = __('单关键词占比过高（超过 10%）', 'npcink-site-toolbox');
                 }
 
                 if (!empty($reason)) {
@@ -284,8 +284,8 @@ if (!class_exists('MaBox_Search_Health')) {
             if (empty($page_function['search_limit'])) {
                 $recommendations[] = array(
                     'id' => 'rec_search_rate_limit',
-                    'title' => __('限制搜索频次', 'magick-toolbox'),
-                    'reason' => __('未启用搜索频次限制，可能被恶意搜索消耗服务器资源。', 'magick-toolbox'),
+                    'title' => __('限制搜索频次', 'npcink-site-toolbox'),
+                    'reason' => __('未启用搜索频次限制，可能被恶意搜索消耗服务器资源。', 'npcink-site-toolbox'),
                 );
             }
 
@@ -302,16 +302,16 @@ if (!class_exists('MaBox_Search_Health')) {
                 if ($no_result_ratio > 0.5) {
                     $recommendations[] = array(
                         'id' => 'rec_no_result_high',
-                        'title' => __('无结果搜索比例过高', 'magick-toolbox'),
+                        'title' => __('无结果搜索比例过高', 'npcink-site-toolbox'),
                         /* translators: %.0f: Percentage of searches with no results. */
-                        'reason' => sprintf(__('超过 %.0f%% 的搜索无结果，建议为热门无结果词补充相关内容。', 'magick-toolbox'), $no_result_ratio * 100),
+                        'reason' => sprintf(__('超过 %.0f%% 的搜索无结果，建议为热门无结果词补充相关内容。', 'npcink-site-toolbox'), $no_result_ratio * 100),
                     );
                 } elseif ($no_result_ratio > 0.2) {
                     $recommendations[] = array(
                         'id' => 'rec_no_result_moderate',
-                        'title' => __('关注无结果搜索词', 'magick-toolbox'),
+                        'title' => __('关注无结果搜索词', 'npcink-site-toolbox'),
                         /* translators: %.0f: Percentage of searches with no results. */
-                        'reason' => sprintf(__('约 %.0f%% 的搜索无结果，可考虑补充相关内容。', 'magick-toolbox'), $no_result_ratio * 100),
+                        'reason' => sprintf(__('约 %.0f%% 的搜索无结果，可考虑补充相关内容。', 'npcink-site-toolbox'), $no_result_ratio * 100),
                     );
                 }
             }
@@ -319,9 +319,9 @@ if (!class_exists('MaBox_Search_Health')) {
             if (!empty($suspicious_terms)) {
                 $recommendations[] = array(
                     'id' => 'rec_suspicious_search',
-                    'title' => __('检测到异常高频搜索', 'magick-toolbox'),
+                    'title' => __('检测到异常高频搜索', 'npcink-site-toolbox'),
                     /* translators: %d: Number of suspicious high-frequency search terms. */
-                    'reason' => sprintf(__('发现 %d 个异常高频搜索词，可能为爬虫或恶意行为，建议开启搜索频次限制。', 'magick-toolbox'), count($suspicious_terms)),
+                    'reason' => sprintf(__('发现 %d 个异常高频搜索词，可能为爬虫或恶意行为，建议开启搜索频次限制。', 'npcink-site-toolbox'), count($suspicious_terms)),
                 );
             }
 
@@ -329,8 +329,8 @@ if (!class_exists('MaBox_Search_Health')) {
             if (empty($search_enhance['hotwords_enabled'])) {
                 $recommendations[] = array(
                     'id' => 'rec_enable_search_log',
-                    'title' => __('开启搜索日志', 'magick-toolbox'),
-                    'reason' => __('搜索日志已关闭，无法收集搜索健康数据。建议开启以获得搜索分析。', 'magick-toolbox'),
+                    'title' => __('开启搜索日志', 'npcink-site-toolbox'),
+                    'reason' => __('搜索日志已关闭，无法收集搜索健康数据。建议开启以获得搜索分析。', 'npcink-site-toolbox'),
                 );
             }
 

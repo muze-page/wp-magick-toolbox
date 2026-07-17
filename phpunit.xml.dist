@@ -8,7 +8,7 @@
          beStrictAboutTestsThatDoNotTestAnything="true"
          beStrictAboutOutputDuringTests="true">
     <testsuites>
-        <testsuite name="WP Magick Toolbox Test Suite">
+        <testsuite name="Npcink Site Toolbox Test Suite">
             <directory suffix=".php">./tests/</directory>
             <exclude>./tests/support/</exclude>
         </testsuite>
@@ -18,7 +18,7 @@
         <include>
             <directory suffix=".php">./admin</directory>
             <directory suffix=".php">./includes</directory>
-            <file>magick-tool-box.php</file>
+            <file>npcink-site-toolbox.php</file>
         </include>
     </coverage>
 

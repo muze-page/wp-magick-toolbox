@@ -63,8 +63,8 @@ if (!class_exists('MaBox_Comment_Sensitive_Words')) {
                 if (mb_stripos($content, $word) !== false) {
                     if ($action === 'block') {
                         wp_die(
-                            esc_html__('您的评论包含敏感词，请修改后重新提交。', 'magick-toolbox'),
-                            esc_html__('评论被拦截', 'magick-toolbox'),
+                            esc_html__('您的评论包含敏感词，请修改后重新提交。', 'npcink-site-toolbox'),
+                            esc_html__('评论被拦截', 'npcink-site-toolbox'),
                             array('back_link' => true)
                         );
                     }

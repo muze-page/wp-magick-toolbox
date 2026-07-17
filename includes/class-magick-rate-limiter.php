@@ -148,7 +148,7 @@ if (!class_exists('MaBox_Rate_Limiter')) {
 
                 $nonce = '';
                 if (is_object($request) && method_exists($request, 'get_header')) {
-                    $nonce = $request->get_header('x-mabox-nonce');
+                    $nonce = $request->get_header('x-npcink-site-toolbox-nonce');
                 }
                 if (empty($nonce) && is_object($request) && method_exists($request, 'get_param')) {
                     $nonce = $request->get_param('nonce');

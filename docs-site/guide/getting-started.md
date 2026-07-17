@@ -2,7 +2,7 @@
 
 ## 环境要求
 
-- WordPress 4.6 或更高版本
+- WordPress 6.0 或更高版本
 - PHP 7.4 或更高版本
 - Chrome、Firefox、Safari 或 Edge 等现代浏览器
 
@@ -11,9 +11,9 @@
 1. 下载插件 ZIP 包。
 2. 在 WordPress 后台进入 **插件 → 安装插件 → 上传插件**。
 3. 上传、安装并启用插件。
-4. 在左侧菜单打开 **魔法工具箱**。
+4. 在左侧菜单打开 **Npcink Site Toolbox**。
 
-也可以解压后将 `wp-magick-toolbox` 目录上传到 `wp-content/plugins/`，再从插件页启用。新安装不需要先执行一次空保存。
+也可以解压后将 `npcink-site-toolbox` 目录上传到 `wp-content/plugins/`，再从插件页启用。新安装不需要先执行一次空保存。
 
 ## 管理后台
 

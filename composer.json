@@ -1,6 +1,6 @@
 {
-    "name": "npcink/wp-magick-toolbox",
-    "description": "WP Magick Toolbox - 面向中国 WordPress 站长的一站式实用工具箱插件",
+    "name": "npcink/site-toolbox",
+    "description": "Npcink Site Toolbox - 面向 WordPress 站点所有者的实用工具箱插件",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "authors": [

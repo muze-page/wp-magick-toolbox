@@ -6,7 +6,7 @@ if (!class_exists('MaBox_Rest_Route_Registry')) {
 
         private static $routes = array();
 
-        private static $namespace = 'mabox/v1';
+        private static $namespace = 'npcink-site-toolbox/v1';
 
         public static function add($path, $args, $group = '') {
             self::$routes[] = array(

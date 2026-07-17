@@ -3,11 +3,11 @@
 ## 整体架构
 
 ```
-WP Magick Toolbox
+Npcink Site Toolbox
 ├── PHP 后端（WordPress 插件标准架构）
-│   ├── magick-tool-box.php          # 插件入口
+│   ├── npcink-site-toolbox.php          # 插件入口
 │   ├── includes/                     # 核心类
-│   │   ├── class-magick-mixtrue-admin.php   # 管理端
+│   │   ├── class-magick-mixture-admin.php   # 管理端
 │   │   └── class-magick-config-manager.php  # 配置管理
 │   ├── admin/                        # 后台功能模块
 │   │   ├── modules/                  # 模块注册表与加载器
@@ -47,7 +47,7 @@ PHP 端                                  React 端
   │                                       │
   ├─ REST 基址 + nonce ──────────────────►│ window.dataLocal
   │                                       │
-  ├─ GET /mabox/v1/settings ─────────────►│ 非敏感设置 + secretStatus
+  ├─ GET /npcink-site-toolbox/v1/settings ─────────────►│ 非敏感设置 + secretStatus
   │                                       │
   │◄─ POST { settings, secretChanges } ───┤ 显式保存
   │                                       │
@@ -76,11 +76,11 @@ loader.php（统一加载器）
 
 | 端点前缀 | 用途 |
 |----------|------|
-| `/mabox/v1/settings` | 非敏感配置读取与显式保存 |
-| `/mabox/v1/performance/*` | 性能检查与修复 |
-| `/mabox/v1/domestic/*` | 国内生态功能 |
-| `/mabox/v1/public/*` | 公开端点（前端交互） |
-| `/mabox/v1/tools/*` | 工具类功能 |
+| `/npcink-site-toolbox/v1/settings` | 非敏感配置读取与显式保存 |
+| `/npcink-site-toolbox/v1/performance/*` | 性能检查与修复 |
+| `/npcink-site-toolbox/v1/domestic/*` | 国内生态功能 |
+| `/npcink-site-toolbox/v1/public/*` | 公开端点（前端交互） |
+| `/npcink-site-toolbox/v1/tools/*` | 工具类功能 |
 
 ## 安全层
 

@@ -167,15 +167,15 @@ if (!class_exists('MaBox_Privacy')) {
             }
 
             $screen = get_current_screen();
-            if ($screen && $screen->id !== 'plugins_page_MaBox_config') {
+            if ($screen && $screen->id !== 'plugins_page_npcink-site-toolbox') {
                 return;
             }
 
             ?>
             <div class="notice notice-info is-dismissible">
                 <p>
-                    <strong>Magick Toolbox</strong> 隐私提示：本插件只会在管理员明确启用或主动触发相关功能后连接已披露的外部服务。
-                    <a href="<?php echo esc_url(admin_url('plugins.php?page=MaBox_config')); ?>">查看完整隐私说明 →</a>
+                    <strong>Npcink Site Toolbox</strong> 隐私提示：本插件只会在管理员明确启用或主动触发相关功能后连接已披露的外部服务。
+                    <a href="<?php echo esc_url(admin_url('plugins.php?page=npcink-site-toolbox')); ?>">查看完整隐私说明 →</a>
                 </p>
             </div>
             <?php

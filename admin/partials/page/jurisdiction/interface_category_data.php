@@ -85,7 +85,7 @@ if (!class_exists('MaBox_Interface_Category_Data')) {
         {
             return new WP_Error(
                 'mabox_category_data_unavailable',
-                __('无法获取分类、标签和页面数据。', 'magick-toolbox'),
+                __('无法获取分类、标签和页面数据。', 'npcink-site-toolbox'),
                 array('status' => 500)
             );
         }

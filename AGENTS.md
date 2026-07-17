@@ -1,4 +1,4 @@
-# AGENTS.md - WP Magick Toolbox
+# AGENTS.md - Npcink Site Toolbox
 
 ## Session Startup Protocol
 
@@ -11,7 +11,7 @@ Every AI development session should start with:
 
 ## Product Boundary
 
-WP Magick Toolbox is a WordPress utility plugin for site owners. Keep changes
+Npcink Site Toolbox is a WordPress utility plugin for site owners. Keep changes
 inside the existing plugin feature surface unless a separate design note says
 otherwise.
 

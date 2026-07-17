@@ -12,7 +12,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const dataContextMock = vi.hoisted(() => ({
-  apiBase: "https://example.com/subdirectory/wp-json/mabox/v1",
+  apiBase: "https://example.com/subdirectory/wp-json/npcink-site-toolbox/v1",
   restNonce: "rest-nonce",
 }));
 
@@ -65,7 +65,7 @@ afterEach(() => {
 
 beforeEach(() => {
   dataContextMock.apiBase =
-    "https://example.com/subdirectory/wp-json/mabox/v1";
+    "https://example.com/subdirectory/wp-json/npcink-site-toolbox/v1";
   dataContextMock.restNonce = "rest-nonce";
   const getComputedStyle = window.getComputedStyle.bind(window);
   vi.spyOn(window, "getComputedStyle").mockImplementation((element) =>
@@ -77,11 +77,11 @@ beforeEach(() => {
 describe("SelectImage", () => {
   it.each([
     [
-      "https://example.com/subdirectory/wp-json/mabox/v1",
+      "https://example.com/subdirectory/wp-json/npcink-site-toolbox/v1",
       "https://example.com/subdirectory/wp-json/wp/v2/media?per_page=12",
     ],
     [
-      "https://example.com/subdirectory/?rest_route=/mabox/v1&context=edit",
+      "https://example.com/subdirectory/?rest_route=/npcink-site-toolbox/v1&context=edit",
       "https://example.com/subdirectory/?rest_route=/wp/v2/media&context=edit&per_page=12",
     ],
     [

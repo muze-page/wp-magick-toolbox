@@ -17,7 +17,7 @@ const AboutPlugin = () => (
         </li>
         <li>
           开源地址：
-          <Link target="_blank" href="https://github.com/muze-page/wp-magick-toolbox">GitHub</Link>
+          <Link target="_blank" href="https://github.com/muze-page/npcink-site-toolbox">GitHub</Link>
         </li>
       </ul>
     </Paragraph>
@@ -38,7 +38,7 @@ const Proposal = () => (
           <Link target="_blank" href="https://www.npc.ink/277510.html">文章评论</Link>
         </li>
         <li>
-          <Link target="_blank" href="https://github.com/muze-page/wp-magick-toolbox/issues">GitHub Issue</Link>
+          <Link target="_blank" href="https://github.com/muze-page/npcink-site-toolbox/issues">GitHub Issue</Link>
         </li>
       </ul>
     </Paragraph>
