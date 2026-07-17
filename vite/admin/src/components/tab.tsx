@@ -278,7 +278,7 @@ const App: React.FC = () => {
   };
 
   const breadcrumbs = [
-    "魔法工具箱",
+    "Npcink Site Toolbox",
     activeGroup?.groupLabel || "工作台",
     activeNavItem?.label || "概览",
   ];
@@ -304,7 +304,7 @@ const App: React.FC = () => {
           <div className="mabox-header-left">
             <span className="dashicons dashicons-admin-generic mabox-header-icon" aria-hidden="true" />
             <div>
-              <h1 className="mabox-header-title">魔法工具箱</h1>
+              <h1 className="mabox-header-title">Npcink Site Toolbox</h1>
               <p className="mabox-header-subtitle">站点设置与维护</p>
             </div>
           </div>
@@ -361,7 +361,7 @@ const App: React.FC = () => {
           <nav
             id="mabox-primary-navigation"
             className={`mabox-sidebar ${isMobile && mobileMenuOpen ? "mabox-sidebar--open" : ""}`}
-            aria-label="魔法工具箱主导航"
+            aria-label="Npcink Site Toolbox主导航"
           >
             {navGroups.map((group) => (
               <div className="mabox-nav-group" key={group.groupLabel}>

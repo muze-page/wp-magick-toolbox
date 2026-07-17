@@ -259,7 +259,7 @@ if ( $wp_tests_dir && file_exists( $wp_tests_dir . '/includes/functions.php' ) )
 	require_once $wp_tests_dir . '/includes/functions.php';
 
 	function _manually_load_plugin() {
-		require dirname( __FILE__ ) . '/../magick-tool-box.php';
+		require dirname( __FILE__ ) . '/../npcink-site-toolbox.php';
 	}
 	tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 

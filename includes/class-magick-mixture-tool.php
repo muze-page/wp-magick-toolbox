@@ -163,10 +163,30 @@ if (!class_exists('MaBox_Tool')) {
         }
 
         /**
+         * Count posts that match a site-local calendar range.
+         *
+         * Sticky posts remain part of the count. The query only disables their
+         * special ordering and asks WordPress for one ID while retaining the
+         * total row count.
+         */
+        private static function count_release_posts($type, $status, $date_query)
+        {
+            $query = new WP_Query(array(
+                'post_type' => $type,
+                'post_status' => $status,
+                'date_query' => array($date_query),
+                'fields' => 'ids',
+                'posts_per_page' => 1,
+                'ignore_sticky_posts' => true,
+            ));
+
+            return (int) $query->found_posts;
+        }
+
+        /**
          * 输出今天、本周、本月、本年和累计发文数量
          * 可选获取时间、类型（page.post）、状态
-         * 描述：考虑到性能问题，这里写成if判断，
-         * 注意：全部统计有问题，有时间再解决
+         * 描述：按 WordPress 站点时区统计日历区间。
          */
         public static function get_total_release_amount($time = 'today', $type = 'post', $status = 'publish')
         {
@@ -179,20 +199,11 @@ if (!class_exists('MaBox_Tool')) {
             if ($time == 'today') {
 
                 $today = static::current_site_datetime();
-                $today_args = array(
-                    'post_type' => $type, //类型
-                    'post_status' => $status, //状态
-                    'post__not_in' => get_option('sticky_posts'), //排除置顶文章
-                    'date_query' => array( //时间
-                        array(
-                            'year' => (int) $today->format('Y'),
-                            'month' => (int) $today->format('n'),
-                            'day' => (int) $today->format('j'),
-                        ),
-                    ),
-                );
-                $today_query = new WP_Query($today_args);
-                return $today_query->post_count;
+                return self::count_release_posts($type, $status, array(
+                    'year' => (int) $today->format('Y'),
+                    'month' => (int) $today->format('n'),
+                    'day' => (int) $today->format('j'),
+                ));
             }
 
             /**
@@ -201,22 +212,14 @@ if (!class_exists('MaBox_Tool')) {
              *参考：https://developer.wordpress.org/reference/classes/wp_query/#date-parameters
              */
             if ($time == 'week') {
-                $today = static::current_site_datetime();
-                $time_week = array(
-                    'year' => (int) $today->format('Y'),
-                    'week' => (int) $today->format('W'),
-                );
-                $args_week = array(
-                    'post_type' => $type,
-                    'post_status' => $status,
-                    'date_query' => $time_week,
-                    'no_found_rows' => true,
-                    'suppress_filters' => true,
-                    'fields' => 'ids',
-                    'posts_per_page' => 10000,
-                );
-                $query_week = new WP_Query($args_week);
-                return $query_week->found_posts;
+                $today = static::current_site_datetime()->setTime(0, 0, 0);
+                $start = $today->modify('-' . ((int) $today->format('N') - 1) . ' days');
+
+                return self::count_release_posts($type, $status, array(
+                    'after' => $start->format('Y-m-d'),
+                    'before' => $start->modify('+6 days')->format('Y-m-d'),
+                    'inclusive' => true,
+                ));
             }
 
             /**
@@ -224,21 +227,11 @@ if (!class_exists('MaBox_Tool')) {
              * 描述：仅统计本月已发布文章数量
              */
             if ($time == 'month') {
-                $args = array(
-                    'post_type' => $type,
-                    'post_status' => $status,
-                    'post__not_in' => get_option('sticky_posts'),
-                    'date_query' => array(
-                        array(
-                            'after' => '1 month ago',
-                        ),
-                    ),
-                    'no_found_rows' => true,
-                    'fields' => 'ids',
-                    'posts_per_page' => 10000,
-                );
-                $query = new WP_Query($args);
-                return $query->found_posts;
+                $today = static::current_site_datetime();
+                return self::count_release_posts($type, $status, array(
+                    'year' => (int) $today->format('Y'),
+                    'month' => (int) $today->format('n'),
+                ));
             }
 
             /**
@@ -246,21 +239,10 @@ if (!class_exists('MaBox_Tool')) {
              */
 
             if ($time == 'year') {
-                $args = array(
-                    'post_type' => $type,
-                    'post_status' => $status,
-                    'post__not_in' => get_option('sticky_posts'),
-                    'date_query' => array(
-                        array(
-                            'after' => '1 year ago',
-                        ),
-                    ),
-                    'no_found_rows' => true,
-                    'fields' => 'ids',
-                    'posts_per_page' => 10000,
-                );
-                $query = new WP_Query($args);
-                return $query->found_posts;
+                $today = static::current_site_datetime();
+                return self::count_release_posts($type, $status, array(
+                    'year' => (int) $today->format('Y'),
+                ));
             }
 
             /**
@@ -268,12 +250,9 @@ if (!class_exists('MaBox_Tool')) {
              * 来源：https://developer.wordpress.org/reference/functions/wp_count_posts/
              */
             if ($time == 'total') {
-                $count_posts = wp_count_posts();
+                $count_posts = wp_count_posts($type);
 
-                if ($count_posts) {
-                    $published_posts = $count_posts->publish;
-                }
-                return $published_posts;
+                return isset($count_posts->{$status}) ? (int) $count_posts->{$status} : 0;
             }
 
             $msg = "参数错误！";
@@ -301,22 +280,11 @@ if (!class_exists('MaBox_Tool')) {
              * 今天
              */
             //今天发文数量
-            $today_args = array(
-                'post_type' => 'post', //类型
-                'post_status' => 'publish', //状态
-                'post__not_in' => get_option('sticky_posts'), //排除置顶文章
-                'date_query' => array( //时间
-                    array(
-                        'year' => (int) $today->format('Y'),
-                        'month' => (int) $today->format('n'),
-                        'day' => (int) $today->format('j'),
-                        //after’=>’1 day ago’
-                    ),
-
-                ),
-            );
-            $today_query = new WP_Query($today_args);
-            $today_single = $today_query->post_count;
+            $today_single = self::count_release_posts('post', 'publish', array(
+                'year' => (int) $today->format('Y'),
+                'month' => (int) $today->format('n'),
+                'day' => (int) $today->format('j'),
+            ));
             $arr['today']['single'] = $today_single;
 
             //获取今天的评论数量

@@ -85,10 +85,10 @@ class MaBox_Admin
         //添加插件菜单
 
         add_plugins_page(
-            '魔法工具箱设置',             // 要在此页面的浏览器窗口中显示的标题。
-            '魔法工具箱',            // 要为此菜单项显示的文本
+            'Npcink Site Toolbox 设置',   // 要在此页面的浏览器窗口中显示的标题。
+            'Npcink Site Toolbox',        // 要为此菜单项显示的文本
             'manage_options',            // 哪种类型的用户可以看到此菜单项
-            'MaBox_config',    // The unique ID - that is, the slug - for this menu item 
+            'npcink-site-toolbox', // The unique ID - that is, the slug - for this menu item.
             array(__CLASS__, 'MaBox_display'),   // 呈现此菜单的页面时要调用的函数的名称
             '200.2'
         );
@@ -150,7 +150,7 @@ class MaBox_Admin
         $name = self::$plugin_name;
 
         //是否是指定页面
-        if ('plugins_page_MaBox_config' != $hook) {
+        if ('plugins_page_npcink-site-toolbox' != $hook) {
             return;
         }
 
@@ -174,7 +174,7 @@ class MaBox_Admin
             'single_arr' => self::get_single_data(),
             'url_site' => get_site_url(),
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'apiBase' => esc_url_raw(rest_url('mabox/v1')),
+            'apiBase' => esc_url_raw(rest_url('npcink-site-toolbox/v1')),
             'restNonce' => wp_create_nonce('wp_rest'),
         );
         wp_localize_script($name, 'dataLocal', $MaBox_array);
@@ -375,7 +375,7 @@ class MaBox_Admin
         if (!class_exists('MaBox_Diagnostics')) {
             return new \WP_Error(
                 'diagnostics_not_available',
-                __('诊断服务暂不可用', 'magick-toolbox'),
+                __('诊断服务暂不可用', 'npcink-site-toolbox'),
                 array('status' => 500)
             );
         }
@@ -572,7 +572,7 @@ class MaBox_Admin
         MaBox_Rest_Route_Registry::add('/public/search-log', array(
             'methods'             => \WP_REST_Server::CREATABLE,
             'callback'            => array('MaBox_Performance_Search_Enhance', 'rest_log_search'),
-            'permission_callback' => MaBox_Rest_Route_Registry::public_nonce_rate_limited('search-log', 'mabox_public_api', array('max_requests' => 30, 'time_window' => 60)),
+            'permission_callback' => MaBox_Rest_Route_Registry::public_nonce_rate_limited('search-log', 'npcink_site_toolbox_public_api', array('max_requests' => 30, 'time_window' => 60)),
             'args'                => array(
                 'keyword' => array(
                     'required'          => true,
@@ -666,11 +666,11 @@ class MaBox_Admin
      * 验证公开 REST API 端点的 nonce（防 CSRF/滥用）
      */
     public static function verify_public_nonce($request) {
-        $nonce = $request->get_header('x-mabox-nonce');
+        $nonce = $request->get_header('x-npcink-site-toolbox-nonce');
         if (empty($nonce)) {
             $nonce = $request->get_param('nonce');
         }
-        return wp_verify_nonce($nonce, 'mabox_public_api') !== false;
+        return wp_verify_nonce($nonce, 'npcink_site_toolbox_public_api') !== false;
     }
 
     public static function sanitize_int_arg($value)

@@ -3,7 +3,7 @@ parameters:
     paths:
         - admin
         - includes
-        - magick-tool-box.php
+        - npcink-site-toolbox.php
         - uninstall.php
     excludePaths:
         - admin/partials/function/b2/*

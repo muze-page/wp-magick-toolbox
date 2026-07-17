@@ -1,8 +1,8 @@
 {
-  "name": "wp-magick-toolbox-docs",
-  "version": "2.3.0",
+  "name": "npcink-site-toolbox-docs",
+  "version": "3.1.0",
   "private": true,
-  "description": "WP Magick Toolbox 官方文档站",
+  "description": "Npcink Site Toolbox 官方文档站",
   "type": "module",
   "packageManager": "pnpm@10.33.0",
   "scripts": {

@@ -67,6 +67,8 @@ phpcs.xml
 .distignore
 phpunit.phar
 phpstan-baseline.neon
+npcink-site-toolbox-*.zip
+npcink-site-toolbox.zip
 magick-toolbox-*.zip
 magick-toolbox.zip
 wp-magick-toolbox-*.zip

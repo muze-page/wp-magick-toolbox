@@ -33,7 +33,7 @@ function getAjaxurl(): string {
 
 function getApiBase(): string {
   if (state) return "/api";
-  return window.dataLocal?.apiBase || "/wp-json/mabox/v1";
+  return window.dataLocal?.apiBase || "/wp-json/npcink-site-toolbox/v1";
 }
 
 function getRestNonce(): string {

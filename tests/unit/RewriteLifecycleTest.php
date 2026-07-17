@@ -116,7 +116,7 @@ class RewriteLifecycleTest extends TestCase
 
     public function test_main_file_registers_lifecycle_hooks_at_top_level(): void
     {
-        $main = file_get_contents(dirname(__DIR__, 2) . '/magick-tool-box.php');
+        $main = file_get_contents(dirname(__DIR__, 2) . '/npcink-site-toolbox.php');
         $module = file_get_contents(dirname(__DIR__, 2) . '/admin/partials/optimize/site/category_link_simplify.php');
 
         $this->assertStringContainsString(

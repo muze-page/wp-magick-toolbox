@@ -1,18 +1,20 @@
 # 架构决策记录（ADRs）
 
-本文档记录 WP Magick Toolbox 项目的关键技术决策及其背后的原因。
+本文档记录 Npcink Site Toolbox 项目的关键技术决策及其背后的原因。
 
 > [!IMPORTANT]
 > ADR-001 至 ADR-008 记录的是早期阶段。当前 Pre-GA clean break 已删除旧配置迁移、兼容写入口、预设/快照、百度推送和失效的腾讯验证码链；发生冲突时，以仓库 `docs/adr-pre-ga-admin-reset-2026-07-15.md`、当前 Schema 和自动化测试为准。
 
 ## 决策清单
 
+当前仓库级公开身份决策见 [ADR-0003](https://github.com/muze-page/npcink-site-toolbox/blob/main/docs/decisions/0003-npcink-site-toolbox-public-identity.md)：显示名、slug、主文件、REST namespace 和发布包统一为 Npcink Site Toolbox；内部类名和 Option key 保持不变。
+
 | 编号 | 决策 | 状态 | 日期 |
 |------|------|------|------|
 | [ADR-001](#adr-001-采用模块注册表架构) | 采用模块注册表架构 | 已采纳 | 2024-01 |
 | [ADR-002](#adr-002-配置拆分为独立-option) | 配置拆分为独立 Option | 部分取代：保留拆分，删除迁移 | 2024-01 |
 | [ADR-003](#adr-003-前端采用-react-vite-技术栈) | 前端采用 React + Vite 技术栈 | 部分取代：保留技术栈，三个子项目已收口 | 2024-02 |
-| [ADR-004](#adr-004-rest-api-为主-ajax-为兼容) | REST API 为主，AJAX 为兼容层 | 已采纳 | 2024-02 |
+| [ADR-004](#adr-004-rest-api-为主-ajax-为兼容) | REST API 为主，AJAX 为兼容层 | 已采纳；namespace 已由 ADR-0003 更新 | 2024-02 |
 | [ADR-005](#adr-005-类名统一为-mabox-前缀) | 类名统一为 MaBox_ 前缀 | 已采纳；不保留旧别名 | 2024-03 |
 | [ADR-006](#adr-006-按需加载机制) | 按需加载机制 | 已采纳 | 2024-01 |
 | [ADR-007](#adr-007-php-74-最低版本要求) | PHP 7.4 最低版本要求 | 已采纳 | 2024-01 |
@@ -141,7 +143,7 @@ WordPress 提供两种前后端通信方式：
 
 ### 决策
 
-- 新功能统一使用 REST API（`/wp-json/mabox/v1/*`）
+- 新功能统一使用 REST API（`/wp-json/npcink-site-toolbox/v1/*`）
 - 不再保留旧 AJAX 兼容层
 - 少量独立后台交互允许直接使用 WordPress AJAX
 - REST 端点统一使用 nonce 验证

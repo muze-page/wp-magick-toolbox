@@ -19,12 +19,12 @@ class MaBox_Easy_Thumbnail_Switcher {
      */
     public function __construct() {
 
-$this->add_new_str = __( '添加', 'magick-toolbox' );
-            $this->change_str = __( '修改', 'magick-toolbox' );
-            $this->remove_str = __( '移除', 'magick-toolbox' );
-            $this->upload_title = __( '上传缩略图', 'magick-toolbox' );
-            $this->upload_add = __( '使用选定的', 'magick-toolbox' );
-            $this->confirm_str = __( '确定吗？', 'magick-toolbox' );
+$this->add_new_str = __( '添加', 'npcink-site-toolbox' );
+            $this->change_str = __( '修改', 'npcink-site-toolbox' );
+            $this->remove_str = __( '移除', 'npcink-site-toolbox' );
+            $this->upload_title = __( '上传缩略图', 'npcink-site-toolbox' );
+            $this->upload_add = __( '使用选定的', 'npcink-site-toolbox' );
+            $this->confirm_str = __( '确定吗？', 'npcink-site-toolbox' );
 
         add_filter( 'manage_posts_columns', array( $this, 'add_column' ) );
         add_action( 'manage_posts_custom_column', array( $this, 'thumb_column' ), 10, 2 );
@@ -70,7 +70,7 @@ $this->add_new_str = __( '添加', 'magick-toolbox' );
 
         wp_enqueue_media();
 
-        wp_enqueue_style( 'ts-ets-css', plugins_url( '\css\styles.css', __FILE__ ) );
+        wp_enqueue_style( 'ts-ets-css', plugins_url( '\css\styles.css', __FILE__ ), array(), MAGICK_MIXTURE_VERSION );
 
         wp_enqueue_script( 'ts-ets-js', plugins_url( '\js\script.js', __FILE__ ), array( 'jquery', 'media-upload', 'thickbox' ), '1.0', true );
 
@@ -92,7 +92,7 @@ $this->add_new_str = __( '添加', 'magick-toolbox' );
      */
     public function add_column( $columns ) {
 
-        $columns['ts-ets-option'] = __( '缩略图', 'magick-toolbox' );
+        $columns['ts-ets-option'] = __( '缩略图', 'npcink-site-toolbox' );
         return $columns;
 
     }

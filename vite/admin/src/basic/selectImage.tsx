@@ -68,7 +68,10 @@ const buildMediaEndpoint = (apiBase: string): string => {
     return "/api/wp-json/wp/v2/media?per_page=12";
   }
 
-  const restRoot = normalizedBase.replace(/\/mabox\/v1$/, "");
+  // dataLocal.apiBase points at this plugin's `{namespace}/vN` route. Remove
+  // that contract generically so product renames do not leak into core media
+  // endpoint construction.
+  const restRoot = normalizedBase.replace(/\/[^/]+\/v\d+$/, "");
 
   return `${restRoot}/wp/v2/media?per_page=12`;
 };

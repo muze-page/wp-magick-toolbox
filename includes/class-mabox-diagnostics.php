@@ -66,33 +66,33 @@ if (!class_exists('MaBox_Diagnostics')) {
             return array(
                 array(
                     'id'      => 'php_version',
-                    'title'   => __('PHP 版本', 'magick-toolbox'),
+                    'title'   => __('PHP 版本', 'npcink-site-toolbox'),
                     'status'  => $php_ok ? 'good' : 'critical',
                     'message' => $php_ok
                         ? sprintf(
                             /* translators: %s: Current PHP version. */
-                            __('当前 PHP 版本 %s，满足最低要求（7.4+）。', 'magick-toolbox'),
+                            __('当前 PHP 版本 %s，满足最低要求（7.4+）。', 'npcink-site-toolbox'),
                             $env['php_version']
                         )
                         : sprintf(
                             /* translators: %s: Current PHP version. */
-                            __('当前 PHP 版本 %s，低于最低要求 7.4。', 'magick-toolbox'),
+                            __('当前 PHP 版本 %s，低于最低要求 7.4。', 'npcink-site-toolbox'),
                             $env['php_version']
                         ),
                 ),
                 array(
                     'id'      => 'wp_version',
-                    'title'   => __('WordPress 版本', 'magick-toolbox'),
+                    'title'   => __('WordPress 版本', 'npcink-site-toolbox'),
                     'status'  => $wp_ok ? 'good' : 'warning',
                     'message' => $wp_ok
                         ? sprintf(
                             /* translators: %s: Current WordPress version. */
-                            __('当前 WordPress 版本 %s。', 'magick-toolbox'),
+                            __('当前 WordPress 版本 %s。', 'npcink-site-toolbox'),
                             $env['wp_version']
                         )
                         : sprintf(
                             /* translators: %s: Current WordPress version. */
-                            __('当前 WordPress 版本 %s，建议升级至 6.0+。', 'magick-toolbox'),
+                            __('当前 WordPress 版本 %s，建议升级至 6.0+。', 'npcink-site-toolbox'),
                             $env['wp_version']
                         ),
                 ),
@@ -126,8 +126,8 @@ if (!class_exists('MaBox_Diagnostics')) {
                         'tier'      => $tier,
                         'title'     => $meta && !empty($meta['label']) ? $meta['label'] : $module_id,
                         'message'   => $tier === 'high_risk'
-                            ? __('该模块被标记为高风险，可能影响站点稳定性。', 'magick-toolbox')
-                            : __('该模块为实验性功能，不建议在生产环境长期开启。', 'magick-toolbox'),
+                            ? __('该模块被标记为高风险，可能影响站点稳定性。', 'npcink-site-toolbox')
+                            : __('该模块为实验性功能，不建议在生产环境长期开启。', 'npcink-site-toolbox'),
                     );
                 }
             }

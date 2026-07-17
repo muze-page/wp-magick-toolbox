@@ -613,7 +613,7 @@ class ModuleRegistryConsistency_Test extends TestCase {
         $registry = MaBox_Module_Loader::get_registry();
         $tiers = MaBox_Module_Loader::get_tiers();
         $autoload = file_get_contents(self::$plugin_dir . '/includes/autoload.php');
-        $plugin = file_get_contents(self::$plugin_dir . '/magick-tool-box.php');
+        $plugin = file_get_contents(self::$plugin_dir . '/npcink-site-toolbox.php');
         $uninstall = file_get_contents(self::$plugin_dir . '/uninstall.php');
         $phpstan = file_get_contents(self::$plugin_dir . '/phpstan.neon');
 

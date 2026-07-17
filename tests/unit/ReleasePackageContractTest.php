@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class ReleasePackageContractTest extends TestCase
 {
-    private const PACKAGE_SLUG = 'magick-toolbox';
+    private const PACKAGE_SLUG = 'npcink-site-toolbox';
 
     /** @var string */
     private $temporary_root;
@@ -50,8 +50,8 @@ class ReleasePackageContractTest extends TestCase
             'stubs',
             'vite/*/src',
             'vite/*/dist/.vite',
-            'magick-toolbox-*.zip',
-            'magick-toolbox.zip',
+            'npcink-site-toolbox-*.zip',
+            'npcink-site-toolbox.zip',
             'wp-magick-toolbox-*.zip',
             'wp-magick-toolbox.zip',
             '*.zip',
@@ -67,9 +67,9 @@ class ReleasePackageContractTest extends TestCase
             return $line !== '' && strpos($line, '#') !== 0;
         }));
         foreach (array(
-            'magick-toolbox-*.zip',
-            'magick-toolbox.zip',
-            'magick-toolbox.zip.sha256',
+            'npcink-site-toolbox-*.zip',
+            'npcink-site-toolbox.zip',
+            'npcink-site-toolbox.zip.sha256',
             'wp-magick-toolbox-*.zip',
             'wp-magick-toolbox.zip',
             'wp-magick-toolbox.zip.sha256',
@@ -79,10 +79,10 @@ class ReleasePackageContractTest extends TestCase
 
         $build = (string) file_get_contents($root . '/bin/build-release-zip.sh');
         $verify = (string) file_get_contents($root . '/bin/verify-release-zip.sh');
-        $this->assertStringContainsString('PLUGIN_SLUG="magick-toolbox"', $build);
-        $this->assertStringContainsString('magick-toolbox.zip', $build);
+        $this->assertStringContainsString('PLUGIN_SLUG="npcink-site-toolbox"', $build);
+        $this->assertStringContainsString('npcink-site-toolbox.zip', $build);
         $this->assertStringNotContainsString('PLUGIN_SLUG="wp-magick-toolbox"', $build);
-        $this->assertStringContainsString('PLUGIN_SLUG="magick-toolbox"', $verify);
+        $this->assertStringContainsString('PLUGIN_SLUG="npcink-site-toolbox"', $verify);
         $this->assertStringNotContainsString('PLUGIN_SLUG="wp-magick-toolbox"', $verify);
         $this->assertStringContainsString('rsync -a --exclude-from="$DISTIGNORE"', $build);
         $this->assertStringContainsString('mktemp -d', $build);
@@ -394,8 +394,8 @@ BASH
     private function requiredFixtureFiles(string $header_version, string $constant_version): array
     {
         return array(
-            'magick-tool-box.php' => "<?php\n/*\n * Plugin Name: Magick Toolbox\n * Version: {$header_version}\n */\ndefine('MAGICK_MIXTURE_VERSION', '{$constant_version}');\n",
-            'readme.txt' => "=== Magick Toolbox ===\nStable tag: {$header_version}\n",
+            'npcink-site-toolbox.php' => "<?php\n/*\n * Plugin Name: Npcink Site Toolbox\n * Version: {$header_version}\n */\ndefine('MAGICK_MIXTURE_VERSION', '{$constant_version}');\n",
+            'readme.txt' => "=== Npcink Site Toolbox ===\nStable tag: {$header_version}\n",
             'LICENSE' => 'GPL-2.0-or-later',
             'index.php' => "<?php\n",
             'uninstall.php' => "<?php\n",

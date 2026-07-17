@@ -1,10 +1,24 @@
 # Changelog
 
-All notable changes to Magick Toolbox will be documented in this file.
+All notable changes to Npcink Site Toolbox will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [3.1.0] - 2026-07-17
+
+### Changed
+
+- Unified the public product identity as `Npcink Site Toolbox` and the distribution slug as `npcink-site-toolbox`.
+- Renamed the plugin entry file to `npcink-site-toolbox.php` and synchronized version metadata at `3.1.0`.
+- Moved the public REST namespace to `npcink-site-toolbox/v1` and aligned the public nonce protocol.
+- Aligned Composer metadata, admin URL, CI artifact, ZIP filename, and ZIP root with the product slug.
+- Preserved internal class names, constant names, existing Option keys, old tags, releases, and historical documentation.
+
+### Added
+
+- ADR-0003 and automated public-identity contract coverage.
 
 ## [3.0.1] - 2026-07-16
 

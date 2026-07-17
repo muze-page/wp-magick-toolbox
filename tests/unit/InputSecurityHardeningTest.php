@@ -143,7 +143,7 @@ final class InputSecurityHardeningTest extends TestCase
         $request = new class {
             public function get_header($name)
             {
-                return 'x-mabox-nonce' === $name ? 'valid-rest-nonce' : '';
+                return 'x-npcink-site-toolbox-nonce' === $name ? 'valid-rest-nonce' : '';
             }
 
             public function get_param($name)
@@ -154,7 +154,7 @@ final class InputSecurityHardeningTest extends TestCase
 
         $callback = MaBox_Rate_Limiter::permission_callback_with_nonce(
             'search-log',
-            'mabox_public_api',
+            'npcink_site_toolbox_public_api',
             array('max_requests' => 30, 'time_window' => 60)
         );
 
@@ -181,7 +181,7 @@ final class InputSecurityHardeningTest extends TestCase
         $this->assertIsString($source);
         $this->assertStringNotContainsString('$_REQUEST', $source);
         $this->assertStringNotContainsString("HTTP_X_MABOX_NONCE", $source);
-        $this->assertStringContainsString("get_header('x-mabox-nonce')", $source);
+        $this->assertStringContainsString("get_header('x-npcink-site-toolbox-nonce')", $source);
         $this->assertStringContainsString("get_param('nonce')", $source);
     }
 

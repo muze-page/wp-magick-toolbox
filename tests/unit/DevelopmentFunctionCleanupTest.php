@@ -34,12 +34,12 @@ final class DevelopmentFunctionCleanupTest extends TestCase
         $this->assertStringNotContainsString('public static function magick_admin_notice_acfs(', $source);
     }
 
-    public function test_bootstrap_function_uses_product_prefix_without_compatibility_alias(): void
+    public function test_bootstrap_does_not_expose_a_global_runner_function(): void
     {
-        $source = $this->source('magick-tool-box.php');
+        $source = $this->source('npcink-site-toolbox.php');
 
-        $this->assertStringContainsString('function magick_toolbox_run()', $source);
-        $this->assertStringContainsString('magick_toolbox_run();', $source);
+        $this->assertStringContainsString('(new Magick_Mixture())->run();', $source);
+        $this->assertStringNotContainsString('function npcink_site_toolbox_run()', $source);
         $this->assertStringNotContainsString('function run_magick_mixture()', $source);
     }
 

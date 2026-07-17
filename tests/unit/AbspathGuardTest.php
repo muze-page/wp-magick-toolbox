@@ -98,7 +98,7 @@ class AbspathGuardTest extends TestCase {
      * 测试核心入口文件有双重保护
      */
     public function test_main_plugin_file_has_dual_protection(): void {
-        $main_file = dirname(__DIR__, 2) . '/magick-tool-box.php';
+        $main_file = dirname(__DIR__, 2) . '/npcink-site-toolbox.php';
         $content = file_get_contents($main_file);
 
         $this->assertStringContainsString("defined('WPINC')", $content, '主文件应该有 WPINC 检查');
@@ -106,7 +106,7 @@ class AbspathGuardTest extends TestCase {
     }
 
     public function test_main_plugin_file_loads_autoloader_before_core_class(): void {
-        $main_file = dirname(__DIR__, 2) . '/magick-tool-box.php';
+        $main_file = dirname(__DIR__, 2) . '/npcink-site-toolbox.php';
         $content = file_get_contents($main_file);
 
         $autoload_pos = strpos($content, "includes/autoload.php");

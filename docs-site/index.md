@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: "WP Magick Toolbox"
+  name: "Npcink Site Toolbox"
   text: "WordPress 站长一站式工具箱"
   tagline: 用一个清晰、可信的后台完成常用站点优化、SEO、安全与国内生态配置
   actions:

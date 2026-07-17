@@ -24,12 +24,12 @@ describe("admin navigation", () => {
   });
 
   it("restores a known view from the query string", () => {
-    expect(getAdminViewFromSearch("?page=MaBox_config&view=china")).toBe("china");
+    expect(getAdminViewFromSearch("?page=npcink-site-toolbox&view=china")).toBe("china");
   });
 
   it("falls back to overview for missing or unknown views", () => {
-    expect(getAdminViewFromSearch("?page=MaBox_config")).toBe("overview");
-    expect(getAdminViewFromSearch("?page=MaBox_config&view=security")).toBe("overview");
+    expect(getAdminViewFromSearch("?page=npcink-site-toolbox")).toBe("overview");
+    expect(getAdminViewFromSearch("?page=npcink-site-toolbox&view=security")).toBe("overview");
     expect(normalizeAdminView("security")).toBe("overview");
     expect(normalizeAdminView("13")).toBe("overview");
     expect(normalizeAdminView("unknown")).toBe("overview");
@@ -38,9 +38,9 @@ describe("admin navigation", () => {
   it("writes the semantic view without losing other URL state", () => {
     expect(
       createAdminViewUrl(
-        "https://example.test/wp-admin/plugins.php?page=MaBox_config&view=site#module",
+        "https://example.test/wp-admin/plugins.php?page=npcink-site-toolbox&view=site#module",
         "maintenance",
       ),
-    ).toBe("/wp-admin/plugins.php?page=MaBox_config&view=maintenance#module");
+    ).toBe("/wp-admin/plugins.php?page=npcink-site-toolbox&view=maintenance#module");
   });
 });
