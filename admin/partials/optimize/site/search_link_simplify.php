@@ -17,8 +17,11 @@ if (!class_exists('MaBox_Search_Link_Simplify')) {
         //修改搜索结果的链接
         public static function redirect_search()
         {
-            if (is_search() && !empty($_GET['s'])) {
-                wp_redirect(home_url("/search/") . urlencode(get_query_var('s')));
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public read-only search query; no state is changed.
+            $search_term = isset($_GET['s']) && is_string($_GET['s']) ? sanitize_text_field(wp_unslash($_GET['s'])) : '';
+
+            if (is_search() && '' !== $search_term) {
+                wp_safe_redirect(home_url('/search/' . rawurlencode($search_term)));
                 exit();
             }
         }

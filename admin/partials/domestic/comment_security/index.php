@@ -128,11 +128,15 @@ if (!class_exists('MaBox_Domestic_Comment_Security')) {
             return array_filter($words);
         }
         private static function get_client_ip() {
-            $keys = array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'REMOTE_ADDR');
-            foreach ($keys as $key) {
-                if (!empty($_SERVER[$key])) return sanitize_text_field($_SERVER[$key]);
+            // Forwarded headers are client-controlled unless a trusted proxy boundary exists.
+            if (!isset($_SERVER['REMOTE_ADDR']) || !is_string($_SERVER['REMOTE_ADDR'])) {
+                return '0.0.0.0';
             }
-            return '0.0.0.0';
+
+            $remote_addr = sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']));
+            return filter_var($remote_addr, FILTER_VALIDATE_IP) !== false
+                ? $remote_addr
+                : '0.0.0.0';
         }
     }
 }

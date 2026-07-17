@@ -61,23 +61,41 @@ if (!class_exists('MaBox_Seo_Category_Add_Meat')) {
         // 保存数据
         public static function taxonomy_metadate($term_id)
         {
-            if (isset($_POST['cat-title']) && isset($_POST['cat-words'])) {
-                //判断权限--可改
-                if (!current_user_can('manage_categories')) {
-                    return $term_id;
-                }
-                // 标题
-                $title_key = 'cat-title-' . $term_id; // key
-                $title_value = sanitize_text_field(wp_unslash($_POST['cat-title'])); // value
-
-                // 关键字
-                $words_key = 'cat-words-' . $term_id;
-                $words_value = sanitize_text_field(wp_unslash($_POST['cat-words']));
-
-                // 更新选项值
-                update_option($title_key, $title_value);
-                update_option($words_key, $words_value);
+            if (!current_user_can('manage_categories')) {
+                return $term_id;
             }
+
+            $action = isset($_POST['action']) && is_string($_POST['action'])
+                ? sanitize_key(wp_unslash($_POST['action']))
+                : '';
+            $nonce_valid = false;
+
+            if ('add-tag' === $action && isset($_POST['_wpnonce_add-tag']) && is_string($_POST['_wpnonce_add-tag'])) {
+                $nonce = sanitize_text_field(wp_unslash($_POST['_wpnonce_add-tag']));
+                $nonce_valid = wp_verify_nonce($nonce, 'add-tag') !== false;
+            } elseif ('editedtag' === $action && isset($_POST['_wpnonce']) && is_string($_POST['_wpnonce'])) {
+                $nonce = sanitize_text_field(wp_unslash($_POST['_wpnonce']));
+                $nonce_valid = wp_verify_nonce($nonce, 'update-tag_' . absint($term_id)) !== false;
+            }
+
+            if (
+                !$nonce_valid
+                || !isset($_POST['cat-title'], $_POST['cat-words'])
+                || !is_string($_POST['cat-title'])
+                || !is_string($_POST['cat-words'])
+            ) {
+                return $term_id;
+            }
+
+            $title_key = 'cat-title-' . absint($term_id);
+            $title_value = sanitize_text_field(wp_unslash($_POST['cat-title']));
+            $words_key = 'cat-words-' . absint($term_id);
+            $words_value = sanitize_text_field(wp_unslash($_POST['cat-words']));
+
+            update_option($title_key, $title_value);
+            update_option($words_key, $words_value);
+
+            return $term_id;
         }
     }
 }

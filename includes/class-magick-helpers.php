@@ -16,16 +16,13 @@ if (!class_exists('MaBox_Helpers')) {
          */
         public static function get_real_ip()
         {
-            $ip = '';
-            if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-                $ip = trim($ips[0]);
-            } elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-                $ip = $_SERVER['HTTP_CLIENT_IP'];
-            } else {
-                $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+            // Forwarded headers are client-controlled unless a trusted proxy boundary exists.
+            if (!isset($_SERVER['REMOTE_ADDR']) || !is_string($_SERVER['REMOTE_ADDR'])) {
+                return '';
             }
-            return sanitize_text_field($ip);
+
+            $ip = sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']));
+            return filter_var($ip, FILTER_VALIDATE_IP) !== false ? $ip : '';
         }
 
         /**

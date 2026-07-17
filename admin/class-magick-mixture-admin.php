@@ -102,7 +102,9 @@ class MaBox_Admin
         echo '<div class="wrap"> <h2>';
         echo '</h2><div id="root"></div>';
 
-        if (isset($_GET['mabox_debug']) && current_user_can('manage_options')) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only diagnostic view; no state is changed.
+        $debug_enabled = isset($_GET['mabox_debug']) && is_string($_GET['mabox_debug']) ? '1' === sanitize_text_field(wp_unslash($_GET['mabox_debug'])) : false;
+        if ($debug_enabled && current_user_can('manage_options')) {
             self::render_debug_panel();
         }
     }

@@ -61,7 +61,9 @@ if (!class_exists('MaBox_Audit_Logger')) {
                 'user_id'    => get_current_user_id(),
                 'user_login' => function_exists('wp_get_current_user') ? wp_get_current_user()->user_login : 'cli',
                 'ip'         => MaBox_Helpers::get_real_ip(),
-                'request_uri' => isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '',
+                'request_uri' => isset($_SERVER['REQUEST_URI']) && is_string($_SERVER['REQUEST_URI'])
+                    ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))
+                    : '',
             );
 
             // 写入 error_log（兼容现有日志系统）

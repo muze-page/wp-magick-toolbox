@@ -93,7 +93,9 @@ if (!class_exists('MaBox_Rate_Limiter')) {
         public static function get_client_id()
         {
             $ip = MaBox_Helpers::get_real_ip();
-            $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+            $ua = isset($_SERVER['HTTP_USER_AGENT']) && is_string($_SERVER['HTTP_USER_AGENT'])
+                ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT']))
+                : '';
             return md5($ip . '|' . $ua);
         }
 
@@ -132,7 +134,7 @@ if (!class_exists('MaBox_Rate_Limiter')) {
          */
         public static function permission_callback_with_nonce($endpoint, $nonce_action, $config = array())
         {
-            return function () use ($endpoint, $nonce_action, $config) {
+            return function ($request = null) use ($endpoint, $nonce_action, $config) {
                 $client_id = self::get_client_id();
                 $key = $endpoint . ':' . $client_id;
 
@@ -144,10 +146,14 @@ if (!class_exists('MaBox_Rate_Limiter')) {
                     );
                 }
 
-                $nonce = isset($_SERVER['HTTP_X_MABOX_NONCE']) ? $_SERVER['HTTP_X_MABOX_NONCE'] : '';
-                if (empty($nonce)) {
-                    $nonce = isset($_REQUEST['nonce']) ? $_REQUEST['nonce'] : '';
+                $nonce = '';
+                if (is_object($request) && method_exists($request, 'get_header')) {
+                    $nonce = $request->get_header('x-mabox-nonce');
                 }
+                if (empty($nonce) && is_object($request) && method_exists($request, 'get_param')) {
+                    $nonce = $request->get_param('nonce');
+                }
+                $nonce = is_string($nonce) ? sanitize_text_field($nonce) : '';
 
                 if (empty($nonce) || wp_verify_nonce($nonce, $nonce_action) === false) {
                     return new \WP_Error(

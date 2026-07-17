@@ -155,15 +155,37 @@ $this->add_new_str = __( '添加', 'magick-toolbox' );
             wp_die();
         }
 
-        // Verify nonce
-        if( !wp_verify_nonce( $_POST['nonce'], 'ts_ets_nonce' ) ) {
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Value is unslashed here, then type-checked and sanitized below.
+        $nonce_value = wp_unslash( $_POST['nonce'] );
+
+        if ( ! is_string( $nonce_value ) ) {
             wp_die();
         }
 
-        $id = intval($_POST['post_id']);
-        $thumb_id = intval($_POST['thumb_id']);
+        $nonce = sanitize_text_field( $nonce_value );
+
+        // Verify nonce
+        if( !wp_verify_nonce( $nonce, 'ts_ets_nonce' ) ) {
+            wp_die();
+        }
+
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Value is unslashed here, then type-checked and converted below.
+        $post_id = wp_unslash( $_POST['post_id'] );
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Value is unslashed here, then type-checked and converted below.
+        $thumbnail_id = wp_unslash( $_POST['thumb_id'] );
+
+        if ( ! is_string( $post_id ) || ! is_string( $thumbnail_id ) ) {
+            wp_die();
+        }
+
+        $id = absint( $post_id );
+        $thumb_id = absint( $thumbnail_id );
 
         if ($id <= 0 || $thumb_id <= 0) {
+            wp_die();
+        }
+
+        if ( ! current_user_can( 'edit_post', $id ) ) {
             wp_die();
         }
 
@@ -191,14 +213,34 @@ $this->add_new_str = __( '添加', 'magick-toolbox' );
             wp_die();
         }
 
-        // Verify nonce
-        if( !wp_verify_nonce( $_POST['nonce'], 'ts_ets_nonce' ) ) {
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Value is unslashed here, then type-checked and sanitized below.
+        $nonce_value = wp_unslash( $_POST['nonce'] );
+
+        if ( ! is_string( $nonce_value ) ) {
             wp_die();
         }
 
-        $id = intval($_POST['post_id']);
+        $nonce = sanitize_text_field( $nonce_value );
+
+        // Verify nonce
+        if( !wp_verify_nonce( $nonce, 'ts_ets_nonce' ) ) {
+            wp_die();
+        }
+
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Value is unslashed here, then type-checked and converted below.
+        $post_id = wp_unslash( $_POST['post_id'] );
+
+        if ( ! is_string( $post_id ) ) {
+            wp_die();
+        }
+
+        $id = absint( $post_id );
 
         if ($id <= 0) {
+            wp_die();
+        }
+
+        if ( ! current_user_can( 'edit_post', $id ) ) {
             wp_die();
         }
 

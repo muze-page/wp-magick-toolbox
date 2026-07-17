@@ -18,10 +18,7 @@ if (!class_exists('MaBox_Comment_Only_Once')) {
         // 获取评论用户的ip，参考wp-includes/comment.php
         public static function ludou_getIP()
         {
-            $ip = $_SERVER['REMOTE_ADDR'];
-            $ip = preg_replace('/[^0-9a-fA-F:., ]/', '', $ip);
-
-            return $ip;
+            return MaBox_Helpers::get_real_ip();
         }
         public static function ludou_only_one_comment($approved, $commentdata)
         {

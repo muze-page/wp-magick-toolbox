@@ -47,9 +47,9 @@ if (!class_exists('MaBox_Admin_Add_Time_Screen')) {
          */
         public static function form()
         {
-
-            $from = (isset($_GET['mishaDateFrom']) && $_GET['mishaDateFrom']) ? $_GET['mishaDateFrom'] : '';
-            $to = (isset($_GET['mishaDateTo']) && $_GET['mishaDateTo']) ? $_GET['mishaDateTo'] : '';
+            $dates = self::requested_dates();
+            $from = $dates['from'];
+            $to = $dates['to'];
 
             echo '<style>
             #ui-datepicker-div{
@@ -101,19 +101,21 @@ if (!class_exists('MaBox_Admin_Add_Time_Screen')) {
         {
             global $pagenow;
 
+            $dates = self::requested_dates();
+
             if (
                 is_admin()
                 && $admin_query->is_main_query()
                 // 默认情况下，过滤器将被添加到所有post类型中，您可以使用$_GET['post_type']来限制某些类型的过滤器
-                && in_array($pagenow, array('edit.php', 'upload.php'))
-                && (!empty($_GET['mishaDateFrom']) || !empty($_GET['mishaDateTo']))
+                && in_array($pagenow, array('edit.php', 'upload.php'), true)
+                && ('' !== $dates['from'] || '' !== $dates['to'])
             ) {
 
                 $admin_query->set(
                     'date_query', //我喜欢WordPress 3.7中出现的日期查询！
                     array(
-                        'after' => sanitize_text_field($_GET['mishaDateFrom']), // any strtotime()-acceptable format!
-                        'before' => sanitize_text_field($_GET['mishaDateTo']),
+                        'after' => $dates['from'], // any strtotime()-acceptable format!
+                        'before' => $dates['to'],
                         'inclusive' => true, // 还包括选定的日期
                         'column' => 'post_date', // 'post_modified', 'post_date_gmt', 'post_modified_gmt'
                     )
@@ -121,6 +123,27 @@ if (!class_exists('MaBox_Admin_Add_Time_Screen')) {
             }
 
             return $admin_query;
+        }
+
+        /**
+         * Read-only admin list filters do not change state, so they do not need a nonce.
+         *
+         * @return array{from: string, to: string}
+         */
+        private static function requested_dates()
+        {
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Read-only value is unslashed here, then type-checked and sanitized below.
+            $from_value = wp_unslash($_GET['mishaDateFrom'] ?? '');
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Read-only value is unslashed here, then type-checked and sanitized below.
+            $to_value = wp_unslash($_GET['mishaDateTo'] ?? '');
+
+            $from = is_string($from_value) ? sanitize_text_field($from_value) : '';
+            $to = is_string($to_value) ? sanitize_text_field($to_value) : '';
+
+            return array(
+                'from' => $from,
+                'to' => $to,
+            );
         }
     }
 }

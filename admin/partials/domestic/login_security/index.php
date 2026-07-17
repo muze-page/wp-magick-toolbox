@@ -254,7 +254,9 @@ if (!class_exists('MaBox_Domestic_Login_Security')) {
                 return null;
             }
 
-            $remote_addr = self::normalize_ip($_SERVER['REMOTE_ADDR']);
+            $remote_addr = self::normalize_ip(
+                sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']))
+            );
             if ($remote_addr === null) {
                 return null;
             }
@@ -267,12 +269,18 @@ if (!class_exists('MaBox_Domestic_Login_Security')) {
             if (
                 !isset($_SERVER['HTTP_X_FORWARDED_FOR'])
                 || !is_string($_SERVER['HTTP_X_FORWARDED_FOR'])
-                || trim($_SERVER['HTTP_X_FORWARDED_FOR']) === ''
             ) {
                 return null;
             }
 
-            $forwarded_chain = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $forwarded_for = sanitize_text_field(
+                wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR'])
+            );
+            if (trim($forwarded_for) === '') {
+                return null;
+            }
+
+            $forwarded_chain = explode(',', $forwarded_for);
             $chain = array();
             foreach ($forwarded_chain as $forwarded_ip) {
                 $normalized = self::normalize_ip($forwarded_ip);
@@ -338,15 +346,18 @@ if (!class_exists('MaBox_Domestic_Login_Security')) {
         }
 
         private static function is_anonymous_numeric_author_request() {
-            if (
-                is_user_logged_in()
-                || !isset($_GET['author'])
-                || is_array($_GET['author'])
-            ) {
+            if (is_user_logged_in()) {
                 return false;
             }
 
-            $author = trim((string) wp_unslash($_GET['author']));
+            // This only recognizes a read-only routing query; it does not mutate state.
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Anonymous author routing inspection cannot require a nonce.
+            if (!isset($_GET['author']) || !is_string($_GET['author'])) {
+                return false;
+            }
+
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Anonymous author routing inspection cannot require a nonce.
+            $author = trim(sanitize_text_field(wp_unslash($_GET['author'])));
             if ($author === '') {
                 return false;
             }

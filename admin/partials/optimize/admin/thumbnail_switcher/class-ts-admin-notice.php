@@ -97,24 +97,36 @@ if( !class_exists( 'TS_Admin_Notice' ) ) :
 
 			check_ajax_referer( 'ts_notice_dismiss', 'security' );
 
-			// 权限检查：任何登录用户都可以关闭通知
-			if ( ! is_user_logged_in() ) {
+			// 任何具有后台访问权限的用户都可以关闭自己的通知。
+			if ( ! current_user_can( 'read' ) ) {
 				wp_die( 'Unauthorized', 'Unauthorized', array( 'response' => 403 ) );
 			}
 
-			if( isset( $_POST['notice_id'] ) ) {
-
-				$uid = get_current_user_id();
-
-				$cookie = 'ts_notice_' . $_POST['notice_id'] . '_' . $uid . '_dismissed';
-
-				setcookie( $cookie, true, ( time() + YEAR_IN_SECONDS ), COOKIEPATH, COOKIE_DOMAIN );
-
-				delete_transient( $cookie );
-
-				set_transient( $cookie, true, 1 * YEAR_IN_SECONDS );
-
+			if ( ! isset( $_POST['notice_id'] ) ) {
+				wp_die( 'Invalid notice', 'Invalid notice', array( 'response' => 400 ) );
 			}
+
+			$uid = get_current_user_id();
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Value is unslashed here, then type-checked and sanitized below.
+			$notice_id_value = wp_unslash( $_POST['notice_id'] );
+
+			if ( ! is_string( $notice_id_value ) ) {
+				wp_die( 'Invalid notice', 'Invalid notice', array( 'response' => 400 ) );
+			}
+
+			$notice_id = sanitize_key( $notice_id_value );
+
+			if ( '' === $notice_id ) {
+				wp_die( 'Invalid notice', 'Invalid notice', array( 'response' => 400 ) );
+			}
+
+			$cookie = 'ts_notice_' . $notice_id . '_' . $uid . '_dismissed';
+
+			setcookie( $cookie, true, ( time() + YEAR_IN_SECONDS ), COOKIEPATH, COOKIE_DOMAIN );
+
+			delete_transient( $cookie );
+
+			set_transient( $cookie, true, 1 * YEAR_IN_SECONDS );
 
 			die();
 

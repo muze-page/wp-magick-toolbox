@@ -47,7 +47,9 @@ if (!class_exists('MaBox_Performance_Search_Enhance')) {
         }
         public static function ajax_log_search() {
             check_ajax_referer('mabox_public_nonce', 'nonce');
-            $term = isset($_POST['term']) ? sanitize_text_field($_POST['term']) : '';
+            $term = isset($_POST['term']) && is_string($_POST['term'])
+                ? sanitize_text_field(wp_unslash($_POST['term']))
+                : '';
             if (!empty($term)) {
                 MaBox_Search_Health::log_search_term($term, true);
             }

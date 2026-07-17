@@ -23,7 +23,9 @@ if (!class_exists('MaBox_Admin_Single_Add_User_Screen')) {
             //     return;
             // }
 
-            $selected = isset($_GET['user']) && $_GET['user'] ? $_GET['user'] : '';
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Read-only value is unslashed here, then type-checked and converted below.
+            $author = wp_unslash($_GET['author'] ?? '');
+            $selected = is_string($author) ? absint($author) : 0;
 
             wp_dropdown_users(
                 array(

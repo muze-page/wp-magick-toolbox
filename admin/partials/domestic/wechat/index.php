@@ -74,7 +74,9 @@ if (!class_exists('MaBox_Domestic_Wechat')) {
             wp_enqueue_script('mabox-wechat-guide-script');
         }
         private static function is_wechat_qq() {
-            $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+            $ua = isset($_SERVER['HTTP_USER_AGENT']) && is_string($_SERVER['HTTP_USER_AGENT'])
+                ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT']))
+                : '';
             return stripos($ua, 'MicroMessenger') !== false || stripos($ua, 'QQ') !== false;
         }
     }
