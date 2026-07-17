@@ -1,44 +1,37 @@
-//HTML 输入框
-import { useState } from "react";
+import React from "react";
 import { Input } from "antd";
-//反转义
 
-const unescapeHtmlTagsInString = (escapedString: string) => {
-  const tempElement = document.createElement("textarea");
-
-  tempElement.innerHTML = escapedString;
-
-  return tempElement.value;
+type TextAreaHtmlProps = Omit<
+  React.ComponentProps<typeof Input.TextArea>,
+  "defaultValue" | "onChange" | "value"
+> & {
+  value?: string;
+  onChange?: (value: string) => void;
 };
 
-const TextAreaHtml: React.FC = (props: any) => {
-  const { TextArea } = Input;
+const decodeHtmlTags = (value = "") => {
+  const textArea = document.createElement("textarea");
+  textArea.innerHTML = value;
 
-  const [textAreaValue, setTextAreaValue] = useState(
-    unescapeHtmlTagsInString(props.value)
-  );
-
-  const handleTextAreaChange = (e: any) => {
-    //对字符串进行转化
-
-    const data = e.target.value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-    //console.log(data);
-
-    setTextAreaValue(e.target.value); // 更新 textAreaValue 的值
-
-    props.onChange(data); //传出值
-  };
-
-  return (
-    <>
-      <TextArea
-        rows={4}
-        value={textAreaValue}
-        onChange={handleTextAreaChange}
-      />
-    </>
-  );
+  return textArea.value;
 };
+
+const encodeHtmlTags = (value: string) =>
+  value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const TextAreaHtml = React.forwardRef<
+  React.ElementRef<typeof Input.TextArea>,
+  TextAreaHtmlProps
+>(({ value = "", onChange, rows = 4, ...textAreaProps }, ref) => (
+  <Input.TextArea
+    {...textAreaProps}
+    ref={ref}
+    rows={rows}
+    value={decodeHtmlTags(value)}
+    onChange={(event) => onChange?.(encodeHtmlTags(event.target.value))}
+  />
+));
+
+TextAreaHtml.displayName = "TextAreaHtml";
 
 export default TextAreaHtml;
