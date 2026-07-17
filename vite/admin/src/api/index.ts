@@ -95,7 +95,7 @@ export const settingsApi = {
 // ========== 站点诊断 ==========
 export const diagnosticsApi = {
   getSummary: (): Promise<ApiResponse<DiagnosticSummary>> =>
-    restInstance.get("/diagnostics/summary") as Promise<any>,
+    restInstance.get<ApiResponse<DiagnosticSummary>, ApiResponse<DiagnosticSummary>>("/diagnostics/summary"),
 };
 
 // ========== 搜索健康 ==========

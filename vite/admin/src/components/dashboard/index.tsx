@@ -23,6 +23,14 @@ interface ToggleStats {
   total: number;
 }
 
+interface DiagnosticCounts {
+  total: number;
+  good: number;
+  warning: number;
+  critical: number;
+  moduleRisks: number;
+}
+
 interface SecurityCheck {
   label: string;
   detail: string;
@@ -43,6 +51,50 @@ const diagnosticStatusLabels: Record<DiagnosticSummary["status"], string> = {
   warning: "需要关注",
   critical: "需要处理",
 };
+
+const diagnosticStatuses = ["good", "warning", "critical"] as const;
+const moduleRiskTiers = ["high_risk", "experimental"] as const;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isDiagnosticItem(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+
+  return (
+    typeof value.id === "string" &&
+    typeof value.title === "string" &&
+    typeof value.message === "string" &&
+    diagnosticStatuses.includes(value.status as DiagnosticSummary["status"])
+  );
+}
+
+function isDiagnosticModuleRisk(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+
+  return (
+    typeof value.module_id === "string" &&
+    typeof value.title === "string" &&
+    typeof value.message === "string" &&
+    moduleRiskTiers.includes(value.tier as "high_risk" | "experimental")
+  );
+}
+
+function isDiagnosticSummary(value: unknown): value is DiagnosticSummary {
+  if (!isRecord(value)) return false;
+
+  return (
+    diagnosticStatuses.includes(value.status as DiagnosticSummary["status"]) &&
+    Array.isArray(value.items) &&
+    value.items.length > 0 &&
+    value.items.every(isDiagnosticItem) &&
+    Array.isArray(value.module_risks) &&
+    value.module_risks.every(isDiagnosticModuleRisk) &&
+    typeof value.generated_at === "string" &&
+    value.generated_at.trim() !== ""
+  );
+}
 
 function countBooleanToggles(value: unknown): ToggleStats {
   const stats: ToggleStats = { enabled: 0, total: 0 };
@@ -68,6 +120,41 @@ function getLoginSecurityEnabledCount(optionData: Option): number {
     loginSecurity?.attempt_limit_enabled,
     loginSecurity?.anonymous_author_guard_enabled,
   ].filter(Boolean).length;
+}
+
+function getDiagnosticCounts(summary: DiagnosticSummary): DiagnosticCounts {
+  return summary.items.reduce<DiagnosticCounts>(
+    (counts, item) => ({
+      ...counts,
+      [item.status]: counts[item.status] + 1,
+    }),
+    {
+      total: summary.items.length,
+      good: 0,
+      warning: 0,
+      critical: 0,
+      moduleRisks: summary.module_risks.length,
+    },
+  );
+}
+
+function getDiagnosticAttention(summary: DiagnosticSummary): string | null {
+  const itemTitles = [
+    ...summary.items.filter((item) => item.status === "critical"),
+    ...summary.items.filter((item) => item.status === "warning"),
+  ].map((item) => item.title);
+
+  if (itemTitles.length > 0) {
+    const displayedTitles = itemTitles.slice(0, 3).join("、");
+    return `待核对：${displayedTitles}${itemTitles.length > 3 ? `等 ${itemTitles.length} 项` : ""}`;
+  }
+
+  if (summary.module_risks.length > 0) {
+    const displayedTitles = summary.module_risks.slice(0, 3).map((risk) => risk.title).join("、");
+    return `需评估模块：${displayedTitles}${summary.module_risks.length > 3 ? `等 ${summary.module_risks.length} 项` : ""}`;
+  }
+
+  return null;
 }
 
 function getSecurityChecks(optionData: Option): SecurityCheck[] {
@@ -117,7 +204,6 @@ function getSecurityChecks(optionData: Option): SecurityCheck[] {
 
 function buildNextSteps(
   optionData: Option,
-  diagnosticState: RemoteState<DiagnosticSummary>,
   searchState: RemoteState<SearchHealthSummary>,
 ): NextStep[] {
   const steps: NextStep[] = [];
@@ -151,16 +237,6 @@ function buildNextSteps(
       description: "按站点实际情况决定是否启用文章级 SEO，而不是套用预设方案。",
       view: "seo",
       action: "管理内容与 SEO",
-    });
-  }
-
-  if (diagnosticState.status === "success" && diagnosticState.data.status !== "good") {
-    steps.push({
-      id: "diagnostics",
-      title: "处理站点诊断项",
-      description: `当前诊断为“${diagnosticStatusLabels[diagnosticState.data.status]}”，请逐项核对后再调整设置。`,
-      view: "maintenance",
-      action: "查看维护工具",
     });
   }
 
@@ -230,13 +306,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         setDiagnosticState({ status: "error", data: null });
         return;
       }
-      if (
-        !response.data ||
-        typeof response.data.score !== "number" ||
-        !["good", "warning", "critical"].includes(response.data.status) ||
-        !Array.isArray(response.data.items) ||
-        !Array.isArray(response.data.risks)
-      ) {
+      if (!isDiagnosticSummary(response.data)) {
         setDiagnosticState({ status: "empty", data: null });
         return;
       }
@@ -282,9 +352,17 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const stats = useMemo(() => countBooleanToggles(optionData), [optionData]);
   const securityChecks = useMemo(() => getSecurityChecks(optionData), [optionData]);
   const loginSecurityEnabledCount = useMemo(() => getLoginSecurityEnabledCount(optionData), [optionData]);
+  const diagnosticCounts = useMemo(
+    () => diagnosticState.status === "success" ? getDiagnosticCounts(diagnosticState.data) : null,
+    [diagnosticState],
+  );
+  const diagnosticAttention = useMemo(
+    () => diagnosticState.status === "success" ? getDiagnosticAttention(diagnosticState.data) : null,
+    [diagnosticState],
+  );
   const nextSteps = useMemo(
-    () => buildNextSteps(optionData, diagnosticState, searchState),
-    [diagnosticState, optionData, searchState],
+    () => buildNextSteps(optionData, searchState),
+    [optionData, searchState],
   );
   const navigate = (view: OverviewView, itemId?: string) => {
     if (itemId) {
@@ -345,13 +423,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           {diagnosticState.status === "loading" && (
             <div className="mabox-overview__state" role="status">
               <StateIcon name="loading" />
-              <div><strong>正在读取站点诊断</strong><span>请稍候，当前不会显示估算分数。</span></div>
+              <div><strong>正在读取站点诊断</strong><span>请稍候，正在核对运行环境。</span></div>
             </div>
           )}
           {diagnosticState.status === "error" && (
             <div className="mabox-overview__state mabox-overview__state--error" role="alert">
               <StateIcon name="error" />
-              <div><strong>站点诊断暂时不可用</strong><span>请求失败，当前没有可展示的诊断分数。</span></div>
+              <div><strong>站点诊断暂时不可用</strong><span>请求失败，当前没有可展示的检查结果。</span></div>
               <button type="button" onClick={() => void loadDiagnostics()}>重新获取</button>
             </div>
           )}
@@ -362,14 +440,23 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               <button type="button" onClick={() => void loadDiagnostics()}>重新检查</button>
             </div>
           )}
-          {diagnosticState.status === "success" && (
+          {diagnosticState.status === "success" && diagnosticCounts && (
             <div className="mabox-overview__diagnostic-result">
-              <div className="mabox-overview__score" aria-label={`站点诊断得分 ${diagnosticState.data.score} 分`}>
-                <strong>{diagnosticState.data.score}</strong><span>/ 100</span>
+              <div
+                className="mabox-overview__diagnostic-count"
+                aria-label={`站点诊断 ${diagnosticCounts.good} / ${diagnosticCounts.total} 项通过${diagnosticCounts.moduleRisks > 0 ? `，${diagnosticCounts.moduleRisks} 个模块风险` : ""}`}
+              >
+                <strong>{diagnosticCounts.good}</strong><span>/ {diagnosticCounts.total} 项通过</span>
               </div>
-              <div>
-                <p>{diagnosticState.data.items.length} 个检查项，{diagnosticState.data.risks.length} 个风险提示。</p>
-                {diagnosticState.data.generated_at && <span>生成于 {diagnosticState.data.generated_at}</span>}
+              <div className="mabox-overview__diagnostic-meta">
+                <p>
+                  {diagnosticCounts.warning} 项待关注，{diagnosticCounts.critical} 项需要处理；
+                  {diagnosticCounts.moduleRisks > 0
+                    ? `${diagnosticCounts.moduleRisks} 个高风险或实验性模块已启用。`
+                    : "未启用高风险或实验性模块。"}
+                </p>
+                {diagnosticAttention && <span>{diagnosticAttention}</span>}
+                <small>生成于 {diagnosticState.data.generated_at}</small>
               </div>
             </div>
           )}

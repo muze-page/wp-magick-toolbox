@@ -103,55 +103,13 @@ export interface DiagnosticItem {
   title: string;
   status: "good" | "warning" | "critical";
   message: string;
-  action?: string;
 }
 
-export interface DiagnosticRecommendation {
-  id: string;
-  title: string;
-  module: string;
-  field: string;
-  reason: string;
-}
-
-export interface DiagnosticRisk {
+export interface DiagnosticModuleRisk {
   module_id: string;
-  tier: "config" | "high_risk" | "experimental";
+  tier: "high_risk" | "experimental";
   title: string;
   message: string;
-}
-
-export interface DiagnosticServiceHint {
-  type: string;
-  message: string;
-}
-
-export interface DiagnosticFixChange {
-  path: string;
-  label: string;
-  before: any;
-  after: any;
-  risk_level: "none" | "low" | "high";
-}
-
-export interface DiagnosticFixSuggestion {
-  id: string;
-  title: string;
-  reason: string;
-  severity: "low" | "medium" | "high";
-  module: string;
-  requires_confirmation: boolean;
-  changes: DiagnosticFixChange[];
-}
-
-export interface DiagnosticEnvironment {
-  php_version: string;
-  wp_version: string;
-  plugin_version: string;
-  permalink: string;
-  object_cache: boolean;
-  rest_api_available: boolean;
-  site_url: string;
 }
 
 export interface ConfigDiffItem {
@@ -164,15 +122,10 @@ export interface ConfigDiffItem {
 }
 
 export interface DiagnosticSummary {
-  score: number;
   status: "good" | "warning" | "critical";
   items: DiagnosticItem[];
-  recommendations: DiagnosticRecommendation[];
-  risks: DiagnosticRisk[];
-  service_hints: DiagnosticServiceHint[];
-  generated_at?: string;
-  environment?: DiagnosticEnvironment;
-  fix_suggestions?: DiagnosticFixSuggestion[];
+  module_risks: DiagnosticModuleRisk[];
+  generated_at: string;
 }
 
 export interface SearchHealthTerm {

@@ -17,15 +17,12 @@ vi.mock("@/api", () => ({
 }));
 
 const diagnosticSummary: DiagnosticSummary = {
-  score: 92,
   status: "good",
   items: [
-    { id: "rest", title: "REST API", status: "good", message: "可用" },
-    { id: "cache", title: "对象缓存", status: "warning", message: "未启用" },
+    { id: "php", title: "PHP 版本", status: "good", message: "满足要求" },
+    { id: "wp", title: "WordPress 版本", status: "good", message: "满足要求" },
   ],
-  recommendations: [],
-  risks: [],
-  service_hints: [],
+  module_risks: [],
   generated_at: "2026-07-15 10:30:00",
 };
 
@@ -96,17 +93,91 @@ describe("现代概览页", () => {
     expect(screen.getByText("正在汇总搜索数据")).toBeInTheDocument();
   });
 
-  it("使用接口返回的真实诊断分数和搜索统计", async () => {
+  it("使用接口返回的真实检查计数和搜索统计", async () => {
     apiMocks.getDiagnosticsSummary.mockResolvedValue({ success: true, data: diagnosticSummary });
     apiMocks.getSearchSummary.mockResolvedValue({ success: true, data: searchSummary });
 
     renderDashboard();
 
-    expect(await screen.findByLabelText("站点诊断得分 92 分")).toBeInTheDocument();
+    expect(await screen.findByLabelText("站点诊断 2 / 2 项通过")).toBeInTheDocument();
+    expect(screen.getByText("0 项待关注，0 项需要处理；未启用高风险或实验性模块。")).toBeInTheDocument();
     expect(screen.getByText("状态良好")).toBeInTheDocument();
     expect(screen.getByText("128")).toBeInTheDocument();
     expect(screen.getByText("24")).toBeInTheDocument();
     expect(screen.getByText("2", { selector: "dd" })).toBeInTheDocument();
+  });
+
+  it("没有模块风险但存在待关注检查项时解释需要关注的原因", async () => {
+    apiMocks.getDiagnosticsSummary.mockResolvedValue({
+      success: true,
+      data: {
+        ...diagnosticSummary,
+        status: "warning",
+        items: [
+          { id: "php", title: "PHP 版本", status: "good", message: "满足要求" },
+          { id: "wp", title: "WordPress 版本", status: "warning", message: "建议升级" },
+        ],
+      },
+    });
+    apiMocks.getSearchSummary.mockResolvedValue({ success: true, data: emptySearchSummary });
+
+    renderDashboard();
+
+    expect(await screen.findByLabelText("站点诊断 1 / 2 项通过")).toBeInTheDocument();
+    expect(screen.getByText("1 项待关注，0 项需要处理；未启用高风险或实验性模块。")).toBeInTheDocument();
+    expect(screen.getByText("待核对：WordPress 版本")).toBeInTheDocument();
+    expect(screen.queryByLabelText("站点诊断得分 54 分")).not.toBeInTheDocument();
+  });
+
+  it("关键问题优先于普通待关注项展示", async () => {
+    apiMocks.getDiagnosticsSummary.mockResolvedValue({
+      success: true,
+      data: {
+        ...diagnosticSummary,
+        status: "critical",
+        items: [
+          { id: "wp", title: "WordPress 版本", status: "warning", message: "建议升级" },
+          { id: "php", title: "PHP 版本", status: "critical", message: "版本过低" },
+          { id: "runtime", title: "运行环境", status: "good", message: "正常" },
+        ],
+      },
+    });
+    apiMocks.getSearchSummary.mockResolvedValue({ success: true, data: emptySearchSummary });
+
+    renderDashboard();
+
+    expect(await screen.findByLabelText("站点诊断 1 / 3 项通过")).toBeInTheDocument();
+    expect(screen.getByText("1 项待关注，1 项需要处理；未启用高风险或实验性模块。")).toBeInTheDocument();
+    expect(screen.getByText("待核对：PHP 版本、WordPress 版本")).toBeInTheDocument();
+    expect(screen.getByText("需要处理")).toBeInTheDocument();
+  });
+
+  it("检查项通过但启用风险模块时明确说明模块风险", async () => {
+    apiMocks.getDiagnosticsSummary.mockResolvedValue({
+      success: true,
+      data: {
+        ...diagnosticSummary,
+        status: "warning",
+        module_risks: [
+          {
+            module_id: "performance.db_clean",
+            tier: "high_risk",
+            title: "数据库清理",
+            message: "该模块被标记为高风险",
+          },
+        ],
+      },
+    });
+    apiMocks.getSearchSummary.mockResolvedValue({ success: true, data: emptySearchSummary });
+
+    renderDashboard();
+
+    expect(await screen.findByLabelText("站点诊断 2 / 2 项通过，1 个模块风险")).toBeInTheDocument();
+    expect(screen.getByText("0 项待关注，0 项需要处理；1 个高风险或实验性模块已启用。")).toBeInTheDocument();
+    expect(screen.getByText("需评估模块：数据库清理")).toBeInTheDocument();
+    const diagnosticPanel = screen.getByRole("heading", { name: "站点诊断" }).closest("section");
+    expect(diagnosticPanel).not.toBeNull();
+    expect(within(diagnosticPanel as HTMLElement).getByText("需要关注")).toBeInTheDocument();
   });
 
   it("接口失败时明确标记不可用且不显示默认 60 分", async () => {
@@ -134,7 +205,7 @@ describe("现代概览页", () => {
   it("成功响应缺少必需数组时降级为空状态而不是渲染崩溃", async () => {
     apiMocks.getDiagnosticsSummary.mockResolvedValue({
       success: true,
-      data: { score: 88, status: "good" },
+      data: { ...diagnosticSummary, items: [] },
     });
     apiMocks.getSearchSummary.mockResolvedValue({
       success: true,
@@ -145,6 +216,19 @@ describe("现代概览页", () => {
 
     expect(await screen.findByText("暂无诊断数据")).toBeInTheDocument();
     expect(screen.getByText("暂无搜索数据")).toBeInTheDocument();
+  });
+
+  it("诊断数组包含无效成员时降级为空状态", async () => {
+    apiMocks.getDiagnosticsSummary.mockResolvedValue({
+      success: true,
+      data: { ...diagnosticSummary, items: [null] },
+    });
+    apiMocks.getSearchSummary.mockResolvedValue({ success: true, data: emptySearchSummary });
+
+    renderDashboard();
+
+    expect(await screen.findByText("暂无诊断数据")).toBeInTheDocument();
+    expect(screen.queryByText("NaN")).not.toBeInTheDocument();
   });
 
   it("错误状态可以分别重试", async () => {

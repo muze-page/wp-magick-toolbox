@@ -126,6 +126,7 @@ return array(
         'option_key'=> 'optimize.medium.no_auto_size',
         'category'  => 'optimize',
         'scope'     => 'admin',
+        'label'     => '禁止缩略图',
         'risk_tags' => array('谨慎', '需主题兼容'),
     ),
     'optimize.svg_support' => array(
@@ -243,6 +244,7 @@ return array(
         'option_key'=> 'page.function.add_inks',
         'category'  => 'page',
         'scope'     => 'frontend',
+        'label'     => '关键词自动内链',
     ),
     'page.add_article_update_time' => array(
         'class'     => 'MaBox_Single_Add_Last_Updated_Date',
@@ -298,6 +300,7 @@ return array(
         'category'  => 'page',
         'scope'     => 'frontend',
         'config_path' => 'page.jurisdiction',
+        'label'     => '隐藏指定分类文章',
         'risk_tags' => array('仅前台'),
     ),
     'page.hide_tag' => array(
@@ -307,6 +310,7 @@ return array(
         'category'  => 'page',
         'scope'     => 'frontend',
         'config_path' => 'page.jurisdiction',
+        'label'     => '隐藏指定标签文章',
         'risk_tags' => array('仅前台'),
     ),
     'page.hide_page' => array(
@@ -316,6 +320,7 @@ return array(
         'category'  => 'page',
         'scope'     => 'frontend',
         'config_path' => 'page.jurisdiction',
+        'label'     => '隐藏指定页面',
         'risk_tags' => array('仅前台'),
     ),
 
@@ -385,6 +390,7 @@ return array(
         'category'  => 'function',
         'scope'     => 'frontend',
         'config_path' => 'function.auxiliary',
+        'label'     => '百度统计',
     ),
     'auxiliary.google_tonji' => array(
         'class'     => 'MaBox_Google_Tonji',
@@ -393,6 +399,7 @@ return array(
         'category'  => 'function',
         'scope'     => 'frontend',
         'config_path' => 'function.auxiliary',
+        'label'     => 'Google Analytics',
     ),
     'auxiliary.biying_tonji' => array(
         'class'     => 'MaBox_Biying_Tonji',
@@ -401,6 +408,7 @@ return array(
         'category'  => 'function',
         'scope'     => 'frontend',
         'config_path' => 'function.auxiliary',
+        'label'     => '必应统计',
     ),
 
     // ========== 导入导出 ==========
@@ -527,6 +535,7 @@ return array(
         'category'  => 'performance',
         'scope'     => 'admin',
         'config_path' => 'performance.db_clean',
+        'label'     => '数据库清理优化',
         'risk_tags' => array('高风险', '不可逆'),
     ),
 );

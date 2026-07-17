@@ -234,25 +234,32 @@
   min-height: 96px;
 }
 
-.mabox-overview__score {
+.mabox-overview__diagnostic-count {
   align-items: baseline;
   display: flex;
   min-width: 112px;
 }
 
-.mabox-overview__score strong {
+.mabox-overview__diagnostic-count strong {
   font-size: 42px;
   line-height: 1;
 }
 
-.mabox-overview__score span,
-.mabox-overview__diagnostic-result p + span {
+.mabox-overview__diagnostic-count span,
+.mabox-overview__diagnostic-meta > span,
+.mabox-overview__diagnostic-meta > small {
   color: var(--mabox-overview-muted);
 }
 
 .mabox-overview__diagnostic-result p {
   line-height: 1.55;
   margin: 0 0 5px;
+}
+
+.mabox-overview__diagnostic-meta > span,
+.mabox-overview__diagnostic-meta > small {
+  display: block;
+  line-height: 1.5;
 }
 
 .mabox-overview__search-metrics {
