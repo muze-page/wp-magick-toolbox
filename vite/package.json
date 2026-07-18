@@ -1,6 +1,6 @@
 {
   "name": "npcink-site-toolbox-frontend",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.33.0",
@@ -17,7 +17,8 @@
     "lint:count": "eslint count --ext ts,tsx --report-unused-disable-directives",
     "lint": "pnpm run lint:admin && pnpm run lint:count",
     "test:admin": "vitest run --root admin",
-    "test": "pnpm run test:admin",
+    "test:block": "node ../tests/js/site-stats-editor-contract.mjs",
+    "test": "pnpm run test:admin && pnpm run test:block",
     "test:coverage": "vitest run --root admin --coverage --maxWorkers=2 --minWorkers=2",
     "preview:admin": "vite preview admin --config admin/vite.config.ts",
     "preview:count": "vite preview count --config count/vite.config.ts"

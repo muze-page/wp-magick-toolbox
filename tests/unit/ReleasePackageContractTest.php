@@ -89,6 +89,10 @@ class ReleasePackageContractTest extends TestCase
         $this->assertStringContainsString('trap cleanup', $build);
         $this->assertStringContainsString('"$VERIFY_SCRIPT" "$temporary_zip"', $build);
         foreach (array(
+            'blocks/site-stats/block.json',
+            'blocks/site-stats/index.js',
+            'blocks/site-stats/index.asset.php',
+            'blocks/site-stats/style.css',
             'vite/admin/dist/index.js',
             'vite/admin/dist/index.css',
             'vite/count/dist/index.js',
@@ -418,6 +422,10 @@ BASH
             'admin/class-magick-mixture-admin.php' => "<?php\n",
             'admin/partials/optimize/site/category_link_simplify.php' => "<?php\n",
             'public/class-magick-mixture-public.php' => "<?php\n",
+            'blocks/site-stats/block.json' => '{"name":"npcink/site-stats"}',
+            'blocks/site-stats/index.js' => 'void 0;',
+            'blocks/site-stats/index.asset.php' => "<?php\nreturn array('dependencies' => array(), 'version' => '9.8.7');\n",
+            'blocks/site-stats/style.css' => '.npcink-site-stats{}',
             'vite/admin/dist/index.js' => 'void 0;',
             'vite/admin/dist/index.css' => '.mabox{}',
             'vite/count/dist/index.js' => 'void 0;',

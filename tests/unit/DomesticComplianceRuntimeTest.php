@@ -5,7 +5,7 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
 if (!defined('MAGICK_MIXTURE_VERSION')) {
-    define('MAGICK_MIXTURE_VERSION', '3.1.1');
+    define('MAGICK_MIXTURE_VERSION', '3.2.0');
 }
 if (!defined('DAY_IN_SECONDS')) {
     define('DAY_IN_SECONDS', 86400);

@@ -2,10 +2,10 @@
 Contributors: muze233
 Donate link: https://www.npc.ink/
 Tags: toolbox, optimization, security, performance
-Requires at least: 6.0
+Requires at least: 6.3
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 3.1.1
+Stable tag: 3.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ An opt-in toolbox for WordPress site settings, media, SEO, security, China-focus
 
 == Description ==
 
-Npcink Site Toolbox is a utility plugin for WordPress site owners. Version 3.1.1 provides 55 opt-in modules in seven task-oriented admin views. Features cover site and media settings, content and SEO, login and comment safeguards, China-focused integrations, diagnostics, and maintenance.
+Npcink Site Toolbox is a utility plugin for WordPress site owners. Version 3.2.0 provides 55 opt-in modules, three editor patterns, and a dynamic site-statistics block. Features cover site and media settings, content and SEO, login and comment safeguards, China-focused integrations, diagnostics, and maintenance.
 
 = Current features =
 
@@ -24,6 +24,7 @@ Npcink Site Toolbox is a utility plugin for WordPress site owners. Version 3.1.1
 * China-focused integrations: ICP information, WeChat JSSDK, cookie notice, and optional object storage.
 * Maintenance: diagnostics, SEO checks, media health, and guarded database cleanup.
 * Admin experience: feature search, risk labels, change confirmation, secret-status handling, and responsive layouts.
+* Editor tools: three core-block patterns plus a live site-statistics block with selectable metrics.
 
 = Important behavior =
 
@@ -101,7 +102,16 @@ The public, maintained source for the minified JavaScript and CSS shipped in thi
 
 The generated files are written to `vite/admin/dist/` and `vite/count/dist/`.
 
+The site-statistics block editor script is shipped as readable source in `blocks/site-stats/index.js`; it has no separate build step.
+
 == Changelog ==
+
+= 3.2.0 =
+* Release date: 2026-07-18.
+* Added editor patterns for resource downloads, article conclusions, and source/copyright notes.
+* Added a dynamic site-statistics block with live article, comment, category, and user counts.
+* Reused one statistics provider across the block and legacy widget instead of duplicating count logic.
+* Kept the editor script as readable, build-free source so the block does not create another Vite target or Node dependency.
 
 = 3.1.1 =
 * Release date: 2026-07-18.
@@ -194,6 +204,9 @@ The generated files are written to `vite/admin/dist/` and `vite/count/dist/`.
 * Vite 构建工具迁移
 
 == Upgrade Notice ==
+
+= 3.2.0 =
+Requires WordPress 6.3 or later and adds editor-native patterns and a live site-statistics block.
 
 = 3.1.1 =
 Fixes configured compliance notices and makes restricted-content output more reliable.

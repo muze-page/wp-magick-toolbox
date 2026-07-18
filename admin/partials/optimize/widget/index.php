@@ -41,18 +41,8 @@ if (!class_exists('MaBox_Widgets')) {
                 echo $args['before_title'] . esc_html($instance['title']) . $args['after_title'];
             }
 
-            $post_count = wp_count_posts('post')->publish;
-            $comment_count = wp_count_comments()->approved;
-            $user_count = count_users();
-            $user_total = $user_count['total_users'];
-            $category_count = wp_count_terms('category');
-
-            echo '<ul class="mabox-widget-stats">';
-            echo '<li><span class="stat-label">文章</span><span class="stat-value">' . esc_html($post_count) . '</span></li>';
-            echo '<li><span class="stat-label">评论</span><span class="stat-value">' . esc_html($comment_count) . '</span></li>';
-            echo '<li><span class="stat-label">分类</span><span class="stat-value">' . esc_html($category_count) . '</span></li>';
-            echo '<li><span class="stat-label">用户</span><span class="stat-value">' . esc_html($user_total) . '</span></li>';
-            echo '</ul>';
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes labels, values, and class attributes.
+            echo MaBox_Site_Stats::render_items(array(), 'mabox-widget-stats');
 
             // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Trusted wrapper HTML supplied by the active theme via the Widgets API.
             echo $args['after_widget'];

@@ -2,7 +2,7 @@
 
 ## 环境要求
 
-- WordPress 6.0 或更高版本
+- WordPress 6.3 或更高版本
 - PHP 7.4 或更高版本
 - Chrome、Firefox、Safari 或 Edge 等现代浏览器
 

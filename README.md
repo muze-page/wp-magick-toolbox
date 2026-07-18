@@ -1,12 +1,12 @@
 # Npcink Site Toolbox
 
 > 面向中国 WordPress 站长的一站式实用工具箱插件
-> 版本：**3.1.1** | 阶段：**WordPress.org 提交准备中** | 授权：**GPL-2.0**
+> 版本：**3.2.0** | 阶段：**特色区块开发** | 授权：**GPL-2.0**
 
-`3.1.1` 是首次 WordPress.org 提交候选，修复了合规输出和受限内容的运行问题。现有历史标签和附件保持不变。
+`3.1.1` 是已发布的首次 WordPress.org 提交候选；`3.2.0` 在此基础上增加编辑器原生样板和动态站点数据区块。现有历史标签和附件保持不变。
 
 [![CI](https://github.com/muze-page/npcink-site-toolbox/actions/workflows/ci.yml/badge.svg)](https://github.com/muze-page/npcink-site-toolbox/actions/workflows/ci.yml)
-[![WordPress Plugin](https://img.shields.io/badge/WordPress-6.0%2B-blue)](https://wordpress.org)
+[![WordPress Plugin](https://img.shields.io/badge/WordPress-6.3%2B-blue)](https://wordpress.org)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green)](https://php.net)
 [![License](https://img.shields.io/badge/License-GPL%202.0-orange)](LICENSE)
 
@@ -14,7 +14,7 @@
 
 ## 简介
 
-Npcink Site Toolbox 是一款面向中国 WordPress 站长的免费工具箱插件。3.1.1 以 55 个注册模块为运行边界，通过七个语义化管理视图提供站点优化、内容与 SEO、登录安全、国内生态和维护诊断等能力。
+Npcink Site Toolbox 是一款面向中国 WordPress 站长的免费工具箱插件。3.2.0 以 55 个注册模块为设置运行边界，并增加 3 个核心区块样板和 1 个动态站点数据区块；七个语义化管理视图继续承载站点优化、内容与 SEO、登录安全、国内生态和维护诊断等能力。
 
 **核心定位**：在一个插件内集中提供可按需启用的常见站点设置与维护工具。
 
@@ -60,6 +60,8 @@ pnpm dev:admin
 
 在 `vite/` 下执行 `pnpm build` 会构建两个目标；也可使用 `pnpm build:admin` 或 `pnpm build:count` 单独构建。已退役的 `vite/public` 不属于发布包；仓库根目录 `public/` 仍是 WordPress 前台 PHP/CSS 运行层，二者不要混淆。
 
+“站点数据”区块的编辑器脚本位于 `blocks/site-stats/index.js`，以可读源码直接发布，不需要新增构建目标。
+
 ---
 
 ## 功能概览
@@ -68,6 +70,7 @@ pnpm dev:admin
 |------|----------|
 | 站点与媒体 | 链接、上传、图片和后台列表优化 |
 | 内容与 SEO | 评论治理、TDK、统计和内容维护 |
+| 区块编辑器 | 资源下载、文章结论、来源版权样板，以及动态站点数据 |
 | 安全 | 登录尝试保护，以及面向匿名请求的作者枚举限制 |
 | 国内生态 | 备案合规、微信 JSSDK、Cookie 弹窗和 OSS 对接 |
 | 维护工具 | 站点体检、SEO 检查、媒体体检和数据库清理 |
@@ -78,7 +81,7 @@ pnpm dev:admin
 
 ## 技术架构
 
-- **后端**：PHP 7.4+，WordPress Plugin Boilerplate 变体，模块注册表机制
+- **后端**：PHP 7.4+、WordPress 6.3+，WordPress Plugin Boilerplate 变体，模块注册表机制
 - **前端工程**：React + TypeScript + Vite，共享依赖与工具链
 - **独立产物**：后台设置页的导航、搜索、状态和保存外壳使用原生 React/WordPress 管理样式，复杂表单按需加载 Ant Design；发文统计页使用 ECharts，两组产物均只在对应后台页面加载
 - **图表**：ECharts + 自研统计组件
@@ -102,6 +105,13 @@ pnpm dev:admin
 ---
 
 ## 更新记录
+
+### 3.2.0 — 2026-07-18
+
+- 增加资源下载、文章结论、来源与版权说明 3 个核心区块样板
+- 增加动态“站点数据”区块，可选择显示文章、评论、分类和用户数量
+- 动态区块与旧站点统计小工具复用同一统计服务，不重复维护查询逻辑
+- 最低 WordPress 版本提高到 6.3；编辑器脚本保持为可读、无需构建的源码，不增加第三个 Vite 目标
 
 ### 3.1.1 — 2026-07-18
 

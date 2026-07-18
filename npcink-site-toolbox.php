@@ -6,10 +6,10 @@ defined('ABSPATH') || exit;
  * Plugin Name: Npcink Site Toolbox
  * Description: An opt-in toolbox for site settings, media, SEO, security, integrations, diagnostics, and maintenance.
  * Plugin URI: https://www.npc.ink/277510.html
- * Version: 3.1.1
+ * Version: 3.2.0
  * Author: Npcink
  * Author URI: https://www.npc.ink/
- * Requires at least: 6.0
+ * Requires at least: 6.3
  * Requires PHP:      7.4
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -29,7 +29,7 @@ if (!defined('WPINC')) {
 //定义插件名
 define('MAGICK_MIXTURE_NAME', 'npcink-site-toolbox');
 //定义插件版本
-define('MAGICK_MIXTURE_VERSION', '3.1.1');
+define('MAGICK_MIXTURE_VERSION', '3.2.0');
 define('MAGICK_TOOLBOX_ACTIVE_MODULES', 'Magick_ToolBox_Active_Modules');
 
 /**

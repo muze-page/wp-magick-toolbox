@@ -130,6 +130,7 @@ class Magick_Mixture
     public function run()
     {
         add_action('init', array('MaBox_Block_Patterns', 'register'));
+        add_action('init', array('MaBox_Site_Stats', 'register_block'));
 
         //对js文件进行module接入
         add_filter('script_loader_tag', array(__CLASS__, 'refund_type_script'), 10, 2);

@@ -20,7 +20,7 @@ final class OptimizeOutputEscapingTest extends TestCase
         );
         $this->assertSame(2, substr_count($source, "echo \$args['after_widget'];"));
         $this->assertSame(
-            6,
+            7,
             substr_count($source, 'phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped')
         );
         $this->assertStringNotContainsString("wp_kses_post(\$args[", $source);

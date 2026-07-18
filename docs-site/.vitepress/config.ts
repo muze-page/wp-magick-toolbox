@@ -141,6 +141,12 @@ export default defineConfig({
           ],
         },
         {
+          text: '区块编辑器',
+          items: [
+            { text: '特色样板与站点数据', link: '/features/editor-tools' },
+          ],
+        },
+        {
           text: '登录安全',
           items: [
             { text: '登录尝试保护', link: '/features/login-security/login-attempt-protection' },

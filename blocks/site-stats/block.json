@@ -1,0 +1,49 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "npcink/site-stats",
+  "version": "3.2.0",
+  "title": "站点数据",
+  "category": "widgets",
+  "icon": "chart-bar",
+  "description": "展示文章、评论、分类和用户数量，并始终读取当前站点数据。",
+  "keywords": [ "统计", "数据", "站点" ],
+  "textdomain": "npcink-site-toolbox",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "站点数据"
+    },
+    "showPosts": {
+      "type": "boolean",
+      "default": true
+    },
+    "showComments": {
+      "type": "boolean",
+      "default": true
+    },
+    "showCategories": {
+      "type": "boolean",
+      "default": true
+    },
+    "showUsers": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": [ "wide", "full" ],
+    "anchor": true,
+    "color": {
+      "background": true,
+      "text": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "style": "file:./style.css"
+}

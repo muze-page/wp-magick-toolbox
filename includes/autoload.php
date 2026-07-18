@@ -84,6 +84,7 @@ spl_autoload_register(function ($class) {
         'MaBox_Single_First_Picture' => 'admin/partials/page/function/first_picture.php',
         'MaBox_Single_Keyword_Add_Link' => 'admin/partials/page/function/single_keyword_add_link.php',
         'MaBox_Site_Health' => 'includes/class-magick-site-health.php',
+        'MaBox_Site_Stats' => 'includes/class-mabox-site-stats.php',
 
                 'MaBox_Tool' => 'includes/class-magick-mixture-tool.php',
         'MaBox_Unlisted_Vague_Img' => 'admin/partials/page/function/unlisted_vague_img.php',
