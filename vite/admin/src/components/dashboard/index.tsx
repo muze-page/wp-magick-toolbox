@@ -501,6 +501,59 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         </section>
       </div>
 
+      <section
+        className="mabox-overview__panel mabox-overview__editor-tools"
+        aria-labelledby="editor-tools-heading"
+      >
+        <div className="mabox-overview__panel-heading">
+          <div>
+            <p className="mabox-overview__eyebrow">内容编辑</p>
+            <h3 id="editor-tools-heading">编辑器工具</h3>
+            <p className="mabox-overview__editor-tools-summary">
+              3 个可编辑样板和 1 个实时数据区块，只在文章或页面编辑器中使用。
+            </p>
+          </div>
+          <span className="mabox-overview__badge">4 项可用</span>
+        </div>
+
+        <div className="mabox-overview__editor-tools-body">
+          <dl className="mabox-overview__editor-tools-list">
+            <div>
+              <dt>样板</dt>
+              <dd>资源下载、文章结论、来源与版权说明</dd>
+            </div>
+            <div>
+              <dt>动态区块</dt>
+              <dd>站点数据（文章、评论、分类与用户数量）</dd>
+            </div>
+          </dl>
+
+          <div className="mabox-overview__editor-tools-actions">
+            <p>在区块插入器中选择 Npcink Site Toolbox，或搜索“站点数据”。</p>
+            <div>
+              <a
+                className="button button-primary mabox-overview__editor-link"
+                href="post-new.php"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                新建文章使用
+                <span className="dashicons dashicons-external" aria-hidden="true" />
+              </a>
+              <a
+                className="button mabox-overview__editor-link"
+                href="post-new.php?post_type=page"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                新建页面
+                <span className="dashicons dashicons-external" aria-hidden="true" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div className="mabox-overview__work-grid">
         <section className="mabox-overview__panel" aria-labelledby="next-steps-heading">
           <div className="mabox-overview__panel-heading">

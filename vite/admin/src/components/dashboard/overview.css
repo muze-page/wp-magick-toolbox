@@ -181,6 +181,85 @@
   color: var(--mabox-overview-critical);
 }
 
+.mabox-overview__editor-tools {
+  display: grid;
+  gap: 0;
+}
+
+.mabox-overview__editor-tools > .mabox-overview__panel-heading {
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.mabox-overview__editor-tools-summary,
+.mabox-overview__editor-tools-actions > p {
+  color: var(--mabox-overview-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.mabox-overview__editor-tools-summary {
+  margin-top: 5px;
+}
+
+.mabox-overview__editor-tools-body {
+  border-top: 1px solid #ececec;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, .8fr);
+  margin-top: 18px;
+  padding-top: 16px;
+}
+
+.mabox-overview__editor-tools-list {
+  display: grid;
+  gap: 11px;
+  margin: 0;
+}
+
+.mabox-overview__editor-tools-list div {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 82px minmax(0, 1fr);
+}
+
+.mabox-overview__editor-tools-list dt {
+  color: var(--mabox-overview-muted);
+  font-weight: 600;
+}
+
+.mabox-overview__editor-tools-list dd {
+  line-height: 1.55;
+  margin: 0;
+}
+
+.mabox-overview__editor-tools-actions {
+  align-content: start;
+  display: grid;
+  gap: 12px;
+}
+
+.mabox-overview__editor-tools-actions > div {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mabox-overview__editor-link {
+  align-items: center;
+  display: inline-flex;
+  gap: 5px;
+  justify-content: center;
+  min-height: 36px;
+}
+
+.mabox-overview__editor-link .dashicons {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+}
+
 .mabox-overview__state {
   align-items: flex-start;
   background: var(--mabox-overview-bg);
@@ -405,6 +484,10 @@
   .mabox-overview__work-grid {
     grid-template-columns: 1fr;
   }
+
+  .mabox-overview__editor-tools-body {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -435,6 +518,20 @@
 
   .mabox-overview__state button {
     grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .mabox-overview__editor-tools-list div {
+    gap: 4px;
+    grid-template-columns: 1fr;
+  }
+
+  .mabox-overview__editor-tools-actions > div {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mabox-overview__editor-link {
     width: 100%;
   }
 

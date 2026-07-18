@@ -113,6 +113,7 @@ The site-statistics block editor script is shipped as readable source in `blocks
 * Reused one statistics provider across the block and legacy widget instead of duplicating count logic.
 * Kept the editor script as readable, build-free source so the block does not create another Vite target or Node dependency.
 * Unified long admin settings pages with accessible, search-aware secondary tabs while keeping compact views direct.
+* Added an overview guide with direct post and page editor links for using the bundled patterns and site-statistics block.
 
 = 3.1.1 =
 * Release date: 2026-07-18.

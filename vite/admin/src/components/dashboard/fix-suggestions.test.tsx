@@ -261,6 +261,27 @@ describe("现代概览页", () => {
     expect(onNavigate).not.toHaveBeenCalledWith("13", expect.anything());
   });
 
+  it("提供编辑器工具说明和不会丢失当前页面的文章页面入口", () => {
+    apiMocks.getDiagnosticsSummary.mockReturnValue(new Promise(() => {}));
+    apiMocks.getSearchSummary.mockReturnValue(new Promise(() => {}));
+
+    renderDashboard();
+
+    const editorTools = screen.getByRole("region", { name: "编辑器工具" });
+    expect(within(editorTools).getByText("3 个可编辑样板和 1 个实时数据区块，只在文章或页面编辑器中使用。")).toBeInTheDocument();
+    expect(within(editorTools).getByText("资源下载、文章结论、来源与版权说明")).toBeInTheDocument();
+    expect(within(editorTools).getByText("站点数据（文章、评论、分类与用户数量）")).toBeInTheDocument();
+
+    const postLink = within(editorTools).getByRole("link", { name: "新建文章使用" });
+    const pageLink = within(editorTools).getByRole("link", { name: "新建页面" });
+    expect(postLink).toHaveAttribute("href", "post-new.php");
+    expect(pageLink).toHaveAttribute("href", "post-new.php?post_type=page");
+    expect(postLink).toHaveAttribute("target", "_blank");
+    expect(pageLink).toHaveAttribute("target", "_blank");
+    expect(postLink).toHaveAttribute("rel", "noopener noreferrer");
+    expect(pageLink).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
   it("安全状态入口仍指向国内生态中的真实登录保护", async () => {
     apiMocks.getDiagnosticsSummary.mockResolvedValue({ success: true, data: diagnosticSummary });
     apiMocks.getSearchSummary.mockResolvedValue({ success: true, data: emptySearchSummary });
