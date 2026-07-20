@@ -154,7 +154,8 @@ final class GithubProjectBlockTest extends TestCase
         $this->assertSame('npcink/github-project', $metadata['name']);
         $this->assertSame(3, $metadata['apiVersion']);
         $this->assertSame('npcink-site-toolbox', $metadata['category']);
-        $this->assertSame(array('repositoryUrl'), array_keys($metadata['attributes']));
+        $this->assertSame(array('repositoryUrl', 'customDescription'), array_keys($metadata['attributes']));
+        $this->assertSame('', $metadata['attributes']['customDescription']['default']);
         $this->assertStringContainsString("'wp-server-side-render'", $asset);
         $this->assertStringContainsString("blocks.registerBlockType( 'npcink/github-project'", $editor);
         $this->assertStringContainsString('ServerSideRender', $editor);
@@ -223,6 +224,48 @@ final class GithubProjectBlockTest extends TestCase
         $this->assertStringContainsString('1,234', $first);
         $this->assertStringContainsString('56', $first);
         $this->assertStringContainsString('已归档', $first);
+    }
+
+    public function test_custom_description_overrides_github_description_and_is_escaped(): void
+    {
+        $GLOBALS['_test_github_remote_response'] = array(
+            'response' => array('code' => 200),
+            'body' => json_encode(array(
+                'description' => 'GitHub API description',
+                'language' => 'PHP',
+                'stargazers_count' => 12,
+                'forks_count' => 3,
+                'archived' => false,
+            )),
+        );
+
+        $output = Npcink_Toolbox_Github_Project::render_block(array(
+            'repositoryUrl' => 'https://github.com/muze-page/npcink-site-toolbox',
+            'customDescription' => '面向站长的 <strong>中文摘要</strong> & 项目说明',
+        ));
+
+        $this->assertCount(1, $GLOBALS['_test_github_remote_calls']);
+        $this->assertStringContainsString('面向站长的 中文摘要 &amp; 项目说明', $output);
+        $this->assertStringNotContainsString('<strong>', $output);
+        $this->assertStringNotContainsString('GitHub API description', $output);
+        $this->assertStringContainsString('<dd>12</dd>', $output);
+    }
+
+    public function test_custom_description_survives_github_api_failure(): void
+    {
+        $GLOBALS['_test_github_remote_response'] = array(
+            'response' => array('code' => 403),
+            'body' => '{"message":"rate limit"}',
+        );
+
+        $output = Npcink_Toolbox_Github_Project::render_block(array(
+            'repositoryUrl' => 'https://github.com/muze-page/npcink-site-toolbox',
+            'customDescription' => '即使接口暂不可用，也应显示这段站内摘要。',
+        ));
+
+        $this->assertStringContainsString('即使接口暂不可用，也应显示这段站内摘要。', $output);
+        $this->assertStringContainsString('暂时无法读取项目数据', $output);
+        $this->assertStringContainsString('href="https://github.com/muze-page/npcink-site-toolbox"', $output);
     }
 
     public function test_failed_repository_response_is_negative_cached_with_direct_link_fallback(): void

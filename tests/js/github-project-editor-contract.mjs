@@ -32,6 +32,7 @@ const window = {
 			PanelBody: 'PanelBody',
 			Placeholder: 'Placeholder',
 			TextControl: 'TextControl',
+			TextareaControl: 'TextareaControl',
 		},
 		element: {
 			createElement,
@@ -77,19 +78,29 @@ const emptyTree = registrations[ 0 ].settings.edit( {
 } );
 assert.equal( blockPropsCalls.length - emptyBlockPropsStart, 1 );
 const emptyControls = collect( emptyTree, 'TextControl' );
+const emptyDescriptionControls = collect( emptyTree, 'TextareaControl' );
 
 assert.equal( collect( emptyTree, 'Placeholder' ).length, 1 );
 assert.equal( collect( emptyTree, 'ServerSideRender' ).length, 0 );
 assert.equal( emptyControls.length, 2 );
+assert.equal( emptyDescriptionControls.length, 1 );
 emptyControls[ 1 ].props.onChange( 'https://github.com/muze-page/npcink-site-toolbox' );
 assert.equal(
 	JSON.stringify( changes[ 0 ] ),
 	JSON.stringify( { repositoryUrl: 'https://github.com/muze-page/npcink-site-toolbox' } )
 );
+emptyDescriptionControls[ 0 ].props.onChange( '站内项目摘要' );
+assert.equal(
+	JSON.stringify( changes[ 1 ] ),
+	JSON.stringify( { customDescription: '站内项目摘要' } )
+);
 
 const validBlockPropsStart = blockPropsCalls.length;
 const validTree = registrations[ 0 ].settings.edit( {
-	attributes: { repositoryUrl: 'https://github.com/muze-page/npcink-site-toolbox' },
+	attributes: {
+		repositoryUrl: 'https://github.com/muze-page/npcink-site-toolbox',
+		customDescription: '面向站长的项目摘要',
+	},
 	setAttributes() {},
 } );
 assert.equal( blockPropsCalls.length - validBlockPropsStart, 1 );
@@ -102,6 +113,8 @@ assert.equal(
 	previews[ 0 ].props.attributes.repositoryUrl,
 	'https://github.com/muze-page/npcink-site-toolbox'
 );
+assert.equal( previews[ 0 ].props.attributes.customDescription, '面向站长的项目摘要' );
+assert.equal( collect( validTree, 'TextareaControl' ).length, 1 );
 
 const invalidBlockPropsStart = blockPropsCalls.length;
 const invalidTree = registrations[ 0 ].settings.edit( {

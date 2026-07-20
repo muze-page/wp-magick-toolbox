@@ -24,7 +24,7 @@ Npcink Site Toolbox is a utility plugin for WordPress site owners. Version 3.2.0
 * China-focused integrations: ICP information, WeChat JSSDK, cookie notice, and optional object storage.
 * Maintenance: diagnostics, SEO checks, media health, and guarded database cleanup.
 * Admin experience: feature search, risk labels, change confirmation, secret-status handling, and responsive layouts.
-* Editor tools: three core-block patterns, a live site-statistics block, and a GitHub project block with cached public repository metadata.
+* Editor tools: three core-block patterns, a live site-statistics block, and a GitHub project block with cached public repository metadata plus an optional author-written summary.
 
 = Important behavior =
 
@@ -66,7 +66,7 @@ No external service is contacted merely by activating the plugin.
 
 = GitHub project block =
 
-Only after a content author inserts this block and supplies a public repository URL does the server request `https://api.github.com/repos/{owner}/{repository}` on a cache miss. The request sends the public owner/repository identifier, the site server's IP address, the plugin User-Agent, and normal HTTP headers to retrieve the repository description, primary language, Stars, Forks, and archive status. Successful responses are cached locally for up to 12 hours and failures for 30 minutes. No GitHub credentials, article content, plugin settings, visitor IP address, or visitor browser request is sent. [Service](https://docs.github.com/en/rest/repos/repos#get-a-repository), [GitHub Terms of Service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service), [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
+Only after a content author inserts this block and supplies a public repository URL does the server request `https://api.github.com/repos/{owner}/{repository}` on a cache miss. The author may also save an optional custom project summary in the article; that summary is rendered locally and is not sent to GitHub. The request sends the public owner/repository identifier, the site server's IP address, the plugin User-Agent, and normal HTTP headers to retrieve the repository description, primary language, Stars, Forks, and archive status. Successful responses are cached locally for up to 12 hours and failures for 30 minutes. No GitHub credentials, article content, custom summary, plugin settings, visitor IP address, or visitor browser request is sent. [Service](https://docs.github.com/en/rest/repos/repos#get-a-repository), [GitHub Terms of Service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service), [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
 
 = WeChat JSSDK =
 
@@ -114,7 +114,7 @@ The site-statistics and GitHub project block editor scripts are shipped as reada
 * Release date: 2026-07-18.
 * Added editor patterns for resource downloads, article conclusions, and source/copyright notes.
 * Added a dynamic site-statistics block with live article, comment, category, and user counts.
-* Added a dynamic GitHub project block with cached public repository metadata and a direct-link fallback.
+* Added a dynamic GitHub project block with cached public repository metadata, an optional author-written summary, and a direct-link fallback.
 * Reused one statistics provider across the site-statistics block and legacy widget instead of duplicating count logic.
 * Kept the editor script as readable, build-free source so the block does not create another Vite target or Node dependency.
 * Unified long admin settings pages with accessible, search-aware secondary tabs while keeping compact views direct.

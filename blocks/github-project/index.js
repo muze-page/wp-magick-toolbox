@@ -8,6 +8,7 @@
 	var PanelBody = components.PanelBody;
 	var Placeholder = components.Placeholder;
 	var TextControl = components.TextControl;
+	var TextareaControl = components.TextareaControl;
 	var __ = i18n.__;
 	var repositoryPattern = /^https:\/\/(?:www\.)?github\.com\/[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?\/[A-Za-z0-9._-]{1,100}\/?$/i;
 
@@ -34,10 +35,23 @@
 		} );
 	}
 
+	function descriptionControl( value, setAttributes ) {
+		return createElement( TextareaControl, {
+			__nextHasNoMarginBottom: true,
+			help: __( '留空时使用 GitHub 项目描述；接口不可用时仍可显示这段摘要。', 'npcink-site-toolbox' ),
+			label: __( '自定义项目摘要', 'npcink-site-toolbox' ),
+			onChange: function ( nextValue ) {
+				setAttributes( { customDescription: nextValue } );
+			},
+			value: value,
+		} );
+	}
+
 	function Edit( props ) {
 		var attributes = props.attributes;
 		var setAttributes = props.setAttributes;
 		var repositoryUrl = attributes.repositoryUrl || '';
+		var customDescription = attributes.customDescription || '';
 		var isValid = isRepositoryUrl( repositoryUrl );
 		var inspector = createElement(
 			InspectorControls,
@@ -45,7 +59,8 @@
 			createElement(
 				PanelBody,
 				{ title: __( '项目设置', 'npcink-site-toolbox' ) },
-				repositoryControl( repositoryUrl, setAttributes )
+				repositoryControl( repositoryUrl, setAttributes ),
+				descriptionControl( customDescription, setAttributes )
 			)
 		);
 		var previewProps = useBlockProps( isValid

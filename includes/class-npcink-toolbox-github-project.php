@@ -43,9 +43,14 @@ final class Npcink_Toolbox_Github_Project
             return '';
         }
 
+        $custom_description = isset($attributes['customDescription']) && is_string($attributes['customDescription'])
+            ? sanitize_text_field($attributes['customDescription'])
+            : '';
         $data = self::get_repository_data($repository);
         $project_name = $repository['owner'] . '/' . $repository['repo'];
-        $description = is_array($data) ? $data['description'] : '';
+        $description = $custom_description !== ''
+            ? $custom_description
+            : (is_array($data) ? $data['description'] : '');
         $archive_badge = is_array($data) && $data['archived']
             ? '<span class="npcink-github-project__badge">' . esc_html__('已归档', 'npcink-site-toolbox') . '</span>'
             : '';
