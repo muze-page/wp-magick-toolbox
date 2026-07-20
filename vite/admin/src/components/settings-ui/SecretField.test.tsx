@@ -9,7 +9,7 @@ import { SecretChange, SecretChanges, SecretPath } from "@/tool/interface";
 
 const PATH: SecretPath = "domestic.wechat.appsecret";
 
-const Harness: React.FC<{ configured: boolean }> = ({ configured }) => {
+const Harness: React.FC<{ configured: boolean; compact?: boolean }> = ({ configured, compact }) => {
   const [changes, setChanges] = useState<SecretChanges>({});
   const status = emptySecretStatus();
   status[PATH] = { configured };
@@ -39,7 +39,7 @@ const Harness: React.FC<{ configured: boolean }> = ({ configured }) => {
         settingsError: null,
       }}
     >
-      <SecretField label="AppSecret" path={PATH} />
+      <SecretField label="AppSecret" path={PATH} compact={compact} />
     </DataContext.Provider>
   );
 };
@@ -72,5 +72,16 @@ describe("SecretField", () => {
 
     expect(screen.getByText("未配置")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "清除已保存凭据" })).toBeDisabled();
+  });
+
+  it("紧凑模式把凭据操作收进状态行且不显示无效清除按钮", () => {
+    const { rerender } = render(<Harness configured compact />);
+
+    expect(screen.getByText("留空表示保留。")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "清除" })).toBeEnabled();
+    expect(screen.queryByRole("button", { name: "清除已保存凭据" })).not.toBeInTheDocument();
+
+    rerender(<Harness configured={false} compact />);
+    expect(screen.queryByRole("button", { name: "清除" })).not.toBeInTheDocument();
   });
 });

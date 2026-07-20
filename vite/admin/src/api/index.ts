@@ -74,48 +74,77 @@ export const performanceApi = {
       { maboxNotify: false },
     ),
   getDbStats: (): Promise<ApiResponse<DbStats>> =>
-    restInstance.get<ApiResponse<DbStats>, ApiResponse<DbStats>>("/performance/db/stats"),
+    restInstance.get<ApiResponse<DbStats>, ApiResponse<DbStats>>(
+      "/performance/db/stats",
+      { maboxNotify: false },
+    ),
   previewDb: (type: DbCleanType): Promise<ApiResponse<DbPreview>> =>
     restInstance.post<ApiResponse<DbPreview>, ApiResponse<DbPreview>>("/performance/db/preview", {
       type,
       dry_run: true,
-    }),
+    }, { maboxNotify: false }),
   cleanDb: (type: DbCleanType, dryRun = true): Promise<ApiResponse<DbCleanResult>> =>
     restInstance.post<ApiResponse<DbCleanResult>, ApiResponse<DbCleanResult>>("/performance/db/clean", {
       type,
       dry_run: dryRun,
-    }),
+    }, { maboxNotify: false }),
   checkSeo: (postId?: number): Promise<ApiResponse<{ issues: SeoIssue[]; total: number }>> =>
-    restInstance.post<ApiResponse<{ issues: SeoIssue[]; total: number }>, ApiResponse<{ issues: SeoIssue[]; total: number }>>("/performance/seo/check", { post_id: postId }),
+    restInstance.post<ApiResponse<{ issues: SeoIssue[]; total: number }>, ApiResponse<{ issues: SeoIssue[]; total: number }>>(
+      "/performance/seo/check",
+      { post_id: postId },
+      { maboxNotify: false },
+    ),
   fixSeoAlt: (postId?: number): Promise<ApiResponse<{ fixed: number }>> =>
-    restInstance.post<ApiResponse<{ fixed: number }>, ApiResponse<{ fixed: number }>>("/performance/seo/fix-alt", { post_id: postId }),
+    restInstance.post<ApiResponse<{ fixed: number }>, ApiResponse<{ fixed: number }>>(
+      "/performance/seo/fix-alt",
+      { post_id: postId },
+      { maboxNotify: false },
+    ),
   checkMedia: (postId?: number): Promise<ApiResponse<{ issues: MediaHealthIssue[] }>> =>
-    restInstance.post<ApiResponse<{ issues: MediaHealthIssue[] }>, ApiResponse<{ issues: MediaHealthIssue[] }>>("/performance/media/check", { post_id: postId }),
+    restInstance.post<ApiResponse<{ issues: MediaHealthIssue[] }>, ApiResponse<{ issues: MediaHealthIssue[] }>>(
+      "/performance/media/check",
+      { post_id: postId },
+      { maboxNotify: false },
+    ),
   fixMediaAlt: (postId?: number): Promise<ApiResponse<{ fixed: number }>> =>
-    restInstance.post<ApiResponse<{ fixed: number }>, ApiResponse<{ fixed: number }>>("/performance/media/fix-alt", { post_id: postId }),
+    restInstance.post<ApiResponse<{ fixed: number }>, ApiResponse<{ fixed: number }>>(
+      "/performance/media/fix-alt",
+      { post_id: postId },
+      { maboxNotify: false },
+    ),
 };
 
 // ========== 国内生态 ==========
 export const domesticApi = {
   checkEnvironment: (): Promise<ApiResponse<Record<string, { service: string; reachable: boolean; latency: number; suggestion: string }>>> =>
-    restInstance.get("/domestic/environment/check") as Promise<any>,
+    restInstance.get("/domestic/environment/check", { maboxNotify: false }) as Promise<any>,
   applyEnvironmentFix: (fixes: string[]): Promise<ApiResponse<{ applied: string[]; new_config: any }>> =>
-    restInstance.post("/domestic/environment/apply", { fixes }) as Promise<any>,
+    restInstance.post(
+      "/domestic/environment/apply",
+      { fixes },
+      { maboxNotify: false },
+    ) as Promise<any>,
 };
 
 // ========== 设置 ==========
 export const settingsApi = {
-  getSchema: () => restInstance.get("/settings/schema"),
+  getSchema: () => restInstance.get("/settings/schema", { maboxNotify: false }),
 };
 
 // ========== 站点诊断 ==========
 export const diagnosticsApi = {
   getSummary: (): Promise<ApiResponse<DiagnosticSummary>> =>
-    restInstance.get<ApiResponse<DiagnosticSummary>, ApiResponse<DiagnosticSummary>>("/diagnostics/summary"),
+    restInstance.get<ApiResponse<DiagnosticSummary>, ApiResponse<DiagnosticSummary>>(
+      "/diagnostics/summary",
+      { maboxNotify: false },
+    ),
 };
 
 // ========== 搜索健康 ==========
 export const searchHealthApi = {
   getSummary: (days = 30): Promise<ApiResponse<SearchHealthSummary>> =>
-    restInstance.get(`/search-health/summary?days=${days}`) as Promise<any>,
+    restInstance.get(
+      `/search-health/summary?days=${days}`,
+      { maboxNotify: false },
+    ) as Promise<any>,
 };

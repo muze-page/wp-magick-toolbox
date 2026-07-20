@@ -1,13 +1,17 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Form, Button } from "antd";
+import { Alert, Form, Button } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { AntConfig } from "@/tool/tool";
 import { SettingsSection, ModuleRow, CheckTable } from "@/components/settings-ui";
 import StatusTag from "@/components/settings-ui/StatusTag";
 import { MediaHealthIssue, performanceApi } from "@/api";
-import { notice } from "@/tool/notice";
 
 const fromConfig = AntConfig.from;
+
+interface OperationFeedback {
+  type: "success" | "error" | "info";
+  message: string;
+}
 
 const App: React.FC = () => {
   const { optionData, updateOption } = useContext(DataContext);
@@ -15,6 +19,8 @@ const App: React.FC = () => {
   const [formData, setFormData] = useState(publicData || {});
   const [issues, setIssues] = useState<MediaHealthIssue[]>([]);
   const [checking, setChecking] = useState(false);
+  const [fixing, setFixing] = useState(false);
+  const [operationFeedback, setOperationFeedback] = useState<OperationFeedback | null>(null);
 
   const onValuesChange = (changedValues: any, _allValues: any) => {
     setFormData((prev: any) => ({ ...prev, ...changedValues }));
@@ -25,23 +31,46 @@ const App: React.FC = () => {
   }, [formData]);
 
   const handleCheck = async () => {
+    setOperationFeedback(null);
     setChecking(true);
     try {
       const res = await performanceApi.checkMedia();
-      if (res.success) setIssues(res.data?.issues || []);
+      if (res.success) {
+        const nextIssues = res.data?.issues || [];
+        setIssues(nextIssues);
+        setOperationFeedback({
+          type: "info",
+          message: nextIssues.length > 0
+            ? `体检完成：发现 ${nextIssues.length} 类问题。`
+            : "体检完成：未发现需要处理的问题。",
+        });
+      } else {
+        setOperationFeedback({ type: "error", message: "体检失败，请重试。" });
+      }
     } catch {
-      notice.error("检查失败");
+      setOperationFeedback({ type: "error", message: "体检失败，请重试。" });
     } finally {
       setChecking(false);
     }
   };
 
   const handleFixAlt = async () => {
+    setOperationFeedback(null);
+    setFixing(true);
     try {
       const res = await performanceApi.fixMediaAlt();
-      if (res.success) notice.success("已补全 " + (res.data?.fixed || 0) + " 张图片的 Alt");
+      if (res.success) {
+        setOperationFeedback({
+          type: "success",
+          message: `已补全 ${res.data?.fixed || 0} 张图片的 Alt。`,
+        });
+      } else {
+        setOperationFeedback({ type: "error", message: "修复失败，请重试。" });
+      }
     } catch {
-      notice.error("修复失败");
+      setOperationFeedback({ type: "error", message: "修复失败，请重试。" });
+    } finally {
+      setFixing(false);
     }
   };
 
@@ -100,13 +129,23 @@ const App: React.FC = () => {
         />
 
         <Form.Item wrapperCol={fromConfig.wrapperCol}>
-          <Button type="primary" onClick={handleCheck} loading={checking}>
+          <Button type="primary" onClick={handleCheck} loading={checking} disabled={fixing}>
             开始体检
           </Button>
-          <Button style={{ marginLeft: 8 }} onClick={handleFixAlt}>
+          <Button style={{ marginLeft: 8 }} onClick={handleFixAlt} loading={fixing} disabled={checking}>
             批量补全 Alt
           </Button>
         </Form.Item>
+
+        {operationFeedback && (
+          <Alert
+            showIcon
+            type={operationFeedback.type}
+            role={operationFeedback.type === "error" ? "alert" : "status"}
+            message={operationFeedback.message}
+            style={{ marginBottom: 12 }}
+          />
+        )}
 
         {issues.length > 0 && (
           <CheckTable columns={columns} dataSource={dataSource} />

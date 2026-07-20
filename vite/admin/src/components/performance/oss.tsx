@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Alert, Button, Form, Input, Select, Space, Typography } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
+import { Alert, Button, Form, Input, Popover, Select, Space, Typography } from "antd";
 import { performanceApi } from "@/api";
 import { DataContext } from "@/tool/dataContext";
 import { defaultVarOption } from "@/tool/defaultVar";
@@ -27,41 +28,49 @@ const CONNECTION_TEST_OBJECT = "npcink-site-toolbox/connection-test.txt";
 const providerGuidance: Record<string, {
   bucketPlaceholder: string;
   bucketHelp: string;
-  exampleBucket: string;
-  examplePath: string;
-  exampleTarget: string;
-  examplePublicUrl: string;
 }> = {
   aliyun: {
     bucketPlaceholder: "示例：npcink-media",
     bucketHelp: "只填写 Bucket 名称；上传目录请填写在下一项。",
-    exampleBucket: "npcink-media",
-    examplePath: "www",
-    exampleTarget: "oss-cn-shanghai.aliyuncs.com",
-    examplePublicUrl: "https://img.example.com/www",
   },
   tencent: {
     bucketPlaceholder: "示例：npcink-media-1250000000",
     bucketHelp: "填写带 APPID 后缀的完整 Bucket 名称。",
-    exampleBucket: "npcink-media-1250000000",
-    examplePath: "www",
-    exampleTarget: "ap-beijing",
-    examplePublicUrl: "https://img.example.com/www",
   },
   qiniu: {
     bucketPlaceholder: "示例：npcink-media",
     bucketHelp: "填写七牛云空间名称，不要填写访问域名。",
-    exampleBucket: "npcink-media",
-    examplePath: "www",
-    exampleTarget: "当前使用全局上传节点",
-    examplePublicUrl: "https://img.example.com/www",
   },
 };
+
+interface InfoButtonProps {
+  label: string;
+  title: string;
+  children: React.ReactNode;
+}
+
+const InfoButton: React.FC<InfoButtonProps> = ({ label, title, children }) => (
+  <Popover
+    trigger="click"
+    placement="bottomRight"
+    title={title}
+    content={<div className="mabox-oss-popover">{children}</div>}
+  >
+    <Button
+      type="text"
+      size="small"
+      className="mabox-oss-info-button"
+      aria-label={label}
+      icon={<InfoCircleOutlined />}
+    />
+  </Popover>
+);
 
 interface ConnectionNotice {
   type: "success" | "error";
   message: string;
-  description: string;
+  summary: string;
+  details?: string;
 }
 
 const isSecretConfigured = (configured: boolean, change?: SecretChange): boolean => {
@@ -99,12 +108,14 @@ const App: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [testing, setTesting] = useState(false);
   const [connectionNotice, setConnectionNotice] = useState<ConnectionNotice | null>(null);
+  const [connectionDetailsOpen, setConnectionDetailsOpen] = useState(false);
 
   const onValuesChange = (changedValues: Partial<PerformanceOss>) => {
     const nextFormData = { ...formDataRef.current, ...changedValues };
     formDataRef.current = nextFormData;
     setFormData(nextFormData);
     setConnectionNotice(null);
+    setConnectionDetailsOpen(false);
     updateOption("performance", "oss", nextFormData);
   };
 
@@ -112,6 +123,7 @@ const App: React.FC = () => {
   const secretKeyChange = secretChanges["performance.oss.secret_key"];
   useEffect(() => {
     setConnectionNotice(null);
+    setConnectionDetailsOpen(false);
   }, [accessKeyChange, secretKeyChange]);
 
   const accessKeyConfigured = isSecretConfigured(
@@ -166,6 +178,7 @@ const App: React.FC = () => {
 
     setTesting(true);
     setConnectionNotice(null);
+    setConnectionDetailsOpen(false);
     try {
       const response = await performanceApi.testOssConnection({
         settings: {
@@ -182,8 +195,9 @@ const App: React.FC = () => {
       }
       setConnectionNotice({
         type: "success",
-        message: response.message || "连接成功，已写入并覆盖测试对象。",
-        description: `对象 ${response.data.objectKey}；耗时 ${response.data.latencyMs} ms；本次测试未保存设置，也未改变启用状态。`,
+        message: "连接成功",
+        summary: `已写入测试对象 · ${response.data.latencyMs} ms`,
+        details: `对象 ${response.data.objectKey}。固定测试对象会被覆盖；本次测试未保存设置，也未改变启用状态。`,
       });
     } catch (error) {
       const requestError = error as {
@@ -193,7 +207,7 @@ const App: React.FC = () => {
       setConnectionNotice({
         type: "error",
         message: "连接测试失败",
-        description: requestError.response?.data?.message
+        summary: requestError.response?.data?.message
           || requestError.message
           || "请检查凭据、Bucket、地域节点和写入权限。",
       });
@@ -219,16 +233,29 @@ const App: React.FC = () => {
         <DetailDrawer
           title="对象存储配置"
           visible={drawerOpen}
-          onClose={() => setDrawerOpen(false)}
-          description="可先完成配置，再决定是否启用；更改随页面顶部的“保存”统一保存。"
+          onClose={() => {
+            setDrawerOpen(false);
+            setConnectionNotice(null);
+            setConnectionDetailsOpen(false);
+          }}
+          description="先配置并测试；更改随页面顶部的“保存”生效。"
           width={520}
         >
           <Alert
             type="info"
             showIcon
-            message="本地文件安全回退"
-            description="本地副本始终保留。停用对象存储、上传失败或更换目标时，媒体文件仍可从本站读取。"
-            style={{ marginBottom: 16 }}
+            className="mabox-oss-safety-strip"
+            message={(
+              <Space size={4} wrap>
+                <span>本地副本始终保留，上传失败时自动回退。</span>
+                <InfoButton
+                  label="查看本地文件回退说明"
+                  title="本地文件回退"
+                >
+                  停用对象存储、上传失败或更换目标时，媒体文件仍可从本站读取。
+                </InfoButton>
+              </Space>
+            )}
           />
           <Form
             name="oss"
@@ -240,123 +267,158 @@ const App: React.FC = () => {
             autoComplete="off"
             onValuesChange={onValuesChange}
           >
-            <Form.Item label="服务商" name="provider">
-              <Select options={[
-                { label: "阿里云 OSS", value: "aliyun" },
-                { label: "腾讯云 COS", value: "tencent" },
-                { label: "七牛云", value: "qiniu" },
-              ]} />
-            </Form.Item>
-            <SecretField label="Access Key" path="performance.oss.access_key" />
-            <SecretField label="Secret Key" path="performance.oss.secret_key" />
-            <Form.Item label="Bucket" name="bucket" extra={guidance.bucketHelp}>
-              <Input placeholder={guidance.bucketPlaceholder} />
-            </Form.Item>
-            <Form.Item
-              label="上传目录（可选）"
-              name="path"
-              extra="对象键前缀，例如 www 或 uploads/site-a；不要填写 Bucket、oss://、开头或结尾斜杠。"
-            >
-              <Input placeholder="示例：www" />
-            </Form.Item>
-            {formData.provider === "aliyun" && (
-              <Form.Item
-                label="Endpoint"
-                name="endpoint"
-                extra={(
-                  <span>
-                    可直接粘贴阿里云控制台中的外网 Endpoint，例如 oss-cn-shanghai.aliyuncs.com；
-                    也接受 cn-shanghai 快捷写法。仅当 WordPress 服务器位于同地域阿里云内网时使用
-                    -internal 节点。{" "}
-                    <Typography.Link
-                      href="https://help.aliyun.com/en/oss/user-guide/regions-and-endpoints"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      查看节点列表
-                    </Typography.Link>
-                  </span>
-                )}
-              >
-                <Input placeholder="示例：oss-cn-shanghai.aliyuncs.com" />
+            <section className="mabox-oss-section" aria-labelledby="mabox-oss-credentials-title">
+              <Typography.Title level={5} id="mabox-oss-credentials-title">
+                服务商与凭据
+              </Typography.Title>
+              <Form.Item label="服务商" name="provider">
+                <Select options={[
+                  { label: "阿里云 OSS", value: "aliyun" },
+                  { label: "腾讯云 COS", value: "tencent" },
+                  { label: "七牛云", value: "qiniu" },
+                ]} />
               </Form.Item>
-            )}
-            {formData.provider === "tencent" && (
-              <Form.Item
-                label="Region"
-                name="region"
-                extra="填写地域 ID，例如 ap-beijing；不要填写完整 COS 域名。"
-              >
-                <Input placeholder="示例：ap-beijing" />
-              </Form.Item>
-            )}
-            {formData.provider === "qiniu" && (
-              <Alert
-                type="info"
-                showIcon
-                message="当前七牛云使用全局上传节点，无需填写 Region。"
-                style={{ marginBottom: 16 }}
+              <SecretField
+                compact
+                label="Access Key"
+                path="performance.oss.access_key"
               />
-            )}
-            <Form.Item
-              label="公开访问地址"
-              name="domain"
-              extra="填写源站或 CDN 的公开地址前缀，需包含 http:// 或 https://。若上传目录为 www，通常也应以 /www 结尾；插件不会自动重复追加目录。"
-            >
-              <Input placeholder="示例：https://img.example.com/www" />
-            </Form.Item>
+              <SecretField
+                compact
+                label="Secret Key"
+                path="performance.oss.secret_key"
+              />
+            </section>
+
+            <section className="mabox-oss-section" aria-labelledby="mabox-oss-target-title">
+              <Typography.Title level={5} id="mabox-oss-target-title">
+                存储目标
+              </Typography.Title>
+              <Form.Item label="Bucket" name="bucket">
+                <Input
+                  placeholder={guidance.bucketPlaceholder}
+                  suffix={(
+                    <InfoButton label="查看 Bucket 填写说明" title="Bucket">
+                      <Space direction="vertical" size={4}>
+                        <span>{guidance.bucketHelp}</span>
+                        <Typography.Text type="secondary">
+                          不要填写 oss://、访问域名或上传目录。
+                        </Typography.Text>
+                      </Space>
+                    </InfoButton>
+                  )}
+                />
+              </Form.Item>
+              <Form.Item label="上传目录（可选）" name="path">
+                <Input
+                  placeholder="示例：www 或 uploads/site-a"
+                  suffix={(
+                    <InfoButton label="查看上传目录填写说明" title="上传目录">
+                      作为对象键前缀；不要填写 Bucket、oss://，也不要添加开头或结尾斜杠。
+                    </InfoButton>
+                  )}
+                />
+              </Form.Item>
+              {formData.provider === "aliyun" && (
+                <Form.Item label="Endpoint" name="endpoint">
+                  <Input
+                    placeholder="示例：oss-cn-shanghai.aliyuncs.com"
+                    suffix={(
+                      <InfoButton label="查看 Endpoint 填写说明" title="Endpoint">
+                        <Space direction="vertical" size={6}>
+                          <span>
+                            可直接粘贴阿里云控制台中的外网 Endpoint，也接受 cn-shanghai 快捷写法。
+                          </span>
+                          <span>
+                            仅当 WordPress 服务器位于同地域阿里云内网时使用 -internal 节点。
+                          </span>
+                          <Typography.Link
+                            href="https://help.aliyun.com/en/oss/user-guide/regions-and-endpoints"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            查看节点列表
+                          </Typography.Link>
+                        </Space>
+                      </InfoButton>
+                    )}
+                  />
+                </Form.Item>
+              )}
+              {formData.provider === "tencent" && (
+                <Form.Item label="Region" name="region">
+                  <Input
+                    placeholder="示例：ap-beijing"
+                    suffix={(
+                      <InfoButton label="查看 Region 填写说明" title="Region">
+                        填写地域 ID，例如 ap-beijing；不要填写完整 COS 域名。
+                      </InfoButton>
+                    )}
+                  />
+                </Form.Item>
+              )}
+              {formData.provider === "qiniu" && (
+                <Typography.Paragraph type="secondary" className="mabox-oss-inline-note">
+                  七牛云使用全局上传节点，无需填写地域。
+                </Typography.Paragraph>
+              )}
+            </section>
+
+            <section className="mabox-oss-section" aria-labelledby="mabox-oss-public-title">
+              <Typography.Title level={5} id="mabox-oss-public-title">
+                公开访问
+              </Typography.Title>
+              <Form.Item label="公开访问地址" name="domain">
+                <Input
+                  placeholder="示例：https://img.example.com/www"
+                  suffix={(
+                    <InfoButton label="查看公开访问地址填写说明" title="公开访问地址">
+                      <Space direction="vertical" size={4}>
+                        <span>填写源站或 CDN 地址，需包含 http:// 或 https://。</span>
+                        <span>
+                          若上传目录为 www，地址通常也以 /www 结尾；插件不会重复追加目录。
+                        </span>
+                      </Space>
+                    </InfoButton>
+                  )}
+                />
+              </Form.Item>
+            </section>
           </Form>
-          <Alert
-            type="info"
-            showIcon
-            message="配置示例"
-            description={(
-              <Space direction="vertical" size={2}>
-                <Typography.Text>
-                  Bucket：<Typography.Text code>{guidance.exampleBucket}</Typography.Text>
+
+          <section className="mabox-oss-summary" aria-labelledby="mabox-oss-summary-title">
+            <Typography.Title level={5} id="mabox-oss-summary-title">
+              目标预览
+            </Typography.Title>
+            <dl>
+              <div>
+                <dt>请求主机</dt>
+                <dd><code title={requestHostPreview}>{requestHostPreview}</code></dd>
+              </div>
+              <div>
+                <dt>远端对象</dt>
+                <dd><code title={storagePreview}>{storagePreview}</code></dd>
+              </div>
+              <div>
+                <dt>公开 URL</dt>
+                <dd><code title={publicPreview}>{publicPreview}</code></dd>
+              </div>
+            </dl>
+          </section>
+
+          <section className="mabox-oss-test" aria-labelledby="mabox-oss-test-title">
+            <Typography.Title level={5} id="mabox-oss-test-title">
+              连接测试
+            </Typography.Title>
+            <Space direction="vertical" size={10} style={{ width: "100%" }}>
+              <Space size={4} wrap>
+                <Typography.Text type="secondary">
+                  测试不会保存设置或改变启用状态。
                 </Typography.Text>
-                <Typography.Text>
-                  上传目录：<Typography.Text code>{guidance.examplePath}</Typography.Text>
-                </Typography.Text>
-                <Typography.Text>
-                  地域节点：<Typography.Text code>{guidance.exampleTarget}</Typography.Text>
-                </Typography.Text>
-                <Typography.Text>
-                  公开地址：<Typography.Text code>{guidance.examplePublicUrl}</Typography.Text>
-                </Typography.Text>
-                <Typography.Text>
-                  对象示例：<Typography.Text code>
-                    {`${storageScheme}://${guidance.exampleBucket}/${guidance.examplePath}/${SAMPLE_MEDIA_PATH}`}
-                  </Typography.Text>
-                </Typography.Text>
+                <InfoButton label="查看连接测试说明" title="连接测试">
+                  测试会写入并覆盖 {testObjectPreview}；公开访问地址可稍后填写，不影响写入测试。
+                </InfoButton>
               </Space>
-            )}
-            style={{ marginBottom: 16 }}
-          />
-          <Alert
-            type="info"
-            showIcon
-            message="当前目标预览"
-            description={(
-              <Space direction="vertical" size={2}>
-                <Typography.Text>
-                  请求主机：<Typography.Text code>{requestHostPreview}</Typography.Text>
-                </Typography.Text>
-                <Typography.Text>
-                  远端对象：<Typography.Text code>{storagePreview}</Typography.Text>
-                </Typography.Text>
-                <Typography.Text>
-                  公开 URL：<Typography.Text code>{publicPreview}</Typography.Text>
-                </Typography.Text>
-              </Space>
-            )}
-            style={{ marginBottom: 16 }}
-          />
-          <Space direction="vertical" size={10} style={{ width: "100%" }}>
-            <Typography.Text type="secondary">
-              测试会写入并覆盖 {testObjectPreview}；不会保存设置，也不会改变启用状态。
-              公开访问地址可稍后填写，不影响写入测试。
-            </Typography.Text>
             <Button
               type="primary"
               loading={testing}
@@ -374,11 +436,36 @@ const App: React.FC = () => {
               <Alert
                 showIcon
                 type={connectionNotice.type}
+                role={connectionNotice.type === "success" ? "status" : "alert"}
+                className="mabox-oss-connection-notice"
                 message={connectionNotice.message}
-                description={connectionNotice.description}
+                description={(
+                  <div className="mabox-oss-connection-result">
+                    <div className="mabox-oss-connection-summary">
+                      <span>{connectionNotice.summary}</span>
+                      {connectionNotice.details && (
+                        <Button
+                          type="link"
+                          size="small"
+                          className="mabox-oss-connection-details-button"
+                          aria-expanded={connectionDetailsOpen}
+                          onClick={() => setConnectionDetailsOpen((open) => !open)}
+                        >
+                          {connectionDetailsOpen ? "收起详情" : "查看详情"}
+                        </Button>
+                      )}
+                    </div>
+                    {connectionDetailsOpen && connectionNotice.details && (
+                      <div className="mabox-oss-connection-details">
+                        {connectionNotice.details}
+                      </div>
+                    )}
+                  </div>
+                )}
               />
             )}
-          </Space>
+            </Space>
+          </section>
         </DetailDrawer>
       </>
     </SettingsSection>

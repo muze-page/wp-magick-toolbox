@@ -6,7 +6,6 @@ import { AntConfig } from "@/tool/tool";
 import { SettingsSection, ModuleRow, RiskNotice, CheckTable, StatusTag } from "@/components/settings-ui";
 import FeatureSwitch from "@/basic/feature-switch";
 import { DbCleanType, DbPreview, DbStats, performanceApi } from "@/api";
-import { notice } from "@/tool/notice";
 
 const { Text } = Typography;
 const fromConfig = AntConfig.from;
@@ -20,6 +19,11 @@ interface StatsRow {
   noAction?: boolean;
 }
 
+interface OperationFeedback {
+  type: "info" | "success" | "warning" | "error";
+  message: string;
+}
+
 const App: React.FC = () => {
   const { optionData, updateOption } = useContext(DataContext);
   const publicData = optionData.performance?.db_clean || {};
@@ -28,6 +32,7 @@ const App: React.FC = () => {
   const [previewData, setPreviewData] = useState<Partial<Record<DbCleanType, DbPreview>>>({});
   const [previewLoadingType, setPreviewLoadingType] = useState<DbCleanType | null>(null);
   const [cleanLoadingType, setCleanLoadingType] = useState<DbCleanType | null>(null);
+  const [operationFeedback, setOperationFeedback] = useState<OperationFeedback | null>(null);
 
   const onValuesChange = (changedValues: any, _allValues: any) => {
     setFormData((prev: any) => ({ ...prev, ...changedValues }));
@@ -37,26 +42,37 @@ const App: React.FC = () => {
     updateOption("performance", "db_clean", formData);
   }, [formData]);
 
-  const fetchStats = async () => {
+  const fetchStats = async (clearFeedback = true): Promise<boolean> => {
+    if (clearFeedback) setOperationFeedback(null);
     try {
       const res = await performanceApi.getDbStats();
-      if (res.success && res.data) setStats(res.data);
+      if (res.success && res.data) {
+        setStats(res.data);
+        return true;
+      }
+      setOperationFeedback({ type: "error", message: "统计获取失败，请重试。" });
     } catch {
-      notice.error("统计请求失败");
+      setOperationFeedback({ type: "error", message: "统计请求失败，请重试。" });
     }
+    return false;
   };
 
   const handlePreview = async (type: DbCleanType) => {
+    setOperationFeedback(null);
     setPreviewLoadingType(type);
     try {
       const res = await performanceApi.previewDb(type);
       if (res.success && res.data) {
         setPreviewData((prev) => ({ ...prev, [type]: res.data }));
+        setOperationFeedback({
+          type: "info",
+          message: `预览完成：预计影响 ${getAffectedCount(type, res.data)} 条数据。`,
+        });
       } else {
-        notice.error("预览失败");
+        setOperationFeedback({ type: "error", message: "预览失败，请重试。" });
       }
     } catch {
-      notice.error("预览请求失败");
+      setOperationFeedback({ type: "error", message: "预览请求失败，请重试。" });
     } finally {
       setPreviewLoadingType(null);
     }
@@ -92,29 +108,34 @@ const App: React.FC = () => {
       okText: "确认清理",
       okButtonProps: { danger: true },
       cancelText: "取消",
-      onOk: () => {
-        return new Promise<void>((resolve) => {
-          setCleanLoadingType(type);
-          performanceApi.cleanDb(type, false)
-            .then((res) => {
-              setCleanLoadingType(null);
-              if (res.success) {
-                notice.success("清理完成" + (res?.data?.deleted ? "，删除 " + res.data.deleted + " 条" : ""));
-                setPreviewData((prev) => {
-                  const next = { ...prev };
-                  delete next[type];
-                  return next;
-                });
-                fetchStats();
-              }
-              resolve();
-            })
-            .catch(() => {
-              setCleanLoadingType(null);
-              notice.error("清理失败");
-              resolve();
-            });
-        });
+      onOk: async () => {
+        setOperationFeedback(null);
+        setCleanLoadingType(type);
+        try {
+          const res = await performanceApi.cleanDb(type, false);
+          if (!res.success) {
+            setOperationFeedback({ type: "error", message: "清理失败，请重试。" });
+            return;
+          }
+
+          const deleted = res.data?.deleted || 0;
+          setPreviewData((prev) => {
+            const next = { ...prev };
+            delete next[type];
+            return next;
+          });
+          const refreshed = await fetchStats(false);
+          setOperationFeedback(refreshed
+            ? { type: "success", message: `清理完成，删除 ${deleted} 条数据。` }
+            : {
+                type: "warning",
+                message: `清理完成，删除 ${deleted} 条数据；统计刷新失败，请重新查看统计。`,
+              });
+        } catch {
+          setOperationFeedback({ type: "error", message: "清理失败，请重试。" });
+        } finally {
+          setCleanLoadingType(null);
+        }
       },
     });
   };
@@ -224,11 +245,20 @@ const App: React.FC = () => {
         )}
 
         <Form.Item wrapperCol={fromConfig.wrapperCol}>
-          <Button onClick={fetchStats}>查看统计</Button>
+          <Button onClick={() => void fetchStats()}>查看统计</Button>
         </Form.Item>
 
         {statsDataSource.length > 0 && (
           <CheckTable columns={statsColumns} dataSource={statsDataSource} />
+        )}
+        {operationFeedback && (
+          <Alert
+            showIcon
+            type={operationFeedback.type}
+            role={operationFeedback.type === "error" ? "alert" : "status"}
+            message={operationFeedback.message}
+            style={{ marginTop: 12 }}
+          />
         )}
       </Form>
     </SettingsSection>

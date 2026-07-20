@@ -153,8 +153,9 @@ describe("Save", () => {
     fireEvent.click(screen.getByRole("button", { name: "查看并保存" }));
 
     await waitFor(() => {
-      expect(noticeMocks.error).toHaveBeenCalledWith("保存确认界面加载失败，请重试");
+      expect(screen.getByRole("alert")).toHaveTextContent("保存确认界面加载失败，请重试");
     });
+    expect(noticeMocks.error).not.toHaveBeenCalled();
     expect(screen.getByRole("status")).toHaveTextContent("1 项待保存");
     expect(screen.getByRole("button", { name: "查看并保存" })).toBeEnabled();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -163,6 +164,7 @@ describe("Save", () => {
     fireEvent.click(screen.getByRole("button", { name: "查看并保存" }));
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
     expect(diffModalLoaderMocks.loadDiffModal).toHaveBeenCalledTimes(2);
+    expect(screen.queryByText("保存确认界面加载失败，请重试")).not.toBeInTheDocument();
   });
 
   it("取消确认后恢复保存按钮焦点且复用已加载弹窗", async () => {
@@ -238,10 +240,11 @@ describe("Save", () => {
     fireEvent.click(await screen.findByRole("button", { name: "确认保存" }));
 
     await waitFor(() => {
-      expect(noticeMocks.warning).toHaveBeenCalledWith(
+      expect(screen.getByText(
         "设置已保存，但重新读取失败；保存功能已禁用，请重新读取后继续",
-      );
+      )).toBeInTheDocument();
     });
+    expect(noticeMocks.warning).not.toHaveBeenCalled();
   });
 
   it("写入失败时保留待保存内容并显示失败反馈", async () => {
@@ -257,9 +260,9 @@ describe("Save", () => {
     fireEvent.click(await screen.findByRole("button", { name: "确认保存" }));
 
     await waitFor(() => {
-      expect(noticeMocks.error).toHaveBeenCalledTimes(1);
-      expect(noticeMocks.error).toHaveBeenCalledWith("保存失败，已恢复为之前的设置");
+      expect(screen.getByRole("alert")).toHaveTextContent("保存失败，已恢复为之前的设置");
     });
+    expect(noticeMocks.error).not.toHaveBeenCalled();
     expect(clearSecretChanges).not.toHaveBeenCalled();
     expect(refreshOption).not.toHaveBeenCalled();
     expect(screen.getByRole("status")).toHaveTextContent("1 项待保存");

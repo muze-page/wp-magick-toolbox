@@ -86,7 +86,7 @@ export function parseSettingsResponse(value: unknown): SettingsResponse {
 }
 
 export const fetchSettings = async (): Promise<SettingsResponse> => {
-  const response: unknown = await restInstance.get("/settings");
+  const response: unknown = await restInstance.get("/settings", { maboxNotify: false });
   return parseSettingsResponse(response);
 };
 

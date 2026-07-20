@@ -8,6 +8,11 @@ import { notice } from "@/tool/notice";
 
 type DiffModalComponent = Awaited<ReturnType<typeof loadDiffModal>>["default"];
 
+interface SaveFeedback {
+  kind: "warning" | "error";
+  message: string;
+}
+
 const App: React.FC = () => {
   const {
     optionData,
@@ -23,6 +28,7 @@ const App: React.FC = () => {
   const [diffVisible, setDiffVisible] = useState(false);
   const [diffs, setDiffs] = useState<ConfigDiffItem[]>([]);
   const [LoadedDiffModal, setLoadedDiffModal] = useState<DiffModalComponent | null>(null);
+  const [saveFeedback, setSaveFeedback] = useState<SaveFeedback | null>(null);
   const statusRef = useRef<HTMLSpanElement>(null);
   const changes = useMemo(
     () => [
@@ -34,6 +40,7 @@ const App: React.FC = () => {
   const changeCount = changes.length;
 
   const doSave = async () => {
+    setSaveFeedback(null);
     setSaving(true);
     let saved = false;
     try {
@@ -41,12 +48,19 @@ const App: React.FC = () => {
       saved = true;
       clearSecretChanges();
       await refreshOption();
+      setSaveFeedback(null);
       notice.success(response.message || "保存成功");
     } catch (error) {
       if (saved) {
-        notice.warning("设置已保存，但重新读取失败；保存功能已禁用，请重新读取后继续");
+        setSaveFeedback({
+          kind: "warning",
+          message: "设置已保存，但重新读取失败；保存功能已禁用，请重新读取后继续",
+        });
       } else {
-        notice.error(error instanceof Error && error.message ? error.message : "保存失败，请重试");
+        setSaveFeedback({
+          kind: "error",
+          message: error instanceof Error && error.message ? error.message : "保存失败，请重试",
+        });
       }
     } finally {
       setSaving(false);
@@ -56,6 +70,7 @@ const App: React.FC = () => {
   const handleSaveClick = async () => {
     if (changes.length === 0) return;
 
+    setSaveFeedback(null);
     setDiffs(changes);
     if (LoadedDiffModal) {
       setDiffVisible(true);
@@ -68,7 +83,10 @@ const App: React.FC = () => {
       setLoadedDiffModal(() => module.default);
       setDiffVisible(true);
     } catch {
-      notice.error("保存确认界面加载失败，请重试");
+      setSaveFeedback({
+        kind: "error",
+        message: "保存确认界面加载失败，请重试",
+      });
     } finally {
       setPreparingConfirmation(false);
     }
@@ -110,6 +128,16 @@ const App: React.FC = () => {
 
   return (
     <div className={`mabox-save-trust mabox-save-trust--${statusKind}`}>
+      {saveFeedback && (
+        <div
+          className={`mabox-save-feedback mabox-save-feedback--${saveFeedback.kind}`}
+          role={saveFeedback.kind === "error" ? "alert" : "status"}
+          aria-live={saveFeedback.kind === "error" ? "assertive" : "polite"}
+          aria-atomic="true"
+        >
+          {saveFeedback.message}
+        </div>
+      )}
       <span
         ref={statusRef}
         className="mabox-save-status"

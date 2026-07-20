@@ -98,7 +98,7 @@ describe("对象存储设置", () => {
     fireEvent.click(screen.getByRole("button", { name: "配置：启用对象存储" }));
 
     expect(await screen.findByText("对象存储配置")).toBeInTheDocument();
-    expect(screen.getByText("可先完成配置，再决定是否启用；更改随页面顶部的“保存”统一保存。"))
+    expect(screen.getByText("先配置并测试；更改随页面顶部的“保存”生效。"))
       .toBeInTheDocument();
     expect(screen.getByLabelText("服务商")).toBeInTheDocument();
     expect(screen.getByLabelText("Access Key新值")).toBeInTheDocument();
@@ -108,18 +108,8 @@ describe("对象存储设置", () => {
     expect(screen.getByLabelText("Endpoint")).toBeInTheDocument();
     expect(screen.queryByLabelText("Region")).not.toBeInTheDocument();
     expect(screen.getByLabelText("公开访问地址")).toBeInTheDocument();
-    expect(screen.getByText("本地副本始终保留。停用对象存储、上传失败或更换目标时，媒体文件仍可从本站读取。"))
-      .toBeInTheDocument();
-    expect(screen.getByText("只填写 Bucket 名称；上传目录请填写在下一项。"))
-      .toBeInTheDocument();
     expect(screen.getByPlaceholderText("示例：npcink-media")).toBeInTheDocument();
-    expect(screen.getByText(/可直接粘贴阿里云控制台中的外网 Endpoint/))
-      .toBeInTheDocument();
     expect(screen.getByPlaceholderText("示例：oss-cn-shanghai.aliyuncs.com")).toBeInTheDocument();
-    expect(screen.getByText("配置示例")).toBeInTheDocument();
-    expect(screen.getByText(/oss:\/\/npcink-media\/www\/YYYY\/MM\/example.jpg/))
-      .toBeInTheDocument();
-    expect(screen.getByText(/npcink-site-toolbox\/connection-test\.txt/)).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText("Bucket"), { target: { value: "bucket-a" } });
     await waitFor(() => {
@@ -138,6 +128,33 @@ describe("对象存储设置", () => {
         expect.objectContaining({ enabled: true, bucket: "bucket-a" }),
       );
     });
+  });
+
+  it("按任务分组配置并把详细规则收进可访问的信息入口", async () => {
+    renderOss();
+
+    fireEvent.click(screen.getByRole("button", { name: "配置：启用对象存储" }));
+
+    expect(await screen.findByRole("heading", { name: "服务商与凭据" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "存储目标" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "公开访问" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "目标预览" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "连接测试" })).toBeInTheDocument();
+    expect(screen.getByText("本地副本始终保留，上传失败时自动回退。")).toBeInTheDocument();
+    expect(screen.queryByText(/停用对象存储、上传失败或更换目标时/)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "查看本地文件回退说明" })).toBeInTheDocument();
+    expect(screen.queryByText("只填写 Bucket 名称；上传目录请填写在下一项。"))
+      .not.toBeInTheDocument();
+    expect(screen.queryByText(/可直接粘贴阿里云控制台中的外网 Endpoint/))
+      .not.toBeInTheDocument();
+    expect(screen.queryByText("配置示例")).not.toBeInTheDocument();
+    expect(screen.queryByText(/npcink-site-toolbox\/connection-test\.txt/)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "查看 Endpoint 填写说明" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "查看连接测试说明" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "查看 Bucket 填写说明" }));
+    expect(await screen.findByText("只填写 Bucket 名称；上传目录请填写在下一项。"))
+      .toBeInTheDocument();
   });
 
   it("仅在存储目标和两项凭据都齐备时标记为已配置", () => {
@@ -236,11 +253,42 @@ describe("对象存储设置", () => {
         },
       });
     });
-    expect(await screen.findByText("连接成功，已写入并覆盖测试对象。")).toBeInTheDocument();
+    expect(await screen.findByText("连接成功")).toBeInTheDocument();
+    expect(screen.getByText("已写入测试对象 · 42 ms")).toBeInTheDocument();
+    expect(screen.queryByText(/对象 www\/npcink-site-toolbox\/connection-test\.txt/))
+      .not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "查看详情" }));
     expect(screen.getByText(
-      "对象 www/npcink-site-toolbox/connection-test.txt；耗时 42 ms；本次测试未保存设置，也未改变启用状态。",
+      "对象 www/npcink-site-toolbox/connection-test.txt。固定测试对象会被覆盖；本次测试未保存设置，也未改变启用状态。",
     )).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "收起详情" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
     expect(updateOption).not.toHaveBeenCalled();
+
+    fireEvent.change(screen.getByLabelText("Bucket"), { target: { value: "bucket-b" } });
+    expect(screen.queryByText("连接成功")).not.toBeInTheDocument();
+  });
+
+  it("在测试失败时原地保留明确错误且不显示成功详情入口", async () => {
+    apiMocks.testOssConnection.mockRejectedValueOnce(new Error("AccessDenied：缺少写入权限"));
+    renderOss({
+      credentialsConfigured: true,
+      oss: {
+        provider: "aliyun",
+        bucket: "bucket-a",
+        endpoint: "oss-cn-hangzhou.aliyuncs.com",
+      },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "配置：启用对象存储" }));
+    fireEvent.click(await screen.findByRole("button", { name: "测试连接" }));
+
+    expect(await screen.findByText("连接测试失败")).toBeInTheDocument();
+    expect(screen.getByText("AccessDenied：缺少写入权限")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "查看详情" })).not.toBeInTheDocument();
   });
 
   it("按服务商显示 Endpoint 或 Region，七牛云不显示无效地域字段", async () => {

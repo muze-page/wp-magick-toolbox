@@ -7,9 +7,10 @@ import { SecretPath } from "@/tool/interface";
 interface SecretFieldProps {
   label: string;
   path: SecretPath;
+  compact?: boolean;
 }
 
-const SecretField: React.FC<SecretFieldProps> = ({ label, path }) => {
+const SecretField: React.FC<SecretFieldProps> = ({ label, path, compact = false }) => {
   const { secretStatus, secretChanges, setSecretChange } = useContext(DataContext);
   const configured = secretStatus[path].configured;
   const draft = secretChanges[path];
@@ -37,8 +38,31 @@ const SecretField: React.FC<SecretFieldProps> = ({ label, path }) => {
         <Space wrap>
           <Tag color={statusColor}>{statusLabel}</Tag>
           <Typography.Text type="secondary">
-            {configured ? "已保存的值不会显示；留空表示保留。" : "尚未保存凭据。"}
+            {configured
+              ? compact ? "留空表示保留。" : "已保存的值不会显示；留空表示保留。"
+              : "尚未保存凭据。"}
           </Typography.Text>
+          {compact && configured && (
+            <Button
+              danger
+              type="link"
+              size="small"
+              style={{ height: "auto", paddingInline: 0 }}
+              onClick={() => setSecretChange(path, { operation: "clear" })}
+            >
+              清除
+            </Button>
+          )}
+          {compact && draft && (
+            <Button
+              type="link"
+              size="small"
+              style={{ height: "auto", paddingInline: 0 }}
+              onClick={() => setSecretChange(path)}
+            >
+              撤销更改
+            </Button>
+          )}
         </Space>
         <Input.Password
           aria-label={`${label}新值`}
@@ -50,21 +74,23 @@ const SecretField: React.FC<SecretFieldProps> = ({ label, path }) => {
             setSecretChange(path, value ? { operation: "replace", value } : undefined);
           }}
         />
-        <Space>
-          <Button
-            danger
-            size="small"
-            disabled={!configured}
-            onClick={() => setSecretChange(path, { operation: "clear" })}
-          >
-            清除已保存凭据
-          </Button>
-          {draft && (
-            <Button size="small" onClick={() => setSecretChange(path)}>
-              撤销凭据更改
+        {!compact && (
+          <Space>
+            <Button
+              danger
+              size="small"
+              disabled={!configured}
+              onClick={() => setSecretChange(path, { operation: "clear" })}
+            >
+              清除已保存凭据
             </Button>
-          )}
-        </Space>
+            {draft && (
+              <Button size="small" onClick={() => setSecretChange(path)}>
+                撤销凭据更改
+              </Button>
+            )}
+          </Space>
+        )}
       </Space>
     </Form.Item>
   );

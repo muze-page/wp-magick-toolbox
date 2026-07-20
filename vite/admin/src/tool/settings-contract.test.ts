@@ -42,7 +42,10 @@ describe("设置 REST 契约", () => {
 
     const response = await fetchSettings();
 
-    expect(restMocks.get).toHaveBeenCalledWith("/settings");
+    expect(restMocks.get).toHaveBeenCalledWith(
+      "/settings",
+      { maboxNotify: false },
+    );
     expect(response.data).toBe(defaultVarOption);
     expect(response.secretStatus).toEqual(secretStatus);
   });

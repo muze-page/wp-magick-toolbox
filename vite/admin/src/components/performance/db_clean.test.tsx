@@ -15,13 +15,6 @@ vi.mock("@/api", () => ({
   performanceApi: apiMocks,
 }));
 
-vi.mock("@/tool/notice", () => ({
-  notice: {
-    error: vi.fn(),
-    success: vi.fn(),
-  },
-}));
-
 function renderDbClean() {
   render(
     <DataContext.Provider
@@ -93,5 +86,40 @@ describe("数据库清理操作链", () => {
       expect(apiMocks.previewDb).toHaveBeenCalledWith("revisions");
       expect(cleanButton).toBeEnabled();
     });
+    expect(screen.getByRole("status")).toHaveTextContent("预览完成：预计影响 12 条数据。");
+  });
+
+  it("清理后在表格附近保留删除数量并刷新统计", async () => {
+    renderDbClean();
+    fireEvent.click(screen.getByRole("button", { name: "查看统计" }));
+
+    const revisionRow = (await screen.findByText("12 条")).closest("tr");
+    const row = within(revisionRow as HTMLElement);
+    fireEvent.click(row.getByRole("button", { name: /预\s*览/ }));
+    await waitFor(() => expect(row.getByRole("button", { name: /清\s*理/ })).toBeEnabled());
+    fireEvent.click(row.getByRole("button", { name: /清\s*理/ }));
+    fireEvent.click(await screen.findByRole("button", { name: "确认清理" }));
+
+    await waitFor(() => {
+      expect(apiMocks.cleanDb).toHaveBeenCalledWith("revisions", false);
+      expect(screen.getByRole("status")).toHaveTextContent("清理完成，删除 12 条数据。");
+    });
+    expect(apiMocks.getDbStats).toHaveBeenCalledTimes(2);
+  }, 15000);
+
+  it("清理失败时在操作区域保留错误", async () => {
+    apiMocks.cleanDb.mockRejectedValueOnce(new Error("network unavailable"));
+    renderDbClean();
+    fireEvent.click(screen.getByRole("button", { name: "查看统计" }));
+
+    const revisionRow = (await screen.findByText("12 条")).closest("tr");
+    const row = within(revisionRow as HTMLElement);
+    fireEvent.click(row.getByRole("button", { name: /预\s*览/ }));
+    await waitFor(() => expect(row.getByRole("button", { name: /清\s*理/ })).toBeEnabled());
+    fireEvent.click(row.getByRole("button", { name: /清\s*理/ }));
+    fireEvent.click(await screen.findByRole("button", { name: "确认清理" }));
+
+    const failureMessage = await screen.findByText("清理失败，请重试。");
+    expect(failureMessage.closest('[role="alert"]')).not.toBeNull();
   });
 });

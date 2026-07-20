@@ -96,6 +96,6 @@ describe('searchHealthApi', () => {
 
     const { searchHealthApi } = await import('@/api');
     await searchHealthApi.getSummary(30);
-    expect(mockGet).toHaveBeenCalledWith('/search-health/summary?days=30');
+    expect(mockGet).toHaveBeenCalledWith('/search-health/summary?days=30', { maboxNotify: false });
   });
 });
