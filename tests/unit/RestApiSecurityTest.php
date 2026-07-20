@@ -185,6 +185,22 @@ class RestApiSecurityTest extends TestCase {
         $this->assertStringNotContainsString('wp_send_json_', $content);
     }
 
+    public function test_performance_rest_callbacks_return_rest_responses(): void {
+        $callback_files = array(
+            'admin/partials/performance/media_health/index.php',
+            'admin/partials/performance/seo_checker/index.php',
+            'admin/partials/performance/db_clean/index.php',
+        );
+
+        foreach ($callback_files as $relative_path) {
+            $content = file_get_contents(dirname(__DIR__, 2) . '/' . $relative_path);
+
+            $this->assertStringContainsString('rest_ensure_response', $content, $relative_path);
+            $this->assertStringContainsString('WP_Error', $content, $relative_path);
+            $this->assertStringNotContainsString('wp_send_json_', $content, $relative_path);
+        }
+    }
+
     public function test_removed_settings_and_external_service_routes_are_absent(): void {
         self::trigger_registration();
         $routes = Npcink_Toolbox_Rest_Route_Registry::get_registered();

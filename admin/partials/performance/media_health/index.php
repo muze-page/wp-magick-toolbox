@@ -11,7 +11,9 @@ if (!class_exists('Npcink_Toolbox_Performance_Media_Health')) {
             if (empty($config['enabled'])) return;
         }
         public static function ajax_check() {
-            if (!current_user_can('manage_options')) wp_send_json_error('权限不足', 403);
+            if (!current_user_can('manage_options')) {
+                return new \WP_Error('rest_forbidden', '权限不足', array('status' => 403));
+            }
             $issues = array();
             global $wpdb;
 
@@ -69,17 +71,22 @@ if (!class_exists('Npcink_Toolbox_Performance_Media_Health')) {
                 $issues[] = array('type' => '无特色图文章', 'count' => intval($missing_featured));
             }
 
-            wp_send_json_success(array(
-                'issues' => $issues,
-                'attachment_scan' => array(
-                    'checked' => $attachment_scan['checked'],
-                    'total'   => $attachment_scan['total'],
-                    'sampled' => $attachment_scan['sampled'],
+            return rest_ensure_response(array(
+                'success' => true,
+                'data'    => array(
+                    'issues' => $issues,
+                    'attachment_scan' => array(
+                        'checked' => $attachment_scan['checked'],
+                        'total'   => $attachment_scan['total'],
+                        'sampled' => $attachment_scan['sampled'],
+                    ),
                 ),
             ));
         }
         public static function ajax_fix_alt() {
-            if (!current_user_can('manage_options')) wp_send_json_error('权限不足', 403);
+            if (!current_user_can('manage_options')) {
+                return new \WP_Error('rest_forbidden', '权限不足', array('status' => 403));
+            }
             $query = new WP_Query(array(
                 'post_type'              => 'attachment',
                 'post_status'            => 'inherit',
@@ -104,7 +111,10 @@ if (!class_exists('Npcink_Toolbox_Performance_Media_Health')) {
                 update_post_meta($img->ID, '_wp_attachment_image_alt', sanitize_text_field($alt));
                 $fixed++;
             }
-            wp_send_json_success(array('fixed' => $fixed));
+            return rest_ensure_response(array(
+                'success' => true,
+                'data'    => array('fixed' => $fixed),
+            ));
         }
 
         private static function scan_recent_attachments() {

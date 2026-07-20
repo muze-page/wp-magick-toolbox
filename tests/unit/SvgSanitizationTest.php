@@ -47,6 +47,14 @@ class Npcink_Toolbox_Svg_Sanitization_Test extends TestCase {
         $this->assertStringNotContainsString('<script', $output);
     }
 
+    public function test_removes_namespaced_script_tags(): void {
+        $input = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"><svg:script>alert(document.domain)</svg:script><rect/></svg>';
+        $output = Npcink_Toolbox_Medium_Svg_Support::sanitize_svg_content($input);
+
+        $this->assertStringNotContainsStringIgnoringCase(':script', $output);
+        $this->assertStringNotContainsString('alert(document.domain)', $output);
+    }
+
     /**
      * 测试移除 <object> 标签
      */
@@ -217,6 +225,67 @@ class Npcink_Toolbox_Svg_Sanitization_Test extends TestCase {
         $output = Npcink_Toolbox_Medium_Svg_Support::sanitize_svg_content($input);
 
         $this->assertStringNotContainsString('javascript:', $output);
+    }
+
+    public function test_removes_entity_encoded_javascript_in_attribute_value(): void {
+        $input = '<svg xmlns="http://www.w3.org/2000/svg"><a href="jav&#x61;script:alert(document.domain)">link</a></svg>';
+        $output = Npcink_Toolbox_Medium_Svg_Support::sanitize_svg_content($input);
+
+        $xml = simplexml_load_string($output);
+        $this->assertInstanceOf(SimpleXMLElement::class, $xml);
+
+        $links = $xml->xpath('//*[local-name()="a"]');
+        $this->assertIsArray($links);
+        $this->assertCount(1, $links);
+        $this->assertArrayNotHasKey('href', (array) $links[0]->attributes());
+    }
+
+    public function test_non_svg_uploads_bypass_the_svg_capability_gate(): void {
+        $source = file_get_contents(dirname(__DIR__, 2) . '/admin/partials/optimize/medium/svg_support.php');
+        $this->assertIsString($source);
+
+        $method = substr($source, strpos($source, 'public static function sanitize_svg_upload'));
+        $extension_gate = strpos($method, "strtolower(\$ext) !== 'svg'");
+        $capability_gate = strpos($method, "current_user_can('manage_options')");
+
+        $this->assertIsInt($extension_gate);
+        $this->assertIsInt($capability_gate);
+        $this->assertLessThan($capability_gate, $extension_gate);
+    }
+
+    public function test_rest_sideloads_are_sanitized_and_receive_complete_metadata(): void {
+        $source = file_get_contents(dirname(__DIR__, 2) . '/admin/partials/optimize/medium/svg_support.php');
+        $this->assertIsString($source);
+
+        $this->assertStringContainsString(
+            "add_filter('wp_handle_sideload_prefilter', array(__CLASS__, 'sanitize_svg_upload'))",
+            $source
+        );
+        $this->assertStringContainsString(
+            "add_filter('wp_generate_attachment_metadata', array(__CLASS__, 'add_svg_metadata'), 10, 3)",
+            $source
+        );
+    }
+
+    public function test_svg_dimensions_support_explicit_size_and_viewbox_fallback(): void {
+        $this->assertSame(
+            array('width' => 200, 'height' => 120),
+            Npcink_Toolbox_Medium_Svg_Support::get_svg_dimensions(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="200px" height="120"></svg>'
+            )
+        );
+        $this->assertSame(
+            array('width' => 640, 'height' => 360),
+            Npcink_Toolbox_Medium_Svg_Support::get_svg_dimensions(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"></svg>'
+            )
+        );
+        $this->assertSame(
+            array('width' => 0, 'height' => 0),
+            Npcink_Toolbox_Medium_Svg_Support::get_svg_dimensions(
+                '<svg xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"/></svg>'
+            )
+        );
     }
 
     public function test_upload_audit_is_not_duplicated_to_server_log(): void {

@@ -30,8 +30,8 @@ final class DbCleanCoreApiContractTest extends TestCase
         $this->assertStringNotContainsString('information_schema', $source);
         $this->assertStringNotContainsString('wp_cache_set(', $source);
         $this->assertStringNotContainsString('set_transient(', $source);
-        $this->assertStringContainsString("\$wpdb->esc_like('_transient_')", $source);
         $this->assertStringContainsString("\$wpdb->esc_like('_transient_timeout_')", $source);
+        $this->assertStringContainsString("\$wpdb->esc_like('_site_transient_timeout_')", $source);
     }
 
     public function test_transient_cleanup_uses_cache_aware_apis_and_handles_timeout_rows(): void
@@ -42,7 +42,7 @@ final class DbCleanCoreApiContractTest extends TestCase
         $this->assertStringContainsString('delete_site_transient($key)', $source);
         $this->assertStringContainsString('delete_option($option_prefix . $key)', $source);
         $this->assertStringContainsString('delete_option($timeout_prefix . $key)', $source);
-        $this->assertStringContainsString('COUNT(DISTINCT CASE', $source);
+        $this->assertStringContainsString('CAST(option_value AS UNSIGNED) < %d', $source);
 
         $method = new ReflectionMethod(Npcink_Toolbox_Performance_Db_Clean::class, 'parse_transient_option_name');
         $method->setAccessible(true);
@@ -55,6 +55,23 @@ final class DbCleanCoreApiContractTest extends TestCase
             $method->invoke(null, '_site_transient_update_plugins')
         );
         $this->assertNull($method->invoke(null, '_transient_'));
+    }
+
+    public function test_transient_preview_and_cleanup_target_expired_timeout_rows_only(): void
+    {
+        $source = $this->source();
+        $delete_start = strpos($source, 'private static function delete_transients()');
+        $delete_end = strpos($source, 'private static function parse_transient_option_name', $delete_start);
+
+        $this->assertIsInt($delete_start);
+        $this->assertIsInt($delete_end);
+        $delete_source = substr($source, $delete_start, $delete_end - $delete_start);
+
+        $this->assertGreaterThanOrEqual(2, substr_count($source, 'CAST(option_value AS UNSIGNED) < %d'));
+        $this->assertStringContainsString("\$wpdb->esc_like('_transient_timeout_')", $delete_source);
+        $this->assertStringContainsString("\$wpdb->esc_like('_site_transient_timeout_')", $delete_source);
+        $this->assertStringNotContainsString("\$wpdb->esc_like('_transient_') . '%'", $delete_source);
+        $this->assertStringNotContainsString("\$wpdb->esc_like('_site_transient_') . '%'", $delete_source);
     }
 
     public function test_optimize_table_names_are_prefix_scoped_and_allowlisted(): void

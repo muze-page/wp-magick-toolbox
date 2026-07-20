@@ -59,7 +59,12 @@ if (!class_exists('Npcink_Toolbox_Performance_Db_Clean')) {
 
             // Do not create a duplicate event when an existing event could not be cleared.
             if (!wp_get_scheduled_event(self::CRON_HOOK)) {
-                wp_schedule_event(time(), $schedule, self::CRON_HOOK);
+                $schedule_intervals = array(
+                    'daily'   => 86400,
+                    'weekly'  => 604800,
+                    'monthly' => 2592000,
+                );
+                wp_schedule_event(time() + $schedule_intervals[$schedule], $schedule, self::CRON_HOOK);
             }
         }
 
@@ -102,13 +107,16 @@ if (!class_exists('Npcink_Toolbox_Performance_Db_Clean')) {
         public static function ajax_stats()
         {
             if (!current_user_can('manage_options')) {
-                wp_send_json_error('权限不足', 403);
+                return new \WP_Error('rest_forbidden', '权限不足', array('status' => 403));
             }
 
             $stats = self::get_cleanup_counts();
             $stats['db_size'] = self::get_database_size();
 
-            wp_send_json_success($stats);
+            return rest_ensure_response(array(
+                'success' => true,
+                'data'    => $stats,
+            ));
         }
 
         /**
@@ -117,7 +125,7 @@ if (!class_exists('Npcink_Toolbox_Performance_Db_Clean')) {
         public static function ajax_preview(\WP_REST_Request $request)
         {
             if (!current_user_can('manage_options')) {
-                wp_send_json_error('权限不足', 403);
+                return new \WP_Error('rest_forbidden', '权限不足', array('status' => 403));
             }
 
             $params = $request->get_json_params();
@@ -126,16 +134,19 @@ if (!class_exists('Npcink_Toolbox_Performance_Db_Clean')) {
             $type = is_string($type_value) ? sanitize_key($type_value) : '';
             $allowed_types = array('revisions', 'drafts', 'spam', 'transients', 'optimize', 'pending', 'trash');
             if (!in_array($type, $allowed_types, true)) {
-                wp_send_json_error('无效的清理类型', 400);
+                return new \WP_Error('rest_invalid_param', '无效的清理类型', array('status' => 400));
             }
 
-            wp_send_json_success(self::build_preview($type));
+            return rest_ensure_response(array(
+                'success' => true,
+                'data'    => self::build_preview($type),
+            ));
         }
 
         public static function ajax_clean(\WP_REST_Request $request)
         {
             if (!current_user_can('manage_options')) {
-                wp_send_json_error('权限不足', 403);
+                return new \WP_Error('rest_forbidden', '权限不足', array('status' => 403));
             }
 
             $params = $request->get_json_params();
@@ -147,11 +158,14 @@ if (!class_exists('Npcink_Toolbox_Performance_Db_Clean')) {
 
             $allowed_types = array('revisions', 'drafts', 'spam', 'transients', 'optimize', 'pending', 'trash');
             if (!in_array($type, $allowed_types, true)) {
-                wp_send_json_error('无效的清理类型', 400);
+                return new \WP_Error('rest_invalid_param', '无效的清理类型', array('status' => 400));
             }
 
             if ($dry_run) {
-                wp_send_json_success(self::build_preview($type));
+                return rest_ensure_response(array(
+                    'success' => true,
+                    'data'    => self::build_preview($type),
+                ));
             }
 
             if (class_exists('Npcink_Toolbox_Audit_Logger')) {
@@ -171,7 +185,10 @@ if (!class_exists('Npcink_Toolbox_Performance_Db_Clean')) {
             }
 
             $result['dry_run'] = false;
-            wp_send_json_success($result);
+            return rest_ensure_response(array(
+                'success' => true,
+                'data'    => $result,
+            ));
         }
 
         public static function auto_clean()
@@ -210,7 +227,7 @@ if (!class_exists('Npcink_Toolbox_Performance_Db_Clean')) {
                 'revisions' => '个文章修订版本',
                 'drafts' => '个自动草稿',
                 'spam' => '条垃圾评论',
-                'transients' => '个临时选项',
+                'transients' => '个过期临时选项',
                 'pending' => '个待审核文章',
                 'trash' => '个回收站文章',
             );
@@ -232,10 +249,9 @@ if (!class_exists('Npcink_Toolbox_Performance_Db_Clean')) {
         {
             global $wpdb;
 
-            $transient_pattern = $wpdb->esc_like('_transient_') . '%';
             $transient_timeout_pattern = $wpdb->esc_like('_transient_timeout_') . '%';
-            $site_transient_pattern = $wpdb->esc_like('_site_transient_') . '%';
             $site_transient_timeout_pattern = $wpdb->esc_like('_site_transient_timeout_') . '%';
+            $now = time();
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin stats and dry-run previews require a fresh snapshot; one merged query replaces repeated uncached counts.
             $row = $wpdb->get_row(
                 $wpdb->prepare(
@@ -243,31 +259,17 @@ if (!class_exists('Npcink_Toolbox_Performance_Db_Clean')) {
                         (SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = %s) AS revisions,
                         (SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = %s) AS drafts,
                         (SELECT COUNT(*) FROM {$wpdb->comments} WHERE comment_approved = %s) AS spam,
-                        (SELECT COUNT(DISTINCT CASE
-                            WHEN option_name LIKE %s THEN CONCAT('site:', SUBSTRING(option_name, %d))
-                            WHEN option_name LIKE %s THEN CONCAT('site:', SUBSTRING(option_name, %d))
-                            WHEN option_name LIKE %s THEN CONCAT('local:', SUBSTRING(option_name, %d))
-                            WHEN option_name LIKE %s THEN CONCAT('local:', SUBSTRING(option_name, %d))
-                            END)
-                         FROM {$wpdb->options}
-                         WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s) AS transients,
+                        (SELECT COUNT(*) FROM {$wpdb->options}
+                         WHERE (option_name LIKE %s OR option_name LIKE %s)
+                           AND CAST(option_value AS UNSIGNED) < %d) AS transients,
                         (SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = %s) AS pending,
                         (SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = %s) AS trash",
                     'revision',
                     'auto-draft',
                     'spam',
-                    $site_transient_timeout_pattern,
-                    strlen('_site_transient_timeout_') + 1,
-                    $site_transient_pattern,
-                    strlen('_site_transient_') + 1,
                     $transient_timeout_pattern,
-                    strlen('_transient_timeout_') + 1,
-                    $transient_pattern,
-                    strlen('_transient_') + 1,
                     $site_transient_timeout_pattern,
-                    $site_transient_pattern,
-                    $transient_timeout_pattern,
-                    $transient_pattern,
+                    $now,
                     'pending',
                     'trash'
                 ),
@@ -452,8 +454,8 @@ if (!class_exists('Npcink_Toolbox_Performance_Db_Clean')) {
         }
 
         /**
-         * Delete transient keys through their APIs and clean orphaned option rows through
-         * the Options API. Both paths invalidate the corresponding object-cache entries.
+         * Delete only transient keys whose persisted timeout has expired. Transient APIs
+         * and the Options API keep object caches and orphaned rows consistent.
          *
          * @return int
          */
@@ -462,13 +464,12 @@ if (!class_exists('Npcink_Toolbox_Performance_Db_Clean')) {
             global $wpdb;
 
             $patterns = array(
-                $wpdb->esc_like('_transient_') . '%',
                 $wpdb->esc_like('_transient_timeout_') . '%',
-                $wpdb->esc_like('_site_transient_') . '%',
                 $wpdb->esc_like('_site_transient_timeout_') . '%',
             );
             $deleted = 0;
             $last_option_name = '';
+            $now = time();
 
             do {
                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Maintenance reads a bounded, fresh option-name batch; Transient and Options APIs perform cache-aware deletion.
@@ -476,14 +477,14 @@ if (!class_exists('Npcink_Toolbox_Performance_Db_Clean')) {
                     $wpdb->prepare(
                         "SELECT option_name FROM {$wpdb->options}
                             WHERE option_name > %s
-                              AND (option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s)
+                              AND (option_name LIKE %s OR option_name LIKE %s)
+                              AND CAST(option_value AS UNSIGNED) < %d
                             ORDER BY option_name ASC
                             LIMIT %d",
                         $last_option_name,
                         $patterns[0],
                         $patterns[1],
-                        $patterns[2],
-                        $patterns[3],
+                        $now,
                         self::BATCH_SIZE
                     )
                 );

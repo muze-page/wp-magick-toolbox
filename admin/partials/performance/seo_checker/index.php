@@ -8,7 +8,9 @@ if (!class_exists('Npcink_Toolbox_Performance_Seo_Checker')) {
             if (empty($config['enabled'])) return;
         }
         public static function ajax_check() {
-            if (!current_user_can('manage_options')) wp_send_json_error('权限不足', 403);
+            if (!current_user_can('manage_options')) {
+                return new \WP_Error('rest_forbidden', '权限不足', array('status' => 403));
+            }
             $issues = array();
             $seo_home = Npcink_Toolbox_Config_Manager::get_module_config('function');
             if (isset($seo_home['seo']['title']) && empty($seo_home['seo']['title'])) {
@@ -47,10 +49,15 @@ if (!class_exists('Npcink_Toolbox_Performance_Seo_Checker')) {
             if ($short_posts > 0) {
                 $issues[] = array('type' => '内容过短', 'message' => $short_posts . ' 篇文章内容过短（少于300字）');
             }
-            wp_send_json_success(array('issues' => $issues, 'total' => count($issues)));
+            return rest_ensure_response(array(
+                'success' => true,
+                'data'    => array('issues' => $issues, 'total' => count($issues)),
+            ));
         }
         public static function ajax_fix_alt() {
-            if (!current_user_can('manage_options')) wp_send_json_error('权限不足', 403);
+            if (!current_user_can('manage_options')) {
+                return new \WP_Error('rest_forbidden', '权限不足', array('status' => 403));
+            }
             $query = new WP_Query(array(
                 'post_type'              => 'attachment',
                 'post_status'            => 'inherit',
@@ -75,7 +82,10 @@ if (!class_exists('Npcink_Toolbox_Performance_Seo_Checker')) {
                 update_post_meta($img->ID, '_wp_attachment_image_alt', sanitize_text_field($alt));
                 $fixed++;
             }
-            wp_send_json_success(array('fixed' => $fixed));
+            return rest_ensure_response(array(
+                'success' => true,
+                'data'    => array('fixed' => $fixed),
+            ));
         }
     }
 }

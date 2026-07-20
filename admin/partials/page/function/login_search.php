@@ -18,7 +18,7 @@ if (!class_exists('Npcink_Toolbox_Page_Login_Search')) {
         {
             if (!is_admin() && $query->is_search && $query->is_main_query()) {
                 if (!Npcink_Toolbox_Helpers::is_logged_in()) {
-                    wp_die('请先登录后再使用搜索功能。');
+                    wp_die('请先登录后再使用搜索功能。', '需要登录', array('response' => 403));
                 }
             }
         }

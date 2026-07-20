@@ -160,7 +160,6 @@ export type PerformanceOss = {
   bucket: string;
   region: string;
   domain: string;
-  delete_local: boolean;
 };
 
 export type PerformanceSeoChecker = {

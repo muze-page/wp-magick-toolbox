@@ -4,6 +4,45 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
+if (!class_exists('WP_Error')) {
+    class WP_Error
+    {
+        private $errors = array();
+        private $error_data = array();
+
+        public function __construct($code = '', $message = '', $data = array())
+        {
+            if ($code !== '') {
+                $this->errors[$code] = array($message);
+                $this->error_data[$code] = $data;
+            }
+        }
+
+        public function get_error_codes()
+        {
+            return array_keys($this->errors);
+        }
+
+        public function get_error_code()
+        {
+            $codes = $this->get_error_codes();
+            return isset($codes[0]) ? $codes[0] : '';
+        }
+
+        public function get_error_message($code = '')
+        {
+            $code = $code !== '' ? $code : $this->get_error_code();
+            return isset($this->errors[$code][0]) ? $this->errors[$code][0] : '';
+        }
+
+        public function get_error_data($code = '')
+        {
+            $code = $code !== '' ? $code : $this->get_error_code();
+            return isset($this->error_data[$code]) ? $this->error_data[$code] : null;
+        }
+    }
+}
+
 if (!defined('NPCINK_SITE_TOOLBOX_VERSION')) {
     define('NPCINK_SITE_TOOLBOX_VERSION', '3.2.0');
 }
@@ -173,6 +212,9 @@ final class GithubProjectBlockTest extends TestCase
         $this->assertSame('application/vnd.github+json', $request['args']['headers']['Accept']);
         $this->assertSame('2022-11-28', $request['args']['headers']['X-GitHub-Api-Version']);
         $this->assertStringStartsWith('Npcink-Site-Toolbox/', $request['args']['headers']['User-Agent']);
+        $this->assertSame(4, $request['args']['timeout']);
+        $this->assertSame(2, $request['args']['redirection']);
+        $this->assertSame(102400, $request['args']['limit_response_size']);
         $this->assertStringContainsString('npcink-github-project', $first);
         $this->assertStringContainsString('muze-page/npcink-site-toolbox', $first);
         $this->assertStringContainsString('实用项目 &amp; 工具', $first);
@@ -198,6 +240,68 @@ final class GithubProjectBlockTest extends TestCase
         $this->assertCount(1, $GLOBALS['_test_github_remote_calls']);
         $this->assertStringContainsString('暂时无法读取项目数据', $first);
         $this->assertStringContainsString('href="https://github.com/muze-page/npcink-site-toolbox"', $first);
+    }
+
+    public function test_structurally_invalid_success_response_uses_negative_cache_and_fallback(): void
+    {
+        global $_test_transient_store;
+
+        $GLOBALS['_test_github_remote_response'] = array(
+            'response' => array('code' => 200),
+            'body' => '{}',
+        );
+        $attributes = array('repositoryUrl' => 'https://github.com/muze-page/npcink-site-toolbox');
+
+        $first = Npcink_Toolbox_Github_Project::render_block($attributes);
+        $second = Npcink_Toolbox_Github_Project::render_block($attributes);
+
+        $this->assertSame($first, $second);
+        $this->assertCount(1, $GLOBALS['_test_github_remote_calls']);
+        $this->assertStringContainsString('暂时无法读取项目数据', $first);
+        $this->assertStringContainsString('href="https://github.com/muze-page/npcink-site-toolbox"', $first);
+        $this->assertSame(
+            array('status' => 'error'),
+            $_test_transient_store['npcink_site_toolbox_github_2ec6f3a633bd1e653106b2475c95f63d']
+        );
+    }
+
+    /**
+     * @dataProvider remote_failure_provider
+     * @param mixed $response Simulated WordPress HTTP API response.
+     */
+    public function test_remote_failure_matrix_uses_one_negative_cached_request($response): void
+    {
+        $GLOBALS['_test_github_remote_response'] = $response;
+        $attributes = array('repositoryUrl' => 'https://github.com/muze-page/npcink-site-toolbox');
+
+        $first = Npcink_Toolbox_Github_Project::render_block($attributes);
+        $second = Npcink_Toolbox_Github_Project::render_block($attributes);
+
+        $this->assertSame($first, $second);
+        $this->assertCount(1, $GLOBALS['_test_github_remote_calls']);
+        $this->assertStringContainsString('暂时无法读取项目数据', $first);
+        $this->assertStringContainsString('href="https://github.com/muze-page/npcink-site-toolbox"', $first);
+    }
+
+    /**
+     * @return array<string,array{0:mixed}>
+     */
+    public function remote_failure_provider(): array
+    {
+        return array(
+            'not found' => array(array('response' => array('code' => 404), 'body' => '{}')),
+            'rate limited' => array(array('response' => array('code' => 429), 'body' => '{}')),
+            'network error' => array(new WP_Error()),
+            'malformed json' => array(array('response' => array('code' => 200), 'body' => '{bad')),
+        );
+    }
+
+    public function test_cache_ttls_match_the_documented_success_and_failure_windows(): void
+    {
+        $reflection = new ReflectionClass('Npcink_Toolbox_Github_Project');
+
+        $this->assertSame(43200, $reflection->getConstant('CACHE_TTL'));
+        $this->assertSame(1800, $reflection->getConstant('ERROR_CACHE_TTL'));
     }
 
     public function test_invalid_repository_url_renders_nothing_without_a_remote_request(): void

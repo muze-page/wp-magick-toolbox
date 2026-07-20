@@ -28,6 +28,8 @@ if (!class_exists('Npcink_Toolbox_Medium_Svg_Support')) {
 
             // SVG 上传时清洗内容
             add_filter('wp_handle_upload_prefilter', array(__CLASS__, 'sanitize_svg_upload'));
+            add_filter('wp_handle_sideload_prefilter', array(__CLASS__, 'sanitize_svg_upload'));
+            add_filter('wp_generate_attachment_metadata', array(__CLASS__, 'add_svg_metadata'), 10, 3);
         }
 
         //添加媒体库 SVG 图标支持
@@ -67,9 +69,10 @@ if (!class_exists('Npcink_Toolbox_Medium_Svg_Support')) {
             );
 
             foreach ($dangerous_tags as $tag) {
+                $qualified_tag = '(?:[a-zA-Z_][a-zA-Z0-9_.-]*:)?' . preg_quote($tag, '/');
                 // 移除整个标签及其内容
-                $content = preg_replace('/<' . $tag . '[^>]*>.*?<\/' . $tag . '>/is', '', $content);
-                $content = preg_replace('/<' . $tag . '[^>]*\/?>/is', '', $content);
+                $content = preg_replace('/<' . $qualified_tag . '\b[^>]*>.*?<\/' . $qualified_tag . '\s*>/is', '', $content);
+                $content = preg_replace('/<' . $qualified_tag . '\b[^>]*\/?>/is', '', $content);
             }
 
             // 移除危险属性
@@ -97,6 +100,30 @@ if (!class_exists('Npcink_Toolbox_Medium_Svg_Support')) {
                 $content = preg_replace('/\s*[\w-]+\s*=\s*\S*' . $pattern . '\S*/i', '', $content);
             }
 
+            // XML 字符引用会在浏览器解析属性时解码，必须检查解码后的值。
+            $decoded_attribute_result = preg_replace_callback(
+                '/\s+([a-zA-Z_:][a-zA-Z0-9_.:-]*)\s*=\s*(["\'])(.*?)\2/s',
+                static function ($matches) {
+                    $attribute_name = strtolower($matches[1]);
+                    $attribute_value = html_entity_decode($matches[3], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    $compact_value = preg_replace('/[\x00-\x20\x7f]+/u', '', $attribute_value);
+
+                    if (
+                        strpos($attribute_name, 'on') === 0
+                        || preg_match('/(?:javascript|vbscript):/i', (string) $compact_value)
+                        || preg_match('/expression\s*\(/i', $attribute_value)
+                    ) {
+                        return '';
+                    }
+
+                    return $matches[0];
+                },
+                $content
+            );
+            if (is_string($decoded_attribute_result)) {
+                $content = $decoded_attribute_result;
+            }
+
             // 移除 XML 外部实体 (XXE)
             $content = preg_replace('/<!DOCTYPE[^>]*>/i', '', $content);
             $content = preg_replace('/<!ENTITY[^>]*>/i', '', $content);
@@ -109,15 +136,15 @@ if (!class_exists('Npcink_Toolbox_Medium_Svg_Support')) {
          */
         public static function sanitize_svg_upload($file)
         {
-            // 仅管理员可上传 SVG
-            if (!current_user_can('manage_options')) {
-                $file['error'] = '仅管理员可上传 SVG 文件';
-                return $file;
-            }
-
             // 检查是否为 SVG 文件
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
             if (strtolower($ext) !== 'svg') {
+                return $file;
+            }
+
+            // 仅管理员可上传 SVG；其他文件不受此功能影响。
+            if (!current_user_can('manage_options')) {
+                $file['error'] = '仅管理员可上传 SVG 文件';
                 return $file;
             }
 
@@ -152,6 +179,101 @@ if (!class_exists('Npcink_Toolbox_Medium_Svg_Support')) {
             }
 
             return $file;
+        }
+
+        /**
+         * Supply dimensions for SVG attachments so REST responses can calculate
+         * missing image sizes without reading absent raster metadata keys.
+         *
+         * @param mixed  $metadata Existing attachment metadata.
+         * @param int    $attachment_id Attachment ID.
+         * @param string $context Metadata generation context.
+         * @return mixed
+         */
+        public static function add_svg_metadata($metadata, $attachment_id, $context)
+        {
+            unset($context);
+
+            if ('image/svg+xml' !== get_post_mime_type($attachment_id)) {
+                return $metadata;
+            }
+
+            $file = get_attached_file($attachment_id);
+            if (!is_string($file) || !is_readable($file)) {
+                return $metadata;
+            }
+
+            $content = file_get_contents($file);
+            $dimensions = self::get_svg_dimensions($content);
+            if (null === $dimensions) {
+                return $metadata;
+            }
+
+            $metadata = is_array($metadata) ? $metadata : array();
+            $metadata['width'] = $dimensions['width'];
+            $metadata['height'] = $dimensions['height'];
+            $metadata['sizes'] = isset($metadata['sizes']) && is_array($metadata['sizes'])
+                ? $metadata['sizes']
+                : array();
+
+            if (empty($metadata['file'])) {
+                $relative_file = _wp_relative_upload_path($file);
+                if (is_string($relative_file) && '' !== $relative_file) {
+                    $metadata['file'] = $relative_file;
+                }
+            }
+
+            return $metadata;
+        }
+
+        /**
+         * @param mixed $content SVG XML.
+         * @return array{width: int, height: int}|null
+         */
+        public static function get_svg_dimensions($content)
+        {
+            if (!is_string($content) || '' === trim($content)) {
+                return null;
+            }
+
+            $xml = @simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NONET);
+            if (false === $xml) {
+                return null;
+            }
+
+            $width = self::parse_svg_length((string) $xml['width']);
+            $height = self::parse_svg_length((string) $xml['height']);
+
+            if (null === $width || null === $height) {
+                $view_box = preg_split('/[\s,]+/', trim((string) $xml['viewBox']));
+                if (is_array($view_box) && 4 === count($view_box)) {
+                    $view_box_width = is_numeric($view_box[2]) ? (float) $view_box[2] : 0.0;
+                    $view_box_height = is_numeric($view_box[3]) ? (float) $view_box[3] : 0.0;
+                    if ($view_box_width > 0 && $view_box_height > 0) {
+                        $width = max(1, (int) round($view_box_width));
+                        $height = max(1, (int) round($view_box_height));
+                    }
+                }
+            }
+
+            return array(
+                'width' => null === $width ? 0 : $width,
+                'height' => null === $height ? 0 : $height,
+            );
+        }
+
+        /**
+         * @param string $value SVG length attribute.
+         * @return int|null
+         */
+        private static function parse_svg_length($value)
+        {
+            if (1 !== preg_match('/^\s*([0-9]+(?:\.[0-9]+)?)\s*(?:px)?\s*$/i', $value, $matches)) {
+                return null;
+            }
+
+            $length = (float) $matches[1];
+            return $length > 0 ? max(1, (int) round($length)) : null;
         }
     }
 }

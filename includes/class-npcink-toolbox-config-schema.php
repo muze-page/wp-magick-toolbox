@@ -231,7 +231,6 @@ if (!class_exists('Npcink_Toolbox_Config_Schema')) {
                         'bucket'       => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_text_field'),
                         'region'       => array('type' => 'string',  'default' => '', 'sanitize' => 'sanitize_text_field'),
                         'domain'       => array('type' => 'string',  'default' => '', 'sanitize' => 'esc_url_raw'),
-                        'delete_local' => array('type' => 'boolean', 'default' => false),
                     ),
                     'seo_checker' => array(
                         'enabled' => array('type' => 'boolean', 'default' => false, 'search' => self::search_metadata('performance-seo_checker-enabled', 'SEO 检查助手', 'maintenance', '维护工具', 'SEO', array('seo', '检查', 'alt', '健康度'), array('SEO'))),

@@ -17,15 +17,26 @@ if (!class_exists('Npcink_Toolbox_Image_Add_Tag')) {
         //自动给图片添加Alt标签
         public static function image_alt_tag($content)
         {
-            //global $post;
-            preg_match_all('/<img (.*?)\/>/', $content, $images);
-            if (!is_null($images)) {
-                foreach ($images[1] as $index => $value) {
-                    $new_img = str_replace('<img', '<img alt="' . get_the_title() . ' - ' . get_bloginfo('name') . '"', $images[0][$index]);
-                    $content = str_replace($images[0][$index], $new_img, $content);
-                }
+            $alt_parts = array_filter(array(
+                trim(wp_strip_all_tags((string) get_the_title())),
+                trim(wp_strip_all_tags((string) get_bloginfo('name'))),
+            ));
+            $alt_text = implode(' - ', $alt_parts);
+            if ($alt_text === '') {
+                return $content;
             }
-            return $content;
+
+            $processor = new WP_HTML_Tag_Processor($content);
+            while ($processor->next_tag('IMG')) {
+                $existing_alt = $processor->get_attribute('alt');
+                if ($existing_alt !== null && trim((string) $existing_alt) !== '') {
+                    continue;
+                }
+
+                $processor->set_attribute('alt', $alt_text);
+            }
+
+            return $processor->get_updated_html();
         }
     }
 }

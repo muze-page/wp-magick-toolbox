@@ -155,7 +155,6 @@
             },
             "oss": {
                 "bucket": "",
-                "delete_local": false,
                 "domain": "",
                 "enabled": false,
                 "provider": "aliyun",

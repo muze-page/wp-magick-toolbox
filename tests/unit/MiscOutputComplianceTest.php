@@ -47,6 +47,13 @@ final class MiscOutputComplianceTest extends TestCase
         );
     }
 
+    public function test_login_only_search_returns_an_explicit_forbidden_status(): void
+    {
+        $source = $this->source('page/function/login_search.php');
+
+        $this->assertStringContainsString("array('response' => 403)", $source);
+    }
+
     public function test_census_sanitizer_keeps_unique_positive_integer_user_ids(): void
     {
         $this->assertSame(

@@ -34,11 +34,11 @@ final class PerformanceComplianceTest extends TestCase
         $this->assertStringNotContainsString('SELECT ID, post_name', $source);
     }
 
-    public function test_oss_uses_wordpress_file_deletion_api(): void
+    public function test_oss_never_deletes_the_local_media_fallback(): void
     {
         $source = $this->source('admin/partials/performance/oss/index.php');
 
-        $this->assertStringContainsString('wp_delete_file($file);', $source);
+        $this->assertStringNotContainsString('wp_delete_file(', $source);
         $this->assertSame(0, preg_match('/(?<![A-Za-z0-9_])unlink\s*\(/', $source));
     }
 

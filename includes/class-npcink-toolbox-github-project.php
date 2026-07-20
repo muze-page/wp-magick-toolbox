@@ -145,7 +145,7 @@ final class Npcink_Toolbox_Github_Project
         }
 
         $payload = json_decode(wp_remote_retrieve_body($response), true);
-        if (!is_array($payload)) {
+        if (!is_array($payload) || !self::is_valid_repository_payload($payload)) {
             self::cache_failure($cache_key);
             return null;
         }
@@ -165,6 +165,32 @@ final class Npcink_Toolbox_Github_Project
         set_transient($cache_key, array('status' => 'success', 'data' => $data), self::CACHE_TTL);
 
         return $data;
+    }
+
+    /**
+     * Reject successful HTTP responses that do not match GitHub's repository shape.
+     *
+     * @param array<string,mixed> $payload Decoded GitHub response.
+     * @return bool
+     */
+    private static function is_valid_repository_payload($payload)
+    {
+        if (
+            !array_key_exists('description', $payload)
+            || ($payload['description'] !== null && !is_string($payload['description']))
+            || !array_key_exists('language', $payload)
+            || ($payload['language'] !== null && !is_string($payload['language']))
+            || !isset($payload['stargazers_count'])
+            || !is_int($payload['stargazers_count'])
+            || !isset($payload['forks_count'])
+            || !is_int($payload['forks_count'])
+            || !array_key_exists('archived', $payload)
+            || !is_bool($payload['archived'])
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

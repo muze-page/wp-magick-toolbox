@@ -7,6 +7,7 @@ import vm from 'node:vm';
 const root = resolve( dirname( fileURLToPath( import.meta.url ) ), '../..' );
 const source = await readFile( resolve( root, 'blocks/github-project/index.js' ), 'utf8' );
 const registrations = [];
+const blockPropsCalls = [];
 
 function createElement( type, props, ...children ) {
 	return { type, props: props || {}, children };
@@ -20,9 +21,12 @@ const window = {
 				return settings;
 			},
 		},
-		blockEditor: {
-			InspectorControls: 'InspectorControls',
-			useBlockProps: ( props = {} ) => props,
+			blockEditor: {
+				InspectorControls: 'InspectorControls',
+				useBlockProps: ( props = {} ) => {
+					blockPropsCalls.push( props );
+					return props;
+				},
 		},
 		components: {
 			PanelBody: 'PanelBody',
@@ -66,10 +70,12 @@ function collect( node, type, results = [] ) {
 }
 
 const changes = [];
+const emptyBlockPropsStart = blockPropsCalls.length;
 const emptyTree = registrations[ 0 ].settings.edit( {
 	attributes: { repositoryUrl: '' },
 	setAttributes: ( change ) => changes.push( change ),
 } );
+assert.equal( blockPropsCalls.length - emptyBlockPropsStart, 1 );
 const emptyControls = collect( emptyTree, 'TextControl' );
 
 assert.equal( collect( emptyTree, 'Placeholder' ).length, 1 );
@@ -81,10 +87,12 @@ assert.equal(
 	JSON.stringify( { repositoryUrl: 'https://github.com/muze-page/npcink-site-toolbox' } )
 );
 
+const validBlockPropsStart = blockPropsCalls.length;
 const validTree = registrations[ 0 ].settings.edit( {
 	attributes: { repositoryUrl: 'https://github.com/muze-page/npcink-site-toolbox' },
 	setAttributes() {},
 } );
+assert.equal( blockPropsCalls.length - validBlockPropsStart, 1 );
 const previews = collect( validTree, 'ServerSideRender' );
 
 assert.equal( collect( validTree, 'Placeholder' ).length, 0 );
@@ -95,10 +103,12 @@ assert.equal(
 	'https://github.com/muze-page/npcink-site-toolbox'
 );
 
+const invalidBlockPropsStart = blockPropsCalls.length;
 const invalidTree = registrations[ 0 ].settings.edit( {
 	attributes: { repositoryUrl: 'https://example.com/not-github/repository' },
 	setAttributes() {},
 } );
+assert.equal( blockPropsCalls.length - invalidBlockPropsStart, 1 );
 assert.equal( collect( invalidTree, 'Placeholder' ).length, 1 );
 assert.equal( collect( invalidTree, 'ServerSideRender' ).length, 0 );
 

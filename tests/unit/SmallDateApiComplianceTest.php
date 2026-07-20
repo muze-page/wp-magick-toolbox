@@ -20,6 +20,7 @@ final class SmallDateApiComplianceTest extends TestCase
 
         $this->assertStringContainsString("wp_date('YmdHis')", $source);
         $this->assertStringContainsString('wp_rand(10, 99)', $source);
+        $this->assertStringContainsString("add_filter('wp_handle_sideload_prefilter'", $source);
         $this->assertSame(0, preg_match('/(?<![A-Za-z0-9_])date\s*\(/', $source));
         $this->assertSame(0, preg_match('/(?<![A-Za-z0-9_])rand\s*\(/', $source));
     }

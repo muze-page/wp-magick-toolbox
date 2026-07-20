@@ -18,10 +18,12 @@ if (!class_exists('Npcink_Toolbox_Medium_Image_Rename')) {
                     //时间
                 case 'math':
                     add_filter('wp_handle_upload_prefilter', array(__CLASS__, 'custom_upload_filter_time'));
+                    add_filter('wp_handle_sideload_prefilter', array(__CLASS__, 'custom_upload_filter_time'));
                     break;
                     //md5重命名
                 case 'md5':
                     add_filter('wp_handle_upload_prefilter', array(__CLASS__, 'custom_upload_filter_md5'));
+                    add_filter('wp_handle_sideload_prefilter', array(__CLASS__, 'custom_upload_filter_md5'));
                     break;
                     //默认值
                 default:

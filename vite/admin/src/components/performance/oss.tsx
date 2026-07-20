@@ -3,7 +3,6 @@ import { Form, Input, Select } from "antd";
 import { DataContext } from "@/tool/dataContext";
 import { AntConfig } from "@/tool/tool";
 import { SettingsSection, ModuleRow, SecretField } from "@/components/settings-ui";
-import FeatureSwitch from "@/basic/feature-switch";
 
 const fromConfig = AntConfig.from;
 
@@ -55,13 +54,10 @@ const App: React.FC = () => {
               <Input />
             </Form.Item>
             <Form.Item label="Region" name="region">
-              <Input placeholder="如：oss-cn-beijing" />
+              <Input placeholder="阿里云 cn-beijing；腾讯云 ap-beijing" />
             </Form.Item>
             <Form.Item label="CDN 域名" name="domain">
               <Input placeholder="如：https://cdn.example.com" />
-            </Form.Item>
-            <Form.Item label="上传后删除本地文件" name="delete_local" valuePropName="checked">
-              <FeatureSwitch featureId="performance-oss-delete_local" label="上传后删除本地文件" />
             </Form.Item>
           </>
         )}

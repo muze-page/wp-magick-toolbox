@@ -51,14 +51,18 @@ class DbCleanCronLifecycleTest extends TestCase
 
     public function test_enabled_auto_cleanup_is_scheduled(): void
     {
+        $before = time();
         Npcink_Toolbox_Performance_Db_Clean::run(array(
             'enabled' => true,
             'auto_clean' => true,
             'auto_clean_schedule' => 'weekly',
         ));
+        $after = time();
 
         $this->assertSame('weekly', $GLOBALS['_test_cron_events'][self::CRON_HOOK]->schedule);
         $this->assertCount(1, $GLOBALS['_test_cron_schedule_calls']);
+        $this->assertGreaterThanOrEqual($before + 604800, $GLOBALS['_test_cron_events'][self::CRON_HOOK]->timestamp);
+        $this->assertLessThanOrEqual($after + 604800, $GLOBALS['_test_cron_events'][self::CRON_HOOK]->timestamp);
     }
 
     public function test_schedule_change_clears_old_event_before_rescheduling(): void
@@ -69,15 +73,19 @@ class DbCleanCronLifecycleTest extends TestCase
             'schedule' => 'weekly',
         );
 
+        $before = time();
         Npcink_Toolbox_Performance_Db_Clean::run(array(
             'enabled' => true,
             'auto_clean' => true,
             'auto_clean_schedule' => 'monthly',
         ));
+        $after = time();
 
         $this->assertSame(array(self::CRON_HOOK), $GLOBALS['_test_cron_clear_calls']);
         $this->assertSame('monthly', $GLOBALS['_test_cron_events'][self::CRON_HOOK]->schedule);
         $this->assertCount(1, $GLOBALS['_test_cron_schedule_calls']);
+        $this->assertGreaterThanOrEqual($before + 2592000, $GLOBALS['_test_cron_events'][self::CRON_HOOK]->timestamp);
+        $this->assertLessThanOrEqual($after + 2592000, $GLOBALS['_test_cron_events'][self::CRON_HOOK]->timestamp);
     }
 
     public function test_disabling_module_via_option_update_clears_schedule(): void

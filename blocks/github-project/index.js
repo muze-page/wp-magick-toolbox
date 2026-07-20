@@ -48,15 +48,18 @@
 				repositoryControl( repositoryUrl, setAttributes )
 			)
 		);
-		var placeholderProps = useBlockProps( {
-			icon: 'admin-links',
-			instructions: __( '粘贴公开 GitHub 仓库地址，自动展示项目说明和实时数据。', 'npcink-site-toolbox' ),
-			label: __( 'GitHub 项目', 'npcink-site-toolbox' ),
-		} );
+		var previewProps = useBlockProps( isValid
+			? { className: 'npcink-github-project-editor' }
+			: {
+				icon: 'admin-links',
+				instructions: __( '粘贴公开 GitHub 仓库地址，自动展示项目说明和实时数据。', 'npcink-site-toolbox' ),
+				label: __( 'GitHub 项目', 'npcink-site-toolbox' ),
+			}
+		);
 		var preview = isValid
 			? createElement(
 				'div',
-				useBlockProps( { className: 'npcink-github-project-editor' } ),
+				previewProps,
 				createElement( ServerSideRender, {
 					attributes: attributes,
 					block: 'npcink/github-project',
@@ -64,7 +67,7 @@
 			)
 			: createElement(
 				Placeholder,
-				placeholderProps,
+				previewProps,
 				repositoryControl( repositoryUrl, setAttributes )
 			);
 

@@ -66,6 +66,31 @@ class Npcink_Toolbox_Module_Loader_Test extends TestCase {
     }
 
     /**
+     * Upload hooks must also load during REST media requests, where is_admin() is false.
+     * Category management hooks must load in wp-admin while rewrite filters remain active
+     * on the frontend.
+     */
+    public function test_request_sensitive_modules_have_runtime_accurate_scopes(): void {
+        $registry = Npcink_Toolbox_Module_Loader::get_registry();
+
+        foreach (array(
+            'optimize.category_link_simplify',
+            'optimize.ban_auto_size',
+            'optimize.svg_support',
+            'optimize.image_rename',
+            'performance.oss',
+        ) as $module_id) {
+            $this->assertSame('both', $registry[$module_id]['scope'], "Module '$module_id' must load in admin and non-admin requests");
+        }
+
+        $this->assertSame(
+            'admin',
+            $registry['seo.seo_category_add_meat']['scope'],
+            'Category SEO fields only register admin taxonomy form and save hooks'
+        );
+    }
+
+    /**
      * 测试 get_module_meta 返回正确数据
      */
     public function test_get_module_meta_returns_correct_data(): void {
