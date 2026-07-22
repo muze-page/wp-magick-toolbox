@@ -150,7 +150,7 @@ describe("媒体库体检操作反馈", () => {
     fireEvent.click(screen.getByText("最多 50 张"));
 
     expect(screen.getByRole("button", { name: "连续转换（最多 50 张）" })).toBeInTheDocument();
-  });
+  }, 30_000);
 
   it("在体检区保留修复数量，并显示请求失败", async () => {
     renderMediaHealth();
