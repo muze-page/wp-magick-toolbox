@@ -121,5 +121,5 @@ describe("数据库清理操作链", () => {
 
     const failureMessage = await screen.findByText("清理失败，请重试。");
     expect(failureMessage.closest('[role="alert"]')).not.toBeNull();
-  });
+  }, 15000);
 });

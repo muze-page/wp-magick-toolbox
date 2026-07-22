@@ -37,6 +37,70 @@ class DiagnosticsTest extends TestCase {
         $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $summary['generated_at']);
     }
 
+    public function test_feature_status_is_read_only_and_uses_runtime_facts(): void {
+        $this->setWordPressState(array());
+
+        $status = Npcink_Toolbox_Diagnostics::get_feature_status();
+
+        $this->assertSame(
+            array('plugin', 'environment', 'counts', 'modules', 'editor_tools', 'diagnostics', 'generated_at'),
+            array_keys($status)
+        );
+        $this->assertSame('Npcink Site Toolbox', $status['plugin']['name']);
+        $this->assertSame(PHP_VERSION, $status['environment']['php_version']);
+        $this->assertSame(count(Npcink_Toolbox_Module_Loader::get_registry()), $status['counts']['registered']);
+        $this->assertSame(count($status['modules']), $status['counts']['active']);
+        $this->assertSame(5, $status['counts']['editor_tools']);
+        $this->assertCount(5, $status['editor_tools']);
+        $this->assertContains('pattern', array_column($status['editor_tools'], 'type'));
+        $this->assertContains('block', array_column($status['editor_tools'], 'type'));
+        $this->assertContains('optimize.widgets', array_column($status['modules'], 'id'));
+
+        $widget_index = array_search('optimize.widgets', array_column($status['modules'], 'id'), true);
+        $this->assertIsInt($widget_index);
+        $this->assertSame('站点小工具', $status['modules'][$widget_index]['label']);
+        $this->assertTrue($status['modules'][$widget_index]['always_loaded']);
+        $this->assertSame('', $status['modules'][$widget_index]['target_id']);
+
+        foreach ($status['modules'] as $module) {
+            $this->assertIsString($module['target_id']);
+            $this->assertNotSame($module['id'], $module['label']);
+        }
+
+        $serialized = json_encode($status);
+        $this->assertIsString($serialized);
+        $this->assertStringNotContainsString('access_key', $serialized);
+        $this->assertStringNotContainsString('secret_key', $serialized);
+        $this->assertStringNotContainsString('site_url', $serialized);
+    }
+
+    public function test_runtime_setting_targets_open_the_specific_feature(): void {
+        $method = new ReflectionMethod('Npcink_Toolbox_Diagnostics', 'get_module_target_id');
+        $registry = Npcink_Toolbox_Module_Loader::get_registry();
+
+        $this->assertSame(
+            'optimize-medium-upload_auto_name',
+            $method->invoke(null, $registry['optimize.image_rename'])
+        );
+        $this->assertSame(
+            'performance-oss-enabled',
+            $method->invoke(null, $registry['performance.oss'])
+        );
+        $this->assertSame(
+            'page-function-first_picture',
+            $method->invoke(null, $registry['page.first_picture'])
+        );
+        $this->assertSame('', $method->invoke(null, $registry['optimize.widgets']));
+    }
+
+    public function test_feature_status_replaces_the_retired_query_debug_panel(): void {
+        $source = file_get_contents(dirname(__FILE__) . '/../../admin/class-npcink-toolbox-admin.php');
+        $this->assertIsString($source);
+        $this->assertStringNotContainsString('npcink_site_toolbox_debug', $source);
+        $this->assertStringNotContainsString('render_debug_panel', $source);
+        $this->assertStringContainsString("'/diagnostics/features'", $source);
+    }
+
     public function test_removed_derived_contract_methods_do_not_exist(): void {
         $this->assertFalse(method_exists('Npcink_Toolbox_Diagnostics', 'calculate_score'));
         $this->assertFalse(method_exists('Npcink_Toolbox_Diagnostics', 'get_recommendations'));

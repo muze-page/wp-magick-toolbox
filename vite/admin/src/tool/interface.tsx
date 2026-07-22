@@ -55,6 +55,7 @@ export type DataLocal = {
   nonce?: string;
   apiBase?: string;
   restNonce?: string;
+  webpSupported?: boolean;
 };
 
 export interface SecretStatusEntry {
@@ -123,6 +124,46 @@ export interface DiagnosticSummary {
   status: "good" | "warning" | "critical";
   items: DiagnosticItem[];
   module_risks: DiagnosticModuleRisk[];
+  generated_at: string;
+}
+
+export interface RuntimeFeatureModule {
+  id: string;
+  label: string;
+  category: string;
+  category_label: string;
+  view: "site" | "content" | "seo" | "china" | "maintenance" | "";
+  target_id: string;
+  scope: "frontend" | "admin" | "both";
+  tier: "core" | "advanced" | "high_risk" | "experimental";
+  always_loaded: boolean;
+}
+
+export interface RuntimeEditorTool {
+  id: string;
+  type: "pattern" | "block";
+  title: string;
+  description: string;
+}
+
+export interface RuntimeFeatureStatus {
+  plugin: {
+    name: string;
+    version: string;
+  };
+  environment: {
+    wordpress_version: string;
+    php_version: string;
+  };
+  counts: {
+    registered: number;
+    active: number;
+    always_loaded: number;
+    editor_tools: number;
+  };
+  modules: RuntimeFeatureModule[];
+  editor_tools: RuntimeEditorTool[];
+  diagnostics: DiagnosticSummary;
   generated_at: string;
 }
 

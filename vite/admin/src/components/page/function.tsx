@@ -1,7 +1,8 @@
 //页面 - 功能
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Form, Input } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Popover } from "antd";
 import TimePeriod from "@/basic/timeInput";
 import TextAreaHtml from "@/basic/htmlInput";
 import { DataContext } from "@/tool/dataContext";
@@ -11,6 +12,7 @@ import { PageFunction } from "@/tool/interface";
 import SelectImage from "@/basic/selectImage";
 import FixedImage from "@/basic/fixedImage";
 import { SettingsSection, ModuleRow } from "@/components/settings-ui";
+import "./function.css";
 
 type FieldType = PageFunction;
 
@@ -18,6 +20,7 @@ const fromConfig = AntConfig.from;
 
 const App: React.FC = () => {
   const { optionData, updateOption } = useContext(DataContext);
+  const [form] = Form.useForm<FieldType>();
 
   const publicData = optionData.page?.function || defaultVarOption.page.function;
 
@@ -37,9 +40,21 @@ const App: React.FC = () => {
     updateOption("page", "function", formData);
   }, [formData]);
 
+  const maintenanceEnabled = formData.maintenance_tips !== "false";
+
+  const setMaintenanceEnabled = (checked: boolean) => {
+    const maintenanceTips = checked ? "default" : "false";
+    form.setFieldValue("maintenance_tips", maintenanceTips);
+    onValuesChange(
+      { maintenance_tips: maintenanceTips },
+      { ...formData, maintenance_tips: maintenanceTips },
+    );
+  };
+
   return (
     <SettingsSection title="功能">
       <Form
+        form={form}
         name="function"
         labelCol={fromConfig.labelCol}
         wrapperCol={fromConfig.wrapperCol}
@@ -85,64 +100,105 @@ const App: React.FC = () => {
             onValuesChange({ add_last_update: checked } as Partial<FieldType>, formData);
           }}
         />
-        <Form.Item<FieldType>
-          label="维护提示"
-          name="maintenance_tips"
-          extra={
-            <>
-              进行可能影响前端页面的配置时，可临时关闭前端页面，避免影响用户体验。（管理员不影响）
-            </>
-          }
+        <ModuleRow
+          title="维护提示页"
+          description="临时关闭前台访问，管理员仍可正常访问"
+          featureId="page-function-maintenance_tips"
+          enabled={maintenanceEnabled}
+          onChange={setMaintenanceEnabled}
+          tags={["谨慎"]}
         >
-          <FixedImage alists={serviceList} />
-        </Form.Item>
-        {formData.maintenance_tips !== "false" && (
-          <>
-            <Form.Item
-              label="倒计时"
-              name="countdown"
-              extra={<>此时间段内才会显示内容</>}
-            >
-              <TimePeriod />
-            </Form.Item>
-            <Form.Item label="倒计时标题" name="countdown_title">
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="倒计时图片"
-              name="countdown_image"
-              extra={
-                <>
-                  不同模版位置不一样，请手动确认效果，，全屏显示时，推荐使用1920×1080像素的图片
-                </>
-              }
-            >
-              <SelectImage />
-            </Form.Item>
-            <Form.Item
-              label="倒计时内容"
-              name="countdown_content"
-              extra={
-                <>
-                  可使用HTML，例如：
-                  <br />
-                  <pre className="mabox-preformatted-hint">
-                    &lt;p&gt; 抱歉，我们的网站正在维护中...
-                    <br />
-                    &lt;h5 class="dull-text"&gt; <br />
-                    请倒计时结束后再回来，我们准备了全新的内容哦！
-                    <br />
-                    &lt;/h5&gt;
-                    <br />
-                    &lt;/p&gt;
-                  </pre>
-                </>
-              }
-            >
-              <TextAreaHtml />
-            </Form.Item>
-          </>
-        )}
+          <div className="mabox-maintenance-config">
+            <section className="mabox-maintenance-section" aria-labelledby="mabox-maintenance-style-title">
+              <div className="mabox-maintenance-section-heading">
+                <h3 id="mabox-maintenance-style-title">页面样式</h3>
+                <p>选择访客看到的维护提示样式。</p>
+              </div>
+              <Form.Item<FieldType> name="maintenance_tips" noStyle>
+                <FixedImage alists={serviceList} includeDisabled={false} />
+              </Form.Item>
+            </section>
+
+            <section className="mabox-maintenance-section" aria-labelledby="mabox-maintenance-schedule-title">
+              <div className="mabox-maintenance-section-heading">
+                <h3 id="mabox-maintenance-schedule-title">显示计划</h3>
+                <p>可选；留空时启用后持续显示维护提示。</p>
+              </div>
+              <div className="mabox-maintenance-field">
+                <span className="mabox-maintenance-field-label">显示时间（可选）</span>
+                <Form.Item name="countdown" noStyle>
+                  <TimePeriod
+                    aria-label="维护提示显示时间"
+                    aria-describedby="mabox-maintenance-schedule-help"
+                    className="mabox-maintenance-time-range"
+                  />
+                </Form.Item>
+                <p id="mabox-maintenance-schedule-help" className="mabox-maintenance-field-help">
+                  只有在所选时间段内，访客才会看到维护提示。
+                </p>
+              </div>
+            </section>
+
+            <section className="mabox-maintenance-section" aria-labelledby="mabox-maintenance-content-title">
+              <div className="mabox-maintenance-section-heading">
+                <h3 id="mabox-maintenance-content-title">维护内容</h3>
+                <p>填写提示标题、可选背景图片和详细说明。</p>
+              </div>
+              <div className="mabox-maintenance-fields">
+                <div className="mabox-maintenance-field">
+                  <span className="mabox-maintenance-field-label">维护标题</span>
+                  <Form.Item name="countdown_title" noStyle>
+                    <Input aria-label="维护标题" placeholder="例如：网站维护中" />
+                  </Form.Item>
+                </div>
+
+                <div className="mabox-maintenance-field">
+                  <span className="mabox-maintenance-field-label">背景图片（可选）</span>
+                  <Form.Item name="countdown_image" noStyle>
+                    <SelectImage
+                      aria-label="维护背景图片"
+                      aria-describedby="mabox-maintenance-image-help"
+                    />
+                  </Form.Item>
+                  <p id="mabox-maintenance-image-help" className="mabox-maintenance-field-help">
+                    不同模板的图片位置不同；全屏样式建议使用 1920×1080 像素图片。
+                  </p>
+                </div>
+
+                <div className="mabox-maintenance-field">
+                  <div className="mabox-maintenance-field-label-row">
+                    <span className="mabox-maintenance-field-label">维护说明</span>
+                    <Popover
+                      placement="rightTop"
+                      title="HTML 示例"
+                      content={maintenanceHtmlExample}
+                      trigger="click"
+                    >
+                      <Button
+                        type="text"
+                        shape="circle"
+                        className="mabox-maintenance-info-button"
+                        aria-label="查看维护说明 HTML 示例"
+                        icon={<InfoCircleOutlined />}
+                      />
+                    </Popover>
+                  </div>
+                  <Form.Item name="countdown_content" noStyle>
+                    <TextAreaHtml
+                      aria-label="维护说明"
+                      aria-describedby="mabox-maintenance-content-help"
+                      rows={6}
+                      placeholder="例如：抱歉，我们的网站正在维护中，请稍后再来。"
+                    />
+                  </Form.Item>
+                  <p id="mabox-maintenance-content-help" className="mabox-maintenance-field-help">
+                    支持安全 HTML；可通过信息按钮查看示例。
+                  </p>
+                </div>
+              </div>
+            </section>
+          </div>
+        </ModuleRow>
       </Form>
     </SettingsSection>
   );
@@ -157,5 +213,14 @@ const serviceList = [
   { value: "default_img", label: Default_img, title: "默认带图" },
   { value: "red", label: Red, title: "红色纯粹" },
 ];
+
+const maintenanceHtmlExample = (
+  <div className="mabox-maintenance-html-example">
+    <pre>{`<p>抱歉，我们的网站正在维护中...</p>
+<h5 class="dull-text">
+  请倒计时结束后再回来，我们准备了全新的内容哦！
+</h5>`}</pre>
+  </div>
+);
 
 export default App;

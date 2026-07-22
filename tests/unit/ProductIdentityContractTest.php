@@ -34,6 +34,7 @@ final class ProductIdentityContractTest extends TestCase
 
         $this->assertStringContainsString("private static \$namespace = '" . self::SLUG . "/v1'", $registry);
         $this->assertStringContainsString("'" . self::SLUG . "'", $admin);
+        $this->assertStringContainsString("'Npcink 站点工具箱'", $admin);
         $this->assertStringContainsString("rest_url('" . self::SLUG . "/v1')", $admin);
         $this->assertStringContainsString("'npcink_site_toolbox_public_api'", $admin);
         $this->assertStringContainsString("get_header('x-" . self::SLUG . "-nonce')", $rate_limiter);

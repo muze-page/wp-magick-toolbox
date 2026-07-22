@@ -14,8 +14,10 @@ import {
   AdminView,
   adminViewSupportsTargetItem,
   getAdminViewFromSearch,
+  getTargetItemFromSearch,
   isAdminView,
   normalizeAdminView,
+  writeAdminTargetToHistory,
   writeAdminViewToHistory,
 } from "@/tool/navigation";
 import Save from "@/tool/save";
@@ -89,7 +91,9 @@ const App: React.FC = () => {
     getAdminViewFromSearch(window.location.search),
   );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [targetItemId, setTargetItemId] = useState<string | null>(null);
+  const [targetItemId, setTargetItemId] = useState<string | null>(() =>
+    getTargetItemFromSearch(window.location.search),
+  );
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 782);
@@ -110,7 +114,7 @@ const App: React.FC = () => {
       if (!isAdminView(requestedView)) {
         writeAdminViewToHistory(nextView, "replace");
       }
-      setTargetItemId(null);
+      setTargetItemId(getTargetItemFromSearch(window.location.search));
       setMobileMenuOpen(false);
     };
     window.addEventListener("popstate", handlePopState);
@@ -172,12 +176,19 @@ const App: React.FC = () => {
   const navigateToView = useCallback((requestedView: string, itemId?: string) => {
     const nextView = normalizeAdminView(requestedView);
     const currentView = getAdminViewFromSearch(window.location.search);
+    const currentTarget = getTargetItemFromSearch(window.location.search);
 
     setActiveView(nextView);
     setTargetItemId(itemId || null);
     setMobileMenuOpen(false);
 
-    if (nextView !== currentView || !isAdminView(new URLSearchParams(window.location.search).get("view"))) {
+    if (itemId) {
+      writeAdminTargetToHistory(nextView, itemId);
+    } else if (
+      nextView !== currentView ||
+      currentTarget ||
+      !isAdminView(new URLSearchParams(window.location.search).get("view"))
+    ) {
       writeAdminViewToHistory(nextView);
     }
     window.requestAnimationFrame(() => {
@@ -223,17 +234,13 @@ const App: React.FC = () => {
   }, [activeView, targetItemId]);
 
   const activeNavItem = allNavItems.find((item) => item.key === activeView);
-  const activeGroup = navGroups.find((group) =>
-    group.items.some((item) => item.key === activeView),
-  );
-
   const renderContent = () => {
     const item = allNavItems.find((navItem) => navItem.key === activeView);
     if (!item) return null;
 
     const Component = item.component;
     const extraProps: Record<string, unknown> = {};
-    if (item.key === "overview") {
+    if (item.key === "overview" || item.key === "about") {
       extraProps.onNavigate = handleSearchNavigate;
     }
     if (targetItemId && adminViewSupportsTargetItem(item.key)) {
@@ -278,12 +285,6 @@ const App: React.FC = () => {
     );
   };
 
-  const breadcrumbs = [
-    "Npcink Site Toolbox",
-    activeGroup?.groupLabel || "工作台",
-    activeNavItem?.label || "概览",
-  ];
-
   return (
     <DataContext.Provider
       value={{
@@ -304,10 +305,7 @@ const App: React.FC = () => {
         <header className="mabox-header">
           <div className="mabox-header-left">
             <span className="dashicons dashicons-admin-generic mabox-header-icon" aria-hidden="true" />
-            <div>
-              <h1 className="mabox-header-title">Npcink Site Toolbox</h1>
-              <p className="mabox-header-subtitle">站点设置与维护</p>
-            </div>
+            <h1 className="mabox-header-title">Npcink Site Toolbox</h1>
           </div>
 
           {!isMobile && (
@@ -384,18 +382,6 @@ const App: React.FC = () => {
           </nav>
 
           <main className="mabox-main" id="mabox-main-content" tabIndex={-1}>
-            <nav className="mabox-breadcrumb" aria-label="面包屑">
-              <ol>
-                {breadcrumbs.map((crumb, index) => (
-                  <li
-                    key={crumb}
-                    className={index === breadcrumbs.length - 1 ? "mabox-breadcrumb-current" : ""}
-                  >
-                    {crumb}
-                  </li>
-                ))}
-              </ol>
-            </nav>
             <div className="mabox-content">{renderContent()}</div>
           </main>
         </div>

@@ -8,6 +8,7 @@
 import { restInstance, ApiResponse } from "@/axios/public";
 import {
   DiagnosticSummary,
+  RuntimeFeatureStatus,
   SearchHealthSummary,
   SettingsSavePayload,
 } from "@/tool/interface";
@@ -51,6 +52,78 @@ export interface MediaHealthIssue {
   type: string;
   count: number;
   severity?: string;
+}
+
+export interface MediaFormatSummary {
+  count: number;
+  bytes: number;
+}
+
+export type MediaWebpRecommendation =
+  | "unsupported"
+  | "no_candidates"
+  | "cleanup_failed"
+  | "insufficient_sample"
+  | "sample_failed"
+  | "low_savings"
+  | "consider_batch"
+  | "below_scale";
+
+export interface MediaWebpAssessment {
+  supported: boolean;
+  checked: number;
+  sampled: boolean;
+  missing_files: number;
+  formats: Record<"jpeg" | "png" | "webp" | "other", MediaFormatSummary>;
+  sample: {
+    attempted: number;
+    successful: number;
+    errors: number;
+    input_bytes: number;
+    output_bytes: number;
+    savings_bytes: number;
+    savings_percent: number | null;
+    temporary_files_cleaned: boolean;
+    recommendation: MediaWebpRecommendation;
+  };
+  thresholds: {
+    candidate_count: number;
+    candidate_bytes: number;
+    savings_percent: number;
+  };
+  batch: {
+    candidate_ids: number[];
+    restorable_ids: number[];
+    batch_size: number;
+    original_retained: boolean;
+    restorable: boolean;
+  };
+}
+
+export type MediaWebpBatchStatus = "converted" | "restored" | "skipped" | "failed";
+
+export interface MediaWebpBatchResult {
+  processed: number;
+  converted?: number;
+  restored?: number;
+  skipped: number;
+  failed: number;
+  results: Array<{
+    attachment_id: number;
+    status: MediaWebpBatchStatus;
+    message: string;
+  }>;
+  original_retained: boolean;
+}
+
+export interface MediaHealthResult {
+  issues: MediaHealthIssue[];
+  attachment_scan: {
+    checked: number;
+    total: number;
+    sampled: boolean;
+  };
+  webp_assessment: MediaWebpAssessment;
 }
 
 export interface SeoIssue {
@@ -100,8 +173,8 @@ export const performanceApi = {
       { post_id: postId },
       { maboxNotify: false },
     ),
-  checkMedia: (postId?: number): Promise<ApiResponse<{ issues: MediaHealthIssue[] }>> =>
-    restInstance.post<ApiResponse<{ issues: MediaHealthIssue[] }>, ApiResponse<{ issues: MediaHealthIssue[] }>>(
+  checkMedia: (postId?: number): Promise<ApiResponse<MediaHealthResult>> =>
+    restInstance.post<ApiResponse<MediaHealthResult>, ApiResponse<MediaHealthResult>>(
       "/performance/media/check",
       { post_id: postId },
       { maboxNotify: false },
@@ -110,6 +183,18 @@ export const performanceApi = {
     restInstance.post<ApiResponse<{ fixed: number }>, ApiResponse<{ fixed: number }>>(
       "/performance/media/fix-alt",
       { post_id: postId },
+      { maboxNotify: false },
+    ),
+  convertMediaWebp: (attachmentIds: number[]): Promise<ApiResponse<MediaWebpBatchResult>> =>
+    restInstance.post<ApiResponse<MediaWebpBatchResult>, ApiResponse<MediaWebpBatchResult>>(
+      "/performance/media/webp/convert",
+      { attachment_ids: attachmentIds },
+      { maboxNotify: false },
+    ),
+  restoreMediaWebp: (attachmentIds: number[]): Promise<ApiResponse<MediaWebpBatchResult>> =>
+    restInstance.post<ApiResponse<MediaWebpBatchResult>, ApiResponse<MediaWebpBatchResult>>(
+      "/performance/media/webp/restore",
+      { attachment_ids: attachmentIds },
       { maboxNotify: false },
     ),
 };
@@ -136,6 +221,11 @@ export const diagnosticsApi = {
   getSummary: (): Promise<ApiResponse<DiagnosticSummary>> =>
     restInstance.get<ApiResponse<DiagnosticSummary>, ApiResponse<DiagnosticSummary>>(
       "/diagnostics/summary",
+      { maboxNotify: false },
+    ),
+  getFeatureStatus: (): Promise<ApiResponse<RuntimeFeatureStatus>> =>
+    restInstance.get<ApiResponse<RuntimeFeatureStatus>, ApiResponse<RuntimeFeatureStatus>>(
+      "/diagnostics/features",
       { maboxNotify: false },
     ),
 };

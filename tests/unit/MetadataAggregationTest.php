@@ -15,7 +15,7 @@ class MetadataAggregationTest extends TestCase {
         $registry = require dirname(__DIR__, 2) . '/admin/modules/registry.php';
         $metadata = Npcink_Toolbox_Module_Metadata::get_registry();
 
-        $this->assertCount(55, $registry);
+        $this->assertCount(56, $registry);
         $this->assertSame(self::expected_module_ids(), array_keys($registry));
         $this->assertSame($registry, $metadata);
     }
@@ -63,7 +63,7 @@ class MetadataAggregationTest extends TestCase {
         $ui = Npcink_Toolbox_Module_Metadata::get_ui_metadata();
 
         $this->assertIsArray($ui);
-        $this->assertCount(55, $ui);
+        $this->assertCount(56, $ui);
 
         foreach ($ui as $module_id => $entry) {
             $this->assertArrayNotHasKey('_option_key', $entry, "UI metadata should not contain _option_key for '{$module_id}'");
@@ -95,12 +95,14 @@ class MetadataAggregationTest extends TestCase {
     public function test_required_keys_are_present_in_all_modules(): void {
         Npcink_Toolbox_Module_Metadata::reset_cache();
         $registry = Npcink_Toolbox_Module_Metadata::get_registry();
-        $required = array('class', 'file', 'option_key', 'category', 'scope');
+        $required = array('class', 'file', 'option_key', 'category', 'scope', 'label');
 
         foreach ($registry as $module_id => $meta) {
             foreach ($required as $key) {
                 $this->assertArrayHasKey($key, $meta, "Module '{$module_id}' should have required key '{$key}'");
             }
+            $this->assertNotSame('', trim((string) $meta['label']), "Module '{$module_id}' should have a user-facing label");
+            $this->assertNotSame($module_id, $meta['label'], "Module '{$module_id}' must not expose its internal ID as the label");
         }
     }
 
@@ -145,6 +147,7 @@ class MetadataAggregationTest extends TestCase {
             'optimize.ban_auto_size',
             'optimize.svg_support',
             'optimize.image_rename',
+            'optimize.webp_conversion',
             'optimize.admin_single_add_user_screen',
             'optimize.admin_add_time_screen',
             'optimize.admin_single_show_id',

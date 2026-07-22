@@ -58,6 +58,14 @@ const media = [
   },
 ];
 
+const thirdMediaItem = {
+  id: 13,
+  source_url: "https://example.com/uploads/third.jpg",
+  slug: "third",
+  alt_text: "第三张图片",
+  title: { rendered: "第三张图片" },
+};
+
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
@@ -78,15 +86,15 @@ describe("SelectImage", () => {
   it.each([
     [
       "https://example.com/subdirectory/wp-json/npcink-site-toolbox/v1",
-      "https://example.com/subdirectory/wp-json/wp/v2/media?per_page=12",
+      "https://example.com/subdirectory/wp-json/wp/v2/media?per_page=12&page=1",
     ],
     [
       "https://example.com/subdirectory/?rest_route=/npcink-site-toolbox/v1&context=edit",
-      "https://example.com/subdirectory/?rest_route=/wp/v2/media&context=edit&per_page=12",
+      "https://example.com/subdirectory/?rest_route=/wp/v2/media&context=edit&per_page=12&page=1",
     ],
     [
       "/api",
-      "/api/wp-json/wp/v2/media?per_page=12",
+      "/api/wp-json/wp/v2/media?per_page=12&page=1",
     ],
   ])("从现有 API 契约推导媒体端点：%s", (apiBase, expected) => {
     dataContextMock.apiBase = apiBase;
@@ -133,6 +141,12 @@ describe("SelectImage", () => {
     const description = screen.getByText("建议使用横向图片");
 
     expect(input).toHaveValue("https://example.com/old.jpg");
+    expect(input).toHaveAttribute("placeholder", "或粘贴图片 URL");
+    expect(screen.getByText("已选择图片")).toBeInTheDocument();
+    expect(screen.getByText("https://example.com/old.jpg")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "为倒计时图片选择图片" })).toHaveTextContent(
+      "从媒体库选择",
+    );
     expect(input).toHaveAttribute("aria-describedby", description.id);
     expect(
       screen.getByRole("button", { name: "为倒计时图片选择图片" }),
@@ -140,6 +154,9 @@ describe("SelectImage", () => {
 
     fireEvent.change(input, { target: { value: "https://example.com/new.jpg" } });
     expect(onChange).toHaveBeenCalledWith("https://example.com/new.jpg");
+
+    fireEvent.click(screen.getByRole("button", { name: "清除倒计时图片" }));
+    expect(onChange).toHaveBeenCalledWith("");
   });
 
   it("在单个有名称的选项组中选择并确认媒体 URL", async () => {
@@ -159,16 +176,19 @@ describe("SelectImage", () => {
     const group = await within(dialog).findByRole("radiogroup", {
       name: "媒体库图片",
     });
+    expect(group).toHaveClass("mabox-media-picker-grid");
     expect(within(group).getAllByRole("radio")).toHaveLength(2);
-    expect(within(dialog).getByRole("img", { name: "精选封面" })).toHaveAttribute(
-      "src",
-      "https://example.com/uploads/first-medium.jpg",
-    );
+    const firstImage = within(dialog).getByRole("img", { name: "精选封面" });
+    expect(firstImage).toHaveAttribute("src", "https://example.com/uploads/first-medium.jpg");
+    expect(firstImage).not.toHaveAttribute("width");
+    expect(firstImage).not.toHaveAttribute("height");
     expect(
       within(dialog).getByRole("img", { name: "第二张图片" }),
     ).toBeInTheDocument();
 
-    fireEvent.click(within(dialog).getByRole("radio", { name: "精选封面" }));
+    const firstRadio = within(dialog).getByRole("radio", { name: "精选封面" });
+    fireEvent.click(firstRadio);
+    expect(firstRadio.closest("label")).toHaveClass("mabox-media-picker-option--selected");
     fireEvent.click(
       within(dialog).getByRole("button", { name: "使用所选图片" }),
     );
@@ -178,6 +198,23 @@ describe("SelectImage", () => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
   }, 15_000);
+
+  it("未选择图片前禁用确认，选择后显示明确选中态", async () => {
+    renderSelectImage(
+      <SelectImage aria-label="维护背景图片" value="" onChange={vi.fn()} />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "为维护背景图片选择图片" }));
+    const dialog = await screen.findByRole("dialog");
+    const group = await within(dialog).findByRole("radiogroup", { name: "媒体库图片" });
+    const confirmButton = within(dialog).getByRole("button", { name: "使用所选图片" });
+    const firstRadio = within(group).getByRole("radio", { name: "精选封面" });
+
+    expect(confirmButton).toBeDisabled();
+    fireEvent.click(firstRadio);
+    expect(confirmButton).toBeEnabled();
+    expect(firstRadio.closest("label")).toHaveClass("mabox-media-picker-option--selected");
+  });
 
   it("取消时丢弃草稿，重新打开时恢复当前值", async () => {
     renderSelectImage(
@@ -256,5 +293,82 @@ describe("SelectImage", () => {
       await within(dialog).findByRole("radiogroup", { name: "媒体库图片" }),
     ).toBeInTheDocument();
     expect(axios.get).toHaveBeenCalledTimes(2);
+  });
+
+  it("按 WordPress 总页数追加媒体并保留当前选择", async () => {
+    vi.mocked(axios.get)
+      .mockResolvedValueOnce({
+        data: media,
+        headers: { "x-wp-totalpages": "2" },
+      })
+      .mockResolvedValueOnce({
+        data: [media[0], thirdMediaItem],
+        headers: { "x-wp-totalpages": "2" },
+      });
+
+    renderSelectImage(
+      <SelectImage aria-label="封面" value="" onChange={vi.fn()} />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "为封面选择图片" }));
+    const dialog = await screen.findByRole("dialog");
+    const group = await within(dialog).findByRole("radiogroup", {
+      name: "媒体库图片",
+    });
+    const firstRadio = within(group).getByRole("radio", { name: "精选封面" });
+
+    fireEvent.click(firstRadio);
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: "加载更多图片" }),
+    );
+
+    expect(
+      await within(group).findByRole("radio", { name: "第三张图片" }),
+    ).toBeInTheDocument();
+    expect(within(group).getAllByRole("radio")).toHaveLength(3);
+    expect(firstRadio).toBeChecked();
+    expect(axios.get).toHaveBeenLastCalledWith(
+      "https://example.com/subdirectory/wp-json/wp/v2/media?per_page=12&page=2",
+      { headers: { "X-WP-Nonce": "rest-nonce" } },
+    );
+    expect(within(dialog).getByRole("status")).toHaveTextContent(
+      "已加载全部图片",
+    );
+  });
+
+  it("加载更多失败时保留现有图片并允许重试", async () => {
+    vi.mocked(axios.get)
+      .mockResolvedValueOnce({
+        data: media,
+        headers: { "x-wp-totalpages": "2" },
+      })
+      .mockRejectedValueOnce(new Error("page unavailable"))
+      .mockResolvedValueOnce({
+        data: [thirdMediaItem],
+        headers: { "x-wp-totalpages": "2" },
+      });
+
+    renderSelectImage(
+      <SelectImage aria-label="封面" value="" onChange={vi.fn()} />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "为封面选择图片" }));
+    const dialog = await screen.findByRole("dialog");
+    const group = await within(dialog).findByRole("radiogroup", {
+      name: "媒体库图片",
+    });
+
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: "加载更多图片" }),
+    );
+    const alert = await within(dialog).findByRole("alert");
+    expect(alert).toHaveTextContent("已加载的图片仍可继续选择");
+    expect(within(group).getAllByRole("radio")).toHaveLength(2);
+
+    fireEvent.click(
+      within(alert).getByRole("button", { name: "重试加载更多图片" }),
+    );
+    expect(
+      await within(group).findByRole("radio", { name: "第三张图片" }),
+    ).toBeInTheDocument();
+    expect(axios.get).toHaveBeenCalledTimes(3);
   });
 });

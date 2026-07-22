@@ -1,5 +1,7 @@
 import { Suspense, useEffect, useState, type KeyboardEvent, type ReactNode } from "react";
 
+import { getSettingsTabFromSearch, writeSettingsTabToHistory } from "@/tool/navigation";
+
 export interface SettingsTab {
   key: string;
   label: string;
@@ -25,20 +27,31 @@ const TabPanelFallback = (
 );
 
 const SettingsTabs = ({ ariaLabel, idPrefix, tabs, targetItemId }: SettingsTabsProps) => {
+  const tabScope = idPrefix.startsWith("mabox-") ? idPrefix.slice("mabox-".length) : idPrefix;
   const matchedTargetKey = targetItemId
     ? tabs.find((tab) => tab.prefixes?.some((prefix) => targetItemId.startsWith(prefix)))?.key
     : undefined;
-  const [activeKey, setActiveKey] = useState(() => matchedTargetKey || tabs[0]?.key || "");
+  const [activeKey, setActiveKey] = useState(() => {
+    const requestedKey = getSettingsTabFromSearch(
+      window.location.search,
+      tabScope,
+      tabs.map((tab) => tab.key),
+    );
+    return matchedTargetKey || requestedKey || tabs[0]?.key || "";
+  });
   const activeTab = tabs.find((tab) => tab.key === activeKey) || tabs[0];
 
   useEffect(() => {
-    if (matchedTargetKey) setActiveKey(matchedTargetKey);
-  }, [matchedTargetKey]);
+    if (!matchedTargetKey) return;
+    setActiveKey(matchedTargetKey);
+    writeSettingsTabToHistory(tabScope, matchedTargetKey);
+  }, [matchedTargetKey, tabScope]);
 
   if (!activeTab) return null;
 
   const selectTab = (nextKey: string, moveFocus = false) => {
     setActiveKey(nextKey);
+    writeSettingsTabToHistory(tabScope, nextKey);
     if (!moveFocus) return;
 
     requestAnimationFrame(() => {

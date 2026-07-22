@@ -78,6 +78,7 @@ class Npcink_Toolbox_Module_Loader_Test extends TestCase {
             'optimize.ban_auto_size',
             'optimize.svg_support',
             'optimize.image_rename',
+            'optimize.webp_conversion',
             'performance.oss',
         ) as $module_id) {
             $this->assertSame('both', $registry[$module_id]['scope'], "Module '$module_id' must load in admin and non-admin requests");

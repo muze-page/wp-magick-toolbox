@@ -32,6 +32,7 @@ export type OptimizeMedium = {
   no_auto_size: boolean;
   medium_add_svg: boolean;
   upload_auto_name: string;
+  webp_conversion: boolean;
 };
 
 export type OptimizeAdmin = {

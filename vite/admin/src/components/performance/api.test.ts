@@ -91,10 +91,27 @@ describe("performanceApi", () => {
     );
   });
 
+  it("历史媒体 WebP 转换和恢复仅提交显式附件 ID", async () => {
+    await performanceApi.convertMediaWebp([11, 12]);
+    await performanceApi.restoreMediaWebp([11, 12]);
+
+    expect(restMocks.post).toHaveBeenNthCalledWith(1,
+      "/performance/media/webp/convert",
+      { attachment_ids: [11, 12] },
+      { maboxNotify: false },
+    );
+    expect(restMocks.post).toHaveBeenNthCalledWith(2,
+      "/performance/media/webp/restore",
+      { attachment_ids: [11, 12] },
+      { maboxNotify: false },
+    );
+  });
+
   it("已有局部状态的查询和建议接口关闭传输层通知", async () => {
     await domesticApi.checkEnvironment();
     await domesticApi.applyEnvironmentFix(["gravatar"]);
     await diagnosticsApi.getSummary();
+    await diagnosticsApi.getFeatureStatus();
     await searchHealthApi.getSummary(30);
     await settingsApi.getSchema();
 
@@ -109,6 +126,10 @@ describe("performanceApi", () => {
     );
     expect(restMocks.get).toHaveBeenCalledWith(
       "/diagnostics/summary",
+      { maboxNotify: false },
+    );
+    expect(restMocks.get).toHaveBeenCalledWith(
+      "/diagnostics/features",
       { maboxNotify: false },
     );
     expect(restMocks.get).toHaveBeenCalledWith(

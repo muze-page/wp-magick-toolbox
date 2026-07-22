@@ -101,7 +101,7 @@ const collectMediaRuleDeclarations = (
       if (nestedRule.type !== 1) return;
 
       const styleRule = nestedRule as CSSStyleRule;
-      if (styleRule.selectorText !== selectorText) return;
+      if (!splitSelectorList(styleRule.selectorText).includes(selectorText)) return;
 
       declarations = Object.fromEntries(
         Array.from(styleRule.style).map((property) => [
@@ -230,6 +230,62 @@ describe('WordPress admin embed isolation', () => {
     expect(mainDeclarations).toMatchObject({
       'max-width': '100%',
       width: '100%',
+    });
+  });
+
+  it('keeps the header and body in one left-aligned 1200px shell and removes the duplicate breadcrumb row', () => {
+    const appStyleSource = readRelativeFile('./App.css');
+    const tabSource = readRelativeFile('./components/tab.tsx');
+
+    expect(appStyleSource).toContain('--mabox-shell-gutter: 0px;');
+    expect(appStyleSource).toContain('--mabox-shell-width: 1200px;');
+    expect(appStyleSource).toContain('background: transparent;');
+    expect(appStyleSource).toContain('width: calc(100% - (2 * var(--mabox-shell-gutter)));');
+    expect(appStyleSource).toContain('max-width: var(--mabox-shell-width);');
+    expect(appStyleSource).toContain('margin-left: var(--mabox-shell-gutter);');
+    expect(appStyleSource).toContain('padding: 24px 0;');
+    expect(tabSource).not.toContain('mabox-breadcrumb');
+    expect(tabSource).not.toContain('aria-label="面包屑"');
+    expect(appStyleSource).not.toContain('.mabox-breadcrumb');
+  });
+
+  it('keeps constrained cards and form labels readable', () => {
+    const appStyleSource = readRelativeFile('./App.css');
+    const domesticSource = readRelativeFile('./components/domestic/index.tsx');
+    const searchEnhanceSource = readRelativeFile('./components/performance/search_enhance.tsx');
+    const mediumLabelDeclarations = collectMediaRuleDeclarations(
+      appStyleSource,
+      '(min-width: 769px) and (max-width: 1024px)',
+      '.mabox-shell .ant-form-item-label',
+    );
+    const mediumControlDeclarations = collectMediaRuleDeclarations(
+      appStyleSource,
+      '(min-width: 769px) and (max-width: 1024px)',
+      '.mabox-shell .ant-form-item-control',
+    );
+
+    expect(domesticSource).toContain('className="mabox-environment-results"');
+    expect(domesticSource).not.toContain('md={8}');
+    expect(searchEnhanceSource.match(/<Col xs=\{24\} xl=\{8\}>/g)).toHaveLength(3);
+    expect(appStyleSource).toContain(
+      '.mabox-environment-results {\n' +
+      '  display: grid;\n' +
+      '  grid-template-columns: repeat(2, minmax(0, 1fr));',
+    );
+    expect(appStyleSource).toContain(
+      '@media (max-width: 600px) {\n' +
+      '  .mabox-environment-results {\n' +
+      '    grid-template-columns: minmax(0, 1fr);',
+    );
+    expect(mediumLabelDeclarations).toMatchObject({
+      flex: '0 0 160px',
+      'max-width': '160px',
+      width: '160px',
+    });
+    expect(mediumControlDeclarations).toMatchObject({
+      'max-width': 'calc(100% - 160px)',
+      'min-width': '0',
+      width: 'calc(100% - 160px)',
     });
   });
 

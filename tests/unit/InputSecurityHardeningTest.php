@@ -201,10 +201,10 @@ final class InputSecurityHardeningTest extends TestCase
         }
 
         $this->assertSame(
-            2,
+            1,
             substr_count($combined, 'phpcs:ignore WordPress.Security.NonceVerification.Recommended')
         );
-        $this->assertSame(2, substr_count($combined, 'no state is changed.'));
+        $this->assertSame(1, substr_count($combined, 'no state is changed.'));
     }
 
     public function test_category_seo_uses_wordpress_core_form_nonce_actions(): void

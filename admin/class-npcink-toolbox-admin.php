@@ -86,7 +86,7 @@ class Npcink_Toolbox_Admin
 
         add_plugins_page(
             'Npcink Site Toolbox 设置',   // 要在此页面的浏览器窗口中显示的标题。
-            'Npcink Site Toolbox',        // 要为此菜单项显示的文本
+            'Npcink 站点工具箱',           // 要为此菜单项显示的文本
             'manage_options',            // 哪种类型的用户可以看到此菜单项
             'npcink-site-toolbox', // The unique ID - that is, the slug - for this menu item.
             array(__CLASS__, 'Npcink_Toolbox_display'),   // 呈现此菜单的页面时要调用的函数的名称
@@ -101,45 +101,6 @@ class Npcink_Toolbox_Admin
     {
         echo '<div class="wrap"> <h2>';
         echo '</h2><div id="root"></div>';
-
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only diagnostic view; no state is changed.
-        $debug_enabled = isset($_GET['npcink_site_toolbox_debug']) && is_string($_GET['npcink_site_toolbox_debug']) ? '1' === sanitize_text_field(wp_unslash($_GET['npcink_site_toolbox_debug'])) : false;
-        if ($debug_enabled && current_user_can('manage_options')) {
-            self::render_debug_panel();
-        }
-    }
-
-    /**
-     * 路由表调试面板
-     */
-    private static function render_debug_panel()
-    {
-        $active_modules = get_option(NPCINK_SITE_TOOLBOX_ACTIVE_MODULES, array());
-        $cache = false;
-        if (function_exists('wp_cache_get')) {
-            $cache = wp_cache_get('npcink_site_toolbox_active_modules', 'npcink_site_toolbox');
-        }
-
-        echo '<div class="postbox" style="margin-top:20px;padding:15px;">';
-        echo '<h3>🔧 按需加载调试面板</h3>';
-        echo '<p>访问地址添加 <code>?npcink_site_toolbox_debug=1</code> 查看此面板</p>';
-        echo '<table class="widefat" style="margin-top:10px;">';
-        echo '<tr><th style="width:200px;">路由表模块数</th><td>' . count($active_modules) . ' 个</td></tr>';
-        echo '<tr><th>缓存命中</th><td>' . ($cache !== false ? '✅ 是' : '❌ 否（从数据库读取）') . '</td></tr>';
-        echo '<tr><th>加载模式</th><td>' . (empty($active_modules) ? '⚠️ 传统模式（降级回退）' : '✅ 按需加载模式') . '</td></tr>';
-
-        if (!empty($active_modules)) {
-            echo '<tr><th>已激活模块</th><td><ul style="margin:5px 0;columns:2;">';
-            foreach ($active_modules as $module) {
-                echo '<li>' . esc_html($module) . '</li>';
-            }
-            echo '</ul></td></tr>';
-        }
-
-        echo '</table>';
-        echo '<p style="margin-top:10px;"><a href="' . esc_url(remove_query_arg('npcink_site_toolbox_debug')) . '" class="button">关闭调试面板</a>';
-        echo ' <a href="' . esc_url(add_query_arg('npcink_site_toolbox_debug', '1')) . '" class="button">刷新路由表</a></p>';
-        echo '</div>';
     }
 
     /**
@@ -176,6 +137,8 @@ class Npcink_Toolbox_Admin
             'ajaxurl' => admin_url('admin-ajax.php'),
             'apiBase' => esc_url_raw(rest_url('npcink-site-toolbox/v1')),
             'restNonce' => wp_create_nonce('wp_rest'),
+            'webpSupported' => function_exists('wp_image_editor_supports')
+                && wp_image_editor_supports(array('mime_type' => 'image/webp')),
         );
         wp_localize_script($name, 'dataLocal', $npcink_site_toolbox_array);
 
@@ -389,6 +352,25 @@ class Npcink_Toolbox_Admin
     }
 
     /**
+     * 获取脱敏的功能与运行状态。
+     */
+    public static function rest_get_feature_status(\WP_REST_Request $request)
+    {
+        if (!class_exists('Npcink_Toolbox_Diagnostics')) {
+            return new \WP_Error(
+                'diagnostics_not_available',
+                __('诊断服务暂不可用', 'npcink-site-toolbox'),
+                array('status' => 500)
+            );
+        }
+
+        return rest_ensure_response(array(
+            'success' => true,
+            'data'    => Npcink_Toolbox_Diagnostics::get_feature_status(),
+        ));
+    }
+
+    /**
      * 注册 REST API 路由
      */
     public static function register_rest_routes()
@@ -517,6 +499,31 @@ class Npcink_Toolbox_Admin
                     },
                 ),
             ),
+        ), 'performance');
+
+        $webp_attachment_args = array(
+            'attachment_ids' => array(
+                'required'          => true,
+                'type'              => 'array',
+                'items'             => array('type' => 'integer', 'minimum' => 1),
+                'description'       => '每批最多 5 个 JPEG 附件 ID',
+                'validate_callback' => array('Npcink_Toolbox_Performance_Media_Health', 'validate_attachment_ids'),
+                'sanitize_callback' => array('Npcink_Toolbox_Performance_Media_Health', 'sanitize_attachment_ids'),
+            ),
+        );
+
+        Npcink_Toolbox_Rest_Route_Registry::add('/performance/media/webp/convert', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('Npcink_Toolbox_Performance_Media_Health', 'ajax_convert_webp'),
+            'permission_callback' => Npcink_Toolbox_Rest_Route_Registry::admin_permission(),
+            'args'                => $webp_attachment_args,
+        ), 'performance');
+
+        Npcink_Toolbox_Rest_Route_Registry::add('/performance/media/webp/restore', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array('Npcink_Toolbox_Performance_Media_Health', 'ajax_restore_webp'),
+            'permission_callback' => Npcink_Toolbox_Rest_Route_Registry::admin_permission(),
+            'args'                => $webp_attachment_args,
         ), 'performance');
 
         Npcink_Toolbox_Rest_Route_Registry::add('/performance/seo/check', array(
@@ -653,6 +660,14 @@ class Npcink_Toolbox_Admin
             array(
                 'methods'             => \WP_REST_Server::READABLE,
                 'callback'            => array(__CLASS__, 'rest_get_diagnostics_summary'),
+                'permission_callback' => Npcink_Toolbox_Rest_Route_Registry::admin_permission(),
+            ),
+        ), 'diagnostics');
+
+        Npcink_Toolbox_Rest_Route_Registry::add('/diagnostics/features', array(
+            array(
+                'methods'             => \WP_REST_Server::READABLE,
+                'callback'            => array(__CLASS__, 'rest_get_feature_status'),
                 'permission_callback' => Npcink_Toolbox_Rest_Route_Registry::admin_permission(),
             ),
         ), 'diagnostics');

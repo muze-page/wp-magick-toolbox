@@ -42,13 +42,13 @@ const SearchHealthPanel: React.FC = () => {
   return (
     <Card size="small" title={<span><SearchOutlined style={{ marginRight: 6 }} />搜索健康分析</span>}>
       <Row gutter={[16, 12]}>
-        <Col span={8}>
+        <Col xs={24} xl={8}>
           <Statistic title="总搜索量" value={data.total_searches} />
         </Col>
-        <Col span={8}>
+        <Col xs={24} xl={8}>
           <Statistic title="唯一关键词" value={data.unique_terms} />
         </Col>
-        <Col span={8}>
+        <Col xs={24} xl={8}>
           <Statistic
             title="无结果比例"
             value={data.total_searches > 0 ? Math.round((data.no_result_terms.reduce((s, t) => s + t.no_result_count, 0) / data.total_searches) * 100) : 0}

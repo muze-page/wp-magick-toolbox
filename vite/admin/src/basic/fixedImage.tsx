@@ -15,6 +15,7 @@ type FixedImageProps = Omit<
   "children" | "onChange" | "onClick" | "value"
 > & {
   alists: FixedImageOption[];
+  includeDisabled?: boolean;
   value?: string;
   onChange?: (value: string) => void;
 };
@@ -32,6 +33,7 @@ const FixedImage = React.forwardRef<
   (
     {
       alists,
+      includeDisabled = true,
       value = "false",
       onChange,
       "aria-label": ariaLabel,
@@ -44,7 +46,7 @@ const FixedImage = React.forwardRef<
     const [draftValue, setDraftValue] = useState(value);
     const { status } = Form.Item.useStatus();
     const generatedName = useId();
-    const mediaImages = [disabledOption, ...alists];
+    const mediaImages = includeDisabled ? [disabledOption, ...alists] : alists;
     const currentImage =
       mediaImages.find((item) => item.value === value) ?? disabledOption;
     const radioName = buttonProps.id
@@ -76,20 +78,12 @@ const FixedImage = React.forwardRef<
 
     return (
       <>
-        <Space style={{ width: "100%" }} size="middle">
-          {value === "false" ? (
-            "禁用"
-          ) : (
-            <Image
-              src={currentImage.label}
-              width={120}
-              alt={`当前维护提示样式：${currentImage.title}`}
-              preview={{ rootClassName: "mabox-admin-modal" }}
-            />
-          )}
+        <Space size="middle" wrap>
+          <span>当前样式：{currentImage.title}</span>
           <Button
             {...buttonProps}
             ref={ref}
+            size={buttonProps.size ?? "small"}
             htmlType="button"
             aria-label={
               ariaLabel ?? `更换维护提示样式，当前：${currentImage.title}`
@@ -99,7 +93,7 @@ const FixedImage = React.forwardRef<
             }
             onClick={showModal}
           >
-            更换
+            更换样式
           </Button>
         </Space>
 

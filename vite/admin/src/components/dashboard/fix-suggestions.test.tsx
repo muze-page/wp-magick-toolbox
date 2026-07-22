@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import Dashboard from "@/components/dashboard";
 import { DataContext, emptySecretStatus } from "@/tool/dataContext";
 import { defaultVarOption } from "@/tool/defaultVar";
+import { FAVORITES_CHANGED_EVENT, FAVORITES_STORAGE_KEY } from "@/tool/favorites";
 import type { DiagnosticSummary, Option, SearchHealthSummary } from "@/tool/interface";
 
 const apiMocks = vi.hoisted(() => ({
@@ -75,6 +76,7 @@ function renderDashboard(onNavigate = vi.fn(), optionData: Option = defaultVarOp
 beforeEach(() => {
   apiMocks.getDiagnosticsSummary.mockReset();
   apiMocks.getSearchSummary.mockReset();
+  localStorage.clear();
 });
 
 afterEach(() => {
@@ -83,6 +85,46 @@ afterEach(() => {
 });
 
 describe("现代概览页", () => {
+  it("展示收藏入口、支持跳转和取消收藏，并忽略无效旧 ID", () => {
+    apiMocks.getDiagnosticsSummary.mockReturnValue(new Promise(() => {}));
+    apiMocks.getSearchSummary.mockReturnValue(new Promise(() => {}));
+    localStorage.setItem(
+      FAVORITES_STORAGE_KEY,
+      JSON.stringify(["performance-db_clean-enabled", "missing-feature"]),
+    );
+    const onNavigate = renderDashboard();
+    const favorites = screen.getByRole("region", { name: "常用功能" });
+
+    expect(within(favorites).getByText("数据库清理优化")).toBeInTheDocument();
+    expect(within(favorites).getByText("存储与维护 · 数据库")).toBeInTheDocument();
+    expect(within(favorites).getByText("1 项")).toBeInTheDocument();
+    expect(within(favorites).queryByText("missing-feature")).not.toBeInTheDocument();
+
+    fireEvent.click(within(favorites).getByRole("button", { name: "打开常用功能：数据库清理优化" }));
+    expect(onNavigate).toHaveBeenCalledWith("maintenance", "performance-db_clean-enabled");
+
+    fireEvent.click(within(favorites).getByRole("button", { name: "取消收藏：数据库清理优化" }));
+    expect(within(favorites).getByText("还没有收藏常用功能")).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem(FAVORITES_STORAGE_KEY) || "[]")).toEqual([
+      "missing-feature",
+    ]);
+  });
+
+  it("概览打开时会响应其他位置新增的收藏", () => {
+    apiMocks.getDiagnosticsSummary.mockReturnValue(new Promise(() => {}));
+    apiMocks.getSearchSummary.mockReturnValue(new Promise(() => {}));
+    renderDashboard();
+
+    expect(screen.getByText("还没有收藏常用功能")).toBeInTheDocument();
+    localStorage.setItem(
+      FAVORITES_STORAGE_KEY,
+      JSON.stringify(["performance-db_clean-enabled"]),
+    );
+    fireEvent(window, new CustomEvent(FAVORITES_CHANGED_EVENT));
+
+    expect(screen.getByText("数据库清理优化")).toBeInTheDocument();
+  });
+
   it("分别展示站点诊断和搜索健康的加载状态", () => {
     apiMocks.getDiagnosticsSummary.mockReturnValue(new Promise(() => {}));
     apiMocks.getSearchSummary.mockReturnValue(new Promise(() => {}));

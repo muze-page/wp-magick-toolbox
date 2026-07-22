@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
-import { Form, Input, InputNumber, Select, Button, Card, Row, Col, Tag, Space, Typography } from "antd";
+import { Form, Input, InputNumber, Select, Button, Card, Tag, Space, Typography } from "antd";
 import { ReloadOutlined, ThunderboltOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { DataContext } from "@/tool/dataContext";
 import { AntConfig } from "@/tool/tool";
@@ -124,26 +124,26 @@ const EnvironmentCard: React.FC<{ drawerOpen?: boolean; onDrawerOpenChange?: (op
           {results && <Button type="primary" size="small" icon={<ThunderboltOutlined />} onClick={handleOneClickFix}>生成修复建议</Button>}
         </Space>
         {results && !loading && (
-          <Row gutter={[16, 16]}>
+          <div className="mabox-environment-results">
             {Object.entries(results).map(([key, result]) => (
-              <Col xs={24} sm={12} md={8} key={key}>
-                <Card size="small">
-                  <Space direction="vertical" style={{ width: "100%" }} size="small">
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <Text strong>{result.service}</Text>
-                      {result.reachable ? (
-                        <Tag icon={<CheckCircleOutlined />} color="success">可达</Tag>
-                      ) : (
-                        <Tag icon={<CloseCircleOutlined />} color="error">不可达</Tag>
-                      )}
-                    </div>
-                    {result.reachable && <Text type="secondary" style={{ fontSize: 12 }}>延迟：{result.latency}ms</Text>}
-                    {!result.reachable && result.suggestion && <Text type="warning" style={{ fontSize: 12 }}>{result.suggestion}</Text>}
-                  </Space>
-                </Card>
-              </Col>
+              <Card size="small" className="mabox-environment-result-card" key={key}>
+                <Text strong className="mabox-environment-result-service">{result.service}</Text>
+                <div className="mabox-environment-result-status">
+                  {result.reachable ? (
+                    <Tag icon={<CheckCircleOutlined />} color="success">可达</Tag>
+                  ) : (
+                    <Tag icon={<CloseCircleOutlined />} color="error">不可达</Tag>
+                  )}
+                  {result.reachable && <Text type="secondary">延迟：{result.latency}ms</Text>}
+                </div>
+                {!result.reachable && result.suggestion && (
+                  <Text type="warning" className="mabox-environment-result-suggestion">
+                    {result.suggestion}
+                  </Text>
+                )}
+              </Card>
             ))}
-          </Row>
+          </div>
         )}
         <DiffModal
           visible={diffVisible}

@@ -17,6 +17,7 @@ const App: React.FC = () => {
   optionData.optimize?.medium || defaultVarOption.optimize.medium;
 
   const [formData, setFormData] = useState(publicData);
+  const webpSupported = window.dataLocal?.webpSupported;
 
   const onValuesChange = (changedValues: Partial<FieldType>) => {
     setFormData((prevState) => ({ ...prevState, ...changedValues }));
@@ -60,6 +61,16 @@ const App: React.FC = () => {
           enabled={formData.medium_add_svg as boolean}
           onChange={(checked: boolean) => onValuesChange({ medium_add_svg: checked } as Partial<FieldType>)}
           tags={["谨慎"]}
+        />
+        <ModuleRow
+          title="新生成图片使用 WebP"
+          description={webpSupported === false
+            ? "当前服务器的 WordPress 图片编辑器不支持 WebP；即使保留设置，JPEG 也会安全保持原格式"
+            : "原始上传的 JPEG 留作恢复备份；媒体库使用 WordPress 生成的 WebP 主图和缩略图。不转换 PNG，不删除或覆盖原图"}
+          featureId="optimize-medium-webp_conversion"
+          enabled={formData.webp_conversion as boolean}
+          onChange={(checked: boolean) => onValuesChange({ webp_conversion: checked } as Partial<FieldType>)}
+          tags={webpSupported === false ? ["异常"] : ["性能", "安全"]}
         />
         <Form.Item<FieldType>
           label="上传图片自动重命名"

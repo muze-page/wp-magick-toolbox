@@ -18,7 +18,7 @@ return array(
         'optimize.hide_top_toolbar', 'optimize.no_escape', 'optimize.remove_wp_version',
         'optimize.category_link_simplify', 'optimize.search_link_simplify',
         'optimize.remove_sitemap_users', 'optimize.hide_email_ip',
-        'optimize.image_add_tag', 'optimize.image_rename',
+        'optimize.image_add_tag', 'optimize.image_rename', 'optimize.webp_conversion',
         'optimize.widgets',
         'optimize.admin_single_add_user_screen', 'optimize.admin_add_time_screen',
         'optimize.admin_single_show_id', 'optimize.admin_thumbnail_switcher',

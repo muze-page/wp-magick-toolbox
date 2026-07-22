@@ -2,11 +2,38 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from "re
 
 import { diagnosticsApi, searchHealthApi } from "@/api";
 import { DataContext } from "@/tool/dataContext";
+import {
+  FAVORITES_CHANGED_EVENT,
+  FAVORITES_STORAGE_KEY,
+  getFavorites,
+  removeFavorite,
+} from "@/tool/favorites";
+import { searchIndex } from "@/tool/featureIndex";
+import type { SearchItem } from "@/tool/featureIndex";
 import type { DiagnosticSummary, Option, SearchHealthSummary } from "@/tool/interface";
 
 import "./overview.css";
 
-type OverviewView = "site" | "content" | "seo" | "china" | "maintenance";
+type OverviewView = "site" | "content" | "seo" | "china" | "maintenance" | "about";
+
+const overviewViews: OverviewView[] = ["site", "content", "seo", "china", "maintenance", "about"];
+
+function isOverviewView(view: string): view is OverviewView {
+  return overviewViews.includes(view as OverviewView);
+}
+
+type FavoriteItem = SearchItem & { tabKey: OverviewView };
+
+function getFavoriteItems(favoriteIds: string[]): FavoriteItem[] {
+  const itemsById = new Map(searchIndex.map((item) => [item.id, item]));
+
+  return favoriteIds
+    .map((favoriteId) => itemsById.get(favoriteId))
+    .filter(
+      (item): item is FavoriteItem =>
+        item !== undefined && isOverviewView(item.tabKey),
+    );
+}
 
 interface DashboardProps {
   onNavigate?: (view: OverviewView, itemId?: string) => void;
@@ -297,6 +324,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     status: "loading",
     data: null,
   });
+  const [favoriteIds, setFavoriteIds] = useState<string[]>(() => getFavorites());
 
   const loadDiagnostics = useCallback(async () => {
     setDiagnosticState({ status: "loading", data: null });
@@ -349,6 +377,21 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     void loadSearchHealth();
   }, [loadDiagnostics, loadSearchHealth]);
 
+  useEffect(() => {
+    const refreshFavorites = () => setFavoriteIds(getFavorites());
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === FAVORITES_STORAGE_KEY) refreshFavorites();
+    };
+
+    window.addEventListener(FAVORITES_CHANGED_EVENT, refreshFavorites);
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      window.removeEventListener(FAVORITES_CHANGED_EVENT, refreshFavorites);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
   const stats = useMemo(() => countBooleanToggles(optionData), [optionData]);
   const securityChecks = useMemo(() => getSecurityChecks(optionData), [optionData]);
   const loginSecurityEnabledCount = useMemo(() => getLoginSecurityEnabledCount(optionData), [optionData]);
@@ -364,6 +407,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     () => buildNextSteps(optionData, searchState),
     [optionData, searchState],
   );
+  const favoriteItems = useMemo(() => getFavoriteItems(favoriteIds), [favoriteIds]);
   const navigate = (view: OverviewView, itemId?: string) => {
     if (itemId) {
       onNavigate?.(view, itemId);
@@ -404,6 +448,58 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <strong>{nextSteps.length}</strong>
           <span>按当前状态生成的建议</span>
         </article>
+      </section>
+
+      <section
+        className="mabox-overview__panel mabox-overview__favorites"
+        aria-labelledby="favorites-heading"
+      >
+        <div className="mabox-overview__panel-heading">
+          <div>
+            <p className="mabox-overview__eyebrow">快捷入口</p>
+            <h3 id="favorites-heading">常用功能</h3>
+          </div>
+          <span className="mabox-overview__badge">{favoriteItems.length} 项</span>
+        </div>
+
+        {favoriteItems.length > 0 ? (
+          <ul className="mabox-overview__favorites-list">
+            {favoriteItems.map((item) => (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  className="mabox-overview__favorite-open"
+                  aria-label={`打开常用功能：${item.label}`}
+                  onClick={() => navigate(item.tabKey, item.id)}
+                >
+                  <span className="dashicons dashicons-star-filled" aria-hidden="true" />
+                  <span className="mabox-overview__favorite-copy">
+                    <strong>{item.label}</strong>
+                    <span>{item.tabLabel}{item.section ? ` · ${item.section}` : ""}</span>
+                  </span>
+                  <span className="dashicons dashicons-arrow-right-alt2" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  className="mabox-overview__favorite-remove"
+                  aria-label={`取消收藏：${item.label}`}
+                  title="取消收藏"
+                  onClick={() => removeFavorite(item.id)}
+                >
+                  <span className="dashicons dashicons-no-alt" aria-hidden="true" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="mabox-overview__favorites-empty">
+            <span className="dashicons dashicons-star-empty" aria-hidden="true" />
+            <div>
+              <strong>还没有收藏常用功能</strong>
+              <span>点击设置项右侧的星标，之后可以从这里直接打开。</span>
+            </div>
+          </div>
+        )}
       </section>
 
       <div className="mabox-overview__status-grid">
@@ -459,6 +555,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 <small>生成于 {diagnosticState.data.generated_at}</small>
               </div>
             </div>
+          )}
+          {diagnosticState.status === "success" && (
+            <button className="mabox-overview__full-button" type="button" onClick={() => navigate("about")}>
+              查看功能与运行状态
+            </button>
           )}
         </section>
 

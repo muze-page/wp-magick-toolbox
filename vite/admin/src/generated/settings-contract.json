@@ -78,7 +78,8 @@
                 "img_add_tag": false,
                 "medium_add_svg": false,
                 "no_auto_size": false,
-                "upload_auto_name": "false"
+                "upload_auto_name": "false",
+                "webp_conversion": false
             },
             "site": {
                 "category_link_simplify": false,
@@ -277,6 +278,24 @@
             "tabLabel": "站点与媒体",
             "tags": [
                 "推荐"
+            ]
+        },
+        {
+            "id": "optimize-medium-webp_conversion",
+            "keywords": [
+                "webp",
+                "图片",
+                "压缩",
+                "格式",
+                "缩略图"
+            ],
+            "label": "新生成图片使用 WebP",
+            "section": "媒体",
+            "tabKey": "site",
+            "tabLabel": "站点与媒体",
+            "tags": [
+                "性能",
+                "安全"
             ]
         },
         {
@@ -716,6 +735,16 @@
             "risk_tags": [
                 "谨慎"
             ],
+            "type": "boolean"
+        },
+        "optimize-medium-webp_conversion": {
+            "feature_id": "optimize-medium-webp_conversion",
+            "group": "媒体",
+            "label": "新生成图片使用 WebP",
+            "path": "optimize.medium.webp_conversion",
+            "risk": {
+                "level": "none"
+            },
             "type": "boolean"
         },
         "performance-db_clean-enabled": {

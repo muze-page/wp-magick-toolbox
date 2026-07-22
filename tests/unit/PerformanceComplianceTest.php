@@ -26,12 +26,26 @@ final class PerformanceComplianceTest extends TestCase
 
         $this->assertStringContainsString('const ATTACHMENT_SCAN_BATCH_SIZE = 100;', $source);
         $this->assertStringContainsString('const ATTACHMENT_SCAN_LIMIT = 500;', $source);
+        $this->assertStringContainsString('const WEBP_SAMPLE_LIMIT = 3;', $source);
+        $this->assertStringContainsString('const WEBP_SAMPLE_MAX_FILE_BYTES = 5242880;', $source);
+        $this->assertStringContainsString('const WEBP_SAMPLE_MAX_PIXELS = 12000000;', $source);
+        $this->assertStringContainsString('const WEBP_CONTINUOUS_MAX_CANDIDATES = 50;', $source);
         $this->assertStringContainsString('private static function scan_recent_attachments()', $source);
+        $this->assertStringContainsString('private static function estimate_webp_savings(', $source);
         $this->assertStringContainsString('while ($checked < self::ATTACHMENT_SCAN_LIMIT)', $source);
         $this->assertStringContainsString("update_meta_cache('post', \$image_ids);", $source);
         $this->assertStringContainsString("'attachment_scan' => array(", $source);
+        $this->assertStringContainsString("'webp_assessment' => \$attachment_scan['webp_assessment']", $source);
+        $this->assertStringContainsString("if (!function_exists('wp_tempnam'))", $source);
+        $this->assertStringContainsString("require_once ABSPATH . 'wp-admin/includes/file.php';", $source);
+        $this->assertStringContainsString("wp_tempnam('npcink-webp-assessment')", $source);
+        $this->assertStringContainsString('wp_delete_file($temporary_path);', $source);
+        $this->assertStringContainsString('} finally {', $source);
         $this->assertStringNotContainsString('SELECT ID, guid', $source);
         $this->assertStringNotContainsString('SELECT ID, post_name', $source);
+        $this->assertStringNotContainsString('wp_update_attachment_metadata(', $source);
+        $this->assertStringNotContainsString('wp_delete_attachment(', $source);
+        $this->assertStringNotContainsString('wp_schedule_', $source);
     }
 
     public function test_oss_never_deletes_the_local_media_fallback(): void

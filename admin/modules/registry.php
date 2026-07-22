@@ -42,6 +42,7 @@ return array(
     ),
     'optimize.remove_wp_version' => array(
         'class'     => 'Npcink_Toolbox_Remove_WP_Version',
+        'label'     => '移除版本信息',
         'file'      => 'optimize/site/remove_wp_version.php',
         'option_key'=> 'optimize.site.remove_RSS_version',
         'category'  => 'optimize',
@@ -50,6 +51,7 @@ return array(
     ),
     'optimize.category_link_simplify' => array(
         'class'     => 'Npcink_Toolbox_Category_Link_Simplify',
+        'label'     => '分类链接简化',
         'file'      => 'optimize/site/category_link_simplify.php',
         'option_key'=> 'optimize.site.category_link_simplify',
         'category'  => 'optimize',
@@ -58,6 +60,7 @@ return array(
     ),
     'optimize.search_link_simplify' => array(
         'class'     => 'Npcink_Toolbox_Search_Link_Simplify',
+        'label'     => '搜索链接优化',
         'file'      => 'optimize/site/search_link_simplify.php',
         'option_key'=> 'optimize.site.search_link_simplify',
         'category'  => 'optimize',
@@ -66,6 +69,7 @@ return array(
     ),
     'optimize.remove_sitemap_users' => array(
         'class'     => 'Npcink_Toolbox_Remove_Sitemap_Users',
+        'label'     => '移除用户站点地图',
         'file'      => 'optimize/site/remove_sitemap_users.php',
         'option_key'=> 'optimize.site.remove_sitemap_users',
         'category'  => 'optimize',
@@ -74,6 +78,7 @@ return array(
     ),
     'optimize.user_list_show_nickname' => array(
         'class'     => 'Npcink_Toolbox_User_List_Show_Nickname',
+        'label'     => '用户列表展示昵称',
         'file'      => 'optimize/site/user_list_show_nickname.php',
         'option_key'=> 'optimize.site.user_list_show_nickname',
         'category'  => 'optimize',
@@ -97,6 +102,7 @@ return array(
     ),
     'optimize.hide_email_ip' => array(
         'class'     => 'Npcink_Toolbox_Hide_Email_IP',
+        'label'     => '隐藏邮件中的 IP',
         'file'      => 'optimize/site/hide_email_ip.php',
         'option_key'=> 'optimize.site.hide_email_ip',
         'category'  => 'optimize',
@@ -105,6 +111,7 @@ return array(
     ),
     'optimize.widgets' => array(
         'class'     => 'Npcink_Toolbox_Widgets',
+        'label'     => '站点小工具',
         'file'      => 'optimize/widget/index.php',
         'option_key'=> 'optimize.widgets',
         'category'  => 'optimize',
@@ -114,6 +121,7 @@ return array(
     ),
     'optimize.image_add_tag' => array(
         'class'     => 'Npcink_Toolbox_Image_Add_Tag',
+        'label'     => '图片自动添加 Alt 标签',
         'file'      => 'optimize/medium/image_add_tag.php',
         'option_key'=> 'optimize.medium.img_add_tag',
         'category'  => 'optimize',
@@ -131,6 +139,7 @@ return array(
     ),
     'optimize.svg_support' => array(
         'class'     => 'Npcink_Toolbox_Medium_Svg_Support',
+        'label'     => '添加 SVG 图标支持',
         'file'      => 'optimize/medium/svg_support.php',
         'option_key'=> 'optimize.medium.medium_add_svg',
         'category'  => 'optimize',
@@ -139,6 +148,7 @@ return array(
     ),
     'optimize.image_rename' => array(
         'class'     => 'Npcink_Toolbox_Medium_Image_Rename',
+        'label'     => '上传文件重命名',
         'file'      => 'optimize/medium/image_rename.php',
         'option_key'=> 'optimize.medium.upload_auto_name',
         'category'  => 'optimize',
@@ -146,8 +156,24 @@ return array(
         'config_path' => 'optimize.medium',
         'risk_tags' => array('推荐'),
     ),
+    'optimize.webp_conversion' => array(
+        'class'       => 'Npcink_Toolbox_Medium_Webp_Conversion',
+        'file'        => 'optimize/medium/webp_conversion.php',
+        'option_key'  => 'optimize.medium.webp_conversion',
+        'category'    => 'optimize',
+        'scope'       => 'both',
+        'config_path' => 'optimize.medium',
+        'label'       => '新生成图片使用 WebP',
+        'group'       => '媒体',
+        'feature_id'  => 'optimize-medium-webp_conversion',
+        'risk_tags'   => array('性能', '安全'),
+        'risk'        => array('level' => 'none'),
+        'depends_on'  => array(),
+        'preset_tags' => array('performance'),
+    ),
     'optimize.admin_single_add_user_screen' => array(
         'class'     => 'Npcink_Toolbox_Admin_Single_Add_User_Screen',
+        'label'     => '添加作者筛选项',
         'file'      => 'optimize/admin/single_add_user_screen.php',
         'option_key'=> 'optimize.admin.add_user',
         'category'  => 'optimize',
@@ -156,6 +182,7 @@ return array(
     ),
     'optimize.admin_add_time_screen' => array(
         'class'     => 'Npcink_Toolbox_Admin_Add_Time_Screen',
+        'label'     => '添加时间筛选项',
         'file'      => 'optimize/admin/add_time_screen.php',
         'option_key'=> 'optimize.admin.add_time',
         'category'  => 'optimize',
@@ -164,6 +191,7 @@ return array(
     ),
     'optimize.admin_single_show_id' => array(
         'class'     => 'Npcink_Toolbox_Admin_Single_Show_ID',
+        'label'     => '各个列表显示链接 ID',
         'file'      => 'optimize/admin/single_show_id.php',
         'option_key'=> 'optimize.admin.show_id',
         'category'  => 'optimize',
@@ -172,6 +200,7 @@ return array(
     ),
     'optimize.admin_thumbnail_switcher' => array(
         'class'     => 'Npcink_Toolbox_Admin_Single_Thumbnail_Switcher',
+        'label'     => '缩略图切换',
         'file'      => 'optimize/admin/thumbnail_switcher/index.php',
         'option_key'=> 'optimize.admin.thumbnail_switcher',
         'category'  => 'optimize',
@@ -183,6 +212,7 @@ return array(
 
     'page.reading_progress' => array(
         'class'     => 'Npcink_Toolbox_Page_Reading_Progress',
+        'label'     => '阅读进度条',
         'file'      => 'page/exterior/reading_progress/index.php',
         'option_key'=> 'page.feature.reading_progress',
         'category'  => 'page',
@@ -193,6 +223,7 @@ return array(
     // ========== 页面评论 ==========
     'page.comment_interval' => array(
         'class'     => 'Npcink_Toolbox_Page_Comment_Interval',
+        'label'     => '两次评论间隔时间',
         'file'      => 'page/comment/comment_interval.php',
         'option_key'=> 'page.comment.interval',
         'category'  => 'page',
@@ -201,6 +232,7 @@ return array(
     ),
     'page.limit_word_count' => array(
         'class'     => 'Npcink_Toolbox_Comment_Limit_Word_Count',
+        'label'     => '限制评论字数',
         'file'      => 'page/comment/limit_word_count.php',
         'option_key'=> 'page.comment.words_number',
         'category'  => 'page',
@@ -209,6 +241,7 @@ return array(
     ),
     'page.ban_pure_english' => array(
         'class'     => 'Npcink_Toolbox_Comment_Ban_Pure_English',
+        'label'     => '禁止纯英文评论',
         'file'      => 'page/comment/ban_pure_english.php',
         'option_key'=> 'page.comment.english',
         'category'  => 'page',
@@ -217,6 +250,7 @@ return array(
     ),
     'page.only_comment_once' => array(
         'class'     => 'Npcink_Toolbox_Comment_Only_Once',
+        'label'     => '单篇文章仅限评论一次',
         'file'      => 'page/comment/only_comment_once.php',
         'option_key'=> 'page.comment.only',
         'category'  => 'page',
@@ -224,6 +258,7 @@ return array(
     ),
     'page.comment_sensitive_words' => array(
         'class'     => 'Npcink_Toolbox_Comment_Sensitive_Words',
+        'label'     => '敏感词过滤',
         'file'      => 'page/comment/sensitive_words.php',
         'option_key'=> 'page.comment.sensitive_words',
         'category'  => 'page',
@@ -233,6 +268,7 @@ return array(
     // ========== 页面功能 ==========
     'page.first_picture' => array(
         'class'     => 'Npcink_Toolbox_Single_First_Picture',
+        'label'     => '首图作特色图',
         'file'      => 'page/function/first_picture.php',
         'option_key'=> 'page.function.first_picture',
         'category'  => 'page',
@@ -248,6 +284,7 @@ return array(
     ),
     'page.add_article_update_time' => array(
         'class'     => 'Npcink_Toolbox_Single_Add_Last_Updated_Date',
+        'label'     => '添加最后更新时间',
         'file'      => 'page/function/add_article_update_time.php',
         'option_key'=> 'page.function.add_last_update',
         'category'  => 'page',
@@ -255,6 +292,7 @@ return array(
     ),
     'page.unlisted_vague_img' => array(
         'class'     => 'Npcink_Toolbox_Unlisted_Vague_Img',
+        'label'     => '未登录模糊文章内图片',
         'file'      => 'page/function/unlisted_vague_img.php',
         'option_key'=> 'page.function.no_login_img',
         'category'  => 'page',
@@ -262,6 +300,7 @@ return array(
     ),
     'page.maintenance_tips' => array(
         'class'     => 'Npcink_Toolbox_Maintenance_Tips',
+        'label'     => '维护提示页',
         'file'      => 'page/function/maintenance_tips.php',
         'option_key'=> 'page.function.maintenance_tips',
         'category'  => 'page',
@@ -270,6 +309,7 @@ return array(
     ),
     'page.default_thumbnail' => array(
         'class'     => 'Npcink_Toolbox_Page_Default_Thumbnail',
+        'label'     => '默认缩略图',
         'file'      => 'page/function/default_thumbnail.php',
         'option_key'=> 'page.function.default_thumbnail',
         'category'  => 'page',
@@ -278,6 +318,7 @@ return array(
     ),
     'page.search_limit' => array(
         'class'     => 'Npcink_Toolbox_Page_Search_Limit',
+        'label'     => '搜索频率限制',
         'file'      => 'page/function/search_limit.php',
         'option_key'=> 'page.function.search_limit',
         'category'  => 'page',
@@ -286,6 +327,7 @@ return array(
     ),
     'page.login_search' => array(
         'class'     => 'Npcink_Toolbox_Page_Login_Search',
+        'label'     => '仅登录用户可搜索',
         'file'      => 'page/function/login_search.php',
         'option_key'=> 'page.function.login_search',
         'category'  => 'page',
@@ -327,6 +369,7 @@ return array(
     // ========== SEO ==========
     'seo.seo_home' => array(
         'class'     => 'Npcink_Toolbox_Seo_Home',
+        'label'     => '首页 SEO',
         'file'      => 'function/seo/seo_home.php',
         'option_key'=> 'function.seo.seo_home',
         'category'  => 'function',
@@ -336,6 +379,7 @@ return array(
     ),
     'seo.seo_single' => array(
         'class'     => 'Npcink_Toolbox_Seo_Single',
+        'label'     => '文章 SEO',
         'file'      => 'function/seo/seo_single.php',
         'option_key'=> 'function.seo.seo_single',
         'category'  => 'function',
@@ -344,6 +388,7 @@ return array(
     ),
     'seo.seo_category_add_meat' => array(
         'class'     => 'Npcink_Toolbox_Seo_Category_Add_Meat',
+        'label'     => '分类 SEO 字段',
         'file'      => 'function/seo/seo_category_add_meat.php',
         'option_key'=> 'function.seo.seo_category',
         'category'  => 'function',
@@ -352,6 +397,7 @@ return array(
     ),
     'seo.seo_category' => array(
         'class'     => 'Npcink_Toolbox_Seo_Category',
+        'label'     => '分类 SEO',
         'file'      => 'function/seo/seo_category.php',
         'option_key'=> 'function.seo.seo_category',
         'category'  => 'function',
@@ -360,6 +406,7 @@ return array(
     ),
     'seo.seo_tag' => array(
         'class'     => 'Npcink_Toolbox_Seo_Tag',
+        'label'     => '标签 SEO',
         'file'      => 'function/seo/seo_tag.php',
         'option_key'=> 'function.seo.seo_category',
         'category'  => 'function',
@@ -370,6 +417,7 @@ return array(
     // ========== 辅助功能 ==========
     'auxiliary.census_single' => array(
         'class'     => 'Npcink_Toolbox_Census_Single',
+        'label'     => '文章访问统计',
         'file'      => 'function/auxiliary/census-single.php',
         'option_key'=> 'function.auxiliary.single_count',
         'category'  => 'function',
@@ -377,6 +425,7 @@ return array(
     ),
     'auxiliary.ban_malice_search' => array(
         'class'     => 'Npcink_Toolbox_Ban_Malice_Search',
+        'label'     => '屏蔽恶意关键词搜索',
         'file'      => 'function/auxiliary/ban_malice_search.php',
         'option_key'=> 'function.auxiliary.no_malice_key',
         'category'  => 'function',
@@ -414,6 +463,7 @@ return array(
     // ========== 页面 jurisdiction interface ==========
     'page.interface_category_data' => array(
         'class'     => 'Npcink_Toolbox_Interface_Category_Data',
+        'label'     => '分类数据接口',
         'file'      => 'page/jurisdiction/interface_category_data.php',
         'option_key'=> 'page.jurisdiction.category_id',
         'category'  => 'page',
@@ -423,6 +473,7 @@ return array(
     // ========== 国内生态 - 备案与合规 ==========
     'domestic.compliance' => array(
         'class'     => 'Npcink_Toolbox_Domestic_Compliance',
+        'label'     => '备案与合规',
         'file'      => 'domestic/compliance/index.php',
         'option_key'=> 'domestic.compliance.icp_enabled',
         'category'  => 'domestic',
@@ -434,6 +485,7 @@ return array(
     // ========== 国内生态 - 微信生态 ==========
     'domestic.wechat' => array(
         'class'     => 'Npcink_Toolbox_Domestic_Wechat',
+        'label'     => '微信生态',
         'file'      => 'domestic/wechat/index.php',
         'option_key'=> 'domestic.wechat.jssdk_enabled',
         'category'  => 'domestic',
@@ -445,6 +497,7 @@ return array(
     // ========== 国内生态 - 评论安全 ==========
     'domestic.comment_security' => array(
         'class'     => 'Npcink_Toolbox_Domestic_Comment_Security',
+        'label'     => '评论安全',
         'file'      => 'domestic/comment_security/index.php',
         'option_key'=> 'domestic.comment_security.blacklist_enabled',
         'category'  => 'domestic',
@@ -476,6 +529,7 @@ return array(
     // ========== 性能优化 - 对象存储 ==========
     'performance.oss' => array(
         'class'     => 'Npcink_Toolbox_Performance_Oss',
+        'label'     => '对象存储 / OSS',
         'file'      => 'performance/oss/index.php',
         'option_key'=> 'performance.oss.enabled',
         'category'  => 'performance',
@@ -487,6 +541,7 @@ return array(
     // ========== 性能优化 - SEO检查 ==========
     'performance.seo_checker' => array(
         'class'     => 'Npcink_Toolbox_Performance_Seo_Checker',
+        'label'     => 'SEO 检查助手',
         'file'      => 'performance/seo_checker/index.php',
         'option_key'=> 'performance.seo_checker.enabled',
         'category'  => 'performance',
@@ -498,6 +553,7 @@ return array(
     // ========== 性能优化 - 媒体库体检 ==========
     'performance.media_health' => array(
         'class'     => 'Npcink_Toolbox_Performance_Media_Health',
+        'label'     => '媒体库体检',
         'file'      => 'performance/media_health/index.php',
         'option_key'=> 'performance.media_health.enabled',
         'category'  => 'performance',
@@ -509,6 +565,7 @@ return array(
     // ========== 性能优化 - 搜索增强 ==========
     'performance.search_enhance' => array(
         'class'     => 'Npcink_Toolbox_Performance_Search_Enhance',
+        'label'     => '搜索增强',
         'file'      => 'performance/search_enhance/index.php',
         'option_key'=> 'performance.search_enhance.highlight_enabled',
         'category'  => 'performance',

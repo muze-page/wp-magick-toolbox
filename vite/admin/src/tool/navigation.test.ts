@@ -4,8 +4,12 @@ import {
   ADMIN_VIEWS,
   TARGETABLE_ADMIN_VIEWS,
   adminViewSupportsTargetItem,
+  createAdminTargetUrl,
   createAdminViewUrl,
+  createSettingsTabUrl,
   getAdminViewFromSearch,
+  getSettingsTabFromSearch,
+  getTargetItemFromSearch,
   isAdminView,
   normalizeAdminView,
 } from "@/tool/navigation";
@@ -44,6 +48,65 @@ describe("admin navigation", () => {
         "maintenance",
       ),
     ).toBe("/wp-admin/plugins.php?page=npcink-site-toolbox&view=maintenance#module");
+
+    expect(
+      createAdminViewUrl(
+        "https://example.test/wp-admin/plugins.php?page=npcink-site-toolbox&view=site&target=optimize-medium-upload_auto_name",
+        "content",
+      ),
+    ).toBe("/wp-admin/plugins.php?page=npcink-site-toolbox&view=content");
+  });
+
+  it("creates and restores a durable setting target", () => {
+    expect(
+      createAdminTargetUrl(
+        "https://example.test/wp-admin/plugins.php?page=npcink-site-toolbox&view=about&tab=about.runtime",
+        "site",
+        "optimize-medium-upload_auto_name",
+      ),
+    ).toBe(
+      "/wp-admin/plugins.php?page=npcink-site-toolbox&view=site&target=optimize-medium-upload_auto_name",
+    );
+    expect(
+      getTargetItemFromSearch(
+        "?page=npcink-site-toolbox&view=site&target=optimize-medium-upload_auto_name",
+      ),
+    ).toBe("optimize-medium-upload_auto_name");
+    expect(getTargetItemFromSearch("?target=contains%20spaces")).toBeNull();
+    expect(getTargetItemFromSearch("?target=../../unsafe")).toBeNull();
+  });
+
+  it("restores only a valid secondary tab and preserves the current admin view", () => {
+    const allowedTabs = ["site", "media", "admin"];
+
+    expect(
+      getSettingsTabFromSearch(
+        "?page=npcink-site-toolbox&view=site&tab=site.media",
+        "site",
+        allowedTabs,
+      ),
+    ).toBe("media");
+    expect(
+      getSettingsTabFromSearch(
+        "?page=npcink-site-toolbox&view=site&tab=site.unknown",
+        "site",
+        allowedTabs,
+      ),
+    ).toBeUndefined();
+    expect(
+      getSettingsTabFromSearch(
+        "?page=npcink-site-toolbox&view=maintenance&tab=site.media",
+        "maintenance",
+        ["storage", "media"],
+      ),
+    ).toBeUndefined();
+    expect(
+      createSettingsTabUrl(
+        "https://example.test/wp-admin/plugins.php?page=npcink-site-toolbox&view=site#module",
+        "site",
+        "media",
+      ),
+    ).toBe("/wp-admin/plugins.php?page=npcink-site-toolbox&view=site&tab=site.media#module");
   });
 
   it("passes search targets only to views that can reveal a matching item", () => {

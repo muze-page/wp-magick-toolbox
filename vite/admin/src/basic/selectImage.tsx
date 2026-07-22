@@ -8,16 +8,15 @@ import {
 import {
   Button,
   Input,
-  List,
   Modal,
   Radio,
-  Space,
 } from "antd";
 import { FileImageOutlined } from "@ant-design/icons";
 import type { InputProps, InputRef, RadioChangeEvent } from "antd";
 import axios from "axios";
 
 import { ApiBase, RestNonce } from "@/tool/dataContext";
+import "./selectImage.css";
 
 interface MediaImage {
   id: number;
@@ -40,7 +39,9 @@ type SelectImageProps = Omit<
 
 type LoadState = "idle" | "loading" | "ready" | "error";
 
-const buildMediaEndpoint = (apiBase: string): string => {
+const MEDIA_PAGE_SIZE = 12;
+
+const buildMediaEndpoint = (apiBase: string, page: number): string => {
   const [baseWithoutHash] = apiBase.split("#", 1);
   const queryIndex = baseWithoutHash.indexOf("?");
 
@@ -50,7 +51,8 @@ const buildMediaEndpoint = (apiBase: string): string => {
 
     if (params.has("rest_route")) {
       params.set("rest_route", "/wp/v2/media");
-      params.set("per_page", "12");
+      params.set("per_page", String(MEDIA_PAGE_SIZE));
+      params.set("page", String(page));
       const query = params
         .toString()
         .replace(
@@ -65,7 +67,7 @@ const buildMediaEndpoint = (apiBase: string): string => {
   const normalizedBase = baseWithoutHash.split("?", 1)[0].replace(/\/+$/, "");
 
   if (normalizedBase === "/api") {
-    return "/api/wp-json/wp/v2/media?per_page=12";
+    return `/api/wp-json/wp/v2/media?per_page=${MEDIA_PAGE_SIZE}&page=${page}`;
   }
 
   // dataLocal.apiBase points at this plugin's `{namespace}/vN` route. Remove
@@ -73,7 +75,12 @@ const buildMediaEndpoint = (apiBase: string): string => {
   // endpoint construction.
   const restRoot = normalizedBase.replace(/\/[^/]+\/v\d+$/, "");
 
-  return `${restRoot}/wp/v2/media?per_page=12`;
+  return `${restRoot}/wp/v2/media?per_page=${MEDIA_PAGE_SIZE}&page=${page}`;
+};
+
+const parseTotalPages = (value: unknown): number | null => {
+  const totalPages = Number.parseInt(String(value), 10);
+  return Number.isFinite(totalPages) && totalPages > 0 ? totalPages : null;
 };
 
 const isMediaImage = (value: unknown): value is MediaImage => {
@@ -115,6 +122,10 @@ const SelectImage = forwardRef<InputRef, SelectImageProps>(
     const [mediaImages, setMediaImages] = useState<MediaImage[]>([]);
     const [draftValue, setDraftValue] = useState(value);
     const [loadState, setLoadState] = useState<LoadState>("idle");
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [loadMoreFailed, setLoadMoreFailed] = useState(false);
     const [fieldLabel, setFieldLabel] = useState(
       typeof ariaLabel === "string" ? ariaLabel : "当前字段",
     );
@@ -146,13 +157,20 @@ const SelectImage = forwardRef<InputRef, SelectImageProps>(
       [],
     );
 
-    const getMediaData = useCallback(async () => {
+    const getMediaData = useCallback(async (page = 1) => {
+      const isFirstPage = page === 1;
       const currentRequest = requestId.current + 1;
       requestId.current = currentRequest;
-      setLoadState("loading");
+      setLoadMoreFailed(false);
+
+      if (isFirstPage) {
+        setLoadState("loading");
+      } else {
+        setIsLoadingMore(true);
+      }
 
       try {
-        const response = await axios.get(buildMediaEndpoint(ApiBase), {
+        const response = await axios.get(buildMediaEndpoint(ApiBase, page), {
           headers: { "X-WP-Nonce": RestNonce },
         });
         if (requestId.current !== currentRequest) return;
@@ -161,22 +179,57 @@ const SelectImage = forwardRef<InputRef, SelectImageProps>(
           throw new Error("Invalid media response");
         }
 
-        setMediaImages(response.data.filter(isMediaImage));
+        const nextImages = response.data.filter(isMediaImage);
+        const responseTotalPages = parseTotalPages(
+          response.headers?.["x-wp-totalpages"],
+        );
+
+        if (isFirstPage) {
+          setMediaImages(nextImages);
+        } else {
+          setMediaImages((currentImages) => {
+            const loadedIds = new Set(currentImages.map((item) => item.id));
+            return [
+              ...currentImages,
+              ...nextImages.filter((item) => !loadedIds.has(item.id)),
+            ];
+          });
+        }
+
+        setCurrentPage(page);
+        setTotalPages(
+          responseTotalPages ??
+            (nextImages.length < MEDIA_PAGE_SIZE ? page : page + 1),
+        );
         setLoadState("ready");
       } catch {
         if (requestId.current !== currentRequest) return;
-        setMediaImages([]);
-        setLoadState("error");
+
+        if (isFirstPage) {
+          setMediaImages([]);
+          setLoadState("error");
+        } else {
+          setLoadMoreFailed(true);
+        }
+      } finally {
+        if (requestId.current === currentRequest && !isFirstPage) {
+          setIsLoadingMore(false);
+        }
       }
     }, []);
 
     const showModal = () => {
       setDraftValue(value);
+      setMediaImages([]);
+      setCurrentPage(0);
+      setTotalPages(1);
+      setLoadMoreFailed(false);
       setIsModalOpen(true);
       void getMediaData();
     };
 
     const handleOk = () => {
+      if (!draftValue) return;
       onChange?.(draftValue);
       setIsModalOpen(false);
     };
@@ -192,7 +245,41 @@ const SelectImage = forwardRef<InputRef, SelectImageProps>(
 
     return (
       <>
-        <Space.Compact style={{ width: "100%" }}>
+        <div className="mabox-image-field">
+          <div className="mabox-image-field-summary">
+            <span className="mabox-image-field-icon" aria-hidden="true">
+              <FileImageOutlined />
+            </span>
+            <span className="mabox-image-field-meta">
+              <strong>{value ? "已选择图片" : "尚未选择图片"}</strong>
+              <span className="mabox-image-field-value" title={value || undefined}>
+                {value || "可从媒体库选择，也可以在下方粘贴图片 URL。"}
+              </span>
+            </span>
+            <span className="mabox-image-field-actions">
+              <Button
+                htmlType="button"
+                aria-label={`为${fieldLabel}选择图片`}
+                aria-describedby={ariaDescribedBy}
+                disabled={disabled || readOnly}
+                onClick={showModal}
+              >
+                从媒体库选择
+              </Button>
+              {value && (
+                <Button
+                  type="text"
+                  htmlType="button"
+                  aria-label={`清除${fieldLabel}`}
+                  aria-describedby={ariaDescribedBy}
+                  disabled={disabled || readOnly}
+                  onClick={() => onChange?.("")}
+                >
+                  清除
+                </Button>
+              )}
+            </span>
+          </div>
           <Input
             {...inputProps}
             ref={ref}
@@ -201,34 +288,30 @@ const SelectImage = forwardRef<InputRef, SelectImageProps>(
             aria-describedby={ariaDescribedBy}
             disabled={disabled}
             readOnly={readOnly}
-            placeholder={placeholder}
+            placeholder={placeholder === "图片地址" ? "或粘贴图片 URL" : placeholder}
             prefix={<FileImageOutlined aria-hidden="true" />}
             value={value}
             onChange={(event) => onChange?.(event.target.value)}
           />
-          <Button
-            htmlType="button"
-            aria-label={`为${fieldLabel}选择图片`}
-            aria-describedby={ariaDescribedBy}
-            disabled={disabled || readOnly}
-            onClick={showModal}
-          >
-            选择
-          </Button>
-        </Space.Compact>
+        </div>
 
         <Modal
           rootClassName="mabox-admin-modal"
+          className="mabox-media-picker-modal"
           title={`选择${fieldLabel}`}
           open={isModalOpen}
+          width={760}
           okText="使用所选图片"
           cancelText="取消"
-          okButtonProps={{ "aria-label": "使用所选图片" }}
+          okButtonProps={{
+            "aria-label": "使用所选图片",
+            disabled: !draftValue,
+          }}
           cancelButtonProps={{ "aria-label": "取消" }}
           onOk={handleOk}
           onCancel={handleCancel}
         >
-          <div aria-busy={loadState === "loading"}>
+          <div aria-busy={loadState === "loading" || isLoadingMore}>
             {loadState === "loading" && (
               <div role="status" aria-live="polite">
                 正在加载媒体库…
@@ -249,39 +332,70 @@ const SelectImage = forwardRef<InputRef, SelectImageProps>(
             )}
 
             {loadState === "ready" && mediaImages.length > 0 && (
-              <div role="radiogroup" aria-label="媒体库图片">
-                <Radio.Group
-                  name={`${id || "select-image"}-media`}
-                  value={draftValue}
-                  onChange={handleRadioChange}
-                  style={{ width: "100%" }}
+              <>
+                <div
+                  role="radiogroup"
+                  aria-label="媒体库图片"
+                  className="mabox-media-picker-grid"
                 >
-                  <List
-                    grid={{
-                      gutter: 16,
-                      xs: 1,
-                      sm: 2,
-                      md: 4,
-                      lg: 4,
-                      xl: 6,
-                      xxl: 3,
-                    }}
-                    dataSource={mediaImages}
-                    renderItem={(item) => (
-                      <List.Item key={item.id}>
-                        <Radio value={item.source_url}>
-                          <img
-                            alt={mediaAlt(item)}
-                            src={mediaThumbnail(item)}
-                            width={200}
-                            height={200}
-                          />
+                  <Radio.Group
+                    name={`${id || "select-image"}-media`}
+                    value={draftValue}
+                    onChange={handleRadioChange}
+                    className="mabox-media-picker-options"
+                  >
+                    {mediaImages.map((item) => {
+                      const label = mediaAlt(item);
+                      const selected = draftValue === item.source_url;
+
+                      return (
+                        <Radio
+                          key={item.id}
+                          value={item.source_url}
+                          aria-label={label}
+                          className={`mabox-media-picker-option${selected ? " mabox-media-picker-option--selected" : ""}`}
+                        >
+                          <span className="mabox-media-picker-thumbnail">
+                            <img
+                              alt={label}
+                              src={mediaThumbnail(item)}
+                              loading="lazy"
+                            />
+                          </span>
+                          <span className="mabox-media-picker-label" title={label}>
+                            {label}
+                          </span>
                         </Radio>
-                      </List.Item>
-                    )}
-                  />
-                </Radio.Group>
-              </div>
+                      );
+                    })}
+                  </Radio.Group>
+                </div>
+
+                <div className="mabox-media-picker-pagination" aria-live="polite">
+                  {loadMoreFailed ? (
+                    <div className="mabox-media-picker-more-error" role="alert">
+                      <span>更多图片加载失败，已加载的图片仍可继续选择。</span>
+                      <Button
+                        htmlType="button"
+                        onClick={() => void getMediaData(currentPage + 1)}
+                      >
+                        重试加载更多图片
+                      </Button>
+                    </div>
+                  ) : currentPage < totalPages ? (
+                    <Button
+                      htmlType="button"
+                      loading={isLoadingMore}
+                      disabled={isLoadingMore}
+                      onClick={() => void getMediaData(currentPage + 1)}
+                    >
+                      加载更多图片
+                    </Button>
+                  ) : (
+                    <span role="status">已加载全部图片</span>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </Modal>

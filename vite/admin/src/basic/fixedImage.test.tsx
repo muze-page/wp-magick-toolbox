@@ -24,7 +24,7 @@ afterEach(() => {
 });
 
 describe("FixedImage", () => {
-  it("保留 Form 标签、说明和错误状态，并为当前预览提供替代文本", () => {
+  it("保留 Form 标签、说明和错误状态，并显示当前样式", () => {
     const buttonRef = createRef<HTMLButtonElement>();
     const { container } = render(
       <Form initialValues={{ maintenance_tips: "default" }}>
@@ -53,7 +53,7 @@ describe("FixedImage", () => {
     expect(changeButton.getAttribute("aria-describedby")?.split(" ")).toEqual(
       expect.arrayContaining([extra.id, errorDescription?.id]),
     );
-    expect(screen.getByRole("img", { name: "当前维护提示样式：默认简洁" })).toBeInTheDocument();
+    expect(screen.getByText("当前样式：默认简洁")).toBeInTheDocument();
   });
 
   it("使用一个有名称的单选组，并只在确认时提交草稿值", () => {
@@ -102,7 +102,7 @@ describe("FixedImage", () => {
       </Form>,
     );
 
-    expect(screen.getByRole("img", { name: "当前维护提示样式：默认简洁" })).toBeInTheDocument();
+    expect(screen.getByText("当前样式：默认简洁")).toBeInTheDocument();
 
     rerender(
       <Form>
@@ -111,11 +111,28 @@ describe("FixedImage", () => {
         </Form.Item>
       </Form>,
     );
-    expect(screen.getByRole("img", { name: "当前维护提示样式：红色纯粹" })).toBeInTheDocument();
+    expect(screen.getByText("当前样式：红色纯粹")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: /更换维护提示样式/ }));
     const dialog = screen.getByRole("dialog", { name: "选择您需要的样式" });
     const group = within(dialog).getByRole("radiogroup", { name: "维护提示样式" });
     expect(within(group).getByRole("radio", { name: "红色纯粹" })).toBeChecked();
+  });
+
+  it("允许由外层开关独立负责禁用状态", () => {
+    render(
+      <Form initialValues={{ maintenance_tips: "default" }}>
+        <Form.Item name="maintenance_tips">
+          <FixedImage alists={imageOptions} includeDisabled={false} />
+        </Form.Item>
+      </Form>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /更换维护提示样式/ }));
+    const dialog = screen.getByRole("dialog", { name: "选择您需要的样式" });
+    const group = within(dialog).getByRole("radiogroup", { name: "维护提示样式" });
+
+    expect(within(group).getAllByRole("radio")).toHaveLength(2);
+    expect(within(group).queryByRole("radio", { name: "禁用" })).not.toBeInTheDocument();
   });
 });

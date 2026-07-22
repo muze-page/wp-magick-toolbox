@@ -81,6 +81,8 @@ class RestApiSecurityTest extends TestCase {
         $sensitive_paths = array(
             '/settings',
             '/performance/oss/test',
+            '/performance/media/webp/convert',
+            '/performance/media/webp/restore',
             '/performance/db/clean',
             '/tools/categories',
         );
@@ -256,6 +258,8 @@ class RestApiSecurityTest extends TestCase {
             '/performance/oss/test',
             '/performance/media/check',
             '/performance/media/fix-alt',
+            '/performance/media/webp/convert',
+            '/performance/media/webp/restore',
             '/performance/seo/check',
             '/performance/seo/fix-alt',
             '/performance/db/stats',
@@ -266,6 +270,7 @@ class RestApiSecurityTest extends TestCase {
             '/domestic/environment/check',
             '/domestic/environment/apply',
             '/diagnostics/summary',
+            '/diagnostics/features',
             '/search-health/summary',
         ), $paths);
     }

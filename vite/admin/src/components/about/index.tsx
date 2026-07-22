@@ -1,6 +1,7 @@
 import { Typography } from "antd";
-import { SettingsSection } from "@/components/settings-ui";
+import { SettingsSection, SettingsTabs } from "@/components/settings-ui";
 import Source from "@/components/about/table";
+import RuntimeStatus from "@/components/about/runtime-status";
 
 const { Paragraph, Link } = Typography;
 
@@ -67,22 +68,47 @@ const Links = () => (
   </div>
 );
 
-const App: React.FC = () => {
+const AboutAndSupport = () => (
+  <>
+    <SettingsSection title="关于插件">
+      <AboutPlugin />
+    </SettingsSection>
+    <SettingsSection title="我有建议">
+      <Proposal />
+    </SettingsSection>
+    <SettingsSection title="联系方式">
+      <Links />
+    </SettingsSection>
+    <SettingsSection title="来源">
+      <Source />
+    </SettingsSection>
+  </>
+);
+
+interface AboutProps {
+  onNavigate?: (view: string, itemId?: string) => void;
+}
+
+const App: React.FC<AboutProps> = ({ onNavigate }) => {
+  const tabs = [
+    {
+      key: "runtime",
+      label: "运行状态",
+      content: <RuntimeStatus onNavigate={onNavigate} />,
+    },
+    {
+      key: "support",
+      label: "关于与支持",
+      content: <AboutAndSupport />,
+    },
+  ] as const;
+
   return (
-    <>
-      <SettingsSection title="关于插件">
-        <AboutPlugin />
-      </SettingsSection>
-      <SettingsSection title="我有建议">
-        <Proposal />
-      </SettingsSection>
-      <SettingsSection title="联系方式">
-        <Links />
-      </SettingsSection>
-      <SettingsSection title="来源">
-        <Source />
-      </SettingsSection>
-    </>
+    <SettingsTabs
+      ariaLabel="关于与帮助分组"
+      idPrefix="about-help"
+      tabs={tabs}
+    />
   );
 };
 
