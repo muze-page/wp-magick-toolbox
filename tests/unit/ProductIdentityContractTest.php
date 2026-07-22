@@ -44,6 +44,10 @@ final class ProductIdentityContractTest extends TestCase
     {
         $composer = json_decode($this->source('composer.json'), true, 512, JSON_THROW_ON_ERROR);
         $this->assertSame('npcink/site-toolbox', $composer['name']);
+        $this->assertSame(
+            'phpstan analyse --configuration phpstan.neon --memory-limit=2G --no-progress',
+            $composer['scripts']['phpstan']
+        );
 
         $build = $this->source('bin/build-release-zip.sh');
         $verify = $this->source('bin/verify-release-zip.sh');
@@ -55,6 +59,8 @@ final class ProductIdentityContractTest extends TestCase
         $this->assertStringContainsString('"' . self::SLUG . '.php"', $verify);
         $this->assertStringContainsString('name: ' . self::SLUG, $workflow);
         $this->assertStringContainsString(self::SLUG . '.zip', $workflow);
+        $this->assertStringContainsString('run: composer phpstan', $workflow);
+        $this->assertStringNotContainsString('vendor/bin/phpstan analyse', $workflow);
     }
 
     public function test_internal_php_identity_uses_one_current_prefix(): void
